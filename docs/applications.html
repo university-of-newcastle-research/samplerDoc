@@ -5,20 +5,20 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 5 Applications | Particle Based Samplers for MCMC</title>
-  <meta name="description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook." />
-  <meta name="generator" content="bookdown 0.17.1 and GitBook 2.6.7" />
+  <meta name="description" content="Particle Based Sampler for MCMC" />
+  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 5 Applications | Particle Based Samplers for MCMC" />
   <meta property="og:type" content="book" />
   
   
-  <meta property="og:description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook." />
+  <meta property="og:description" content="Particle Based Sampler for MCMC" />
   <meta name="github-repo" content="rstudio/bookdown-demo" />
 
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Chapter 5 Applications | Particle Based Samplers for MCMC" />
   
-  <meta name="twitter:description" content="This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook." />
+  <meta name="twitter:description" content="Particle Based Sampler for MCMC" />
   
 
 <meta name="author" content="Jon-Paul Cavallaro" />
@@ -30,7 +30,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="the-linear-ballistic-aclimatiser.html"/>
+<link rel="prev" href="sampler-application-example-3-wagenmakers-2008-experiment-2.html"/>
 <link rel="next" href="final-words.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -105,13 +105,16 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="./">A Minimal Book Example</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> First chapter title goes here</a></li>
-<li class="chapter" data-level="2" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>2</b> Introduction</a></li>
-<li class="chapter" data-level="3" data-path="forstmann-et-al-dataset.html"><a href="forstmann-et-al-dataset.html"><i class="fa fa-check"></i><b>3</b> Forstmann et al. Dataset</a><ul>
-<li class="chapter" data-level="3.1" data-path="forstmann-et-al-dataset.html"><a href="forstmann-et-al-dataset.html#description-of-forstmann-experiment"><i class="fa fa-check"></i><b>3.1</b> Description of Forstmann experiment</a></li>
-<li class="chapter" data-level="3.2" data-path="forstmann-et-al-dataset.html"><a href="forstmann-et-al-dataset.html#using-the-sampler"><i class="fa fa-check"></i><b>3.2</b> Using the sampler</a></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction to Particle Based Sampler for MCMC</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#assumed-knowledge"><i class="fa fa-check"></i><b>1.1</b> Assumed knowledge</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#computational-requirements"><i class="fa fa-check"></i><b>1.2</b> Computational Requirements</a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="the-linear-ballistic-aclimatiser.html"><a href="the-linear-ballistic-aclimatiser.html"><i class="fa fa-check"></i><b>4</b> The Linear Ballistic Aclimatiser</a></li>
+<li class="chapter" data-level="2" data-path="sampler-application-example-1-forstmann-et-al-2008-dataset.html"><a href="sampler-application-example-1-forstmann-et-al-2008-dataset.html"><i class="fa fa-check"></i><b>2</b> Sampler Application Example 1 - Forstmann et al. (2008) dataset</a><ul>
+<li class="chapter" data-level="2.1" data-path="sampler-application-example-1-forstmann-et-al-2008-dataset.html"><a href="sampler-application-example-1-forstmann-et-al-2008-dataset.html#description-of-forstmann-experiment"><i class="fa fa-check"></i><b>2.1</b> Description of Forstmann experiment</a></li>
+<li class="chapter" data-level="2.2" data-path="sampler-application-example-1-forstmann-et-al-2008-dataset.html"><a href="sampler-application-example-1-forstmann-et-al-2008-dataset.html#using-the-sampler"><i class="fa fa-check"></i><b>2.2</b> Using the sampler</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="sampler-application-example-2-single-threshold-parameter.html"><a href="sampler-application-example-2-single-threshold-parameter.html"><i class="fa fa-check"></i><b>3</b> Sampler Application Example 2 - Single threshold parameter</a></li>
+<li class="chapter" data-level="4" data-path="sampler-application-example-3-wagenmakers-2008-experiment-2.html"><a href="sampler-application-example-3-wagenmakers-2008-experiment-2.html"><i class="fa fa-check"></i><b>4</b> Sampler Application Example 3 - Wagenmakers (2008) Experiment 2</a></li>
 <li class="chapter" data-level="5" data-path="applications.html"><a href="applications.html"><i class="fa fa-check"></i><b>5</b> Applications</a><ul>
 <li class="chapter" data-level="5.1" data-path="applications.html"><a href="applications.html#example-one"><i class="fa fa-check"></i><b>5.1</b> Example one</a></li>
 <li class="chapter" data-level="5.2" data-path="applications.html"><a href="applications.html#example-two"><i class="fa fa-check"></i><b>5.2</b> Example two</a></li>
@@ -154,7 +157,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           </div>
         </div>
       </div>
-<a href="the-linear-ballistic-aclimatiser.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="sampler-application-example-3-wagenmakers-2008-experiment-2.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
 <a href="final-words.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
@@ -205,20 +208,6 @@ gitbook.start({
 });
 </script>
 
-<!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
-  (function () {
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    var src = "";
-    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
-    if (location.protocol !== "file:")
-      if (/^https?:/.test(src))
-        src = src.replace(/^https?:/, '');
-    script.src = src;
-    document.getElementsByTagName("head")[0].appendChild(script);
-  })();
-</script>
 </body>
 
 </html>
