@@ -1,7 +1,3 @@
-# The Linear Ballistic Aclimatiser 
+# Sampler Application Example 3 - Wagenmakers (2008) Experiment 2
 
-
-```{r LBA Picture, echo=FALSE}
-knitr::include_graphics("_images/LBA.jpg")
-```
-The LBA model of decision-making which explains the trade off between speed and caution. A basic framework for a simple two choice paradigm is shown. The two accumulators ``race'' by accumulating evidence for either decision before reaching the response threshold. The first accumulator to reach the threshold triggers the associated decision.
+See iSquared paper eperiment 2

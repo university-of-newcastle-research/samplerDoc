@@ -1,121 +1,30 @@
-# Forstmann et al. Dataset
-```{r, required packages NOT to be included in document, include=FALSE}
-library(tidyverse)
-library(knitr)
-```
-Here is an example dataset. We will use the dataset from @forstmann2008striatum.
+# Sampler Application Example 2 - Single threshold parameter
 
-What packages required? Are they mentioned here? with r code? Version of R?
-
-First we need to install the psamplers package
-```{r}
-library(psamplers)
-```
-## Description of Forstmann experiment
-
-Forstmann et al looked at neural correlates of decision making under time pressure, with an aim to identify areas of the brain associated with speed-accuracy tradeoff. Imaging (fMRI) and behavioural data was collected; however, we'll look at the  behavioural data from the decision-making task only. In terms of modelling the data, Forstmann expected to find differences in thresholds (direction?) for each of the three speed-emphasis conditions.
-
-Table \@ref(tab:forsthead10) shows the first ten trials from the Forstmann dataset ( show to get an idea of the data structure?). Participants `(n = 19)` were asked to indicate whether a cloud of dots in a random-dot kinematogram (RDK) moved to the left or the right of the screen. The IV was a within-subject, speed-accuracy manipulation where, before each trial began, pariticipants were instructed to make their choice <i>accurately</i> `(condition = 1)`, with <i>urgency</i>`(condition = 3)`or were confronted with a <i>neutral</i> message `(condition = 2)`. Choice and response time data was collected. Choices were coded as correct `(correct = 2)` or incorrect `(correct =  1)` and response times `(rt)` were recorded in seconds. For more information about the design of the experiment please see [the original paper](https://www.pnas.org/content/105/45/17538.short).
-
-
-
-```{r forsthead10, echo=FALSE, out.width='80%', fig.asp=.75, fig.align='center'}
-kable(head(forstmann,10), caption = 'First 10 trials in Forstmann dataset. The `forstmann` dataset is a data frame ')
+In this second example, we will use a single `b` threshold parameter (the evidence required to make a response).
+Altering the code/model is simple. First, update your parameter object (e.g.`pars`) by including a single `b` threshold parameter:
+```{r eg2pars}
+pars <- c("b", "A", "v1", "v2", "t0")
 ```
 
-## Using the sampler
-
-In this example, we will use the Linear Ballistic Accumulator (LBA) @brown2008simplest. The LBA model parameters are: `b` threshold parameter (the evidence required to make a response), `v` is drift rate or average speed of evidence accumulation, `A` is the model's start point and `t0` is non-decision time. Do we need to mention `sv` here? 
-
-
-First, we create a vector of parameter names for the model `pars`
-```{r params}
-pars <- c("b1", "b2", "b3", "A", "v1", "v2", "t0")
-```
-
-For this dataset, we use 3 threshold parameters (`b1`, `b2`, and `b3`) because we expect threshold to vary as a function of speed-emphasis instruction. We include two drift rate parameters: `v1` for the incorrect accumulator and `v2` for the correct accumulator, a start point parameter `A` and a non-decision time `t0` parameter. <em>Note</em>: It is important that the parameters you list in the `pars` vector match the names and number of parameters you include in your log likelihood function. We've made a decision to set the `sv` to 1 to satisfy the scaling properties of the model, as such we haven't included the `sv` parameter in the `pars` vector.
-
-
-In the new estimations paper pg 6 has an equation with a vector of individual parameters/random effects - include here?
-
-Next we create a `priors` object; a list that contains two components:
- - Gavin needs to check this priors object stuff
-* `theta_mu` a vector containing the prior for model parameter means
-* `theta_sig` the prior covariance matrix for model parameters.
-```{r priors}
+The `priors` object will update based on the length of your parameter object. <b>Remove this?</b>
+```{r eg2priors}
 priors <- list(theta_mu = rep(0, length(pars)),
   theta_sig = diag(rep(1, length(pars)))
 )
 ```
-
-
-The next step is to source your log likelihood function/script. This must be called before you create the sampler object in the next step.
-
-```{r loadLLFile, echo=TRUE, eval=FALSE}
-source(file = "yourLogLikelihoodFile.R")
+The next step is to modify your log likelihood function by updating the threshold parameter vector (`bs`) so that the name and number of threshold parameters (`b`) matches the name and number of threshold parameters you've specified in your `pars` vector. In this case, we require a single `b` parameter.
+``` {r bslbaLL, echo=TRUE, eval=FALSE}
+  bs <- x["A"] + x["b"][data$condition]
 ```
+The subsequent lines of code in the log likelihood function remain unchanged.
 
-
-<b>We need to supply LBA_loglike file </b>
-
-
-Next step is to initialise the `sampler` object. 
-```{r samplerObject, echo=TRUE, eval=FALSE}
-sampler <- pmwgs(
-  data = dataO,
-  pars = pars,
-  prior = priors,
-  ll_func = lba_loglike
-)
-```
-
-The `pmwgs` function takes a set of arguments listed below and returns a list containing the required components for performing the particle metropolis within Gibbs steps.
-
-* `data =` your data (a data frame containing a column for participants called 'subject')
-* `pars =` the model parameters to be used (`pars` vector specified above)
-* `prior =` the priors to be used (`priors` object)
-* `ll_func = ` name of log likelihood function you've sourced above.
-
-You have the option to set model start points. We have specified sensible start points for the Forstmann dataset. If you chose not to specify start points, the sampler will randomly sample points from the prior distribution.
-```{r modStartPoints, echo=TRUE, eval=FALSE}
+As mentioned in example 1, <b>ADD A CROSS REFERENCE HERE</b> you may set model start points. It is important to provide the same number of values for `mu` as the number of parameters you've set in your `pars` vector.
+```{r eg2modStartPoints, echo=TRUE, eval=FALSE}
 start_points <- list(
-  mu = c(.2, .2, .2, .4, .3, 1.3, -2),
+  mu = c(.2,.4, .3, 1.3, -2), # We have set five parameter start points here, 
+                              # matching the number of parameters in the pars vector.
   sig2 = diag(rep(.01, length(pars)))
 )
+
 ```
-
-The `start_points` object contains two vectors: `mu` a vector of start points for the mu of each model parameter and a `sig2` vector containing the start points of the covariance matrix of covariance between model parameters.
-
-
-
-Okay - now we are ready to run the sampler.  
-```{r runSampler, echo=TRUE, eval=FALSE}
-sampler <- init(sampler, theta_mu = start_points$mu,
-                theta_sig = start_points$sig2)
-```
-Here we are using the `init` function to generate initial start points for the random effects and storing them in `sampler` object.  First we pass the `sampler` object from above that includes our data, parameters, priors and log likelihood function.  If we decided to specify our own start points (as above), we would include the `theta_mu` and `theta_sig` arguments.
-
-
-Now we can run the sampler using the `run_stage` function. First we pass our `sampler` object that includes the parameters. The `stage =` argument specifies the sampling stage. `iter = ` is the number of iterations of the sampling stage. `particles =` is the number of particles generated on each iteration. It is optional to include the `iter =` and `particles =` arguments. If these are not included, default values of 1000 are used. The number of iterations you choose for your burn in stage is similar to choices made when running deMCMC, however, this varies depending on the time the model takes to reach the 'real' posterior space. 
-
-First we run our burn in stage by setting `stage =` to `"burn"`
-```{r burn, echo=TRUE, eval=FALSE}
-burned <- run_stage(sampler, stage = "burn", iter = 500, particles = 1000)
-```
-Here we have set iterations to be 500, which may take some time. 
-
-```{r adaptation, echo=TRUE, eval=FALSE}
-adapted <- run_stage(burned, stage = "adapt")
-```
-Now we run our adaptation stage by setting `stage = "adapt"` Because we have not specified number of iterations or particles, the sampler will use the default values of 1000 for each of these arguments. N.B. The sampler will quit adaptation stage after 20 unique values have been accepted for each subject. This means adaptation may not use all 1000 iterations.
-
-
-```{r sampled, echo=TRUE, eval=FALSE}
-sampled <- run_stage(adapted, stage = "sample", iter = 100, particles = 100)
-```
-
-At the start of the `sampled` stage, the sampler object will create a 'proposal' distribution for each subject's random effects using a conditional multi-variate normal. This proposal distribution is then used to efficiently generate new particles for each subject which means we can reduce the number of particles on each iteration whilst still achieving acceptance rates. 
-
-
-
-
+And now you're ready to run the sampler as outlined in example 1<b>ADD A CROSS REFERENCE HERE</b>!
