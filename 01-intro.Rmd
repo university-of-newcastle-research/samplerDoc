@@ -42,7 +42,7 @@ We begin by creating a vector of parameter names for the model. You can name thi
 pars <- c("b1", "b2", "b3", "A", "v1", "v2", "t0")
 ```
 
-For this dataset, we use three threshold parameters (`b1`, `b2`, and `b3`) because we expect threshold to vary as a function of speed-emphasis instruction. We include two drift rate parameters: `v1` for the incorrect accumulator and `v2` for the correct accumulator, a start point parameter `A` and a non-decision time `t0` parameter.  We've made a decision to set the `sv` to 1 to satisfy the scaling properties of the model, as such we haven't included the `sv` parameter in the `pars` vector - it is found in the LBA's likelihood function (see below).
+For this dataset, we use three threshold parameters (`b1`, `b2`, and `b3` i.e. one for each condition) because we assume that the participant responds to each condition with a different level of caution. We include two drift rate parameters: `v1` for the incorrect accumulator and `v2` for the correct accumulator, a start point parameter `A` and a non-decision time `t0` parameter.  We've made a decision to set the `sv` to 1 to satisfy the scaling properties of the model, as such we haven't included the `sv` parameter in the `pars` vector - it is found in the LBA's likelihood function (see below).
 
 Next we create a `priors` object; a list that contains two components
 
@@ -103,7 +103,7 @@ The `lba_loglike` function takes three arguments:
 * `data` is your data set (e.g.`forstmann`)
 * `sample = ` default is `FALSE` calculates a density function or set to `TRUE` to generate a sample that matches the shape of data. 
 
-The first line in the `lba_loglike` function (Line 2 below) takes the exponent of the parameter values to move all parameter values to the real number scale. <b>The purpose of this is to..... </b>
+The first line in the `lba_loglike` function (Line 2 below) takes the exponent of the parameter values to move all parameter values to the real line. <b>The purpose of this is to..... </b>
 Line 3 and 4 then checks RTs are faster than the non-decision time parameter, and zero those RTs that are faster than non-decision time. 
 ```{r lbaLL1, attr.source = '.numberLines', echo=TRUE, eval=FALSE}
 lba_loglike <- function(x, data, sample = FALSE) {
