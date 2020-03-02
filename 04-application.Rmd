@@ -1,7 +1,5 @@
-# Applications
+# Common Problems
 
-Some _significant_ applications are demonstrated in this chapter.
-
-## Example one
+## How to write a log likelihood function
 
 ## Example two
