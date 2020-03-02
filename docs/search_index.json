@@ -5,5 +5,6 @@
 ["sampler-application-example-3-wagenmakers-2008-experiment-2.html", "Chapter 4 Sampler Application Example 3 - Wagenmakers (2008) Experiment 2", " Chapter 4 Sampler Application Example 3 - Wagenmakers (2008) Experiment 2 See iSquared paper eperiment 2 "],
 ["common-problems-better-name-required-troubleshooting-page.html", "Chapter 5 Common Problems (Better name required) Troubleshooting page 5.1 How to write a log likelihood function", " Chapter 5 Common Problems (Better name required) Troubleshooting page 5.1 How to write a log likelihood function What key elements are required in a log likelihood function to be used in the sampler "],
 ["first-simple-example-signal-detection-feary.html", "Chapter 6 First (simple) example - Signal Detection Feary", " Chapter 6 First (simple) example - Signal Detection Feary This first example should/could demostrate how to use the sampler in a simple context/widely understood context using singal detection theory. We can show analytic solutions alongside the samplers estimates to show that it works. A second example might be cover anothe SDT example with the addition of trial level covariate i.e. analytic solution NA. "],
+["non-rtchoice-example.html", "Chapter 7 Non RT/Choice example", " Chapter 7 Non RT/Choice example "],
 ["references.html", "References", " References "]
 ]
