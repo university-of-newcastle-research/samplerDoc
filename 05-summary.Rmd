@@ -1,3 +1,7 @@
-# Final Words
+# First (simple) example - Signal Detection Feary
 
-Nice book.
+This first example should/could demostrate how to use the sampler in a simple context/widely understood context using singal detection theory.  We can show analytic solutions alongside the samplers estimates to show that it works.
+
+A second example might be cover anothe SDT example with the addition of trial level covariate i.e. analytic solution NA.
+
+

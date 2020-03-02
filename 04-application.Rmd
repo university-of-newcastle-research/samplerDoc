@@ -1,5 +1,6 @@
-# Common Problems
+# Common Problems (Better name required) Troubleshooting page
 
 ## How to write a log likelihood function
 
-## Example two
+* What key elements are required in a log likelihood function to be used in the sampler
+* 
