@@ -11,6 +11,7 @@
 ### Wiley's commonestststs Rog-Rikri-hood errors
 
 <b>1. Changing parameter values changes the log likelihood value</b>
+
 * Preliminary step to check log likelihood function - If you update your parameter values, your log likelihood SHOULD also change.
 • Then check if changing parameter values which rely on conditions actually change the log likelihood
 
