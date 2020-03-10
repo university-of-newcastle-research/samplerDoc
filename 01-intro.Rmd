@@ -26,7 +26,7 @@ Table \@ref(tab:forsthead10) shows the first ten trials from the Forstmann datas
 kable(head(forstmann,10), caption = 'First 10 trials in Forstmann dataset. The `forstmann` dataset is an object/data frame ')
 ```
 
-## Using the sampler
+## Setting up the sampler
 
 We will use the Linear Ballistic Accumulator (LBA) [@brown2008simplest] to demonstrate how to use the psamplers package. The LBA model parameters are:
 
@@ -164,6 +164,7 @@ The `pmwgs` function takes a set of arguments (listed below) and returns a list 
 * `prior =` the priors to be used (e.g.`priors`)
 * `ll_func =` name of log likelihood function you've sourced above (e.g.`lba_loglike`)
 
+### Model start points {#start-points}
 You have the option to set model start points. We have specified sensible start points for the Forstmann dataset. If you chose not to specify start points, the sampler will randomly sample points from the prior distribution.
 ```{r modStartPoints, echo=TRUE, eval=FALSE}
 start_points <- list(
@@ -178,7 +179,7 @@ The `start_points` object contains two vectors:
 * `sig2` vector containing the start points of the covariance matrix of covariance between model parameters.
 
 
-
+### Running the sampler {#run-sampler}
 Okay - now we are ready to run the sampler.  
 ```{r runSampler, echo=TRUE, eval=FALSE}
 sampler <- init(sampler, theta_mu = start_points$mu,
@@ -211,8 +212,6 @@ At the start of the `sampled` stage, the sampler object will create a 'proposal'
 ```{r sampled, echo=TRUE, eval=FALSE}
 sampled <- run_stage(adapted, stage = "sample", iter = 100, particles = 100)
 ```
-
- 
 
 
 

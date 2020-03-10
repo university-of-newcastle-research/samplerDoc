@@ -111,12 +111,17 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li class="chapter" data-level="2" data-path="sampler-application-example-1-forstmann-et-al-2008-dataset.html"><a href="sampler-application-example-1-forstmann-et-al-2008-dataset.html"><i class="fa fa-check"></i><b>2</b> Sampler Application Example 1 - Forstmann et al. (2008) dataset</a><ul>
 <li class="chapter" data-level="2.1" data-path="sampler-application-example-1-forstmann-et-al-2008-dataset.html"><a href="sampler-application-example-1-forstmann-et-al-2008-dataset.html#description-of-forstmann-experiment"><i class="fa fa-check"></i><b>2.1</b> Description of Forstmann experiment</a></li>
-<li class="chapter" data-level="2.2" data-path="sampler-application-example-1-forstmann-et-al-2008-dataset.html"><a href="sampler-application-example-1-forstmann-et-al-2008-dataset.html#using-the-sampler"><i class="fa fa-check"></i><b>2.2</b> Using the sampler</a></li>
+<li class="chapter" data-level="2.2" data-path="sampler-application-example-1-forstmann-et-al-2008-dataset.html"><a href="sampler-application-example-1-forstmann-et-al-2008-dataset.html#setting-up-the-sampler"><i class="fa fa-check"></i><b>2.2</b> Setting up the sampler</a><ul>
+<li class="chapter" data-level="2.2.1" data-path="sampler-application-example-1-forstmann-et-al-2008-dataset.html"><a href="sampler-application-example-1-forstmann-et-al-2008-dataset.html#start-points"><i class="fa fa-check"></i><b>2.2.1</b> Model start points</a></li>
+<li class="chapter" data-level="2.2.2" data-path="sampler-application-example-1-forstmann-et-al-2008-dataset.html"><a href="sampler-application-example-1-forstmann-et-al-2008-dataset.html#run-sampler"><i class="fa fa-check"></i><b>2.2.2</b> Running the sampler</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="sampler-application-example-2-single-threshold-parameter.html"><a href="sampler-application-example-2-single-threshold-parameter.html"><i class="fa fa-check"></i><b>3</b> Sampler Application Example 2 - Single threshold parameter</a></li>
 <li class="chapter" data-level="4" data-path="sampler-application-example-3-wagenmakers-2008-experiment-2.html"><a href="sampler-application-example-3-wagenmakers-2008-experiment-2.html"><i class="fa fa-check"></i><b>4</b> Sampler Application Example 3 - Wagenmakers (2008) Experiment 2</a></li>
 <li class="chapter" data-level="5" data-path="common-problems-better-name-required-troubleshooting-page.html"><a href="common-problems-better-name-required-troubleshooting-page.html"><i class="fa fa-check"></i><b>5</b> Common Problems (Better name required) Troubleshooting page</a><ul>
-<li class="chapter" data-level="5.1" data-path="common-problems-better-name-required-troubleshooting-page.html"><a href="common-problems-better-name-required-troubleshooting-page.html#how-to-write-a-log-likelihood-function"><i class="fa fa-check"></i><b>5.1</b> How to write a log likelihood function</a></li>
+<li class="chapter" data-level="5.1" data-path="common-problems-better-name-required-troubleshooting-page.html"><a href="common-problems-better-name-required-troubleshooting-page.html#how-to-write-a-log-likelihood-function"><i class="fa fa-check"></i><b>5.1</b> How to write a log likelihood function</a><ul>
+<li class="chapter" data-level="5.1.1" data-path="common-problems-better-name-required-troubleshooting-page.html"><a href="common-problems-better-name-required-troubleshooting-page.html#wileys-commonestststs-rog-rikri-hood-errors"><i class="fa fa-check"></i><b>5.1.1</b> Wiley’s commonestststs Rog-Rikri-hood errors</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="6" data-path="first-simple-example-signal-detection-feary.html"><a href="first-simple-example-signal-detection-feary.html"><i class="fa fa-check"></i><b>6</b> First (simple) example - Signal Detection Feary</a></li>
 <li class="chapter" data-level="7" data-path="non-rtchoice-example.html"><a href="non-rtchoice-example.html"><i class="fa fa-check"></i><b>7</b> Non RT/Choice example</a></li>
@@ -147,9 +152,19 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h2><span class="header-section-number">5.1</span> How to write a log likelihood function</h2>
 <ul>
 <li>What key elements are required in a log likelihood function to be used in the sampler</li>
-<li></li>
+<li>Show comparison times for slow LL and fast LL</li>
+<li>Check list for commmon errors - brief list check this, check that etc.</li>
 </ul>
+<div id="wileys-commonestststs-rog-rikri-hood-errors" class="section level3">
+<h3><span class="header-section-number">5.1.1</span> Wiley’s commonestststs Rog-Rikri-hood errors</h3>
+<p><b>1. Changing parameter values changes the log likelihood value</b> * Preliminary step to check log likelihood function - If you update your parameter values, your log likelihood SHOULD also change. • Then check if changing parameter values which rely on conditions actually change the log likelihood</p>
+<p>• The parameter specified (for example x[‘b’]) does not exist, is not specified to be estimated (in the parameter names arg) or is misspelled - Same as mentioned earlier. Make sure params vector is of the same length and same names, becuase the log likelihood function will not throw and error.</p>
+<p>• A column in if and for loops is not a factor (i.e. <code>data$condition</code> is a character vector -&gt; this will break things like if (<code>data$condition == “easy”</code>) and <code>x[‘b1’,’b2’][data$condition]</code></p>
+<p>Needs to be factor</p>
+<p>else</p>
+<p>• Columns are misspelled or do not exist i.e. data<span class="math inline">\(RT is actually data\)</span>rt • When making a vector of parameter values - values are not filling in properly (ie you may be making a vector for b for all the values across the data set to be used, but there are NAs filling it somewhere) • Vector of parameters should be the log. The first line should be exp(x). Make sure operations are done on the right scale • The response/rt vector is in the wrong scale (logged, seconds rather than milliseconds etc) • The log likelihood is not printed/outputted at the end - sum the logs of the likelihood at or before the end • When sampling, the generated columns are not outputted • If doing trial-wise functions - i must be specified throughout - ie can’t just be if (data<span class="math inline">\(condition == “easy”) - needs to be (data\)</span>condition[i] == “easy”) throughout</p>
 
+</div>
 </div>
 </div>
             </section>
@@ -208,6 +223,20 @@ gitbook.start({
 });
 </script>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 </body>
 
 </html>
