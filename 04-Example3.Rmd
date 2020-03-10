@@ -11,44 +11,31 @@
 ### Wiley's commonestststs Rog-Rikri-hood errors
 
 <b>1. Changing parameter values changes the log likelihood value</b>
-
-
-* Preliminary step to check log likelihood function: If you update your parameter values, your log likelihood SHOULD also change.
-* Then check if changing parameter values which rely on conditions actually change the log likelihood
-
-
+Preliminary step to check log likelihood function: If you update your parameter values, your log likelihood SHOULD also change. Then check if changing parameter values which rely on conditions actually change the log likelihood
 
 <b>2. The parameter specified (e.g.`x[‘b’]`) does not exist. </b>
-  
-  * The parameter name is not specified to be estimated i.e. it is not in the parameter names argument or it is misspelled. Make sure `pars` vector is the same length and contains the same names, becuase the log likelihood function will not throw and error.
+The parameter name is not specified to be estimated i.e. it is not in the parameter names argument or it is misspelled. Make sure `pars` vector is the same length and contains the same names, becuase the log likelihood function will not throw and error.
 
 <b>3. Column names should be a `factor`. </b> 
-
 Errors will occur when columns are not factors in `if` statements or `for` loops. E.g. `data$condition` is a character vector -> this will break things like if (`data$condition == “easy”`) and `x[‘b1’,’b2’][data$condition]`
 
 <b>4. Spelling errors or mismatched column names.</b>
-
- * Columns are misspelled or do not exist E.g. `data$RT` != `data$rt`
+Columns are misspelled or do not exist E.g. `data$RT` != `data$rt`
 
 <b>5. When making a vector of parameter values - values are not filling in properly.</b>
-
- * you may be making a vector for b for all the values across the data set to be used, but there are NAs filling it somewhere)
+E.g. you may be making a vector for b for all the values across the data set to be used, but there are NAs filling it somewhere)
 
 <b>6. Make sure operations are done on the right scale.</b>
+Vector of parameters should be the log. The first line should be exp(x). 
 
- * Vector of parameters should be the log. The first line should be exp(x). 
+<b>7. Data frame variables are scaled correctly i.e. correct units</b>
+The response/rt vector is in the wrong scale (logged, seconds rather than milliseconds etc)
 
-<b> Data frame variables are scaled correctly i.e. correct units
- * The response/rt vector is in the wrong scale (logged, seconds rather than milliseconds etc)
-
-<b>7. The log likelihood is printed/outputted at the end of function.</b>
-
- * The log likelihood is not printed/outputted at the end - sum the logs of the likelihood at or before the end
+<b>8. The log likelihood is printed/outputted at the end of function.</b>
+The log likelihood is not printed/outputted at the end - sum the logs of the likelihood at or before the end
  
 <b>8. Samping error occurs.</b>
-
- * When sampling, the generated columns are not outputted
+When sampling, the generated columns are not outputted
  
 <b>9. When executing functions row by row (i.e. trial-wise), index MUST be included</b>
- 
- * If doing trial-wise functions - i must be specified throughout - ie can’t just be if (data$condition == “easy”) - needs to be (data$condition[i] == “easy”) throughout
+If doing trial-wise functions - i must be specified throughout - ie can’t just be if (data$condition == “easy”) - needs to be (data$condition[i] == “easy”) throughout

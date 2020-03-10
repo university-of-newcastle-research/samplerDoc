@@ -157,42 +157,16 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul>
 <div id="wileys-commonestststs-rog-rikri-hood-errors" class="section level3">
 <h3><span class="header-section-number">5.1.1</span> Wiley’s commonestststs Rog-Rikri-hood errors</h3>
-<p><b>1. Changing parameter values changes the log likelihood value</b></p>
-<ul>
-<li>Preliminary step to check log likelihood function: If you update your parameter values, your log likelihood SHOULD also change.</li>
-<li>Then check if changing parameter values which rely on conditions actually change the log likelihood</li>
-</ul>
-<p><b>2. The parameter specified (e.g.<code>x[‘b’]</code>) does not exist. </b></p>
-<ul>
-<li>The parameter name is not specified to be estimated i.e. it is not in the parameter names argument or it is misspelled. Make sure <code>pars</code> vector is the same length and contains the same names, becuase the log likelihood function will not throw and error.</li>
-</ul>
-<p><b>3. Column names should be a <code>factor</code>. </b></p>
-<p>Errors will occur when columns are not factors in <code>if</code> statements or <code>for</code> loops. E.g. <code>data$condition</code> is a character vector -&gt; this will break things like if (<code>data$condition == “easy”</code>) and <code>x[‘b1’,’b2’][data$condition]</code></p>
-<p><b>4. Spelling errors or mismatched column names.</b></p>
-<ul>
-<li>Columns are misspelled or do not exist E.g. <code>data$RT</code> != <code>data$rt</code></li>
-</ul>
-<p><b>5. When making a vector of parameter values - values are not filling in properly.</b></p>
-<ul>
-<li>you may be making a vector for b for all the values across the data set to be used, but there are NAs filling it somewhere)</li>
-</ul>
-<p><b>6. Make sure operations are done on the right scale.</b></p>
-<ul>
-<li>Vector of parameters should be the log. The first line should be exp(x).</li>
-</ul>
-<p><b> Data frame variables are scaled correctly i.e. correct units * The response/rt vector is in the wrong scale (logged, seconds rather than milliseconds etc)</p>
-<p><b>7. The log likelihood is printed/outputted at the end of function.</b></p>
-<ul>
-<li>The log likelihood is not printed/outputted at the end - sum the logs of the likelihood at or before the end</li>
-</ul>
-<p><b>8. Samping error occurs.</b></p>
-<ul>
-<li>When sampling, the generated columns are not outputted</li>
-</ul>
-<p><b>9. When executing functions row by row (i.e. trial-wise), index MUST be included</b></p>
-<ul>
-<li>If doing trial-wise functions - i must be specified throughout - ie can’t just be if (data<span class="math inline">\(condition == “easy”) - needs to be (data\)</span>condition[i] == “easy”) throughout</li>
-</ul>
+<p><b>1. Changing parameter values changes the log likelihood value</b> Preliminary step to check log likelihood function: If you update your parameter values, your log likelihood SHOULD also change. Then check if changing parameter values which rely on conditions actually change the log likelihood</p>
+<p><b>2. The parameter specified (e.g.<code>x[‘b’]</code>) does not exist. </b> The parameter name is not specified to be estimated i.e. it is not in the parameter names argument or it is misspelled. Make sure <code>pars</code> vector is the same length and contains the same names, becuase the log likelihood function will not throw and error.</p>
+<p><b>3. Column names should be a <code>factor</code>. </b> Errors will occur when columns are not factors in <code>if</code> statements or <code>for</code> loops. E.g. <code>data$condition</code> is a character vector -&gt; this will break things like if (<code>data$condition == “easy”</code>) and <code>x[‘b1’,’b2’][data$condition]</code></p>
+<p><b>4. Spelling errors or mismatched column names.</b> Columns are misspelled or do not exist E.g. <code>data$RT</code> != <code>data$rt</code></p>
+<p><b>5. When making a vector of parameter values - values are not filling in properly.</b> E.g. you may be making a vector for b for all the values across the data set to be used, but there are NAs filling it somewhere)</p>
+<p><b>6. Make sure operations are done on the right scale.</b> Vector of parameters should be the log. The first line should be exp(x).</p>
+<p><b>7. Data frame variables are scaled correctly i.e. correct units</b> The response/rt vector is in the wrong scale (logged, seconds rather than milliseconds etc)</p>
+<p><b>8. The log likelihood is printed/outputted at the end of function.</b> The log likelihood is not printed/outputted at the end - sum the logs of the likelihood at or before the end</p>
+<p><b>8. Samping error occurs.</b> When sampling, the generated columns are not outputted</p>
+<p><b>9. When executing functions row by row (i.e. trial-wise), index MUST be included</b> If doing trial-wise functions - i must be specified throughout - ie can’t just be if (data<span class="math inline">\(condition == “easy”) - needs to be (data\)</span>condition[i] == “easy”) throughout</p>
 
 </div>
 </div>
