@@ -120,7 +120,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="4" data-path="sampler-application-example-3-wagenmakers-2008-experiment-2.html"><a href="sampler-application-example-3-wagenmakers-2008-experiment-2.html"><i class="fa fa-check"></i><b>4</b> Sampler Application Example 3 - Wagenmakers (2008) Experiment 2</a></li>
 <li class="chapter" data-level="5" data-path="common-problems-better-name-required-troubleshooting-page.html"><a href="common-problems-better-name-required-troubleshooting-page.html"><i class="fa fa-check"></i><b>5</b> Common Problems (Better name required) Troubleshooting page</a><ul>
 <li class="chapter" data-level="5.1" data-path="common-problems-better-name-required-troubleshooting-page.html"><a href="common-problems-better-name-required-troubleshooting-page.html#how-to-write-a-log-likelihood-function"><i class="fa fa-check"></i><b>5.1</b> How to write a log likelihood function</a><ul>
-<li class="chapter" data-level="5.1.1" data-path="common-problems-better-name-required-troubleshooting-page.html"><a href="common-problems-better-name-required-troubleshooting-page.html#wileys-commonestststs-rog-rikri-hood-errors"><i class="fa fa-check"></i><b>5.1.1</b> Wiley’s commonestststs Rog-Rikri-hood errors</a></li>
+<li class="chapter" data-level="5.1.1" data-path="common-problems-better-name-required-troubleshooting-page.html"><a href="common-problems-better-name-required-troubleshooting-page.html#writing-your-log-likelihood-function-tips-errors-and-check-list"><i class="fa fa-check"></i><b>5.1.1</b> Writing your log likelihood function: Tips, errors and check list</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="6" data-path="first-simple-example-signal-detection-feary.html"><a href="first-simple-example-signal-detection-feary.html"><i class="fa fa-check"></i><b>6</b> First (simple) example - Signal Detection Feary</a></li>
@@ -155,28 +155,29 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>Show comparison times for slow LL and fast LL</li>
 <li>Check list for commmon errors - brief list check this, check that etc.</li>
 </ul>
-<div id="wileys-commonestststs-rog-rikri-hood-errors" class="section level3">
-<h3><span class="header-section-number">5.1.1</span> Wiley’s commonestststs Rog-Rikri-hood errors</h3>
-<p><b>1. Changing parameter values changes the log likelihood value</b></p>
-<p>Preliminary step to check log likelihood function: If you update your parameter values, your log likelihood SHOULD also change. Then check if changing parameter values which rely on conditions actually change the log likelihood</p>
-<p><b>2. The parameter specified (e.g.<code>x[‘b’]</code>) does not exist. </b></p>
-<p>The parameter name is not specified to be estimated i.e. it is not in the parameter names argument or it is misspelled. Make sure <code>pars</code> vector is the same length and contains the same names, becuase the log likelihood function will not throw and error.</p>
-<p><b>3. Column names should be a <code>factor</code>. </b></p>
-<p>Errors will occur when columns are not factors in <code>if</code> statements or <code>for</code> loops. E.g. <code>data$condition</code> is a character vector -&gt; this will break things like if (<code>data$condition == “easy”</code>) and <code>x[‘b1’,’b2’][data$condition]</code></p>
-<p><b>4. Spelling errors or mismatched column names.</b></p>
-<p>Columns are misspelled or do not exist E.g. <code>data$RT</code> != <code>data$rt</code></p>
-<p><b>5. When making a vector of parameter values - values are not filling in properly.</b></p>
-<p>E.g. you may be making a vector for b for all the values across the data set to be used, but there are NAs filling it somewhere)</p>
-<p><b>6. Make sure operations are done on the right scale.</b></p>
-<p>Vector of parameters should be the log. The first line should be exp(x).</p>
-<p><b>7. Data frame variables are scaled correctly i.e. correct units</b></p>
-<p>The response/rt vector is in the wrong scale (logged, seconds rather than milliseconds etc)</p>
-<p><b>8. The log likelihood is printed/outputted at the end of function.</b></p>
-<p>The log likelihood is not printed/outputted at the end - sum the logs of the likelihood at or before the end</p>
-<p><b>8. Samping error occurs.</b></p>
+<div id="writing-your-log-likelihood-function-tips-errors-and-check-list" class="section level3">
+<h3><span class="header-section-number">5.1.1</span> Writing your log likelihood function: Tips, errors and check list</h3>
+<p><b>1. The parameter specified does not exist</b></p>
+<p>The parameter name is not specified to be estimated i.e. it is not in the parameter names argument or it is misspelled. Make sure <code>pars</code> vector contains the same parameter names you have included in your log likelihood function and it is the same length. Do not rely on the log likelihood function to throw an error in this case. (e.g.<code>x[‘b’]</code>)</p>
+<p><b>2. All non-continuous data frame variables must be a</b> <code>factor</code>.</p>
+<p>Data frame variables should be <a href="https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/factor"><code>factors</code></a> unless the variable is a continuous variable e.g. response time. If you pass <a href="https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/character"><code>character</code></a> variables to <code>if</code> statements and/or <code>for</code> loops in your log likelihood function, errors will not occur, however, your log likelihood estimate will be incorrect. For example, avoid using character strings like <code>data$condition == “easy”</code>. If you must use a character string, be sure to convert the string to a factor with <code>as.factor</code>.</p>
+<p><b>3. Spelling errors or mismatched column name references</b></p>
+<p>Correctly reference data frame column names in your log likelihood function e.g. <code>data$RT</code> != <code>data$rt</code>.</p>
+<p><b>4. When initialising a vector of parameter values - values are not filling in properly</b></p>
+<p>E.g. When a vector for b for all the values across the data set to be used, but there are NAs filling it somewhere.</p>
+<p><b>5. Make sure operations are done on the right scale.</b></p>
+<p><b>6. Data frame variables are scaled appropriately for the model</b></p>
+<p>Check your variables are correctly scaled and in the correct units. For example, with the LBA, response times must be in seconds rather than milliseconds.</p>
+<p><b>7. The log likelihood is printed/outputted at the end of function</b></p>
+<p>Make sure your log likelihood function prints an estimate at the end of the function and the estimate is correctly obtained e.g. sum the log likelihood estimates for all trials/rows.</p>
+<p><b>8. Sampling error occurs</b></p>
 <p>When sampling, the generated columns are not outputted</p>
 <p><b>9. When executing functions row by row (i.e. trial-wise), index MUST be included</b></p>
-<p>If doing trial-wise functions - i must be specified throughout - ie can’t just be if (data<span class="math inline">\(condition == “easy”) - needs to be (data\)</span>condition[i] == “easy”) throughout</p>
+<p>If writing a trial-wise/row-wise function, index <code>i</code> must be specified.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="cf">if</span> (data<span class="op">$</span>condition <span class="op">==</span><span class="st"> </span>“easy”)     <span class="co"># This will throw an error</span>
+<span class="cf">if</span> (data<span class="op">$</span>condition[i] <span class="op">==</span><span class="st"> </span>“easy”)  <span class="co"># Include i index</span></code></pre></div>
+<p><b>10. Changing parameter values changes the log likelihood estimate</b></p>
+<p>A simple check to run on your log likelihood function is to modify your parameter values and observe the change to log likelihood estimate. Then check if changing parameter values which rely on conditions actually change the log likelihood estimate.</p>
 
 </div>
 </div>
@@ -237,20 +238,6 @@ gitbook.start({
 });
 </script>
 
-<!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
-  (function () {
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    var src = "";
-    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
-    if (location.protocol !== "file:")
-      if (/^https?:/.test(src))
-        src = src.replace(/^https?:/, '');
-    script.src = src;
-    document.getElementsByTagName("head")[0].appendChild(script);
-  })();
-</script>
 </body>
 
 </html>
