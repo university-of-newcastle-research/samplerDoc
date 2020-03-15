@@ -51,9 +51,9 @@ When sampling, the generated columns are not outputted
  
 <b>9. When executing functions row by row (i.e. trial-wise), index MUST be included</b>
 
-If writing a trial-wise/row-wise function, index `i` must be specified.
+If writing a trial-wise/row-wise function (e.g. `if` statement, `for` loop), index `i` must be specified.
 ```{r twfIndex, echo=TRUE, eval=FALSE}
-if (data$condition == “easy”)     # This will throw an error
+if (data$condition == “easy”)     # Incorrect reference when iterating over variable
 if (data$condition[i] == “easy”)  # Include i index
 ```
 

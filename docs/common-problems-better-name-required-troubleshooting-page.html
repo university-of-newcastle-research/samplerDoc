@@ -174,7 +174,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>When sampling, the generated columns are not outputted</p>
 <p><b>9. When executing functions row by row (i.e. trial-wise), index MUST be included</b></p>
 <p>If writing a trial-wise/row-wise function, index <code>i</code> must be specified.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="cf">if</span> (data<span class="op">$</span>condition <span class="op">==</span><span class="st"> </span>“easy”)     <span class="co"># This will throw an error</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="cf">if</span> (data<span class="op">$</span>condition <span class="op">==</span><span class="st"> </span>“easy”)     <span class="co"># This will throw an error or incorrectly loop over variable</span>
 <span class="cf">if</span> (data<span class="op">$</span>condition[i] <span class="op">==</span><span class="st"> </span>“easy”)  <span class="co"># Include i index</span></code></pre></div>
 <p><b>10. Changing parameter values changes the log likelihood estimate</b></p>
 <p>A simple check to run on your log likelihood function is to modify your parameter values and observe the change to log likelihood estimate. Then check if changing parameter values which rely on conditions actually change the log likelihood estimate.</p>
