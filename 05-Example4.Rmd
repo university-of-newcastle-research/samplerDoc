@@ -1,12 +1,8 @@
-# First (simple) example - Signal Detection Feary
+# First (simple) example - Signal Detection Theory
 
-This first example should/could demostrate how to use the sampler in a simple/widely understood context e.g. signal detection theory.  We can show analytic solutions alongside the samplers estimates to show that it works.
+Here we run through a simple signal detection example with data from @wagenmakers2008diffusion. For more information about the design of the experiment please see [the original paper](https://www.sciencedirect.com/science/article/pii/S0749596X07000496).
 
-A second example might cover another SDT example with the addition of trial level covariate i.e. analytic solution NA.
-
-
-Here we run through a simple signal detection example with data from @wagenmakers2008diffusion. For more information about the design of the experiment please see [the original paper](https://www.pnas.org/content/105/45/17538.short).
-
+While it is unnecessary to use the sampler package for this SDT example, we hope that this demonstrates the usefullness of the samplers package.  
 
 ```{r, eval=TRUE, include=FALSE}
 library("tidyverse")
@@ -34,3 +30,4 @@ ggplot(dfff,aes(x=value, fill=variable)) +
   scale_y_continuous(limits = c(0, 0.42), expand = expand_scale(mult = c(0, .1)))
 ```
 
+<b>A second example might cover another SDT example with the addition of trial level covariate i.e. analytic solution NA.</b>
