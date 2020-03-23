@@ -1,8 +1,19 @@
-# First (simple) example - Signal Detection Theory
+# How to use the sampler - Signal Detection Theory
 
-Here we run through a simple signal detection example with data from @wagenmakers2008diffusion. For more information about the design of the experiment please see [the original paper](https://www.sciencedirect.com/science/article/pii/S0749596X07000496).
+Here we demonstrate how to use the sampler package to run a simple signal detection theory analysis on a lexical decision task taken from  @wagenmakers2008diffusion. For details about the design of the experiment please see [the original paper](https://www.sciencedirect.com/science/article/pii/S0749596X07000496). <b> Is this the correct paper to reference? </b>
 
-While it is unnecessary to use the sampler package for this SDT example, we hope that this demonstrates the usefullness of the samplers package.  
+While it is unnecessary to use the sampler package for a simple analysis such as this, we hope this example demonstrates the usefullness of the samplers package.  
+
+First we need to install the psamplers package. We currently recommended installing psamplers via devtools.
+```{r getSampPkg, eval=FALSE}
+# The samplers package will be on CRAN - this step will be removed.
+install_github('gjcooper\samplers')
+```
+```{r loadSampPkg}
+library(psamplers)
+```
+
+<b>We then need to get the Wagenmakers data from somewhere? Will it be included in the samplers package?</b>
 
 ```{r, eval=TRUE, include=FALSE}
 library("tidyverse")

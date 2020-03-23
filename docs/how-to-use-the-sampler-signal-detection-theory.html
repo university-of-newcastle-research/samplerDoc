@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 3 Sampler Application Example 2 - Single threshold parameter | Particle Based Samplers for MCMC</title>
+  <title>Chapter 6 How to use the sampler - Signal Detection Theory | Particle Based Samplers for MCMC</title>
   <meta name="description" content="Particle Based Sampler for MCMC" />
   <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 3 Sampler Application Example 2 - Single threshold parameter | Particle Based Samplers for MCMC" />
+  <meta property="og:title" content="Chapter 6 How to use the sampler - Signal Detection Theory | Particle Based Samplers for MCMC" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="rstudio/bookdown-demo" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 3 Sampler Application Example 2 - Single threshold parameter | Particle Based Samplers for MCMC" />
+  <meta name="twitter:title" content="Chapter 6 How to use the sampler - Signal Detection Theory | Particle Based Samplers for MCMC" />
   
   <meta name="twitter:description" content="Particle Based Sampler for MCMC" />
   
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="sampler-application-example-1-forstmann-et-al-2008-dataset.html"/>
-<link rel="next" href="sampler-application-example-3-wagenmakers-2008-experiment-2.html"/>
+<link rel="prev" href="common-problems-better-name-required-troubleshooting-page.html"/>
+<link rel="next" href="non-rtchoice-example.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -146,33 +146,32 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="sampler-application-example-2---single-threshold-parameter" class="section level1">
-<h1><span class="header-section-number">Chapter 3</span> Sampler Application Example 2 - Single threshold parameter</h1>
-<p>In this second example, we will use a single <code>b</code> threshold parameter (the evidence required to make a response). Altering the code/model is simple. First, update your parameter object (e.g.<code>pars</code>) by including a single <code>b</code> threshold parameter:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pars &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;b&quot;</span>, <span class="st">&quot;A&quot;</span>, <span class="st">&quot;v1&quot;</span>, <span class="st">&quot;v2&quot;</span>, <span class="st">&quot;t0&quot;</span>)</code></pre></div>
-<p>The <code>priors</code> object will update based on the length of your parameter object. <b>Remove this?</b></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">priors &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">theta_mu =</span> <span class="kw">rep</span>(<span class="dv">0</span>, <span class="kw">length</span>(pars)),
-  <span class="dt">theta_sig =</span> <span class="kw">diag</span>(<span class="kw">rep</span>(<span class="dv">1</span>, <span class="kw">length</span>(pars)))
-)</code></pre></div>
-<p>The next step is to modify your log likelihood function by updating the threshold parameter vector (<code>bs</code>) so that the name and number of threshold parameters (<code>b</code>) matches the name and number of threshold parameters you’ve specified in your <code>pars</code> vector. In this case, we require a single <code>b</code> parameter.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">  bs &lt;-<span class="st"> </span>x[<span class="st">&quot;A&quot;</span>] <span class="op">+</span><span class="st"> </span>x[<span class="st">&quot;b&quot;</span>][data<span class="op">$</span>condition]</code></pre></div>
-<p>The subsequent lines of code in the log likelihood function remain unchanged.</p>
-<p>As mentioned in <a href="sampler-application-example-1-forstmann-et-al-2008-dataset.html#start-points">example 1</a>, you may set model start points. It is important to provide the same number of values for <code>mu</code> as the number of parameters you’ve set in your <code>pars</code> vector.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">start_points &lt;-<span class="st"> </span><span class="kw">list</span>(
-  <span class="dt">mu =</span> <span class="kw">c</span>(.<span class="dv">2</span>,.<span class="dv">4</span>, .<span class="dv">3</span>, <span class="fl">1.3</span>, <span class="op">-</span><span class="dv">2</span>), <span class="co"># We have set five parameter start points here, </span>
-                              <span class="co"># matching the number of parameters in the pars vector.</span>
-  <span class="dt">sig2 =</span> <span class="kw">diag</span>(<span class="kw">rep</span>(.<span class="dv">01</span>, <span class="kw">length</span>(pars)))
-)</code></pre></div>
-<p>And now you’re ready to run the sampler as outlined in <a href="sampler-application-example-1-forstmann-et-al-2008-dataset.html#run-sampler">example 1</a>.</p>
+<div id="how-to-use-the-sampler---signal-detection-theory" class="section level1">
+<h1><span class="header-section-number">Chapter 6</span> How to use the sampler - Signal Detection Theory</h1>
+<p>Here we demonstrate how to use the sampler package to run a simple signal detection theory analysis on a lexical decision task taken from <span class="citation">Wagenmakers et al. (<a href="#ref-wagenmakers2008diffusion">2008</a>)</span>. For details about the design of the experiment please see <a href="https://www.sciencedirect.com/science/article/pii/S0749596X07000496">the original paper</a>. <b> Is this the correct paper to reference? </b></p>
+<p>While it is unnecessary to use the sampler package for a simple analysis such as this, we hope this example demonstrates the usefullness of the samplers package.</p>
+<p>First we need to install the psamplers package. We currently recommended installing psamplers via devtools.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># The samplers package will be on CRAN - this step will be removed.</span>
+<span class="kw">install_github</span>(<span class="st">&#39;gjcooper\samplers&#39;</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(psamplers)</code></pre></div>
+<p><b>We then need to get the Wagenmakers data from somewhere? Will it be included in the samplers package?</b></p>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p><b>A second example might cover another SDT example with the addition of trial level covariate i.e. analytic solution NA.</b></p>
 
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-wagenmakers2008diffusion">
+<p>Wagenmakers, Eric-Jan, Roger Ratcliff, Pablo Gomez, and Gail McKoon. 2008. “A Diffusion Model Account of Criterion Shifts in the Lexical Decision Task.” <em>Journal of Memory and Language</em> 58 (1). Elsevier: 140–59.</p>
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="sampler-application-example-1-forstmann-et-al-2008-dataset.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="sampler-application-example-3-wagenmakers-2008-experiment-2.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="common-problems-better-name-required-troubleshooting-page.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="non-rtchoice-example.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -203,7 +202,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/rstudio/bookdown-demo/edit/master/02-Example1.Rmd",
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/05-Example4.Rmd",
 "text": "Edit"
 },
 "history": {
