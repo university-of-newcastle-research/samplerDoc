@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 4 Sampler Application Example 3 - Wagenmakers (2008) Experiment 2 | Particle Based Samplers for MCMC</title>
+  <title>Chapter 6 How to use the PMwG sampler - Signal Detection Theory | Particle Based Samplers for MCMC</title>
   <meta name="description" content="Particle Based Sampler for MCMC" />
   <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 4 Sampler Application Example 3 - Wagenmakers (2008) Experiment 2 | Particle Based Samplers for MCMC" />
+  <meta property="og:title" content="Chapter 6 How to use the PMwG sampler - Signal Detection Theory | Particle Based Samplers for MCMC" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="rstudio/bookdown-demo" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 4 Sampler Application Example 3 - Wagenmakers (2008) Experiment 2 | Particle Based Samplers for MCMC" />
+  <meta name="twitter:title" content="Chapter 6 How to use the PMwG sampler - Signal Detection Theory | Particle Based Samplers for MCMC" />
   
   <meta name="twitter:description" content="Particle Based Sampler for MCMC" />
   
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="sampler-application-example-2-single-threshold-parameter.html"/>
-<link rel="next" href="common-problems-better-name-required-troubleshooting-page.html"/>
+<link rel="prev" href="common-problems-better-name-required-troubleshooting-page.html"/>
+<link rel="next" href="non-rtchoice-example.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -148,18 +148,144 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="sampler-application-example-3---wagenmakers-2008-experiment-2" class="section level1">
-<h1><span class="header-section-number">Chapter 4</span> Sampler Application Example 3 - Wagenmakers (2008) Experiment 2</h1>
-<p>See iSquared paper eperiment 2</p>
+<div id="how-to-use-the-pmwg-sampler---signal-detection-theory" class="section level1">
+<h1><span class="header-section-number">Chapter 6</span> How to use the PMwG sampler - Signal Detection Theory</h1>
+<p>Here we demonstrate how to use the PMwG sampler package to run a simple signal detection theory (SDT) analysis on a lexical decision task taken from <span class="citation">Wagenmakers et al. (<a href="#ref-wagenmakers2008diffusion">2008</a>)</span>. We recognise that it is unnecessary to use the sampler package for a simple analysis such as this; however, we hope this example demonstrates the usefullness of the samplers package.</p>
+<p>Stolen from Wagenmakers paper “This is analogous to a signal detection analysis that allows one to disentangle effects of stimulus discriminability (e.g., d0) from those of criterion placement (i.e., b).”</p>
+<div id="description-of-wagenmakers-experiment" class="section level2">
+<h2><span class="header-section-number">6.1</span> Description of Wagenmakers experiment</h2>
+<p>Participants were asked to indicate whether a letter string was a <i>word</i> or a <i>non-word</i>. A subset of Wagenmaker et al data are shown in table <a href="how-to-use-the-pmwg-sampler-signal-detection-theory.html#tab:wagenmakers10">6.1</a>. We have a <code>subject</code> column with a subject id (1-19), a condition column <code>cond</code> which indicates the proportion of <i>words</i> to <i>non-words</i> presented within a block of trials. In word blocks (<code>cond = w</code>) participants completed 75% word and 25% non-word trials and for non-word (<code>cond = nw</code>) blocks 75% non-word and 25% word trials. The <code>stim</code> column represents how frequent of the word string presented on that trial i.e. is the stimulus a very low frequency word (<code>cond = vlf</code>), a low frequency word <code>cond = lf</code> * <code>hf</code> = high frequency word’.</p>
+<p>For more details about the experiment please see <a href="https://www.sciencedirect.com/science/article/pii/S0749596X07000496">the original paper</a>. <b> Is this the correct paper to reference? </b></p>
+<p>Words (in both conditions) could come from three different sets (shown here as stimuli) - high frequency (hf), low frequency (lf) or very low frequency (vlf). Participants had two possible responses - word or non-word. In total, there were 19 participants, who completed the within subjects design.</p>
+<table>
+<caption><span id="tab:wagenmakers10">Table 6.1: </span>Subset of 10 trials from the Wagenmakers (2008) dataset.</caption>
+<thead>
+<tr class="header">
+<th align="right">subject</th>
+<th align="left">prop</th>
+<th align="left">freq</th>
+<th align="left">resp</th>
+<th align="right">rt</th>
+<th align="right">correct</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">w</td>
+<td align="left">lf</td>
+<td align="left">W</td>
+<td align="right">0.410</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="left">w</td>
+<td align="left">hf</td>
+<td align="left">W</td>
+<td align="right">0.426</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">w</td>
+<td align="left">nw</td>
+<td align="left">NW</td>
+<td align="right">0.499</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="left">w</td>
+<td align="left">lf</td>
+<td align="left">W</td>
+<td align="right">0.392</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">w</td>
+<td align="left">vlf</td>
+<td align="left">W</td>
+<td align="right">0.435</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="left">w</td>
+<td align="left">hf</td>
+<td align="left">W</td>
+<td align="right">0.376</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">nw</td>
+<td align="left">lf</td>
+<td align="left">W</td>
+<td align="right">0.861</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="left">nw</td>
+<td align="left">hf</td>
+<td align="left">W</td>
+<td align="right">0.563</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">nw</td>
+<td align="left">nw</td>
+<td align="left">NW</td>
+<td align="right">0.666</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="left">nw</td>
+<td align="left">nw</td>
+<td align="left">NW</td>
+<td align="right">1.561</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">nw</td>
+<td align="left">nw</td>
+<td align="left">NW</td>
+<td align="right">0.503</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="left">nw</td>
+<td align="left">nw</td>
+<td align="left">NW</td>
+<td align="right">0.445</td>
+<td align="right">2</td>
+</tr>
+</tbody>
+</table>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p><b>A second example might cover another SDT example with the addition of trial level covariate i.e. analytic solution NA.</b></p>
 
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-wagenmakers2008diffusion">
+<p>Wagenmakers, Eric-Jan, Roger Ratcliff, Pablo Gomez, and Gail McKoon. 2008. “A Diffusion Model Account of Criterion Shifts in the Lexical Decision Task.” <em>Journal of Memory and Language</em> 58 (1). Elsevier: 140–59.</p>
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="sampler-application-example-2-single-threshold-parameter.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="common-problems-better-name-required-troubleshooting-page.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="common-problems-better-name-required-troubleshooting-page.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="non-rtchoice-example.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -190,7 +316,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/rstudio/bookdown-demo/edit/master/03-Example2.Rmd",
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/05-Example4.Rmd",
 "text": "Edit"
 },
 "history": {

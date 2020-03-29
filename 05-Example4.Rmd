@@ -1,21 +1,35 @@
-# How to use the sampler - Signal Detection Theory
+# How to use the PMwG sampler - Signal Detection Theory
 
-Here we demonstrate how to use the sampler package to run a simple signal detection theory analysis on a lexical decision task taken from  @wagenmakers2008diffusion. For details about the design of the experiment please see [the original paper](https://www.sciencedirect.com/science/article/pii/S0749596X07000496). <b> Is this the correct paper to reference? </b>
+Here we demonstrate how to use the PMwG sampler package to run a simple signal detection theory (SDT) analysis on a lexical decision task taken from @wagenmakers2008diffusion.  We recognise that it is unnecessary to use the sampler package for a simple analysis such as this; however, we hope this example demonstrates the usefullness of the samplers package.  
 
-While it is unnecessary to use the sampler package for a simple analysis such as this, we hope this example demonstrates the usefullness of the samplers package.  
+Stolen from Wagenmakers paper "This is analogous to a signal detection analysis that allows one to disentangle effects of stimulus discriminability (e.g., d0) from those of criterion placement (i.e., b)."
 
-First we need to install the psamplers package. We currently recommended installing psamplers via devtools.
-```{r getSampPkg, eval=FALSE}
-# The samplers package will be on CRAN - this step will be removed.
-install_github('gjcooper\samplers')
+
+## Description of Wagenmakers experiment
+
+Participants were asked to indicate whether a letter string was a <i>word</i> or a <i>non-word</i>.  A subset of Wagenmaker et al data are shown in table \@ref(tab:wagenmakers10). We have a `subject` column with a subject id (1-19), a condition column `cond` which indicates the proportion of <i>words</i> to <i>non-words</i> presented within a block of trials. In word blocks (`cond = w`) participants completed 75% word and 25% non-word trials and for non-word (`cond = nw`) blocks 75% non-word and 25% word trials. The `stim` column represents how frequent of the word string presented on that trial i.e. is the stimulus a very low frequency word (`cond = vlf`), a low frequency word `cond = lf`
+* `hf` = high frequency word'. 
+
+
+
+
+For more details about the experiment please see [the original paper](https://www.sciencedirect.com/science/article/pii/S0749596X07000496).  <b> Is this the correct paper to reference? </b>
+
+
+Words (in both conditions) could come from three different sets (shown here as stimuli) - high frequency (hf), low frequency (lf) or very low frequency (vlf). Participants had two possible responses - word or non-word. In total, there were 19 participants, who completed the within subjects design. 
+
+
+```{r setupWagen, include=FALSE}
+load("wagenmakers_2008.RData")
+wagenmakers2008<-data
 ```
-```{r loadSampPkg}
-library(psamplers)
+
+```{r wagenmakers10, echo=FALSE, out.width='80%', fig.asp=.75, fig.align='center'}
+kable(slice(wagenmakers2008, 91:102), row.names = FALSE, caption = 'Subset of 10 trials from the Wagenmakers (2008) dataset.')
 ```
 
-<b>We then need to get the Wagenmakers data from somewhere? Will it be included in the samplers package?</b>
 
-```{r, eval=TRUE, include=FALSE}
+```{r SDTplot, eval=TRUE, include=FALSE}
 library("tidyverse")
 library("reshape2")
 # Samplers project - SDT example
