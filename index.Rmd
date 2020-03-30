@@ -25,10 +25,15 @@ Contains implementations of particle based sampling methods for model parameter 
 * R Version
 * Packages
 * Memory
-* Document  computational requirements - memory 200mb
+* Document computational requirements - memory 200mb
 * Minutes
 * Size of samples
 * Memory required
 * Can it be done on a grid or laptop
 
+## Background information
 
+* What is particle metropolis
+* What is Gibbs?
+* Why a multivariate normal?
+* The prior is 'fixed'
