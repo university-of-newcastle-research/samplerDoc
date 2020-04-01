@@ -27,7 +27,7 @@ We begin with the distributions for <i>non-word</i> and <i>word</i> stimuli. You
 
 
 ```{r sdtImg, eval=TRUE, include=TRUE}
-knitr::include_graphics("_images/sdt.png")
+knitr::include_graphics("https://github.com/JPCAV/samplerDoc/_images/sdt.png")
 ```
 ```{r SDTplot, eval=TRUE, include=FALSE}
 library("tidyverse")
