@@ -28,11 +28,11 @@ We begin with the distributions for <i>non-word</i> and <i>word</i> stimuli. You
 Reference-style: 
 ![alt text][logo]
 
-[logo]: _images/sdt.png "Logo Title Text 2"
+[logo]: /blob/master/_images/sdt.png "Logo Title Text 2"
 
 
 ```{r sdtImg, eval=TRUE, include=TRUE}
-knitr::include_graphics("https://github.com/JPCAV/samplerDoc/blob/master/_images/sdt.png")
+knitr::include_graphics("_images/sdt.png")
 ```
 ```{r SDTplot, eval=TRUE, include=FALSE}
 library("tidyverse")
