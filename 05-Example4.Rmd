@@ -110,9 +110,9 @@ Next, we construct a `for` loop to loop over each row in the data set. The loop 
       }
 ```
 
- - Include a modified version of SDT illustration? show 
+ Include a modified version of SDT illustration? show 
  
-From line 16, we write the function for <i>non-word<i> trials. As can be seen below, the output value for these trials is arrived at in a similar manner to the <i>word</i> trials. We set the mean to 0 and the standard deviation (`sd`) to 1. The criterion and upper/lower tails are the same as . This will give me values for the non-word distribution given the different responses.  
+From line 16, we write the function for <i>non-word</i> trials. As can be seen below, the output value for these trials is arrived at in a similar manner to the <i>word</i> trials. We set the mean to 0 and the standard deviation (`sd`) to 1. The criterion and upper/lower tails are the same as . This will give me values for the non-word distribution given the different responses.  
 ```{r part4.3, attr.source='.numberLines startFrom="16"', eval=FALSE} 
     }else{
       if (resp[i] == "word"){
