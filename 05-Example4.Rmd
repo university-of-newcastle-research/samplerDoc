@@ -7,20 +7,20 @@ Stolen from Wagenmakers paper "This is analogous to a signal detection analysis 
 
 ## Description of Wagenmakers experiment
 
-Participants were asked to indicate whether a letter string was a <i>word</i> or a <i>non-word</i>.  A subset of Wagenmaker et al data are shown in table \@ref(tab:wagenmakers10). We have a `subject` column with a subject id (1-19), a condition column `cond` which indicates the proportion of <i>words</i> to <i>non-words</i> presented within a block of trials. In word blocks (`cond = w`) participants completed 75% word and 25% non-word trials and for non-word (`cond = nw`) blocks 75% non-word and 25% word trials. The `stim` column lists the word's frequency i.e. is the stimulus a <i>very low frequency</i> word (`cond = vlf`), a <i>low frequency</i> word (`cond = lf`) or a <i>high frequency</i> word (`cond = hf`). The third column `resp` refers to the participant's response i.e. the participant responded <i>word</i> (`resp = W`) or <i>non-word</i> (`resp = NW`). The two remaining columns list the response time (`rt`) and whether the paricipant made a correct (`correct = 2`) or incorrect (`correct = 1`) choice. 
+Participants were asked to indicate whether a letter string was a <i>word</i> or a <i>non-word</i>.  A subset of Wagenmaker et al data are shown in table \@ref(tab:wagenmakers10), with each line representing a single trial. We have a `subject` column with a subject id (1-19), a condition column `cond` which indicates the proportion of <i>words</i> to <i>non-words</i> presented within a block of trials. In word blocks (`cond = w`) participants completed 75% word and 25% non-word trials and for non-word (`cond = nw`) blocks 75% non-word and 25% word trials. The `stim` column lists the word's frequency i.e. is the stimulus a <i>very low frequency</i> word (`cond = vlf`), a <i>low frequency</i> word (`cond = lf`) or a <i>high frequency</i> word (`cond = hf`). The third column `resp` refers to the participant's response i.e. the participant responded <i>word</i> (`resp = W`) or <i>non-word</i> (`resp = NW`). The two remaining columns list the response time (`rt`) and whether the paricipant made a correct (`correct = 2`) or incorrect (`correct = 1`) choice. 
 
 For more details about the experiment please see [the original paper](https://www.sciencedirect.com/science/article/pii/S0749596X07000496).  <b> Is this the correct paper to reference? </b>
 
 ```{r setupWagen, include=FALSE}
 load("wagenmakers_2008.RData")
-wagenmakers2008<-data
+wagenmakers2008 <- data
 ```
 
 ```{r wagenmakers10, echo=FALSE, out.width='80%', fig.asp=.75, fig.align='center'}
 kable(slice(wagenmakers2008, 91:102), row.names = FALSE, caption = 'Subset of 10 trials from the Wagenmakers (2008) dataset.')
 ```
 
-### Signal Detection Theory
+### Signal Detection Theory {#sdtOutline}
 
 We assume you have an understanding of SDT so we'll jump to an explanation of how we can use SDT in the context of the lexical decision task. 
 We begin with the distributions for <i>non-word</i> and <i>word</i> stimuli. You can think of these two distributions as the 'noise' and 'signal' curves, respectively. Each distribution represents the evidence for 'word-likeness' and they are assumed to be normally distributed. The <i>non-word</i> distribution (or the 'noise' distribution) has a mean of 0 and a standard deviation (SD) of 1 (Note: we could estimate SD here, but we will use 1 in this example for simplicity). The mean for each <i>word</i> distribution is unknown at this point, however, we assign a d-prime parameter (i.e. the signal-noise difference between words and non-words) to each distribution (d'<sub>hf</sub>, d'<sub>lf</sub>, d'<sub>vlf</sub>). The second parameter we denote is the criterion (C) parameter i.e. the point at which an individual responds <i>non-word</i> (to the left of the Cs in Figure \@ref(fig:sdtImg)) or <i>word</i> (to the right of the Cs in Figure \@ref(fig:sdtImg)). Given these parameters, one would expect that the <i>word</i> distributions would have a higher mean than the non-words, with some partial overlap (for words and non-words which might be difficult to classify). The criterion should then be set somewhere between these means. If a person was biased to respond "word", they're criterion would move left. In total, in the simple SDT model, there would be 2 parameters - d' (the mean of the word distribution) and C (the criterion). <b> Need to add something about means should be positive - to the right of NW mean of 0</b>
@@ -29,7 +29,134 @@ We begin with the distributions for <i>non-word</i> and <i>word</i> stimuli. You
 knitr::include_graphics('sdt.png')
 ```
 
-### Writing your log-likelihood function
+### Writing a log-likelihood function
+
+Before we run through the Wagemakers datset, we'll write a simple log likelihood function for a fabricated data set. You can copy the code below to follow along with the example.  
+```{r setupllfab}
+resp <- c("word","word","non-word","word","non-word","non-word","word","non-word")
+stim <- c("word","word","non-word","word","non-word","non-word","non-word","word")
+fabData <- as.data.frame(cbind(resp,stim))
+```
+First we begin with a response (`resp`) and stimulus (`stim`) vector and combine these into a data frame as shown in \@ref(tab:fakeHead) below.
+```{r fakeHead, out.width='80%', fig.asp=.75, fig.align='center', echo=FALSE}
+kable(fabData, caption = 'A fabricated dataset of 7 trials with a response and a stimuls column')
+```
+
+Okay, let's construct our log likelihood function!
+
+Our log likelihood function will step through the data, line by line, and find a likelihood value for each trial, under two parameters; d-prime (`d`) and a criterion `C`. As mentioned [above](#sdtOutline) the <i>non-word</i> distribution has a mean of 0 and SD of 1. This then gives a reference point for where the mean of the <i>word</i> distribution would sit and is denoted by d’.
+Now we must find the location of the criterion. Setting the criterion allows us to determine which response will be made i.e. above the criterion, participant will respond <i>word</i> and below the criterion, participant will respond <i>non-word</i>.
+
+Here is our log likelihood function
+
+```{r sdtLlComplete, attr.source = '.numberLines', eval=FALSE}
+SDT_loglike <- function(x, data, sample = FALSE){
+  if (sample){
+    data$response <- NA
+  } else{
+    out <- numeric(nrow(data))
+    data$out <- NA
+  }
+  if (!sample){
+  for (i in 1:nrow(data)){
+    if (stim[i] == "word"){
+      if (resp[i] == "word"){
+        out[i]<- pnorm(x["C"], mean = x["d"],sd = 1, log.p = TRUE, lower.tail = FALSE)
+      }else{
+        out[i]<- pnorm(x["C"], mean = x["d"],sd = 1, log.p = TRUE, lower.tail = TRUE)
+      }
+    }else{
+      if (resp[i] == "word"){
+        out[i]<- pnorm(x["C"], mean = 0,sd = 1, log.p = TRUE, lower.tail = FALSE)
+      }else{
+        out[i]<- pnorm(x["C"], mean = 0,sd = 1, log.p = TRUE, lower.tail = TRUE)
+        }
+      }
+  }
+  data$out <- out
+  print(data)
+  sum(out)
+  }
+}
+```
+You can copy this function above if you'd like to follow on with our example.
+
+We initialise the log likelihood function with three arguments  
+```{r llS1, attr.source = '.numberLines', eval=FALSE}
+SDT_loglike <- function(x, data, sample = FALSE){
+```
+* `x` is a vector of named parameter values
+* `data` is the dataset
+* `sample =` sample values (For this simple example, we do not require a `sample` argument.)
+
+Now we need an output vector (`out`), that will contain the likelihood values for each row/trial.
+
+```{r sdtllL2, attr.source='.numberLines startFrom="2"', eval=FALSE}
+  if (!sample){
+    out = numeric(nrow(data))
+    data$out = NA
+  }
+```
+
+Next, we construct a `for` loop to loop over each row in the data set. The loop first considers all trials with <i>word</i> stimuli, and assigns a likelihood for each response. The <i>word</i> distribution has mean of x["d"] (the parameter for d-prime) and x["C"] - the criterion parameter - specifies whether we are looking at values above or below the criterion. If the response is <i>word</i>, we are considering values ABOVE the criterion (`C`), so we set `lower.tail = FALSE`. If the response is <i>non-word</i>, we look for values BELOW the criterion, and therefore we set `lower.tail = TRUE`. We also use log.p = TRUE so that we can sum the log-likelihood at the end. 
+```{r sdtllL8, attr.source='.numberLines startFrom="8"', eval=FALSE}
+  if (!sample){
+  for (i in 1:nrow(data)){
+    if (stim[i] == "word"){
+      if (resp[i] == "word"){
+        out[i]<- pnorm(x["C"], mean = x["d"],sd = 1, log.p = TRUE, lower.tail = FALSE)
+      }else{
+        out[i]<- pnorm(x["C"], mean = x["d"],sd = 1, log.p = TRUE, lower.tail = TRUE)
+      }
+```
+
+ - Include a modified version of SDT illustration? show 
+ 
+From line 16, we write the function for <i>non-word<i> trials. As can be seen below, the output value for these trials is arrived at in a similar manner to the <i>word</i> trials. We set the mean to 0 and the standard deviation (`sd`) to 1. The criterion and upper/lower tails are the same as . This will give me values for the non-word distribution given the different responses.  
+```{r part4.3, attr.source='.numberLines startFrom="16"', eval=FALSE} 
+    }else{
+      if (resp[i] == "word"){
+        out[i]<- pnorm(x["C"], mean = 0,sd = 1, log.p = TRUE, lower.tail = FALSE)
+      }else{
+        out[i]<- pnorm(x["C"], mean = 0,sd = 1, log.p = TRUE, lower.tail = TRUE)
+        }
+      }
+  }
+```
+
+Finally, i sum the out vector to produce a log-likelihood value which is returned. 
+```{r part4.4, eval=FALSE}
+
+  sum(out)
+  }
+}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
