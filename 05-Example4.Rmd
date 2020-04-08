@@ -47,8 +47,7 @@ Okay, let's construct our log likelihood function!
 Our log likelihood function will step through the data, line by line, and find a likelihood value for each trial, under two parameters; d-prime (`d`) and a criterion `C`. As mentioned [above](#sdtOutline) the <i>non-word</i> distribution has a mean of 0 and SD of 1. This then gives a reference point for where the mean of the <i>word</i> distribution would sit and is denoted by d’.
 Now we must find the location of the criterion. Setting the criterion allows us to determine which response will be made i.e. above the criterion, participant will respond <i>word</i> and below the criterion, participant will respond <i>non-word</i>.
 
-Here is our log likelihood function
-
+Here is our complete log likelihood function. You can copy this function if you'd like to follow on with our example
 ```{r sdtLlComplete, attr.source = '.numberLines', eval=FALSE}
 SDT_loglike <- function(x, data, sample = FALSE){
   if (sample){
@@ -73,32 +72,32 @@ SDT_loglike <- function(x, data, sample = FALSE){
         }
       }
   }
-  data$out <- out
-  print(data)
   sum(out)
   }
 }
 ```
-You can copy this function above if you'd like to follow on with our example.
+
 
 We initialise the log likelihood function with three arguments  
 ```{r llS1, attr.source = '.numberLines', eval=FALSE}
 SDT_loglike <- function(x, data, sample = FALSE){
 ```
-* `x` is a vector of named parameter values
+* `x` is a vector of parameter names
 * `data` is the dataset
 * `sample =` sample values (For this simple example, we do not require a `sample` argument.)
 
-Now we need an output vector (`out`), that will contain the likelihood values for each row/trial.
-
+The first if statement (line 2) checks if you want to sample.......... and assigns NAs to your data frames response column. If you're not sampling (like us in this example), you need to create an output vector "`out`", that will contain the likelihood values for each row/trial and assign NAs to the out column of our data frame - why? <b> Need to explain the `(sample)` part below </b>
 ```{r sdtllL2, attr.source='.numberLines startFrom="2"', eval=FALSE}
-  if (!sample){
-    out = numeric(nrow(data))
-    data$out = NA
-  }
+if (sample){
+  data$response <- NA
+  } else{
+    out <- numeric(nrow(data))
+    data$out <- NA
+    }
 ```
 
-Next, we construct a `for` loop to loop over each row in the data set. The loop first considers all trials with <i>word</i> stimuli, and assigns a likelihood for each response. The <i>word</i> distribution has mean of x["d"] (the parameter for d-prime) and x["C"] - the criterion parameter - specifies whether we are looking at values above or below the criterion. If the response is <i>word</i>, we are considering values ABOVE the criterion (`C`), so we set `lower.tail = FALSE`. If the response is <i>non-word</i>, we look for values BELOW the criterion, and therefore we set `lower.tail = TRUE`. We also use log.p = TRUE so that we can sum the log-likelihood at the end. 
+From line 9, we check each row in the data set, first considering all trials with <i>word</i> stimuli (`if (stim[i] == "word")` line 10), and assign a likelihood for responding <i>word</i> (line 11-12) or <i>non-word</i> (line 13-14). The <i>word</i> distribution has a mean of `x["d"]` (d-prime parameter) and a decision criterion parameter `x["C"]`. If the response is <i>word</i>, we are considering values ABOVE or to the right of the <i>word</i> criterion (<B>C<sub>w</sub></B>) in \@ref(fig:sdtImg), so we set `lower.tail =` to ` FALSE`. If the response is <i>non-word</i>, we look for values BELOW or to the left of the <i>word</i> criterion (<B>C<sub>w</sub></B>) in \@ref(fig:sdtImg) and we set `lower.tail =` to ` TRUE`. The `log.p =` argument takes the log of all likelihood values when set to `TRUE`. We do this so we can sum all likelihoods at the end of the function. 
+<b> Do we need to explain p-norm??</b>
 ```{r sdtllL8, attr.source='.numberLines startFrom="8"', eval=FALSE}
   if (!sample){
   for (i in 1:nrow(data)){
@@ -112,7 +111,7 @@ Next, we construct a `for` loop to loop over each row in the data set. The loop 
 
  Include a modified version of SDT illustration? show 
  
-From line 16, we write the function for <i>non-word</i> trials. As can be seen below, the output value for these trials is arrived at in a similar manner to the <i>word</i> trials. We set the mean to 0 and the standard deviation (`sd`) to 1. The criterion and upper/lower tails are the same as . This will give me values for the non-word distribution given the different responses.  
+From line 16 (`}else{` i.e. `stim[i] == "non-word"`), we have the function for <i>non-word</i> trials. As can be seen below, the output value `(out[i])` for these trials is arrived at in a similar manner to the <i>word</i> trials. We set the `mean` to 0 and the standard deviation (`sd`) to 1. The criterion and upper/lower tails are the same as . This will give me values for the non-word distribution given the different responses.  
 ```{r part4.3, attr.source='.numberLines startFrom="16"', eval=FALSE} 
     }else{
       if (resp[i] == "word"){
@@ -126,11 +125,9 @@ From line 16, we write the function for <i>non-word</i> trials. As can be seen b
 
 Finally, i sum the out vector to produce a log-likelihood value which is returned. 
 ```{r part4.4, eval=FALSE}
-
   sum(out)
   }
 }
-
 ```
 
 
