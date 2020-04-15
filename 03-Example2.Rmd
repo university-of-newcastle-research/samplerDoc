@@ -1,3 +1,0 @@
-# Sampler Application Example 3 - Wagenmakers (2008) Experiment 2
-
-See iSquared paper eperiment 2

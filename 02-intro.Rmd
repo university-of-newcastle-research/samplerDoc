@@ -1,9 +1,4 @@
-# Sampler Application Example 1 - Forstmann et al. (2008) dataset
-```{r, required packages NOT to be included in document, include=FALSE}
-library(tidyverse)
-library(knitr)
-library(devtools)
-```
+# Example 2 - Forstmann et al. (2008) dataset
 
 We begin with a simple use case of the psamplers package with data from @forstmann2008striatum.
 

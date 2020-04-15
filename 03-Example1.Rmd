@@ -1,4 +1,4 @@
-# Sampler Application Example 2 - Single threshold parameter
+# Example 2 - Single threshold parameter
 
 In this second example, we will use a single `b` threshold parameter (the evidence required to make a response).
 Altering the code/model is simple. First, update your parameter object (e.g.`pars`) by including a single `b` threshold parameter:
