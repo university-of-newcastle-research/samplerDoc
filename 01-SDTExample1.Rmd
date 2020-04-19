@@ -136,7 +136,7 @@ From line 16 (`}else{` i.e. `stim[i] == "non-word"`), we have the function for <
 
 The final line of code on line 24 sums the `out` vector and returns a log-likelihood value for your model.
 <b> The text alignment/justification for code blocks is determined by the length of the longest line in the code block</b>
-```{r part4.4,attr.source='.numberLines startFrom="28"', eval=FALSE}
+```{r part4.4,eval=FALSE}
 sum(out)
 ```
 
@@ -193,6 +193,7 @@ pars <- replace(pars, c(1,2), c(0.5, 1.2))
 SDT_loglike(pars, fabData)
 ```
 We can see the log likelihood has changed, so these values are more accurate given the data. 
+<b> This is vague. What's the point of this? Seems insufficient to look for a change in the LL</b>
 
 ## SDT log likelihood function for Wagenmakers experiment
 

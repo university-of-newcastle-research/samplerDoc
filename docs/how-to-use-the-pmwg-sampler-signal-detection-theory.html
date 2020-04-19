@@ -468,14 +468,14 @@ fabData &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<spa
 <p>Before we run the log likelihood code, we must create a parameter vector <code>pars</code> containing the same parameter names used in our log likelihood function above i.e. we name the criterion <code>C</code> and d-prime parameter <code>d</code> and we then give the parameters arbitrary values. <b> Can this code be improved/shortened?</b></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pars &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.8</span>, <span class="dv">2</span>)
 <span class="kw">names</span>(pars) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;C&quot;</span>, <span class="st">&quot;d&quot;</span>)</code></pre></div>
-<p>Now we can test run our log likelihood function by passing in the parameter values <code>pars</code> and the fabricated dataset we created above <code>fabData</code>. When we run this function we are looking for a change in log-likelihood.</p>
+<p>We can test run our log likelihood function by passing in the parameter values <code>pars</code> and the fabricated dataset we created above <code>fabData</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">SDT_loglike</span>(pars, fabData)</code></pre></div>
 <pre><code>## [1] -4.795029</code></pre>
 <p>Now, if we change the parameter values, the log-likelihood value should also change.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pars &lt;-<span class="st"> </span><span class="kw">replace</span>(pars, <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), <span class="kw">c</span>(<span class="fl">0.5</span>, <span class="fl">1.2</span>))
 <span class="kw">SDT_loglike</span>(pars, fabData)</code></pre></div>
 <pre><code>## [1] -4.532791</code></pre>
-<p>We can see the log likelihood has changed, so these values are more accurate given the data.</p>
+<p>We can see the log likelihood has changed, so these values are more accurate given the data. <b> This is vague. What’s the point of this? Seems insufficient to look for a change in the LL</b></p>
 </div>
 <div id="sdt-log-likelihood-function-for-wagenmakers-experiment" class="section level2">
 <h2><span class="header-section-number">2.3</span> SDT log likelihood function for Wagenmakers experiment</h2>
