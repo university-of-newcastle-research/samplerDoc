@@ -30,8 +30,8 @@ We assume you have an understanding of SDT so we'll jump to an explanation of ho
 
 We begin with the distributions for <i>non-word</i> and <i>word</i> stimuli. You can think of these two distributions as the 'noise' and 'signal' curves, respectively. Each distribution represents the evidence for 'word-likeness' and they are assumed to be normally distributed. The <i>non-word</i> distribution (or the 'noise' distribution) has a mean of 0 and a standard deviation (SD) of 1 (Note: we could estimate SD here, but we will use 1 in this example for simplicity). The mean for each <i>word</i> distribution is unknown at this point, however, we assign a d-prime parameter (i.e. the signal-noise difference between words and non-words) to each distribution (d'<sub>hf</sub>, d'<sub>lf</sub>, d'<sub>vlf</sub>). The second parameter we denote is the criterion (C) parameter i.e. the point at which an individual responds <i>non-word</i> (to the left of the Cs in Figure \@ref(fig:sdtImg)) or <i>word</i> (to the right of the Cs in Figure \@ref(fig:sdtImg)). Given these parameters, one would expect that the <i>word</i> distributions would have a higher mean than the non-words, with partial overlap (for words and non-words which might be difficult to classify). The criterion should then be set somewhere between these means. If a person was biased to respond "word", their criterion would move left. In total, in the simple SDT model, there would be 2 parameters - d' (the mean of the word distribution) and C (the criterion). <b> Need to add something about means should be positive - to the right of NW mean of 0</b>
 
-```{r sdtImg, echo=FALSE, out.width='100%', fig.show='hold', fig.cap='Signal detection theory example of lexical decision task'}
-knitr::include_graphics('sdt.png')
+```{r simplesdtImg, echo=FALSE, out.width='100%', fig.show='hold', fig.cap='Simple SDT example of lexical decision task'}
+knitr::include_graphics('simpleSDT.png')
 ```
 
 ### Writing a log-likelihood function
@@ -42,12 +42,12 @@ resp <- c("word", "word", "non-word", "word", "non-word", "non-word", "word", "n
 stim <- c("word", "word", "non-word", "word", "non-word", "non-word", "non-word", "word")
 fabData <- as.data.frame(cbind(resp, stim))
 ```
-First we begin with a response `resp` and stimulus `stim` vector and combine these into a data frame as shown in \@ref(tab:fakeHead) below.
+First we create our fabricated datset by combining a response `resp` and a stimulus `stim` vector into a data frame as shown in \@ref(tab:fakeHead) below.
 ```{r fakeHead, out.width='80%', fig.asp=.75, fig.align='center', echo=FALSE}
 kable(fabData, caption = 'A fabricated dataset of 7 trials with a response and a stimuls column')
 ```
 
-Our log likelihood function will step through the data, line by line, and find a likelihood value for each trial, under two parameters; d-prime (`d`) and a criterion `C`. As mentioned [above](#sdtOutline) the <i>non-word</i> distribution has a mean of 0 and SD of 1. This then gives a reference point for where the mean of the <i>word</i> distribution would sit and is denoted by d’.
+Our log likelihood function will step through the data, line by line, and find a likelihood value for each trial, under two parameters; d-prime `d` and a criterion `C`. As mentioned [above](#sdtOutline) the <i>non-word</i> distribution has a mean of 0 and SD of 1. This then gives a reference point for where the mean of the <i>word</i> distribution would sit and is denoted by d’.
 Now we must find the location of the criterion. Setting the criterion allows us to determine which response will be made i.e. above the criterion, participant will respond <i>word</i> and below the criterion, participant will respond <i>non-word</i>.
 
 Here is our complete log likelihood function. You can copy this function if you'd like to follow along with our example.
@@ -197,27 +197,12 @@ We can see the log likelihood has changed, so these values are more accurate giv
 
 ## SDT log likelihood function for Wagenmakers experiment
 
-Now we'll write a log-likelihood function for Wagenmakers experimental data.
-
-which can account for the different word frequencies and the two word proportion conditions. Further, i make this function so it is faster than the lin-by-line version. We strongly recommend doing a line-by-line log-likeihood to make sure the function is functioining correctly, before doing a faster version. 
+Now we'll write a log-likelihood function for Wagenmakers experimental data. The main difference with this function is the inclusion of 
 
 
-In this example, there are 5 parameters: 3 for the d' given by frequency (hf, lf, vlf) and 2 for the criterion, to model differences between the word proportion conditions (75% words vs 75% non-words). 
-
-These are specified as: HF.d, LF.d, VLF.d, C.w, C.nw.
-
-Where
-
-HF.d = High frequency d'
-
-LF.d = Low frequency d'
-
-VLF.d = Very low frequency d'
-
-C.w = Criterion for word proportion
-
-C.nw = Criterion for non-word proportion
-
+```{r sdtImg, echo=FALSE, out.width='100%', fig.show='hold', fig.cap='Signal detection theory example of lexical decision task'}
+knitr::include_graphics('sdt.png')
+```
 
 Again, we first specify the function with x, data and sample = FALSE
 
