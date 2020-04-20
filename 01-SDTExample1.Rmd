@@ -236,7 +236,6 @@ SDT_loglike_slow = function(x,data,sample=FALSE){
 
 
 
-
 \@ref(fig:sdtPlot)
 ```{r SDTplotsetup, eval=TRUE, include=FALSE}
 library("tidyverse")
