@@ -213,10 +213,10 @@ Again, we first specify the function with x, data and sample = FALSE
 SDT_loglike_slow = function(x,data,sample=FALSE){
 ```
 
- (d'<sub>hf</sub>, d'<sub>lf</sub>, d'<sub>vlf</sub>) whatever
+ (d'<sub>hf</sub>, d'<sub>lf</sub>, d'<sub>vlf</sub>)
 
 
-sasasdasda
+
 
 
 
