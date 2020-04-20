@@ -7,7 +7,7 @@ We begin with a simple use case of the psamplers package with data from @forstma
 First we need to install the psamplers package. We currently recommended installing psamplers via devtools.
 ```{r getpkg, eval=FALSE}
 # The samplers package will be on CRAN - this step will be removed.
-install_github('gjcooper\samplers')
+install_github('newcastlecl\samplers')
 ```
 ```{r loadpkg}
 library(psamplers)
