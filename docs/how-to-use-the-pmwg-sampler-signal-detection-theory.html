@@ -157,18 +157,25 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="how-to-use-the-pmwg-sampler---signal-detection-theory" class="section level1">
 <h1><span class="header-section-number">Chapter 2</span> How to use the PMwG sampler - Signal Detection Theory</h1>
 <p>Here we demonstrate how to use the PMwG sampler package to run a simple signal detection theory (SDT) analysis on a lexical decision task. We recognise that it is unnecessary to use the sampler package for a simple analysis such as this; however, we hope this example demonstrates the usefulness of the PMwG sampler package.</p>
-<p>Stolen from Wagenmakers paper “This is analogous to a signal detection analysis that allows one to disentangle effects of stimulus discriminability (e.g., d0) from those of criterion placement (i.e., b).”</p>
 <div id="sdtOutline" class="section level3">
 <h3><span class="header-section-number">2.0.1</span> Signal Detection Theory analysis of lexical decision task</h3>
-<p>We assume you have an understanding of SDT so we’ll jump to an explanation of how we can use SDT in the context of the lexical decision task.<br></p>
-<p>We begin with the distributions for <i>non-word</i> and <i>word</i> stimuli. You can think of these two distributions as the ‘noise’ and ‘signal’ curves, respectively. Each distribution represents the evidence for ‘word-likeness’ and they are assumed to be normally distributed. The <i>non-word</i> distribution (or the ‘noise’ distribution) has a mean of 0 and a standard deviation (SD) of 1. We could estimate SD here, but we will use 1 in this example for simplicity. The mean for the <i>word</i> distribution is unknown at this point; however, we assign a d-prime (d’) parameter to denote the difference between the mean of the <i>non-word</i> and the mean of the <i>word</i> distributions (i.e. the signal-noise difference between words and non-words). The second parameter we denote is the criterion (C) parameter i.e. the point at which an individual responds <i>non-word</i> (to the left of the criterion (C) in Figure <a href="how-to-use-the-pmwg-sampler-signal-detection-theory.html#fig:sdtImg">2.2</a>) or <i>word</i> (to the right of the criterion (C) in Figure <a href="how-to-use-the-pmwg-sampler-signal-detection-theory.html#fig:sdtImg">2.2</a>). Given these parameters, one would expect that the <i>word</i> distribution would have a higher mean than the non-words, with partial overlap (for words and non-words which might be difficult to classify). The criterion should then be set somewhere between these means. If a person was biased to respond “word”, their criterion would move left. In total, in the simple SDT model, there would be 2 parameters - d’ (the mean of the word distribution) and C (the criterion).</p>
-<p><b> Need to add something about means should be positive - to the right of NW mean of 0, otherwise the line about “given these parameters, one would expect that the <i>word</i> distribution would have a higher mean than the non-words, with partial overlap” does not make sense.</b></p>
-<div class="figure"><span id="fig:simpleSDTImg"></span>
-<img src="simpleSDT.png" alt="Simple SDT example of lexical decision task" width="100%" />
+<p>We assume you have an understanding of SDT and lexical decision tasks, so we’ll jump straight into how you can use the PMwG package with SDT in the context of the lexical decision task.<br></p>
+<p><b> Do we need to explain lexical decision tasks?? We desribe the procedure briefly below - Participants were asked to indicate whether a letter string was a <i>word</i> or a <i>non-word</i>. </b></p>
+We begin with the distributions for <i>non-word</i> and <i>word</i> stimuli. You can think of these two distributions as the ‘noise’ and ‘signal’ curves, respectively. Each distribution represents the evidence for ‘word-likeness’ and they are assumed to be normally distributed. The <i>non-word</i> distribution (or the ‘noise’ distribution) has a mean (<span class="math inline">\(\mu\)</span>) of 0 and a standard deviation (SD) of 1. We could estimate SD here, but we will use 1 in this example for simplicity. The mean for the <i>word</i> distribution is unknown at this point; however, we assign a d-prime (d’) parameter to denote the difference between the mean of the <i>non-word</i> and the mean of the <i>word</i> distributions (i.e. the ‘sensitivity’ to word stimuli or the signal-noise difference between <i>words</i> and <i>non-word</i>). As can be seen in Figure <a href="how-to-use-the-pmwg-sampler-signal-detection-theory.html#fig:SDT1">2.1</a>, the <i>word</i> distribution mean is greater than the <i>non-word</i> distribution mean; however, the distributions partially overlap where <i>non-words</i> and <i>words</i> are difficult to classify. <br>
+<div class="figure"><span id="fig:SDT1"></span>
+<img src="SDT_1.png" alt="Simple SDT example of lexical decision task" width="100%" />
 <p class="caption">
 Figure 2.1: Simple SDT example of lexical decision task
 </p>
 </div>
+<p>The second parameter we denote is the criterion (C) parameter. The criterion is the point at which an individual responds <i>non-word</i> (to the left of the criterion (C) in Figure <a href="how-to-use-the-pmwg-sampler-signal-detection-theory.html#fig:SDT2">2.2</a>) or <i>word</i> (to the right of the criterion (C) in Figure <a href="how-to-use-the-pmwg-sampler-signal-detection-theory.html#fig:SDT2">2.2</a>) and it is set somewhere between the means of the two distributions. If you’re biased to respond <i>word</i>, the criterion would move to the left. Conversely, if you’re biased to respond <i>non-word</i> then the criterion would move to the right.</p>
+<div class="figure"><span id="fig:SDT2"></span>
+<img src="SDT_2.png" alt="Simple SDT example of lexical decision task" width="100%" />
+<p class="caption">
+Figure 2.2: Simple SDT example of lexical decision task
+</p>
+</div>
+<p><b> Do we need to add something about means should be positive - to the right of NW mean of 0, otherwise the line about “given these parameters, one would expect that the <i>word</i> distribution would have a higher mean than the non-words, with partial overlap” does not make sense.</b></p>
 </div>
 <div id="writing-a-log-likelihood-function" class="section level3">
 <h3><span class="header-section-number">2.0.2</span> Writing a log-likelihood function</h3>
@@ -220,7 +227,7 @@ fabData &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<spa
 </tr>
 </tbody>
 </table>
-<p>Our log likelihood function will step through the data, line by line, and find a likelihood value for each trial, under two parameters; d-prime <code>d</code> and a criterion <code>C</code>. As mentioned <a href="how-to-use-the-pmwg-sampler-signal-detection-theory.html#sdtOutline">above</a> the <i>non-word</i> distribution has a mean of 0 and SD of 1. This then gives a reference point for where the mean of the <i>word</i> distribution would sit and is denoted by d’. Now we must find the location of the criterion. Setting the criterion allows us to determine which response will be made i.e. above the criterion, participant will respond <i>word</i> and below the criterion, participant will respond <i>non-word</i>.</p>
+<p>Our log likelihood function will step through the data, line by line, and find a likelihood value for each trial, under two parameters; d-prime <code>d</code> and a criterion <code>C</code>. <b> Remove this section?? Some info is covered above</b> As mentioned <a href="how-to-use-the-pmwg-sampler-signal-detection-theory.html#sdtOutline">above</a> the <i>non-word</i> distribution has a mean of 0 and SD of 1. This then gives a reference point for where the mean of the <i>word</i> distribution would sit and is denoted by d’. Now we must find the location of the criterion. Setting the criterion allows us to determine which response will be made i.e. above the criterion, participant will respond <i>word</i> and below the criterion, participant will respond <i>non-word</i>.</p>
 <p>Here is our complete log likelihood function. You can copy this function if you’d like to follow along with our example.</p>
 <div class="sourceCode"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
 2
@@ -303,7 +310,7 @@ fabData &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<spa
       out &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data))
       data<span class="op">$</span>out &lt;-<span class="st"> </span><span class="ot">NA</span>
       }</code></pre></td></tr></table></div>
-<p>From line 9, we check each row in the data set, first considering all trials with <i>word</i> stimuli <code>if (stim[i] == &quot;word&quot;</code> (line 10), and assign a likelihood for responding <i>word</i> (line 11-12) or <i>non-word</i> (line 13-14). The <i>word</i> distribution has a mean of <code>x[&quot;d&quot;]</code> (d-prime parameter) and a decision criterion parameter <code>x[&quot;C&quot;]</code>. If the response is <i>word</i>, we are considering values ABOVE or to the right of the <i>word</i> criterion (<B>C<sub>w</sub></B>) in <a href="how-to-use-the-pmwg-sampler-signal-detection-theory.html#fig:sdtImg">2.2</a>, so we set <code>lower.tail =</code> to <code>FALSE</code>. If the response is <i>non-word</i>, we look for values BELOW or to the left of the <i>word</i> criterion (<B>C<sub>w</sub></B>) in <a href="how-to-use-the-pmwg-sampler-signal-detection-theory.html#fig:sdtImg">2.2</a> and we set <code>lower.tail =</code> to <code>TRUE</code>. The <code>log.p =</code> argument takes the log of all likelihood values when set to <code>TRUE</code>. We do this so we can sum all likelihoods at the end of the function. <b> Do we need to explain p-norm??</b></p>
+<p>From line 9, we check each row in the data set, first considering all trials with <i>word</i> stimuli <code>if (stim[i] == &quot;word&quot;</code> (line 10), and assign a likelihood for responding <i>word</i> (line 11-12) or <i>non-word</i> (line 13-14). The <i>word</i> distribution has a mean of <code>x[&quot;d&quot;]</code> (d-prime parameter) and a decision criterion parameter <code>x[&quot;C&quot;]</code>. If the response is <i>word</i>, we are considering values ABOVE or to the right of the <i>word</i> criterion (<B>C<sub>w</sub></B>) in <a href="#fig:sdtImg"><strong>??</strong></a>, so we set <code>lower.tail =</code> to <code>FALSE</code>. If the response is <i>non-word</i>, we look for values BELOW or to the left of the <i>word</i> criterion (<B>C<sub>w</sub></B>) in <a href="#fig:sdtImg"><strong>??</strong></a> and we set <code>lower.tail =</code> to <code>TRUE</code>. The <code>log.p =</code> argument takes the log of all likelihood values when set to <code>TRUE</code>. We do this so we can sum all likelihoods at the end of the function. <b> Do we need to explain p-norm??</b></p>
 <div class="sourceCode" startFrom="8"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>8
 9
 10
@@ -325,7 +332,7 @@ fabData &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<spa
                      <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
       }</code></pre></td></tr></table></div>
 <p><b>Include a modified version of SDT illustration?</b></p>
-<p>From line 16 (<code>}else{</code> i.e. <code>stim[i] == &quot;non-word&quot;</code>), we have the function for <i>non-word</i> trials. As can be seen below, the output value <code>out[i]</code> for these trials is arrived at in a similar manner to the <i>word</i> trials. We set the <code>mean</code> to 0 and the standard deviation (<code>sd</code>) to 1. If the response is <i>word</i>, we are considering values ABOVE or to the right of the <i>non-word</i> criterion (<B>C<sub>nw</sub></B>) in <a href="how-to-use-the-pmwg-sampler-signal-detection-theory.html#fig:sdtImg">2.2</a>, so we set <code>lower.tail =</code> to <code>FALSE</code>. If the response is <i>non-word</i>, we look for values BELOW or to the left of the <i>non-word</i> criterion (<B>C<sub>nw</sub></B>) in <a href="how-to-use-the-pmwg-sampler-signal-detection-theory.html#fig:sdtImg">2.2</a> and we set <code>lower.tail =</code> to <code>TRUE</code>. Again we want the log of all likelihood values so <code>log.p = TRUE</code>.</p>
+<p>From line 16 (<code>}else{</code> i.e. <code>stim[i] == &quot;non-word&quot;</code>), we have the function for <i>non-word</i> trials. As can be seen below, the output value <code>out[i]</code> for these trials is arrived at in a similar manner to the <i>word</i> trials. We set the <code>mean</code> to 0 and the standard deviation (<code>sd</code>) to 1. If the response is <i>word</i>, we are considering values ABOVE or to the right of the <i>non-word</i> criterion (<B>C<sub>nw</sub></B>) in <a href="#fig:sdtImg"><strong>??</strong></a>, so we set <code>lower.tail =</code> to <code>FALSE</code>. If the response is <i>non-word</i>, we look for values BELOW or to the left of the <i>non-word</i> criterion (<B>C<sub>nw</sub></B>) in <a href="#fig:sdtImg"><strong>??</strong></a> and we set <code>lower.tail =</code> to <code>TRUE</code>. Again we want the log of all likelihood values so <code>log.p = TRUE</code>.</p>
 <div class="sourceCode" startFrom="17"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>17
 18
 19
@@ -477,30 +484,23 @@ fabData &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<spa
 <td align="right">0.445</td>
 <td align="right">2</td>
 </tr>
-<tr class="odd">
-<td align="right">Our log-li</td>
-<td align="left">kelihoo</td>
-<td align="left">d funct</td>
-<td align="left">ion for</td>
-<td align="right">Wagenma</td>
-<td align="right">kers experimental data is similar to the function we wrote above, except now we need to include</td>
-</tr>
 </tbody>
 </table>
-<div class="figure"><span id="fig:sdtImg"></span>
-<img src="sdt.png" alt="Signal detection theory example of lexical decision task" width="100%" />
+<p>Our log-likelihood function for Wagenmakers experimental data is similar to the function we wrote above, except now we need to include</p>
+<div class="figure"><span id="fig:SDT3"></span>
+<img src="SDT_3.png" alt="Signal detection theory example of lexical decision task" width="100%" />
 <p class="caption">
-Figure 2.2: Signal detection theory example of lexical decision task
+Figure 2.3: Signal detection theory example of lexical decision task
 </p>
 </div>
 <p>Again, we first specify the function with x, data and sample = FALSE</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">SDT_loglike_slow =<span class="st"> </span><span class="cf">function</span>(x,data,<span class="dt">sample=</span><span class="ot">FALSE</span>){</code></pre></div>
 <p>(d’<sub>hf</sub>, d’<sub>lf</sub>, d’<sub>vlf</sub>)</p>
-<p><a href="how-to-use-the-pmwg-sampler-signal-detection-theory.html#fig:sdtPlot">2.3</a></p>
+<p><a href="how-to-use-the-pmwg-sampler-signal-detection-theory.html#fig:sdtPlot">2.4</a></p>
 <div class="figure"><span id="fig:sdtPlot"></span>
 <img src="bookdown-demo_files/figure-html/sdtPlot-1.png" alt="sdt posterior" width="672" />
 <p class="caption">
-Figure 2.3: sdt posterior
+Figure 2.4: sdt posterior
 </p>
 </div>
 <p><b>A second example might cover another SDT example with the addition of trial level covariate i.e. analytic solution NA.</b></p>
@@ -570,6 +570,20 @@ gitbook.start({
 });
 </script>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 </body>
 
 </html>
