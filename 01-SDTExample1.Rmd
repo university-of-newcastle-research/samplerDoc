@@ -189,13 +189,13 @@ We can see the log likelihood has changed, so these values are more accurate giv
 
 ## SDT log likelihood function for Wagenmakers experiment
 
-Now that we've covered a simple test example, lets create a log likelihood function for the @wagenmakers2008diffusion dataset. Before we do that, we need to cover the design of Wagenmakerssss study.
+Now that we've covered a simple test example, let's create a log likelihood function for the @wagenmakers2008diffusion dataset. Before we do that, we need to cover the design of Wagenmakerssss study.
 
 ### Description of Wagenmakers experiment
 
 Participants were asked to indicate whether a letter string was a <i>word</i> or a <i>non-word</i>.  A subset of Wagenmaker et al data are shown in table \@ref(tab:wagenmakers10), with each line representing a single trial. We have a `subject` column with a subject id (1-19), a condition column `cond` which indicates the proportion of <i>words</i> to <i>non-words</i> presented within a block of trials. In word blocks (`cond = w`) participants completed 75% word and 25% non-word trials and for non-word (`cond = nw`) blocks 75% non-word and 25% word trials. The `stim` column lists the word's frequency i.e. is the stimulus a <i>very low frequency</i> word (`cond = vlf`), a <i>low frequency</i> word (`cond = lf`) or a <i>high frequency</i> word (`cond = hf`). The third column `resp` refers to the participant's response i.e. the participant responded <i>word</i> (`resp = W`) or <i>non-word</i> (`resp = NW`). The two remaining columns list the response time (`rt`) and whether the paricipant made a correct (`correct = 2`) or incorrect (`correct = 1`) choice. 
 
-For more details about the experiment please see [the original paper](https://www.sciencedirect.com/science/article/pii/S0749596X07000496).  <b> Is this the correct paper to reference? I hve changed the name of the columns in the wagenmakers dataset to the names used in the table shown below.</b>
+For more details about the experiment please see [the original paper](https://www.sciencedirect.com/science/article/pii/S0749596X07000496).  <b> Is this the correct paper to reference? I have changed the name of the columns in the wagenmakers dataset to the names used in the table shown below.</b>
 
 ```{r setupWagen, include=FALSE}
 load("wagenmakers_2008.RData")
@@ -206,7 +206,7 @@ wagenmakers2008 <- data
 kable(slice(wagenmakers2008, 91:102), row.names = FALSE, caption = 'Subset of 10 trials from the Wagenmakers (2008) dataset.')
 ```
 
-Our log-likelihood function for Wagenmakers experimental data is similar to the function we wrote above, except now we require a criterion parameter for each condition and a d-prime parameter for each of the `stim` <i>word</i> types. In figure \@ref(fig:SDT3) we have a non-word criterion <B>C<sub>nw</sub></B>, a word criterion <B>C<sub>w</sub></B> and three distributions for each of the `stim` types with corresponding d-prime for each distribution: <b>d<sub>vlf</sub></b>, <b>d<sub>lf</sub></b>, <b>d<sub>hf</sub></b>.
+Our log-likelihood function for Wagenmakers experimental data is similar to the function we wrote above, except now we require a criterion parameter for each condition and a d-prime parameter for each of the `stim` <i>word</i> types. This is illustrated in figure \@ref(fig:SDT3) below, where we have a non-word criterion <B>C<sub>nw</sub></B>, a word criterion <B>C<sub>w</sub></B> and three distributions for each of the `stim` types with corresponding d-prime for each distribution: <b>d<sub>vlf</sub></b>, <b>d<sub>lf</sub></b>, <b>d<sub>hf</sub></b>.
 
 ```{r SDT3, echo=FALSE, out.width='100%', fig.show='hold', fig.cap='Signal detection theory example of lexical decision task'}
 knitr::include_graphics('SDT_3.png')
@@ -214,6 +214,7 @@ knitr::include_graphics('SDT_3.png')
 
 
 Here is our complete log likelihood function for the Wagenmakers data set.
+<b> Remove SLOW part of ll function?</b>
 
 ```{r wagenSDT, attr.source = '.numberLines', eval=FALSE}
 SDT_loglike_slow = function(x, data, sample=FALSE){
@@ -224,74 +225,74 @@ SDT_loglike_slow = function(x, data, sample=FALSE){
   }
   if (!sample){
   for (i in 1:nrow(data)){
-    if (data$prop[i] == "w"){
-    if (data$freq[i] == "hf"){
-      if (data$resp[i] == "W"){
-        out[i]<- pnorm(x["C.w"], mean = x["HF.d"], sd = 1,
+    if (cond[i] == "w"){
+    if (stim[i] == "hf"){
+      if (resp[i] == "W"){
+        out[i] <- pnorm(x["C.w"], mean = x["HF.d"], sd = 1,
                        log.p = TRUE, lower.tail = FALSE)
       }else{
-        out[i]<- pnorm(x["C.w"], mean = x["HF.d"], sd = 1,
+        out[i] <- pnorm(x["C.w"], mean = x["HF.d"], sd = 1,
                        log.p = TRUE, lower.tail = TRUE)
       }
-    }  else if (data$freq[i] == "lf"){
-      if (data$resp[i] == "W"){
-        out[i]<- pnorm(x["C.w"], mean = x["LF.d"], sd = 1,
+    } else if (stim[i] == "lf"){
+      if (resp[i] == "W"){
+        out[i] <- pnorm(x["C.w"], mean = x["LF.d"], sd = 1,
                        log.p = TRUE, lower.tail = FALSE)
       }else{
-        out[i]<- pnorm(x["C.w"], mean = x["LF.d"], sd = 1,
+        out[i] <- pnorm(x["C.w"], mean = x["LF.d"], sd = 1,
                        log.p = TRUE, lower.tail = TRUE)
-      }
-      } else if (data$freq[i] == "vlf"){
-        if (data$resp[i] == "W"){
-          out[i]<- pnorm(x["C.w"], mean = x["VLF.d"], sd = 1,
+        }
+      } else if (stim[i] == "vlf"){
+        if (resp[i] == "W"){
+          out[i] <- pnorm(x["C.w"], mean = x["VLF.d"], sd = 1,
                          log.p = TRUE, lower.tail = FALSE)
         }else{
-          out[i]<- pnorm(x["C.w"], mean = x["VLF.d"], sd = 1,
+          out[i] <- pnorm(x["C.w"], mean = x["VLF.d"], sd = 1,
                          log.p = TRUE, lower.tail = TRUE)
-        }
+          }
         }
     else{
-      if (data$resp[i] == "W"){
-        out[i]<- pnorm(x["C.w"], mean = 0, sd = 1,
+      if (resp[i] == "W"){
+        out[i] <- pnorm(x["C.w"], mean = 0, sd = 1,
                        log.p = TRUE, lower.tail = FALSE)
       }else{
-        out[i]<- pnorm(x["C.w"], mean = 0, sd = 1,
+        out[i] <- pnorm(x["C.w"], mean = 0, sd = 1,
                        log.p = TRUE, lower.tail = TRUE)
-      }
+        }
       }
     }
     else{
-      if (data$freq[i] == "hf"){
-        if (data$resp[i] == "W"){
-          out[i]<- pnorm(x["C.nw"], mean = x["HF.d"], sd = 1, 
+      if (stim[i] == "hf"){
+        if (resp[i] == "W"){
+          out[i] <- pnorm(x["C.nw"], mean = x["HF.d"], sd = 1, 
                          log.p = TRUE, lower.tail = FALSE)
         }else{
-          out[i]<- pnorm(x["C.nw"], mean = x["HF.d"], sd = 1, 
+          out[i] <- pnorm(x["C.nw"], mean = x["HF.d"], sd = 1, 
                          log.p = TRUE, lower.tail = TRUE)
         }
-      }  else if (data$freq[i] == "lf"){
-        if (data$resp[i] == "W"){
-          out[i]<- pnorm(x["C.nw"], mean = x["LF.d"], sd = 1, 
+      }  else if (stim[i] == "lf"){
+        if (resp[i] == "W"){
+          out[i] <- pnorm(x["C.nw"], mean = x["LF.d"], sd = 1, 
                          log.p = TRUE, lower.tail = FALSE)
         }else{
-          out[i]<- pnorm(x["C.nw"], mean = x["LF.d"], sd = 1, 
+          out[i] <- pnorm(x["C.nw"], mean = x["LF.d"], sd = 1, 
                          log.p = TRUE, lower.tail = TRUE)
         }
-      } else if (data$freq[i] == "vlf"){
-        if (data$resp[i] == "W"){
-          out[i]<- pnorm(x["C.nw"], mean = x["VLF.d"], sd = 1, 
+      } else if (stim[i] == "vlf"){
+        if (resp[i] == "W"){
+          out[i] <- pnorm(x["C.nw"], mean = x["VLF.d"], sd = 1, 
                          log.p = TRUE, lower.tail = FALSE)
         }else{
-          out[i]<- pnorm(x["C.nw"], mean = x["VLF.d"], sd = 1, 
+          out[i] <- pnorm(x["C.nw"], mean = x["VLF.d"], sd = 1, 
                          log.p = TRUE, lower.tail = TRUE)
         }
       }
       else{
-        if (data$resp[i] == "W"){
-          out[i]<- pnorm(x["C.nw"], mean = 0, sd = 1, 
+        if (resp[i] == "W"){
+          out[i] <- pnorm(x["C.nw"], mean = 0, sd = 1, 
                          log.p = TRUE, lower.tail = FALSE)
         }else{
-          out[i]<- pnorm(x["C.nw"], mean = 0, sd = 1, 
+          out[i] <- pnorm(x["C.nw"], mean = 0, sd = 1, 
                          log.p = TRUE, lower.tail = TRUE)
         }
       }
@@ -302,10 +303,7 @@ SDT_loglike_slow = function(x, data, sample=FALSE){
 }
 ```
 
-Line 1 through to line 8 are the same as the log likelihood we wrote for the fabricated dataset above, so we'll begin from line 9. 
-
-<br>
-We begin by calculating the log-likelihood for <i>word</i> condition trials  and where the stimulus is High Frequency (freq="hf") for each response. 
+Line 1 through to line 8 are the same as the log likelihood we wrote for the fabricated dataset above. From line 9, we calculate the log-likelihood `out[i]` for <i>word</i> condition trials `cond[i] == "w"` when the stimulus is a high frequency word `stim[i] == "hf"` for word response `resp[i] == "W"`. This is done by considering the upper end of the distribution `lower.tail = FALSE` of the distribution from the word criterion  
 
 Again, notice below that we find the upper tail when looking at "word" responses (ie the probability that we are responding word) and lower tail when looking at "non-word" responses. We look at these probabilities given the criterion - which in this scenario is the criterion for the condition where there is a higher proportion of words. 
 
