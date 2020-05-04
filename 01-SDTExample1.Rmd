@@ -188,15 +188,13 @@ We can see the log likelihood has changed, so these values are more accurate giv
 
 ## SDT log likelihood function for Wagenmakers experiment
 
-Now that we've covered a simple test example, let's create a log likelihood function for the @wagenmakers2008diffusion dataset. Before we do that, we need to cover the study design.
+Now that we've covered a simple test example, let's create a log likelihood function for the @wagenmakers2008diffusion dataset. 
 
 ### Description of Wagenmakers experiment
 
+If you'd like to follow our example, you will need to access the Wagenmakers dataset. This can be done by installing the `rtdists` package and calling the `speed_acc` data frame. The structure of the `speed_acc` dataset will need to be modified in order to meet the requirements of the PMwG sampler. To do this, modify the dataset to match the structure illustrated in table \@ref(tab:wagenmakers10).
 
-
-Participants were asked to indicate whether a letter string was a <i>word</i> or a <i>non-word</i>.  A subset of Wagenmaker et al data are shown in table \@ref(tab:wagenmakers10), with each line representing a single trial. We have a `subject` column with a subject id (1-19), a condition column `cond` which indicates the proportion of <i>words</i> to <i>non-words</i> presented within a block of trials. In word blocks (`cond = w`) participants completed 75% word and 25% non-word trials and for non-word (`cond = nw`) blocks 75% non-word and 25% word trials. The `stim` column lists the word's frequency i.e. is the stimulus a <i>very low frequency</i> word (`stim = vlf`), a <i>low frequency</i> word (`stim = lf`), a <i>high frequency</i> word (`stim = hf`) or a <i>non-word</i> (`stim = nw`). The third column `resp` refers to the participant's response i.e. the participant responded <i>word</i> (`resp = W`) or <i>non-word</i> (`resp = NW`). The two remaining columns list the response time (`rt`) and whether the paricipant made a correct (`correct = 2`) or incorrect (`correct = 1`) choice. 
-
-If you choose to re-create or follow this example, please note that we have modified the columns names in the Wagenmakers dataset as shown in the table below. For more details about the experiment please see [the original paper](https://www.sciencedirect.com/science/article/pii/S0749596X07000496).  <b> Is this the correct paper to reference? </b>
+Participants were asked to indicate whether a letter string was a <i>word</i> or a <i>non-word</i>.  A subset of Wagenmaker et al data are shown in table \@ref(tab:wagenmakers10), with each line representing a single trial. We have a `subject` column with a subject id (1-19), a condition column `cond` which indicates the proportion of <i>words</i> to <i>non-words</i> presented within a block of trials. In word blocks (`cond = w`) participants completed 75% word and 25% non-word trials and for non-word (`cond = nw`) blocks 75% non-word and 25% word trials. The `stim` column lists the word's frequency i.e. is the stimulus a <i>very low frequency</i> word (`stim = vlf`), a <i>low frequency</i> word (`stim = lf`), a <i>high frequency</i> word (`stim = hf`) or a <i>non-word</i> (`stim = nw`). The third column `resp` refers to the participant's response i.e. the participant responded <i>word</i> (`resp = W`) or <i>non-word</i> (`resp = NW`). The two remaining columns list the response time (`rt`) and whether the paricipant made a correct (`correct = 2`) or incorrect (`correct = 1`) choice. For more details about the experiment please see [the original paper](https://www.sciencedirect.com/science/article/pii/S0749596X07000496).  <b> Is this the correct paper to reference? </b>
 
 
 ```{r setupWagen, include=FALSE}
@@ -505,7 +503,7 @@ kable(head(wgnmks2008Fast))
 ```
 
 
-For our SDT log likelihood function, we add `n*` (i.e. a multiplying factor) to each of these values to calculate the model log likelihood
+For our SDT log likelihood function, we add `n*` (i.e. a multiplying factor) to each of these values to calculate the model log likelihood <b> Should we shorten this code block? Seems excessive.</b>
 ```{r part8.2,eval=FALSE}
 SDT_ll_fast <- function(x, data, sample = FALSE){
   if (!sample){
