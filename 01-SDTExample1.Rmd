@@ -713,54 +713,149 @@ SDT_ll(pars, wgnmks2008, sample = FALSE)
 SDT_ll_fast(pars, wgnmks2008Fast, sample = FALSE)
 ```
 
-<b> We recommend "speeding up" your code however you wish. We do it in the Forstmann code.... </b>
+<b> We recommend "speeding up" your code however you wish. We do it in the Forstmann code.... </b>.  When you're confident that your log likelihood functions correctly, you should save it as a separate script so it can be sourced when running the sampler.
 
 
+## PMwG Framework
 
+Now that we have written a log likelihood function, we're ready to use the PMwG sampler package. 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\@ref(fig:sdtPlot)
-```{r SDTplotsetup, eval=TRUE, include=FALSE}
-library("tidyverse")
-library("reshape2")
-# Samplers project - SDT example
-parEst <- c(C.w = 0.9269677, C.nw = 1.7675702, HF.d = 2.9327993, LF.d = 2.6904818, VLF.d = 2.1823751)
-# estimate curve for non-words
-nwD <- round(rnorm(n = 5000, mean = 0,sd = 1), 2)
-# estimate curve for high frequency words
-hfwD <- round(rnorm(n = 5000, mean = parEst[3], sd = 1), 2)
-# estimate curve for low frequency words
-lfwD <- round(rnorm(n = 5000, mean = parEst[4], sd = 1), 2)
-# estimate curve for very low frequency words
-vlfwD <- round(rnorm(n = 5000, mean = parEst[5], sd = 1), 2)
-# combine into data frame
-dfff <- bind_cols(hf = hfwD, lf = lfwD, nw = nwD, vlf = vlfwD)
-dfff <- melt(dfff)
+Let's begin by installing the PMwG samplers package. <b>We currently recommended installing psamplers via devtools.</b>
+```{r instlPMwGpkg, eval=FALSE}
+# The samplers package will be on CRAN - this step will be removed.
+install_github('newcastlecl\samplers')
 ```
-```{r sdtPlot, echo=FALSE, fig.cap="sdt posterior"}
-# plot distributions with non-word criterion (red line) and word criterion (blue line)
-ggplot(dfff,aes(x=value, fill=variable)) + 
-  geom_density(alpha=0.25) + 
-  geom_vline(xintercept = parEst[1], colour = 'blue') + 
-  geom_vline(xintercept = parEst[2], colour = 'red') + 
-  scale_y_continuous(limits = c(0, 0.42), expand = expand_scale(mult = c(0, .1)))
+```{r loadPMwGpkg}
+library(psamplers)
+```
+Now we require the parameter vector `pars` we specified above and a priors object called `priors`. The `priors` object is a list that contains two components:
+
+
+
+* `theta_mu` a vector containing the prior for model parameter means
+* `theta_sig` the prior covariance matrix for model parameters.
+
+```{r part9.3, include=TRUE}
+pars <- c("C.w","C.nw","HF.d","LF.d","VLF.d") # This is the same as the `pars` vector specified above
+priors <- list(
+  theta_mu = rep(0, length(pars)),
+  theta_sig = diag(rep(1, length(pars)))
+)
+
+```
+The `priors` object in our example is initiated with zeros. <b>Under what conditions would this priors object  differ?</b>
+
+
+The next step is to load your log likelihood function/script.
+
+```{r loadYaLL, echo=TRUE, eval=FALSE}
+source(file = "yourLogLikelihoodFile.R")
 ```
 
-<b>A second example might cover another SDT example with the addition of trial level covariate i.e. analytic solution NA.</b>
+Once you've setup your parameters, priors and written a log likelihood function, the next step is to initialise the `sampler` object. 
+```{r SDTsamplerObject, echo=TRUE, eval=FALSE}
+sampler <- pmwgs(
+  data = wgnmks2008Fast,
+  pars = pars,
+  prior = priors,
+  ll_func = SDT_ll_fast
+)
+```
+
+The `pmwgs` function takes a set of arguments (listed below) and returns a list containing the required components for performing the particle metropolis within Gibbs steps.
+
+* `data =`a data frame (e.g.`wgnmks2008Fast`) with a column for participants called <b>`subject`</b>
+* `pars =` the model parameters to be used (e.g.`pars`)
+* `prior =` the priors to be used (e.g.`priors`)
+* `ll_func =` name of log likelihood function you've sourced above (e.g.`SDT_ll_fast`)
+
+
+```{r part9.4, include=TRUE}
+sampler <- pmwgs(
+  data = wgnmks2008Fast,
+  pars = pars,
+  prior = priors,
+  ll_func = SDT_ll_fast
+)
+```
+
+
+### Model start points {#start-points}
+You have the option to set model start points. We use 0 for the mean (mu) and a variance of 0.01. If you chose not to specify start points, the sampler will randomly sample points from the prior distribution.
+```{r part9.5, include=TRUE}
+start_points <- list(
+  mu = rep(0, length.out = length(pars)),
+  sig2 = diag(rep(.01, length(pars)))
+)
+```
+
+The `start_points` object contains two vectors:
+
+* `mu` a vector of start points for the mu of each model parameter 
+* `sig2` vector containing the start points of the covariance matrix of covariance between model parameters.
+
+
+### Running the sampler {#run-sdtsampler}
+Okay - now we are ready to run the sampler.  
+```{r SDTrunSampler, echo=TRUE, eval=FALSE}
+sampler <- init(sampler, theta_mu = start_points$mu,
+                theta_sig = start_points$sig2)
+```
+Here we are using the `init` function to generate initial start points for the random effects and storing them in the `sampler` object.  First we pass the `sampler` object from above that includes our data, parameters, priors and log likelihood function.  If we decided to specify our own start points (as above), we would include the `theta_mu` and `theta_sig` arguments.
+
+
+Now we can run the sampler using the `run_stage` function. The `run_stage` function takes four arguments:
+
+* `x` the `sampler` object including parameters 
+* `stage =` the sampling stage (e.g. `"burn"`, `"adapt"` or `"sample"`)
+* `iter = ` is the number of iterations for the sampling stage 
+* `particles =` is the number of particles generated on each iteration
+* `display_progress =` shows progress bar of current stage
+* `n_cores =` numner of processor cores to run stage on
+* `epsilon = ` must be >0<1 <b> We will write something here </b>
+
+It is optional to include the `iter =` and `particles =` arguments. If these are not included, `iter` and `particles` default to 1000. The number of iterations you choose for your burn in stage is similar to choices made when running deMCMC, however, this varies depending on the time the model takes to reach the 'real' posterior space. 
+
+First we run our burn-in stage by setting `stage =` to `"burn"`. 
+```{r SDTburn, echo=TRUE, eval=FALSE}
+burned <- run_stage(sampler, stage = "burn", iter = 1000, particles = 20, display_progress = TRUE, n_cores = 8)
+```
+
+Now we run our adaptation stage by setting `stage = "adapt"`. This function creates an efficient proposal distribution. The sampler will attempt to create the proposal distribution after 20 unique particles have been accepted for each subject. The sampler will then test whether the distribution was able to be created and if it was created, the sampler will move to the next stage otherwise the sampler will continue to sample. The number of iterations needs to be great enough to generate enough unique samples, but not too large as to make..... <b>Check this with Scott/Guy</b> 
+```{r SDTadaptation, echo=TRUE, eval=FALSE}
+adapted <- run_stage(burned, stage = "adapt", iter = 1000, particles = 20, n_cores = 8)
+```
+
+At the start of the `sampled` stage, the sampler object will create a 'proposal' distribution for each subject's random effects using a conditional multi-variate normal. This proposal distribution is then used to efficiently generate new particles for each subject which means we can reduce the number of particles on each iteration whilst still achieving acceptance rates.
+```{r SDTsampled, echo=TRUE, eval=FALSE}
+sampled <- run_stage(adapted, stage = "sample", iter = 1000, particles = 20, n_cores = 8)
+```
+
+
+## Check sampling process
+
+It is a good idea to check your samples by producing some simple plots as shown below. The first plot gives an indication of the chains. In this example, you will see the chains take only several iterations before arriving at the posterior, however, this may not always be the case. Each parameter chain (lines on plot \@ref(fig:parPlot)) should be stationary i.e. the chain should not trend up or down, and once the chain reaches the posterior, the chain should remain relatively 'thin'. If the chain is wide or continually jump between large values (e.g. move between -3 and 3) then there is likely an error in your log likelihood function. 
+
+<b>Check with Reilly sentence below</b>
+
+As you can see in \@ref(fig:parPlot), the chains are clearly separate and are stable (not trending in any direction), as well as being relatively thin (largest variance ~1).
+
+```{r load_data, include=FALSE}
+load("SDT_sampled.Rdata")
+```
+
+
+```{r parPlot, echo=FALSE, out.width='100%', fig.show='hold', fig.cap='Posterior samples of parameters'}
+matplot(t(sampled$samples$theta_mu),type="l")
+```
+
+The second plot  below (\@ref(fig:subjLLPlot)) shows the likelihoods across iterations for each subject. Again we see that the likelihood values jump up after only a few iterations and then remain stable, with only slight movement. 
+
+
+```{r subjLLPlot, echo=FALSE, out.width='100%', fig.show='hold', fig.cap='Posterior samples of subject log likelihoods'}
+matplot(t(sampled$samples$subj_ll),type="l")
+```
+
+
+## Simulating Posterior Data
+
