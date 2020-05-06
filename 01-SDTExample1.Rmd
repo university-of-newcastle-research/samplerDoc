@@ -834,7 +834,7 @@ sampled <- run_stage(adapted, stage = "sample", iter = 1000, particles = 20, n_c
 
 ## Check sampling process
 
-It is a good idea to check your samples by producing some simple plots as shown below. The first plot gives an indication of the chains. In this example, you will see the chains take only several iterations before arriving at the posterior, however, this may not always be the case. Each parameter chain (lines on plot \@ref(fig:parPlot)) should be stationary i.e. the chain should not trend up or down, and once the chain reaches the posterior, the chain should remain relatively 'thin'. If the chain is wide or continually jump between large values (e.g. move between -3 and 3) then there is likely an error in your log likelihood function. 
+It is a good idea to check your samples by producing some simple plots as shown below. The first plot gives an indication of the chains for the group level parameters. In this example, you will see the chains take only several iterations before arriving at the posterior, however, this may not always be the case. Each parameter chain (lines on plot \@ref(fig:parPlot)) should be stationary i.e. the chain should not trend up or down, and once the chain reaches the posterior, the chain should remain relatively 'thin'. If the chain is wide or continually jump between large values (e.g. move between -3 and 3) then there is likely an error in your log likelihood function. 
 
 <b>Check with Reilly sentence below</b>
 
