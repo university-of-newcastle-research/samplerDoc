@@ -123,6 +123,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="2.3.2" data-path="how-to-use-the-pmwg-sampler-signal-detection-theory.html"><a href="how-to-use-the-pmwg-sampler-signal-detection-theory.html#run-sdtsampler"><i class="fa fa-check"></i><b>2.3.2</b> Running the sampler</a></li>
 </ul></li>
 <li class="chapter" data-level="2.4" data-path="how-to-use-the-pmwg-sampler-signal-detection-theory.html"><a href="how-to-use-the-pmwg-sampler-signal-detection-theory.html#check-sampling-process"><i class="fa fa-check"></i><b>2.4</b> Check sampling process</a></li>
+<li class="chapter" data-level="2.5" data-path="how-to-use-the-pmwg-sampler-signal-detection-theory.html"><a href="how-to-use-the-pmwg-sampler-signal-detection-theory.html#simulating-posterior-data"><i class="fa fa-check"></i><b>2.5</b> Simulating Posterior Data</a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="example-2-forstmann-et-al-2008-dataset.html"><a href="example-2-forstmann-et-al-2008-dataset.html"><i class="fa fa-check"></i><b>3</b> Example 2 - Forstmann et al. (2008) dataset</a><ul>
 <li class="chapter" data-level="3.1" data-path="example-2-forstmann-et-al-2008-dataset.html"><a href="example-2-forstmann-et-al-2008-dataset.html#description-of-forstmann-experiment"><i class="fa fa-check"></i><b>3.1</b> Description of Forstmann experiment</a></li>
@@ -967,7 +968,7 @@ Figure 2.3: Signal detection theory example of lexical decision task
 <pre><code>## [1] -22168.95</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">SDT_ll_fast</span>(pars, wgnmks2008Fast, <span class="dt">sample =</span> <span class="ot">FALSE</span>)</code></pre></div>
 <pre><code>## [1] -22168.95</code></pre>
-<p><b> We recommend “speeding up” your code however you wish. We do it in the Forstmann code…. </b>. When you’re confident that your log likelihood functions correctly, you should it in its own script so it cab be sourced when required.</p>
+<p><b> We recommend “speeding up” your code however you wish. We do it in the Forstmann code…. </b>. When you’re confident that your log likelihood functions correctly, you should save it as a separate script so it can be sourced when running the sampler.</p>
 </div>
 </div>
 <div id="pmwg-framework" class="section level2">
@@ -1066,14 +1067,9 @@ Figure 2.4: Posterior samples of parameters
 Figure 2.5: Posterior samples of subject log likelihoods
 </p>
 </div>
-<p><a href="how-to-use-the-pmwg-sampler-signal-detection-theory.html#fig:sdtPlot">2.6</a></p>
-<div class="figure"><span id="fig:sdtPlot"></span>
-<img src="bookdown-demo_files/figure-html/sdtPlot-1.png" alt="sdt posterior" width="672" />
-<p class="caption">
-Figure 2.6: sdt posterior
-</p>
 </div>
-<p><b>A second example might cover another SDT example with the addition of trial level covariate i.e. analytic solution NA.</b></p>
+<div id="simulating-posterior-data" class="section level2">
+<h2><span class="header-section-number">2.5</span> Simulating Posterior Data</h2>
 
 </div>
 </div>
