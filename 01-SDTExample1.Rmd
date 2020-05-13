@@ -50,9 +50,9 @@ Now we must find the location of the criterion. Setting the criterion allows us 
 Here is our complete log likelihood function. We have omitted some code from the code blocks below to enhance appearance, so we encourage you to copy the log likelihood function from the following code block if you'd like to follow along with our example.
 ```{r sdtLlComplete, attr.source = '.numberLines', eval=FALSE}
 SDT_ll <- function(x, data, sample = FALSE){
-  if (sample){
+  if (sample) {
     data$response <- NA
-  } else{
+  } else {
     out <- numeric(nrow(data))
     data$out <- NA
   }
@@ -92,9 +92,9 @@ SDT_loglike <- function(x, data, sample = FALSE) {
 
 The first if statement (line 2) checks if you want to sample, this is used for posterior predictive sampling which we will cover in later chapters. and assigns NAs to your data frames response column. If you're not sampling (like us in this example), you need to create an output vector `out`. The `out` vector will contain the log likelihood value for each row/trial in your dataset. <b> Need to explain the `(sample)` part below </b>
 ```{r sdtllL2, attr.source='.numberLines startFrom="2"', eval=FALSE}
-  if (sample){
+  if (sample) {
     data$response <- NA
-    }else{
+    } else {
       out <- numeric(nrow(data))
       }
 ```
@@ -102,14 +102,14 @@ The first if statement (line 2) checks if you want to sample, this is used for p
 From line 9, we check each row in the data set, first considering all trials with <i>word</i> stimuli `if (stim[i] == "word"` (line 10), and assign a likelihood for responding <i>word</i> (line 12-13) or <i>non-word</i> (line 15-16). The <i>word</i> distribution has a mean of `x["d"]` (d-prime parameter) and a decision criterion parameter `x["C"]`. If the response is <i>word</i>, we are considering values ABOVE or to the right of <B>C</B> in \@ref(fig:SDT2), so we set `lower.tail =` to `FALSE`. If the response is <i>non-word</i>, we look for values BELOW or to the left of <B>C</B> in \@ref(fig:SDT2) and we set `lower.tail =` to `TRUE`. The `log.p =` argument takes the log of all likelihood values when set to `TRUE`. We do this so we can sum all likelihoods at the end of the log likelihood function. 
 <b> Do we need to explain p-norm??</b>
 ```{r sdtllL8, attr.source='.numberLines startFrom="8"', eval=FALSE}
-  if (!sample){
-    for (i in 1:nrow(data)){
-      if (stim[i] == "word"){
-        if (resp[i] == "word"){
-          out[i]<- pnorm(x["C"], mean = x["d"], sd = 1, 
+  if (!sample) {
+    for (i in 1:nrow(data)) {
+      if (stim[i] == "word") {
+        if (resp[i] == "word") {
+          out[i] <- pnorm(x["C"], mean = x["d"], sd = 1, 
                          log.p = TRUE, lower.tail = FALSE)
-    }else{
-      out[i]<- pnorm(x["C"], mean = x["d"], sd = 1, 
+    } else {
+      out[i] <- pnorm(x["C"], mean = x["d"], sd = 1, 
                      log.p = TRUE, lower.tail = TRUE)
       }
 ```
@@ -117,12 +117,12 @@ From line 9, we check each row in the data set, first considering all trials wit
 From the else statement on line 18, we have the function for <i>non-word</i> trials i.e. `stim[i] == "non-word"`. As can be seen below, the output value `out[i]` for these trials is arrived at in a similar manner to the <i>word</i> trials. We set the `mean` to 0 and the standard deviation `sd` to 1. If the response is <i>word</i>, we are considering values ABOVE or to the right of <B>C</B> in \@ref(fig:SDT2), so we set `lower.tail =` to `FALSE`. If the response is <i>non-word</i>, we look for values BELOW or to the left of <B>C</B> in \@ref(fig:SDT2) and we set `lower.tail =` to `TRUE`. Again we want the log of all likelihood values so we set `log.p = TRUE`.
 
 ```{r part4.3, attr.source='.numberLines startFrom="18"', eval=FALSE} 
-    else{
-      if (resp[i] == "word"){
-        out[i] <- pnorm(x["C"], mean = 0, sd = 1, 
-                        log.p = TRUE, lower.tail = FALSE)
-        }else{
-          out[i]<- pnorm(x["C"], mean = 0, sd = 1, 
+else {
+  if (resp[i] == "word") {
+    out[i] <- pnorm(x["C"], mean = 0, sd = 1, 
+                    log.p = TRUE, lower.tail = FALSE)
+        } else {
+          out[i] <- pnorm(x["C"], mean = 0, sd = 1, 
                          log.p = TRUE, lower.tail = TRUE)
         }
       }
@@ -146,26 +146,26 @@ We can test run our log likelihood function by passing in the parameter vector `
 
 ```{r simple-SDT, include=FALSE}
 SDT_loglike <- function(x, data, sample = FALSE){
-  if (sample){
+  if (sample) {
     data$response <- NA
-  } else{
+  } else {
     out <- numeric(nrow(data))
   }
-  if (!sample){
-  for (i in 1:nrow(data)){
-    if (stim[i] == "word"){
-      if (resp[i] == "word"){
+  if (!sample) {
+  for (i in 1:nrow(data)) {
+    if (stim[i] == "word") {
+      if (resp[i] == "word") {
         out[i] <- pnorm(x["C"], mean = x["d"], sd = 1, 
                         log.p = TRUE, lower.tail = FALSE)
-      }else{
+      } else {
         out[i] <- pnorm(x["C"], mean = x["d"], sd = 1, 
                         log.p = TRUE, lower.tail = TRUE)
       }
-    }else{
-      if (resp[i] == "word"){
+    } else {
+      if (resp[i] == "word") {
         out[i] <- pnorm(x["C"], mean = 0, sd = 1, 
                         log.p = TRUE, lower.tail = FALSE)
-      }else{
+      } else {
         out[i] <- pnorm(x["C"], mean = 0, sd = 1, 
                         log.p = TRUE, lower.tail = TRUE)
         }
@@ -220,17 +220,17 @@ Here is our complete log likelihood function for the Wagenmakers data set.
 SDT_ll <- function(x, data, sample=FALSE){
   if (sample){
     data$response <- NA
-  } else{
+  } else {
     out <- numeric(nrow(data))
   }
   if (!sample){
-  for (i in 1:nrow(data)){
-    if (data$cond[i] == "w"){
-    if (data$stim[i] == "hf"){
-      if (data$resp[i] == "W"){
+  for (i in 1:nrow(data)) {
+    if (data$cond[i] == "w") {
+    if (data$stim[i] == "hf") {
+      if (data$resp[i] == "W") {
         out[i] <- pnorm(x["C.w"], mean = x["HF.d"], sd = 1,
                        log.p = TRUE, lower.tail = FALSE)
-      }else{
+      } else {
         out[i] <- pnorm(x["C.w"], mean = x["HF.d"], sd = 1,
                        log.p = TRUE, lower.tail = TRUE)
       }
@@ -238,60 +238,57 @@ SDT_ll <- function(x, data, sample=FALSE){
       if (data$resp[i] == "W"){
         out[i] <- pnorm(x["C.w"], mean = x["LF.d"], sd = 1,
                        log.p = TRUE, lower.tail = FALSE)
-      }else{
+      } else {
         out[i] <- pnorm(x["C.w"], mean = x["LF.d"], sd = 1,
                        log.p = TRUE, lower.tail = TRUE)
         }
-      } else if (data$stim[i] == "vlf"){
-        if (data$resp[i] == "W"){
+      } else if (data$stim[i] == "vlf") {
+        if (data$resp[i] == "W") {
           out[i] <- pnorm(x["C.w"], mean = x["VLF.d"], sd = 1,
                          log.p = TRUE, lower.tail = FALSE)
-        }else{
+        } else {
           out[i] <- pnorm(x["C.w"], mean = x["VLF.d"], sd = 1,
                          log.p = TRUE, lower.tail = TRUE)
           }
-        }
-    else{
-      if (data$resp[i] == "W"){
+        } else {
+      if (data$resp[i] == "W") {
         out[i] <- pnorm(x["C.w"], mean = 0, sd = 1,
                        log.p = TRUE, lower.tail = FALSE)
-      }else{
+      } else {
         out[i] <- pnorm(x["C.w"], mean = 0, sd = 1,
                        log.p = TRUE, lower.tail = TRUE)
         }
       }
-    }
-    else{
-      if (data$stim[i] == "hf"){
-        if (data$resp[i] == "W"){
+    } else {
+      if (data$stim[i] == "hf") {
+        if (data$resp[i] == "W") {
           out[i] <- pnorm(x["C.nw"], mean = x["HF.d"], sd = 1, 
                          log.p = TRUE, lower.tail = FALSE)
-        }else{
+        } else {
           out[i] <- pnorm(x["C.nw"], mean = x["HF.d"], sd = 1, 
                          log.p = TRUE, lower.tail = TRUE)
         }
-      }  else if (data$stim[i] == "lf"){
-        if (data$resp[i] == "W"){
+      }  else if (data$stim[i] == "lf") {
+        if (data$resp[i] == "W") {
           out[i] <- pnorm(x["C.nw"], mean = x["LF.d"], sd = 1, 
                          log.p = TRUE, lower.tail = FALSE)
-        }else{
+        } else {
           out[i] <- pnorm(x["C.nw"], mean = x["LF.d"], sd = 1, 
                          log.p = TRUE, lower.tail = TRUE)
         }
-      } else if (data$stim[i] == "vlf"){
-        if (data$resp[i] == "W"){
+      } else if (data$stim[i] == "vlf") {
+        if (data$resp[i] == "W") {
           out[i] <- pnorm(x["C.nw"], mean = x["VLF.d"], sd = 1, 
                          log.p = TRUE, lower.tail = FALSE)
-        }else{
+        } else {
           out[i] <- pnorm(x["C.nw"], mean = x["VLF.d"], sd = 1, 
                          log.p = TRUE, lower.tail = TRUE)
         }
-      }
-      else{
-        if (data$resp[i] == "W"){
+      } else {
+        if (data$resp[i] == "W") {
           out[i] <- pnorm(x["C.nw"], mean = 0, sd = 1, 
                          log.p = TRUE, lower.tail = FALSE)
-        }else{
+        } else {
           out[i] <- pnorm(x["C.nw"], mean = 0, sd = 1, 
                          log.p = TRUE, lower.tail = TRUE)
         }
@@ -306,12 +303,12 @@ SDT_ll <- function(x, data, sample=FALSE){
 Line 1 through to line 8 are the same as the log likelihood we wrote for the fabricated dataset above. From line 9, we calculate the log-likelihood `out[i]` for <i>word</i> condition trials `cond[i] == "w"` when the stimulus is a high frequency word `stim[i] == "hf"` for each response. We do this by considering the upper tail of the high frequency word distribution `lower.tail = FALSE`, from the word criterion <B>C<sub>w</sub></B>, for <i>word</i> responses `resp[i] == "W"` and the lower tail for <i>non-word</i> responses (`else` statement on line 14). 
 
 ```{r wgnllSlow, attr.source='.numberLines startFrom="9"', eval=FALSE}
- if (data$cond[i] == "w"){
-    if (data$stim[i] == "hf"){
-      if (data$resp[i] == "W"){
+ if (data$cond[i] == "w") {
+    if (data$stim[i] == "hf") {
+      if (data$resp[i] == "W") {
         out[i] <- pnorm(x["C.w"], mean = x["HF.d"], sd = 1,
                        log.p = TRUE, lower.tail = FALSE)
-      }else{
+      } else {
         out[i] <- pnorm(x["C.w"], mean = x["HF.d"], sd = 1,
                        log.p = TRUE, lower.tail = TRUE)
       }
@@ -320,28 +317,27 @@ Line 1 through to line 8 are the same as the log likelihood we wrote for the fab
 From line 18 and still considering trials from the <i>word</i> condition, we calculate the log likelihood for each response for low frequency words `stim[i] == "lf"`, very low frequency words `stim[i] == "vlf"` (line 26) and non-word stimuli (`else` statement on line 35).
 
 ```{r wgnllslow2, attr.source='.numberLines startFrom="18"', eval=FALSE}
-  else if (data$stim[i] == "lf"){
-      if (data$resp[i] == "W"){
+  else if (data$stim[i] == "lf") {
+      if (data$resp[i] == "W") {
         out[i] <- pnorm(x["C.w"], mean = x["LF.d"], sd = 1,
                        log.p = TRUE, lower.tail = FALSE)
-      }else{
+      } else {
         out[i] <- pnorm(x["C.w"], mean = x["LF.d"], sd = 1,
                        log.p = TRUE, lower.tail = TRUE)
         }
-      } else if (data$stim[i] == "vlf"){
-        if (data$resp[i] == "W"){
+      } else if (data$stim[i] == "vlf") {
+        if (data$resp[i] == "W") {
           out[i] <- pnorm(x["C.w"], mean = x["VLF.d"], sd = 1,
                          log.p = TRUE, lower.tail = FALSE)
-        }else{
+        } else {
           out[i] <- pnorm(x["C.w"], mean = x["VLF.d"], sd = 1,
                          log.p = TRUE, lower.tail = TRUE)
           }
-        }
-    else{
-      if (data$resp[i] == "W"){
+        } else {
+      if (data$resp[i] == "W") {
         out[i] <- pnorm(x["C.w"], mean = 0, sd = 1,
                        log.p = TRUE, lower.tail = FALSE)
-      }else{
+      } else {
         out[i] <- pnorm(x["C.w"], mean = 0, sd = 1,
                        log.p = TRUE, lower.tail = TRUE)
         }
@@ -351,37 +347,36 @@ From line 18 and still considering trials from the <i>word</i> condition, we cal
 That covers the <i>word</i> condition. From line 45 through 78, we repeat the same process for the <i>non-word</i> conditon....
 
 ```{r wgnllslow3, attr.source='.numberLines startFrom="45"', eval=FALSE}
-else{
-      if (data$stim[i] == "hf"){
-        if (data$resp[i] == "W"){
+else {
+      if (data$stim[i] == "hf") {
+        if (data$resp[i] == "W") {
           out[i] <- pnorm(x["C.nw"], mean = x["HF.d"], sd = 1, 
                          log.p = TRUE, lower.tail = FALSE)
-        }else{
+        } else {
           out[i] <- pnorm(x["C.nw"], mean = x["HF.d"], sd = 1, 
                          log.p = TRUE, lower.tail = TRUE)
         }
-      }  else if (data$stim[i] == "lf"){
-        if (data$resp[i] == "W"){
+      } else if (data$stim[i] == "lf") {
+        if (data$resp[i] == "W") {
           out[i] <- pnorm(x["C.nw"], mean = x["LF.d"], sd = 1, 
                          log.p = TRUE, lower.tail = FALSE)
-        }else{
+        } else {
           out[i] <- pnorm(x["C.nw"], mean = x["LF.d"], sd = 1, 
                          log.p = TRUE, lower.tail = TRUE)
         }
-      } else if (data$stim[i] == "vlf"){
-        if (data$resp[i] == "W"){
+      } else if (data$stim[i] == "vlf") {
+        if (data$resp[i] == "W") {
           out[i] <- pnorm(x["C.nw"], mean = x["VLF.d"], sd = 1, 
                          log.p = TRUE, lower.tail = FALSE)
-        }else{
+        } else {
           out[i] <- pnorm(x["C.nw"], mean = x["VLF.d"], sd = 1, 
                          log.p = TRUE, lower.tail = TRUE)
         }
-      }
-      else{
-        if (data$resp[i] == "W"){
+      } else {
+        if (data$resp[i] == "W") {
           out[i] <- pnorm(x["C.nw"], mean = 0, sd = 1, 
                          log.p = TRUE, lower.tail = FALSE)
-        }else{
+        } else {
           out[i] <- pnorm(x["C.nw"], mean = 0, sd = 1, 
                          log.p = TRUE, lower.tail = TRUE)
         }
@@ -505,79 +500,77 @@ kable(head(wgnmks2008Fast))
 
 
 For our SDT log likelihood function, we add `n*` (i.e. a multiplying factor) to each of these values to calculate the model log likelihood <b> Should we shorten this code block? Seems excessive.</b>
-```{r part8.2,eval=FALSE}
+```{r part8.2, eval=FALSE}
 SDT_ll_fast <- function(x, data, sample = FALSE){
   if (!sample){
     out <- numeric(nrow(data))
     for (i in 1:nrow(data)){
-      if (data$cond[i]=="w"){
-        if (data$stim[i] == "hf"){
-          if (data$resp[i] == "W"){
-            out[i]<- data$n[i]*pnorm(x["C.w"], mean = x["HF.d"],
+      if (data$cond[i] == "w") {
+        if (data$stim[i] == "hf") {
+          if (data$resp[i] == "W") {
+            out[i] <- data$n[i] * pnorm(x["C.w"], mean = x["HF.d"],
                                      sd = 1, log.p = TRUE, lower.tail = FALSE)
-          }else{
-            out[i]<- data$n[i]*pnorm(x["C.w"], mean = x["HF.d"],
+          } else {
+            out[i] <- data$n[i] * pnorm(x["C.w"], mean = x["HF.d"],
+                                     sd = 1, log.p = TRUE, lower.tail = TRUE)
+            }
+          } else if (data$stim[i] == "lf") {
+          if (data$resp[i] == "W") {
+            out[i] <- data$n[i] * pnorm(x["C.w"], mean = x["LF.d"],
+                                     sd = 1, log.p = TRUE, lower.tail = FALSE)
+          } else {
+            out[i] <- data$n[i] * pnorm(x["C.w"], mean = x["LF.d"],
                                      sd = 1, log.p = TRUE, lower.tail = TRUE)
           }
-        }  else if (data$stim[i] == "lf"){
-          if (data$resp[i] == "W"){
-            out[i]<- data$n[i]*pnorm(x["C.w"], mean = x["LF.d"],
+        } else if (data$stim[i] == "vlf") {
+          if (data$resp[i] == "W") {
+            out[i] <- data$n[i] * pnorm(x["C.w"], mean = x["VLF.d"],
                                      sd = 1, log.p = TRUE, lower.tail = FALSE)
-          }else{
-            out[i]<- data$n[i]*pnorm(x["C.w"], mean = x["LF.d"],
+          } else {
+            out[i] <- data$n[i] * pnorm(x["C.w"], mean = x["VLF.d"],
                                      sd = 1, log.p = TRUE, lower.tail = TRUE)
           }
-        } else if (data$stim[i] == "vlf"){
-          if (data$resp[i] == "W"){
-            out[i]<- data$n[i]*pnorm(x["C.w"], mean = x["VLF.d"],
+        } else {
+          if (data$resp[i] == "W") {
+            out[i] <- data$n[i] * pnorm(x["C.w"], mean = 0,
                                      sd = 1, log.p = TRUE, lower.tail = FALSE)
           }else{
-            out[i]<- data$n[i]*pnorm(x["C.w"], mean = x["VLF.d"],
-                                     sd = 1, log.p = TRUE, lower.tail = TRUE)
-          }
-        }
-        else{
-          if (data$resp[i] == "W"){
-            out[i]<- data$n[i]*pnorm(x["C.w"], mean = 0,
-                                     sd = 1, log.p = TRUE, lower.tail = FALSE)
-          }else{
-            out[i]<- data$n[i]*pnorm(x["C.w"], mean = 0,
+            out[i] <- data$n[i] * pnorm(x["C.w"], mean = 0,
                                      sd = 1, log.p = TRUE, lower.tail = TRUE)
           }
         }
       }
       else{
-        if (data$stim[i] == "hf"){
-          if (data$resp[i] == "W"){
-            out[i]<- data$n[i]*pnorm(x["C.nw"], mean = x["HF.d"],
+        if (data$stim[i] == "hf") {
+          if (data$resp[i] == "W") {
+            out[i] <- data$n[i] * pnorm(x["C.nw"], mean = x["HF.d"],
                                      sd = 1, log.p = TRUE, lower.tail = FALSE)
-          }else{
-            out[i]<- data$n[i]*pnorm(x["C.nw"], mean = x["HF.d"],
+          } else {
+            out[i] <- data$n[i] * pnorm(x["C.nw"], mean = x["HF.d"],
                                      sd = 1, log.p = TRUE, lower.tail = TRUE)
           }
         }  else if (data$stim[i] == "lf"){
-          if (data$resp[i] == "W"){
-            out[i]<- data$n[i]*pnorm(x["C.nw"], mean = x["LF.d"],
+          if (data$resp[i] == "W") {
+            out[i] <- data$n[i] * pnorm(x["C.nw"], mean = x["LF.d"],
                                      sd = 1, log.p = TRUE, lower.tail = FALSE)
-          }else{
-            out[i]<- data$n[i]*pnorm(x["C.nw"], mean = x["LF.d"],
+          } else {
+            out[i] <- data$n[i] * pnorm(x["C.nw"], mean = x["LF.d"],
                                      sd = 1, log.p = TRUE, lower.tail = TRUE)
           }
-        } else if (data$stim[i] == "vlf"){
-          if (data$resp[i] == "W"){
-            out[i]<- data$n[i]*pnorm(x["C.nw"], mean = x["VLF.d"],
+        } else if (data$stim[i] == "vlf") {
+          if (data$resp[i] == "W") {
+            out[i] <- data$n[i] * pnorm(x["C.nw"], mean = x["VLF.d"],
                                      sd = 1, log.p = TRUE, lower.tail = FALSE)
-          }else{
-            out[i]<- data$n[i]*pnorm(x["C.nw"], mean = x["VLF.d"],
+          } else {
+            out[i] <- data$n[i] * pnorm(x["C.nw"], mean = x["VLF.d"],
                                      sd = 1, log.p = TRUE, lower.tail = TRUE)
           }
-        }
-        else{
-          if (data$resp[i] == "W"){
-            out[i]<- data$n[i]*pnorm(x["C.nw"], mean = 0,
+        } else {
+          if (data$resp[i] == "W") {
+            out[i] <- data$n[i] * pnorm(x["C.nw"], mean = 0,
                                      sd = 1, log.p = TRUE, lower.tail = FALSE)
-          }else{
-            out[i]<- data$n[i]*pnorm(x["C.nw"], mean = 0,
+          } else {
+            out[i] <- data$n[i] * pnorm(x["C.nw"], mean = 0,
                                      sd = 1, log.p = TRUE, lower.tail = TRUE)
           }
         }
@@ -603,25 +596,25 @@ SDT_ll_fast = function(x,data,sample=FALSE){
     for (i in 1:nrow(data)){
       #in total, there are 16 calls to pnorm - which represent the 16 possible outcomes. Each will then only be called once per subject
       #for each line where the proportion was words do this
-      if (data$cond[i]=="w"){
+      if (data$cond[i] =="w"){
         #for each line where proportion was words and the stimulus was a hf word, do this
         if (data$stim[i] == "hf"){
           ##for each line where proportion was words the stimulus was a hf word and the response was "word", do this
           if (data$resp[i] == "W"){
-            out[i]<- data$n[i]*pnorm(x["C.w"], mean = x["HF.d"],sd = 1, log.p = TRUE, lower.tail = FALSE)
-          }else{
+            out[i]<- data$n[i]*pnorm(x["C.w"], mean = x["HF.d"], sd = 1, log.p = TRUE, lower.tail = FALSE)
+          } else {
             out[i]<- data$n[i]*pnorm(x["C.w"], mean = x["HF.d"],sd = 1, log.p = TRUE, lower.tail = TRUE)
           }
         }  else if (data$stim[i] == "lf"){
           if (data$resp[i] == "W"){
             out[i]<- data$n[i]*pnorm(x["C.w"], mean = x["LF.d"],sd = 1, log.p = TRUE, lower.tail = FALSE)
-          }else{
+          } else {
             out[i]<- data$n[i]*pnorm(x["C.w"], mean = x["LF.d"],sd = 1, log.p = TRUE, lower.tail = TRUE)
           }
         } else if (data$stim[i] == "vlf"){
           if (data$resp[i] == "W"){
             out[i]<- data$n[i]*pnorm(x["C.w"], mean = x["VLF.d"],sd = 1, log.p = TRUE, lower.tail = FALSE)
-          }else{
+          } else {
             out[i]<- data$n[i]*pnorm(x["C.w"], mean = x["VLF.d"],sd = 1, log.p = TRUE, lower.tail = TRUE)
           }
         }
@@ -681,10 +674,10 @@ SDT_ll_fast = function(x,data,sample=FALSE){
             data$resp[i]<-ifelse(test=(rnorm(1, mean = x["LF.d"],sd = 1))>x["C.w"], "word","non-word")
            } else if (data$stim[i] == "vlf"){
             data$resp[i]<-ifelse(test=(rnorm(1, mean = x["VLF.d"],sd = 1))>x["C.w"], "word","non-word")
-        }else{
+        } else {
             data$resp[i]<-ifelse(test=(rnorm(1, mean = 0,sd = 1)) >x["C.w"], "word","non-word")
           }
-      } else{
+      } else {
         if (data$stim[i] == "hf"){
             data$resp[i]<-ifelse(test=(rnorm(1, mean = x["HF.d"],sd = 1))>x["C.nw"], "word","non-word")
         } else if (data$stim[i] == "lf"){
@@ -875,34 +868,38 @@ The `sample` process is similar to what we've covered above. We begin by assigni
 We then take the criterion for the <i>word</i> condition i.e. `C.w`. To simulate a response given our parameters we  use `rnorm` to pick a random value from a normal distribution with `mean = HF.d` (i.e. high frequency word stimulus) and a SD of 1 and we test that value against the <i>word</i> criterion `C.w`. If the value is larger than `C.w`, the simulated response will be <i>word</i> otherwise, the simulated response will be <i>non-word</i>.
 
 ```{r part8.4,eval=FALSE}
-data$resp[i] <- ifelse(test = (rnorm(1, mean = x["HF.d"], sd = 1)) > x["C.w"], "word", "non-word")
-} 
+data$resp[i] <- ifelse(test = (rnorm(1, mean = x["HF.d"], 
+                                     sd = 1)) > x["C.w"], "word", "non-word")
 ```
 
 We repeat this process for each condition and stimulus combination as shown in the code block below.
 ```{r part8.5, eval=FALSE}
-        else if (data$stim[i] == "lf"){
-          data$resp[i] <- ifelse(test = (rnorm(1, mean = x["LF.d"], sd = 1)) > x["C.w"], "word", "non-word")
-           } else if (data$stim[i] == "vlf"){
-             data$resp[i] <- ifelse(test = (rnorm(1, mean = x["VLF.d"], sd = 1)) > x["C.w"], "word", "non-word")
-        }else{
-          data$resp[i] <- ifelse(test = (rnorm(1, mean = 0, sd = 1)) > x["C.w"], "word", "non-word")
-          }
-      } else{
-        if (data$stim[i] == "hf"){
-          data$resp[i] <- ifelse(test = (rnorm(1, mean = x["HF.d"], sd = 1)) > x["C.nw"], "word", "non-word")
-        } else if (data$stim[i] == "lf"){
-          data$resp[i] <- ifelse(test = (rnorm(1, mean = x["LF.d"], sd = 1)) > x["C.nw"], "word", "non-word")
-        } else if (data$stim[i] == "vlf"){
-          data$resp[i] <- ifelse(test = (rnorm(1, mean = x["VLF.d"], sd = 1)) > x["C.nw"], "word", "non-word")
-        } else{
-          data$resp[i] <- ifelse(test = (rnorm(1, mean = 0, sd = 1)) > x["C.nw"], "word", "non-word")
+{ else if (data$stim[i] == "lf") {
+  data$resp[i] <- ifelse(test = (rnorm(1, mean = x["LF.d"], 
+                                       sd = 1)) > x["C.w"], "word", "non-word")
+  } else if (data$stim[i] == "vlf") {
+    data$resp[i] <- ifelse(test = (rnorm(1, mean = x["VLF.d"], 
+                                         sd = 1)) > x["C.w"], "word", "non-word")
+    } else {
+      data$resp[i] <- ifelse(test = (rnorm(1, mean = 0, 
+                                           sd = 1)) > x["C.w"], "word", "non-word")
+      }
+} else {
+  if (data$stim[i] == "hf") {
+    data$resp[i] <- ifelse(test = (rnorm(1, mean = x["HF.d"], 
+                                         sd = 1)) > x["C.nw"], "word", "non-word")
+    } else if (data$stim[i] == "lf") {
+          data$resp[i] <- ifelse(test = (rnorm(1, mean = x["LF.d"], 
+                                               sd = 1)) > x["C.nw"], "word", "non-word")
+        } else if (data$stim[i] == "vlf") {
+          data$resp[i] <- ifelse(test = (rnorm(1, mean = x["VLF.d"], 
+                                               sd = 1)) > x["C.nw"], "word", "non-word")
+        } else {
+          data$resp[i] <- ifelse(test = (rnorm(1, mean = 0, 
+                                               sd = 1)) > x["C.nw"], "word", "non-word")
           }
         }
-    }
-    return(data)
-    }
-}
+
 ```
 
 Now we can run our simulation. Below is some code to achieve this.
@@ -927,18 +924,13 @@ for (s in S) {
   }
   
 }
-names(pp.data) <- names(data)
-
-
-tidy.data <- do.call(rbind, data)
-tidy.pp.data <- do.call(rbind, pp.data)
 ```
 
 
 And now we can plot samples against the data.
-```{r part12graph, echo=FALSE}
+```{r part12graph, echo=FALSE, out.width='100%', fig.show='hold', fig.cap='Appropriate figure caption HERE'}
 ggplot(data = av.tmp, aes(x = cond, y = word_prop)) + geom_col(alpha = 0.3) +
   geom_point(data = av.pp, aes(x = cond, y = word_prop)) + theme_classic()
 ```
 
-Shown above is 20 posterior draws (dots) plotted against the data (bars). The posterior draws are for each individual subject - shown here is the average proportion of word responses. Evidently, the model appears to fit the data well.
+Figure \@ref(fig:part12graph) shows 20 posterior draws (dots) plotted against the data (bars). The posterior draws are for each individual subject - shown here is the average proportion of word responses. Evidently, the model appears to fit the data well.

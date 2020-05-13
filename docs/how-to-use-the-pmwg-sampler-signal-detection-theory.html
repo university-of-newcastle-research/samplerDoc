@@ -268,9 +268,9 @@ fabData &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<spa
 29
 30
 </pre></td><td class="sourceCode"><pre><code class="sourceCode r">SDT_ll &lt;-<span class="st"> </span><span class="cf">function</span>(x, data, <span class="dt">sample =</span> <span class="ot">FALSE</span>){
-  <span class="cf">if</span> (sample){
+  <span class="cf">if</span> (sample) {
     data<span class="op">$</span>response &lt;-<span class="st"> </span><span class="ot">NA</span>
-  } <span class="cf">else</span>{
+  } <span class="cf">else</span> {
     out &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data))
     data<span class="op">$</span>out &lt;-<span class="st"> </span><span class="ot">NA</span>
   }
@@ -311,9 +311,9 @@ fabData &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<spa
 4
 5
 6
-</pre></td><td class="sourceCode"><pre><code class="sourceCode r">  <span class="cf">if</span> (sample){
+</pre></td><td class="sourceCode"><pre><code class="sourceCode r">  <span class="cf">if</span> (sample) {
     data<span class="op">$</span>response &lt;-<span class="st"> </span><span class="ot">NA</span>
-    }<span class="cf">else</span>{
+    } <span class="cf">else</span> {
       out &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data))
       }</code></pre></td></tr></table></div>
 <p>From line 9, we check each row in the data set, first considering all trials with <i>word</i> stimuli <code>if (stim[i] == &quot;word&quot;</code> (line 10), and assign a likelihood for responding <i>word</i> (line 12-13) or <i>non-word</i> (line 15-16). The <i>word</i> distribution has a mean of <code>x[&quot;d&quot;]</code> (d-prime parameter) and a decision criterion parameter <code>x[&quot;C&quot;]</code>. If the response is <i>word</i>, we are considering values ABOVE or to the right of <B>C</B> in <a href="how-to-use-the-pmwg-sampler-signal-detection-theory.html#fig:SDT2">2.2</a>, so we set <code>lower.tail =</code> to <code>FALSE</code>. If the response is <i>non-word</i>, we look for values BELOW or to the left of <B>C</B> in <a href="how-to-use-the-pmwg-sampler-signal-detection-theory.html#fig:SDT2">2.2</a> and we set <code>lower.tail =</code> to <code>TRUE</code>. The <code>log.p =</code> argument takes the log of all likelihood values when set to <code>TRUE</code>. We do this so we can sum all likelihoods at the end of the log likelihood function. <b> Do we need to explain p-norm??</b></p>
@@ -327,14 +327,14 @@ fabData &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<spa
 15
 16
 17
-</pre></td><td class="sourceCode"><pre><code class="sourceCode r">  <span class="cf">if</span> (<span class="op">!</span>sample){
-    <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(data)){
-      <span class="cf">if</span> (stim[i] <span class="op">==</span><span class="st"> &quot;word&quot;</span>){
-        <span class="cf">if</span> (resp[i] <span class="op">==</span><span class="st"> &quot;word&quot;</span>){
-          out[i]&lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, 
+</pre></td><td class="sourceCode"><pre><code class="sourceCode r">  <span class="cf">if</span> (<span class="op">!</span>sample) {
+    <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(data)) {
+      <span class="cf">if</span> (stim[i] <span class="op">==</span><span class="st"> &quot;word&quot;</span>) {
+        <span class="cf">if</span> (resp[i] <span class="op">==</span><span class="st"> &quot;word&quot;</span>) {
+          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, 
                          <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-    }<span class="cf">else</span>{
-      out[i]&lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, 
+    } <span class="cf">else</span> {
+      out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, 
                      <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
       }</code></pre></td></tr></table></div>
 <p>From the else statement on line 18, we have the function for <i>non-word</i> trials i.e. <code>stim[i] == &quot;non-word&quot;</code>. As can be seen below, the output value <code>out[i]</code> for these trials is arrived at in a similar manner to the <i>word</i> trials. We set the <code>mean</code> to 0 and the standard deviation <code>sd</code> to 1. If the response is <i>word</i>, we are considering values ABOVE or to the right of <B>C</B> in <a href="how-to-use-the-pmwg-sampler-signal-detection-theory.html#fig:SDT2">2.2</a>, so we set <code>lower.tail =</code> to <code>FALSE</code>. If the response is <i>non-word</i>, we look for values BELOW or to the left of <B>C</B> in <a href="how-to-use-the-pmwg-sampler-signal-detection-theory.html#fig:SDT2">2.2</a> and we set <code>lower.tail =</code> to <code>TRUE</code>. Again we want the log of all likelihood values so we set <code>log.p = TRUE</code>.</p>
@@ -347,12 +347,12 @@ fabData &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<spa
 24
 25
 26
-</pre></td><td class="sourceCode"><pre><code class="sourceCode r">    <span class="cf">else</span>{
-      <span class="cf">if</span> (resp[i] <span class="op">==</span><span class="st"> &quot;word&quot;</span>){
-        out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>, 
-                        <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-        }<span class="cf">else</span>{
-          out[i]&lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>, 
+</pre></td><td class="sourceCode"><pre><code class="sourceCode r"><span class="cf">else</span> {
+  <span class="cf">if</span> (resp[i] <span class="op">==</span><span class="st"> &quot;word&quot;</span>) {
+    out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>, 
+                    <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
+        } <span class="cf">else</span> {
+          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>, 
                          <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
         }
       }</code></pre></td></tr></table></div>
@@ -579,23 +579,20 @@ Figure 2.3: Signal detection theory example of lexical decision task
 79
 80
 81
-82
-83
-84
 </pre></td><td class="sourceCode"><pre><code class="sourceCode r">SDT_ll &lt;-<span class="st"> </span><span class="cf">function</span>(x, data, <span class="dt">sample=</span><span class="ot">FALSE</span>){
   <span class="cf">if</span> (sample){
     data<span class="op">$</span>response &lt;-<span class="st"> </span><span class="ot">NA</span>
-  } <span class="cf">else</span>{
+  } <span class="cf">else</span> {
     out &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data))
   }
   <span class="cf">if</span> (<span class="op">!</span>sample){
-  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(data)){
-    <span class="cf">if</span> (data<span class="op">$</span>cond[i] <span class="op">==</span><span class="st"> &quot;w&quot;</span>){
-    <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;hf&quot;</span>){
-      <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>){
+  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(data)) {
+    <span class="cf">if</span> (data<span class="op">$</span>cond[i] <span class="op">==</span><span class="st"> &quot;w&quot;</span>) {
+    <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;hf&quot;</span>) {
+      <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
         out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,
                        <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-      }<span class="cf">else</span>{
+      } <span class="cf">else</span> {
         out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,
                        <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
       }
@@ -603,60 +600,57 @@ Figure 2.3: Signal detection theory example of lexical decision task
       <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>){
         out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,
                        <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-      }<span class="cf">else</span>{
+      } <span class="cf">else</span> {
         out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,
                        <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
         }
-      } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;vlf&quot;</span>){
-        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>){
+      } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;vlf&quot;</span>) {
+        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
           out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,
                          <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-        }<span class="cf">else</span>{
+        } <span class="cf">else</span> {
           out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,
                          <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
           }
-        }
-    <span class="cf">else</span>{
-      <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>){
+        } <span class="cf">else</span> {
+      <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
         out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>,
                        <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-      }<span class="cf">else</span>{
+      } <span class="cf">else</span> {
         out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>,
                        <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
         }
       }
-    }
-    <span class="cf">else</span>{
-      <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;hf&quot;</span>){
-        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>){
+    } <span class="cf">else</span> {
+      <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;hf&quot;</span>) {
+        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
           out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, 
                          <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-        }<span class="cf">else</span>{
+        } <span class="cf">else</span> {
           out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, 
                          <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
         }
-      }  <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;lf&quot;</span>){
-        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>){
+      }  <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;lf&quot;</span>) {
+        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
           out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, 
                          <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-        }<span class="cf">else</span>{
+        } <span class="cf">else</span> {
           out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, 
                          <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
         }
-      } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;vlf&quot;</span>){
-        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>){
+      } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;vlf&quot;</span>) {
+        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
           out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, 
                          <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-        }<span class="cf">else</span>{
+        } <span class="cf">else</span> {
           out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, 
                          <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
         }
-      }
-      <span class="cf">else</span>{
-        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>){
+      } <span class="cf">else</span> {
+        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
           out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>, 
                          <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-        }<span class="cf">else</span>{
+        } <span class="cf">else</span> {
           out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>, 
                          <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
         }
@@ -676,12 +670,12 @@ Figure 2.3: Signal detection theory example of lexical decision task
 15
 16
 17
-</pre></td><td class="sourceCode"><pre><code class="sourceCode r"> <span class="cf">if</span> (data<span class="op">$</span>cond[i] <span class="op">==</span><span class="st"> &quot;w&quot;</span>){
-    <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;hf&quot;</span>){
-      <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>){
+</pre></td><td class="sourceCode"><pre><code class="sourceCode r"> <span class="cf">if</span> (data<span class="op">$</span>cond[i] <span class="op">==</span><span class="st"> &quot;w&quot;</span>) {
+    <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;hf&quot;</span>) {
+      <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
         out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,
                        <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-      }<span class="cf">else</span>{
+      } <span class="cf">else</span> {
         out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,
                        <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
       }</code></pre></td></tr></table></div>
@@ -711,29 +705,27 @@ Figure 2.3: Signal detection theory example of lexical decision task
 40
 41
 42
-43
-</pre></td><td class="sourceCode"><pre><code class="sourceCode r">  <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;lf&quot;</span>){
-      <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>){
+</pre></td><td class="sourceCode"><pre><code class="sourceCode r">  <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;lf&quot;</span>) {
+      <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
         out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,
                        <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-      }<span class="cf">else</span>{
+      } <span class="cf">else</span> {
         out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,
                        <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
         }
-      } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;vlf&quot;</span>){
-        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>){
+      } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;vlf&quot;</span>) {
+        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
           out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,
                          <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-        }<span class="cf">else</span>{
+        } <span class="cf">else</span> {
           out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,
                          <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
           }
-        }
-    <span class="cf">else</span>{
-      <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>){
+        } <span class="cf">else</span> {
+      <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
         out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>,
                        <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-      }<span class="cf">else</span>{
+      } <span class="cf">else</span> {
         out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>,
                        <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
         }
@@ -772,38 +764,36 @@ Figure 2.3: Signal detection theory example of lexical decision task
 75
 76
 77
-78
-</pre></td><td class="sourceCode"><pre><code class="sourceCode r"><span class="cf">else</span>{
-      <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;hf&quot;</span>){
-        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>){
+</pre></td><td class="sourceCode"><pre><code class="sourceCode r"><span class="cf">else</span> {
+      <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;hf&quot;</span>) {
+        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
           out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, 
                          <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-        }<span class="cf">else</span>{
+        } <span class="cf">else</span> {
           out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, 
                          <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
         }
-      }  <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;lf&quot;</span>){
-        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>){
+      } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;lf&quot;</span>) {
+        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
           out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, 
                          <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-        }<span class="cf">else</span>{
+        } <span class="cf">else</span> {
           out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, 
                          <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
         }
-      } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;vlf&quot;</span>){
-        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>){
+      } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;vlf&quot;</span>) {
+        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
           out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, 
                          <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-        }<span class="cf">else</span>{
+        } <span class="cf">else</span> {
           out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, 
                          <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
         }
-      }
-      <span class="cf">else</span>{
-        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>){
+      } <span class="cf">else</span> {
+        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
           out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>, 
                          <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-        }<span class="cf">else</span>{
+        } <span class="cf">else</span> {
           out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>, 
                          <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
         }</code></pre></td></tr></table></div>
@@ -881,74 +871,72 @@ Figure 2.3: Signal detection theory example of lexical decision task
   <span class="cf">if</span> (<span class="op">!</span>sample){
     out &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data))
     <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(data)){
-      <span class="cf">if</span> (data<span class="op">$</span>cond[i]<span class="op">==</span><span class="st">&quot;w&quot;</span>){
-        <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;hf&quot;</span>){
-          <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>){
-            out[i]&lt;-<span class="st"> </span>data<span class="op">$</span>n[i]<span class="op">*</span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>],
+      <span class="cf">if</span> (data<span class="op">$</span>cond[i] <span class="op">==</span><span class="st"> &quot;w&quot;</span>) {
+        <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;hf&quot;</span>) {
+          <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
+            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>],
                                      <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-          }<span class="cf">else</span>{
-            out[i]&lt;-<span class="st"> </span>data<span class="op">$</span>n[i]<span class="op">*</span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>],
+          } <span class="cf">else</span> {
+            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>],
+                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
+            }
+          } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;lf&quot;</span>) {
+          <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
+            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>],
+                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
+          } <span class="cf">else</span> {
+            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>],
                                      <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
           }
-        }  <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;lf&quot;</span>){
-          <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>){
-            out[i]&lt;-<span class="st"> </span>data<span class="op">$</span>n[i]<span class="op">*</span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>],
+        } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;vlf&quot;</span>) {
+          <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
+            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>],
                                      <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-          }<span class="cf">else</span>{
-            out[i]&lt;-<span class="st"> </span>data<span class="op">$</span>n[i]<span class="op">*</span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>],
+          } <span class="cf">else</span> {
+            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>],
                                      <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
           }
-        } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;vlf&quot;</span>){
-          <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>){
-            out[i]&lt;-<span class="st"> </span>data<span class="op">$</span>n[i]<span class="op">*</span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>],
+        } <span class="cf">else</span> {
+          <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
+            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>,
                                      <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
           }<span class="cf">else</span>{
-            out[i]&lt;-<span class="st"> </span>data<span class="op">$</span>n[i]<span class="op">*</span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>],
-                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
-          }
-        }
-        <span class="cf">else</span>{
-          <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>){
-            out[i]&lt;-<span class="st"> </span>data<span class="op">$</span>n[i]<span class="op">*</span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>,
-                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-          }<span class="cf">else</span>{
-            out[i]&lt;-<span class="st"> </span>data<span class="op">$</span>n[i]<span class="op">*</span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>,
+            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>,
                                      <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
           }
         }
       }
       <span class="cf">else</span>{
-        <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;hf&quot;</span>){
-          <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>){
-            out[i]&lt;-<span class="st"> </span>data<span class="op">$</span>n[i]<span class="op">*</span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>],
+        <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;hf&quot;</span>) {
+          <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
+            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>],
                                      <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-          }<span class="cf">else</span>{
-            out[i]&lt;-<span class="st"> </span>data<span class="op">$</span>n[i]<span class="op">*</span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>],
+          } <span class="cf">else</span> {
+            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>],
                                      <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
           }
         }  <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;lf&quot;</span>){
-          <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>){
-            out[i]&lt;-<span class="st"> </span>data<span class="op">$</span>n[i]<span class="op">*</span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>],
+          <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
+            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>],
                                      <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-          }<span class="cf">else</span>{
-            out[i]&lt;-<span class="st"> </span>data<span class="op">$</span>n[i]<span class="op">*</span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>],
+          } <span class="cf">else</span> {
+            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>],
                                      <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
           }
-        } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;vlf&quot;</span>){
-          <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>){
-            out[i]&lt;-<span class="st"> </span>data<span class="op">$</span>n[i]<span class="op">*</span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>],
+        } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;vlf&quot;</span>) {
+          <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
+            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>],
                                      <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-          }<span class="cf">else</span>{
-            out[i]&lt;-<span class="st"> </span>data<span class="op">$</span>n[i]<span class="op">*</span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>],
+          } <span class="cf">else</span> {
+            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>],
                                      <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
           }
-        }
-        <span class="cf">else</span>{
-          <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>){
-            out[i]&lt;-<span class="st"> </span>data<span class="op">$</span>n[i]<span class="op">*</span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>,
+        } <span class="cf">else</span> {
+          <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
+            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>,
                                      <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-          }<span class="cf">else</span>{
-            out[i]&lt;-<span class="st"> </span>data<span class="op">$</span>n[i]<span class="op">*</span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>,
+          } <span class="cf">else</span> {
+            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>,
                                      <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
           }
         }
@@ -1078,31 +1066,34 @@ Figure 2.5: Posterior samples of subject log likelihoods
       <span class="cf">if</span> (data<span class="op">$</span>cond[i] <span class="op">==</span><span class="st"> &quot;w&quot;</span>){
         <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;hf&quot;</span>){</code></pre></div>
 <p>We then take the criterion for the <i>word</i> condition i.e. <code>C.w</code>. To simulate a response given our parameters we use <code>rnorm</code> to pick a random value from a normal distribution with <code>mean = HF.d</code> (i.e. high frequency word stimulus) and a SD of 1 and we test that value against the <i>word</i> criterion <code>C.w</code>. If the value is larger than <code>C.w</code>, the simulated response will be <i>word</i> otherwise, the simulated response will be <i>non-word</i>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="dt">test =</span> (<span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>)) <span class="op">&gt;</span><span class="st"> </span>x[<span class="st">&quot;C.w&quot;</span>], <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)
-<span class="er">}</span> </code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="dt">test =</span> (<span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>], 
+                                     <span class="dt">sd =</span> <span class="dv">1</span>)) <span class="op">&gt;</span><span class="st"> </span>x[<span class="st">&quot;C.w&quot;</span>], <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)</code></pre></div>
 <p>We repeat this process for each condition and stimulus combination as shown in the code block below.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">        <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;lf&quot;</span>){
-          data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="dt">test =</span> (<span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>)) <span class="op">&gt;</span><span class="st"> </span>x[<span class="st">&quot;C.w&quot;</span>], <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)
-           } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;vlf&quot;</span>){
-             data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="dt">test =</span> (<span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>)) <span class="op">&gt;</span><span class="st"> </span>x[<span class="st">&quot;C.w&quot;</span>], <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)
-        }<span class="cf">else</span>{
-          data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="dt">test =</span> (<span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>)) <span class="op">&gt;</span><span class="st"> </span>x[<span class="st">&quot;C.w&quot;</span>], <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">{ <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;lf&quot;</span>) {
+  data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="dt">test =</span> (<span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>], 
+                                       <span class="dt">sd =</span> <span class="dv">1</span>)) <span class="op">&gt;</span><span class="st"> </span>x[<span class="st">&quot;C.w&quot;</span>], <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)
+  } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;vlf&quot;</span>) {
+    data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="dt">test =</span> (<span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>], 
+                                         <span class="dt">sd =</span> <span class="dv">1</span>)) <span class="op">&gt;</span><span class="st"> </span>x[<span class="st">&quot;C.w&quot;</span>], <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)
+    } <span class="cf">else</span> {
+      data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="dt">test =</span> (<span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean =</span> <span class="dv">0</span>, 
+                                           <span class="dt">sd =</span> <span class="dv">1</span>)) <span class="op">&gt;</span><span class="st"> </span>x[<span class="st">&quot;C.w&quot;</span>], <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)
+      }
+} <span class="cf">else</span> {
+  <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;hf&quot;</span>) {
+    data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="dt">test =</span> (<span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>], 
+                                         <span class="dt">sd =</span> <span class="dv">1</span>)) <span class="op">&gt;</span><span class="st"> </span>x[<span class="st">&quot;C.nw&quot;</span>], <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)
+    } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;lf&quot;</span>) {
+          data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="dt">test =</span> (<span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>], 
+                                               <span class="dt">sd =</span> <span class="dv">1</span>)) <span class="op">&gt;</span><span class="st"> </span>x[<span class="st">&quot;C.nw&quot;</span>], <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)
+        } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;vlf&quot;</span>) {
+          data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="dt">test =</span> (<span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>], 
+                                               <span class="dt">sd =</span> <span class="dv">1</span>)) <span class="op">&gt;</span><span class="st"> </span>x[<span class="st">&quot;C.nw&quot;</span>], <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)
+        } <span class="cf">else</span> {
+          data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="dt">test =</span> (<span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean =</span> <span class="dv">0</span>, 
+                                               <span class="dt">sd =</span> <span class="dv">1</span>)) <span class="op">&gt;</span><span class="st"> </span>x[<span class="st">&quot;C.nw&quot;</span>], <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)
           }
-      <span class="er">}</span> <span class="cf">else</span>{
-        <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;hf&quot;</span>){
-          data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="dt">test =</span> (<span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>)) <span class="op">&gt;</span><span class="st"> </span>x[<span class="st">&quot;C.nw&quot;</span>], <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)
-        } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;lf&quot;</span>){
-          data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="dt">test =</span> (<span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>)) <span class="op">&gt;</span><span class="st"> </span>x[<span class="st">&quot;C.nw&quot;</span>], <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)
-        } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;vlf&quot;</span>){
-          data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="dt">test =</span> (<span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>)) <span class="op">&gt;</span><span class="st"> </span>x[<span class="st">&quot;C.nw&quot;</span>], <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)
-        } <span class="cf">else</span>{
-          data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="dt">test =</span> (<span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>)) <span class="op">&gt;</span><span class="st"> </span>x[<span class="st">&quot;C.nw&quot;</span>], <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)
-          }
-        }
-    <span class="er">}</span>
-    <span class="kw">return</span>(data)
-    <span class="er">}</span>
-<span class="er">}</span></code></pre></div>
+        }</code></pre></div>
 <p>Now we can run our simulation. Below is some code to achieve this.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">n.posterior &lt;-<span class="st"> </span><span class="dv">20</span> <span class="co"># Number of samples from posterior distribution for each parameter.</span>
 pp.data &lt;-<span class="st"> </span><span class="kw">list</span>()
@@ -1122,14 +1113,15 @@ data =<span class="st"> </span><span class="kw">split</span>(<span class="dt">x 
     }
   }
   
-}
-<span class="kw">names</span>(pp.data) &lt;-<span class="st"> </span><span class="kw">names</span>(data)
-
-
-tidy.data &lt;-<span class="st"> </span><span class="kw">do.call</span>(rbind, data)
-tidy.pp.data &lt;-<span class="st"> </span><span class="kw">do.call</span>(rbind, pp.data)</code></pre></div>
-<p>And now we can plot samples against the data. <img src="bookdown-demo_files/figure-html/part12graph-1.png" width="672" /></p>
-<p>Shown above is 20 posterior draws (dots) plotted against the data (bars). The posterior draws are for each individual subject - shown here is the average proportion of word responses. Evidently, the model appears to fit the data well.</p>
+}</code></pre></div>
+And now we can plot samples against the data.
+<div class="figure"><span id="fig:part12graph"></span>
+<img src="bookdown-demo_files/figure-html/part12graph-1.png" alt="Appropriate figure caption HERE" width="100%" />
+<p class="caption">
+Figure 2.6: Appropriate figure caption HERE
+</p>
+</div>
+<p>Figure <a href="how-to-use-the-pmwg-sampler-signal-detection-theory.html#fig:part12graph">2.6</a> shows 20 posterior draws (dots) plotted against the data (bars). The posterior draws are for each individual subject - shown here is the average proportion of word responses. Evidently, the model appears to fit the data well.</p>
 
 </div>
 </div>
