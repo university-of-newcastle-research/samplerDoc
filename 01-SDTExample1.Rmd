@@ -3,6 +3,7 @@
 library(tidyverse)
 library(knitr)
 library(devtools)
+library(ggplot2)
 ```
 Here we demonstrate how to use the PMwG sampler package to run a simple signal detection theory (SDT) analysis on a lexical decision task.  We recognise that it is unnecessary to use the sampler package for a simple analysis such as this; however, we hope this example demonstrates the usefulness of the PMwG sampler package.  
 
@@ -586,7 +587,7 @@ SDT_ll_fast <- function(x, data, sample = FALSE){
   }
 ```
 
-Now we have a fast(er) SDT log likelihood function and we can compare its output to the slow log likelihood function's output to make sure it is functioning correctly.
+Now we have a fast(er) SDT log likelihood function and we can compare its output with the slow log likelihood function's output to make sure it is functioning correctly.
 
 ```{r fast_sdt,include=FALSE}
 SDT_ll_fast = function(x,data,sample=FALSE){
@@ -810,7 +811,7 @@ Now we can run the sampler using the `run_stage` function. The `run_stage` funct
 * `stage =` the sampling stage (e.g. `"burn"`, `"adapt"` or `"sample"`)
 * `iter = ` is the number of iterations for the sampling stage 
 * `particles =` is the number of particles generated on each iteration
-* `display_progress =` shows progress bar of current stage
+* `display_progress =` shows progress bar for current stage
 * `n_cores =` numner of processor cores to run stage on
 * `epsilon = ` must be >0<1 <b> We will write something here </b>
 
@@ -857,5 +858,87 @@ matplot(t(sampled$samples$subj_ll),type="l")
 ```
 
 
-## Simulating Posterior Data
+## Simulating posterior data
 
+Now we'll cover the sample operation within the fast log likelihood function. We will use this on the full data set. The sample operation can be carried out in several ways (using rbinom etc). Please not that we do NOT recommend using this approach below and this should serve as an example only.
+
+The `sample` process is similar to what we've covered above. We begin by assigning `NA`s to the response column to prepare it for simulated response data. We then consider a subset of the data, beginning with <i>word</i> condition and high-frequency `hf` word stimuli trials.
+
+```{r part8.3, eval=FALSE}
+  else{
+    data$resp <- NA
+   for (i in 1:nrow(data)){
+      if (data$cond[i] == "w"){
+        if (data$stim[i] == "hf"){
+```
+ 
+We then take the criterion for the <i>word</i> condition i.e. `C.w`. To simulate a response given our parameters we  use `rnorm` to pick a random value from a normal distribution with `mean = HF.d` (i.e. high frequency word stimulus) and a SD of 1 and we test that value against the <i>word</i> criterion `C.w`. If the value is larger than `C.w`, the simulated response will be <i>word</i> otherwise, the simulated response will be <i>non-word</i>.
+
+```{r part8.4,eval=FALSE}
+data$resp[i] <- ifelse(test = (rnorm(1, mean = x["HF.d"], sd = 1)) > x["C.w"], "word", "non-word")
+} 
+```
+
+We repeat this process for each condition and stimulus combination as shown in the code block below.
+```{r part8.5, eval=FALSE}
+        else if (data$stim[i] == "lf"){
+          data$resp[i] <- ifelse(test = (rnorm(1, mean = x["LF.d"], sd = 1)) > x["C.w"], "word", "non-word")
+           } else if (data$stim[i] == "vlf"){
+             data$resp[i] <- ifelse(test = (rnorm(1, mean = x["VLF.d"], sd = 1)) > x["C.w"], "word", "non-word")
+        }else{
+          data$resp[i] <- ifelse(test = (rnorm(1, mean = 0, sd = 1)) > x["C.w"], "word", "non-word")
+          }
+      } else{
+        if (data$stim[i] == "hf"){
+          data$resp[i] <- ifelse(test = (rnorm(1, mean = x["HF.d"], sd = 1)) > x["C.nw"], "word", "non-word")
+        } else if (data$stim[i] == "lf"){
+          data$resp[i] <- ifelse(test = (rnorm(1, mean = x["LF.d"], sd = 1)) > x["C.nw"], "word", "non-word")
+        } else if (data$stim[i] == "vlf"){
+          data$resp[i] <- ifelse(test = (rnorm(1, mean = x["VLF.d"], sd = 1)) > x["C.nw"], "word", "non-word")
+        } else{
+          data$resp[i] <- ifelse(test = (rnorm(1, mean = 0, sd = 1)) > x["C.nw"], "word", "non-word")
+          }
+        }
+    }
+    return(data)
+    }
+}
+```
+
+Now we can run our simulation. Below is some code to achieve this.
+
+```{r part 11, eval=FALSE}
+n.posterior <- 20 # Number of samples from posterior distribution for each parameter.
+pp.data <- list()
+S <- unique(wgnmks2008$subject)
+data = split(x = wgnmks2008, f = wgnmks2008$subject)
+for (s in S) {
+  cat(s," ")
+  iterations = round(seq(from = 1051, to = sampled$samples$idx, length.out = n.posterior))
+  for (i in 1:length(iterations)) {
+    x <- sampled$samples$alpha[, s, iterations[i]]
+    names(x) <- pars
+    tmp <- SDT_ll_fast(x = x, data = wgnmks2008[wgnmks2008$subject == s,], sample = TRUE)
+    if (i == 1) {
+      pp.data[[s]] <- cbind(i,tmp)
+    } else {
+      pp.data[[s]] <- rbind(pp.data[[s]], cbind(i, tmp))
+    }
+  }
+  
+}
+names(pp.data) <- names(data)
+
+
+tidy.data <- do.call(rbind, data)
+tidy.pp.data <- do.call(rbind, pp.data)
+```
+
+
+And now we can plot samples against the data.
+```{r part12graph, echo=FALSE}
+ggplot(data = av.tmp, aes(x = cond, y = word_prop)) + geom_col(alpha = 0.3) +
+  geom_point(data = av.pp, aes(x = cond, y = word_prop)) + theme_classic()
+```
+
+Shown above is 20 posterior draws (dots) plotted against the data (bars). The posterior draws are for each individual subject - shown here is the average proportion of word responses. Evidently, the model appears to fit the data well.
