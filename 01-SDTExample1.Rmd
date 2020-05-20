@@ -50,27 +50,22 @@ Now we must find the location of the criterion. Setting the criterion allows us 
 Here is our complete log likelihood function. We have omitted some code from the code blocks below to enhance appearance, so we encourage you to copy the log likelihood function from the following code block if you'd like to follow along with our example.
 ```{r sdtLlComplete, attr.source = '.numberLines', eval=FALSE}
 SDT_ll <- function(x, data, sample = FALSE){
-  if (sample) {
-    data$response <- NA
-  } else {
+  if (!sample) {
     out <- numeric(nrow(data))
-    data$out <- NA
-  }
-  if (!sample){
-  for (i in 1:nrow(data)){
-    if (stim[i] == "word"){
-      if (resp[i] == "word"){
+    for (i in 1:nrow(data)) {
+      if (stim[i] == "word") {
+      if (resp[i] == "word") {
         out[i] <- pnorm(x["C"], mean = x["d"], sd = 1, 
                         log.p = TRUE, lower.tail = FALSE)
-      }else{
+      } else {
         out[i] <- pnorm(x["C"], mean = x["d"], sd = 1, 
                         log.p = TRUE, lower.tail = TRUE)
       }
-    }else{
-      if (resp[i] == "word"){
+    } else {
+      if (resp[i] == "word") {
         out[i] <- pnorm(x["C"], mean = 0, sd = 1, 
                         log.p = TRUE, lower.tail = FALSE)
-      }else{
+      } else {
         out[i] <- pnorm(x["C"], mean = 0, sd = 1, 
                         log.p = TRUE, lower.tail = TRUE)
         }
@@ -84,11 +79,11 @@ SDT_ll <- function(x, data, sample = FALSE){
 
 We initialise the log likelihood function with three arguments  
 ```{r llS1, attr.source = '.numberLines', eval=FALSE}
-SDT_loglike <- function(x, data, sample = FALSE) {
+SDT_ll <- function(x, data, sample = FALSE) {
 ```
 * `x` is a named parameter vector (e.g.`pars`)
 * `data` is the dataset
-* `sample =` sample values (For this simple example, we do not require a `sample` argument.)
+* `sample =` sample values from the posterior distribution (For this simple example, we do not require a `sample` argument.)
 
 The first if statement (line 2) checks if you want to sample, this is used for posterior predictive sampling which we will cover in later chapters. and assigns NAs to your data frames response column. If you're not sampling (like us in this example), you need to create an output vector `out`. The `out` vector will contain the log likelihood value for each row/trial in your dataset. <b> Need to explain the `(sample)` part below </b>
 ```{r sdtllL2, attr.source='.numberLines startFrom="2"', eval=FALSE}
@@ -501,10 +496,10 @@ kable(head(wgnmks2008Fast))
 
 For our SDT log likelihood function, we add `n*` (i.e. a multiplying factor) to each of these values to calculate the model log likelihood <b> Should we shorten this code block? Seems excessive.</b>
 ```{r part8.2, eval=FALSE}
-SDT_ll_fast <- function(x, data, sample = FALSE){
-  if (!sample){
+SDT_ll_fast <- function(x, data, sample = FALSE) {
+  if (!sample) {
     out <- numeric(nrow(data))
-    for (i in 1:nrow(data)){
+    for (i in 1:nrow(data)) {
       if (data$cond[i] == "w") {
         if (data$stim[i] == "hf") {
           if (data$resp[i] == "W") {
@@ -534,13 +529,12 @@ SDT_ll_fast <- function(x, data, sample = FALSE){
           if (data$resp[i] == "W") {
             out[i] <- data$n[i] * pnorm(x["C.w"], mean = 0,
                                      sd = 1, log.p = TRUE, lower.tail = FALSE)
-          }else{
+          } else {
             out[i] <- data$n[i] * pnorm(x["C.w"], mean = 0,
                                      sd = 1, log.p = TRUE, lower.tail = TRUE)
           }
         }
-      }
-      else{
+      }else{
         if (data$stim[i] == "hf") {
           if (data$resp[i] == "W") {
             out[i] <- data$n[i] * pnorm(x["C.nw"], mean = x["HF.d"],
