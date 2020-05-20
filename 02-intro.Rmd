@@ -1,7 +1,7 @@
 #PMwG sampler and sequential sampling models
 
 In this chapter we'll demonstrate how to use the PMwG sampler with a sequential sampling model; the Linear Ballistic Accumulator (LBA).
-Before we begin, please ensure the psamplers package is installed. We currently recommended installing psamplers via devtools.
+Please ensure the psamplers package is installed. We currently recommended installing psamplers via devtools.
 ```{r getpkg, eval=FALSE}
 # The samplers package will be on CRAN - this step will be removed.
 install_github('newcastlecl\samplers')
@@ -22,7 +22,7 @@ kable(head(forstmann,10), caption = 'First 10 trials in Forstmann dataset. The `
 
 ## Setting up the sampler
 
-As mentioned above, we'll use the Linear Ballistic Accumulator (LBA) [@brown2008simplest] in this example. The LBA model parameters are:
+There are a number of preliminary steps we need to complete before running the sampler. As mentioned above, we'll use the Linear Ballistic Accumulator (LBA) [@brown2008simplest] in this example. The LBA model parameters are:
 
 * `b` threshold parameter (the evidence required to make a response)
 * `v` is drift rate or average speed of evidence accumulation
@@ -48,7 +48,20 @@ priors <- list(theta_mu = rep(0, length(pars)),
   theta_sig = diag(rep(1, length(pars)))
 )
 ```
-The `priors` object in our example is initiated with zeros. <b>Under what conditions would this priors object  differ?</b>
+The `priors` object in our example is initiated with zeros. <b>Under what conditions would this priors object differ?</b>
+
+
+## Writing the LBA Log-Likelihood Function
+
+Just as we did with the SDT example, we'll write a slow and a fast log likelihood function. The runtime difference is caused by calling the `dLBA` function line by line for the slow log likelihood and calling the `dLBA` function once for all the data in the fast log likelihood function. When writing a new log likelihood function, we suggest starting with a slow, line-by-line function for easier debugging. 
+
+The log-likelihood function requires three arguments:
+ - x: a vector of named parameter values.
+ - data: a data set (which must include a "subject" column)
+ - sample: to generate a posterior predictive sample that matches the shape of data (when set to TRUE)
+
+The log-likelihood function shown below uses functions from the rtdists package for generating data and estimating density. 
+
 
 The next step is to include your log likelihood function. This must be called before you create the sampler object in the following step. You can load your log likelihood function from an external script:
 ```{r loadLL, echo=TRUE, eval=FALSE}
