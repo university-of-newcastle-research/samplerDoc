@@ -22,7 +22,7 @@ kable(head(forstmann,10), caption = 'First 10 trials in Forstmann dataset. The `
 
 ## Setting up the sampler
 
-There are a number of preliminary steps we need to complete before running the sampler. As mentioned above, we'll use the Linear Ballistic Accumulator (LBA) [@brown2008simplest] in this example. The LBA model parameters are:
+There are a number of preliminary steps we need to complete before running the sampler. Let's begin by defining the Linear Ballistic Accumulator (LBA) [@brown2008simplest] model parameters.
 
 * `b` threshold parameter (the evidence required to make a response)
 * `v` is drift rate or average speed of evidence accumulation
@@ -31,14 +31,14 @@ There are a number of preliminary steps we need to complete before running the s
 * <b>Do we need to mention `sv` here? </b>
 
 
-We begin by creating a vector of model parameter names, which we'll use in our log likelihood function. You can name this object as you wish; however, in our example, we will call it `pars`. The parameters you list in the `pars` vector must match the names and number of parameters you include in your log likelihood function.
+Now we know the LBA model parameters, we can create a vector of model parameter names, which we'll use in our log likelihood function. You can name this object as you wish; however, in our example, we will call it `pars`. The parameters you list in the `pars` vector must match the names and number of parameters you include in your log likelihood function.
 ```{r pars}
 pars <- c("b1", "b2", "b3", "A", "v1", "v2", "t0")
 ```
 
-For this dataset, we use three threshold parameters (`b1`, `b2`, and `b3` i.e. one for each condition) because we assume that the participant responds to each condition with a different level of caution. We include two drift rate parameters: `v1` for the incorrect accumulator and `v2` for the correct accumulator, a start point parameter `A` and a non-decision time `t0` parameter.  We've made a decision to set the `sv` to 1 to satisfy the scaling properties of the model, as such we haven't included the `sv` parameter in the `pars` vector - it is found in the LBA's likelihood function (see below).
+For the Forstmann dataset, we need three threshold parameters (`b1`, `b2`, and `b3` i.e. one for each condition) because we assume that the participant responds to each condition with a different level of caution. We include two drift rate parameters: `v1` for the incorrect accumulator and `v2` for the correct accumulator, a start point parameter `A` and a non-decision time `t0` parameter.  We've made a decision to set the `sv` to 1 to satisfy the scaling properties of the model, as such we haven't included the `sv` parameter in the `pars` vector - it is found in the LBA's likelihood function (see below).
 
-Next we create a `priors` object; a list that contains two components
+Next we create a `priors` object; a list that contains two components <b> Do we need to explain what priors are and why we do this?</b>
 
 * `theta_mu` a vector containing the prior for model parameter means
 * `theta_sig` the prior covariance matrix for model parameters.
@@ -53,20 +53,25 @@ The `priors` object in our example is initiated with zeros. <b>Under what condit
 
 ## Writing the LBA Log-Likelihood Function
 
-Just as we did with the SDT example, we'll write a slow and a fast log likelihood function. The runtime difference is caused by calling the `dLBA` function line by line for the slow log likelihood and calling the `dLBA` function once for all the data in the fast log likelihood function. When writing a new log likelihood function, we suggest starting with a slow, line-by-line function for easier debugging. 
+Now we have our parameter vector and priors object, we can write our log likelihood functions. Just as we did with the SDT example, we'll write a slow and a fast log likelihood function. The runtime difference is caused by calling the `dLBA` function line-by-line for the slow log likelihood and calling the `dLBA` function once for all the data in the fast log likelihood function. When writing a new log likelihood function, we suggest starting with a slow, line-by-line function for easier debugging. 
+
+The `lba_loglike` function takes three arguments: 
+
+* `x` is a named parameter vector (e.g. `pars`)
+* `data` is your data set (e.g.`forstmann`)
+* `sample = ` default is `FALSE` calculates a density function or set to `TRUE` to generate a posterior, predictive sample that matches the shape of data. 
+
+
 
 The log-likelihood function requires three arguments:
  - x: a vector of named parameter values.
  - data: a data set (which must include a "subject" column)
  - sample: to generate a posterior predictive sample that matches the shape of data (when set to TRUE)
 
-The log-likelihood function shown below uses functions from the rtdists package for generating data and estimating density. 
+The log likelihood function shown below includes functions from the `rtdists` package for generating data and estimating density. 
 
 
-The next step is to include your log likelihood function. This must be called before you create the sampler object in the following step. You can load your log likelihood function from an external script:
-```{r loadLL, echo=TRUE, eval=FALSE}
-source(file = "yourLogLikelihoodFile.R")
-```
+
 Or you can write a log likelihood function as we have done with the LBA log likelihood function below. If you'd like to run through this example, it is best to copy the `lba_loglike` function from the code block below rather than copying from the following separate code chunks, as some curly braces have been removed from code chunks.
 ```{r lbaLL, attr.source = '.numberLines', eval=FALSE}
 lba_loglike <- function(x, data, sample = FALSE) {
@@ -104,11 +109,7 @@ lba_loglike <- function(x, data, sample = FALSE) {
 }
 ```
 
-The `lba_loglike` function takes three arguments: 
 
-* `x` is a named parameter vector (e.g. `pars`)
-* `data` is your data set (e.g.`forstmann`)
-* `sample = ` default is `FALSE` calculates a density function or set to `TRUE` to generate a sample that matches the shape of data. 
 
 The first line in the `lba_loglike` function (Line 2 below) takes the exponent of the parameter values to move all parameter values to the real line. <b>The purpose of this is to..... </b>
 Line 3 and 4 then checks RTs are faster than the non-decision time parameter, and zero those RTs that are faster than non-decision time. 
@@ -152,6 +153,13 @@ The `if else` statement below (Line 9-32) does one of two things: `if (sample)` 
   }
   out
 ```
+
+
+The next step is to include your log likelihood function. This must be called before you create the sampler object in the following step. You can load your log likelihood function from an external script:
+```{r loadLL, echo=TRUE, eval=FALSE}
+source(file = "yourLogLikelihoodFile.R")
+```
+
 
 
 Once you've setup your parameters, priors and your log likelihood function, the next step is to initialise the `sampler` object. 

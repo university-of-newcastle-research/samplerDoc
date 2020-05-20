@@ -248,7 +248,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </div>
 <div id="setting-up-the-sampler" class="section level2">
 <h2><span class="header-section-number">3.2</span> Setting up the sampler</h2>
-<p>There are a number of preliminary steps we need to complete before running the sampler. As mentioned above, we’ll use the Linear Ballistic Accumulator (LBA) <span class="citation">(Brown and Heathcote <a href="#ref-brown2008simplest">2008</a>)</span> in this example. The LBA model parameters are:</p>
+<p>There are a number of preliminary steps we need to complete before running the sampler. Let’s begin by defining the Linear Ballistic Accumulator (LBA) <span class="citation">(Brown and Heathcote <a href="#ref-brown2008simplest">2008</a>)</span> model parameters.</p>
 <ul>
 <li><code>b</code> threshold parameter (the evidence required to make a response)</li>
 <li><code>v</code> is drift rate or average speed of evidence accumulation</li>
@@ -256,10 +256,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><code>t0</code> is non-decision time.</li>
 <li><b>Do we need to mention <code>sv</code> here? </b></li>
 </ul>
-<p>We begin by creating a vector of model parameter names, which we’ll use in our log likelihood function. You can name this object as you wish; however, in our example, we will call it <code>pars</code>. The parameters you list in the <code>pars</code> vector must match the names and number of parameters you include in your log likelihood function.</p>
+<p>Now we know the LBA model parameters, we can create a vector of model parameter names, which we’ll use in our log likelihood function. You can name this object as you wish; however, in our example, we will call it <code>pars</code>. The parameters you list in the <code>pars</code> vector must match the names and number of parameters you include in your log likelihood function.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pars &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;b1&quot;</span>, <span class="st">&quot;b2&quot;</span>, <span class="st">&quot;b3&quot;</span>, <span class="st">&quot;A&quot;</span>, <span class="st">&quot;v1&quot;</span>, <span class="st">&quot;v2&quot;</span>, <span class="st">&quot;t0&quot;</span>)</code></pre></div>
-<p>For this dataset, we use three threshold parameters (<code>b1</code>, <code>b2</code>, and <code>b3</code> i.e. one for each condition) because we assume that the participant responds to each condition with a different level of caution. We include two drift rate parameters: <code>v1</code> for the incorrect accumulator and <code>v2</code> for the correct accumulator, a start point parameter <code>A</code> and a non-decision time <code>t0</code> parameter. We’ve made a decision to set the <code>sv</code> to 1 to satisfy the scaling properties of the model, as such we haven’t included the <code>sv</code> parameter in the <code>pars</code> vector - it is found in the LBA’s likelihood function (see below).</p>
-<p>Next we create a <code>priors</code> object; a list that contains two components</p>
+<p>For the Forstmann dataset, we need three threshold parameters (<code>b1</code>, <code>b2</code>, and <code>b3</code> i.e. one for each condition) because we assume that the participant responds to each condition with a different level of caution. We include two drift rate parameters: <code>v1</code> for the incorrect accumulator and <code>v2</code> for the correct accumulator, a start point parameter <code>A</code> and a non-decision time <code>t0</code> parameter. We’ve made a decision to set the <code>sv</code> to 1 to satisfy the scaling properties of the model, as such we haven’t included the <code>sv</code> parameter in the <code>pars</code> vector - it is found in the LBA’s likelihood function (see below).</p>
+<p>Next we create a <code>priors</code> object; a list that contains two components <b> Do we need to explain what priors are and why we do this?</b></p>
 <ul>
 <li><code>theta_mu</code> a vector containing the prior for model parameter means</li>
 <li><code>theta_sig</code> the prior covariance matrix for model parameters.</li>
@@ -271,11 +271,15 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </div>
 <div id="writing-the-lba-log-likelihood-function" class="section level2">
 <h2><span class="header-section-number">3.3</span> Writing the LBA Log-Likelihood Function</h2>
-<p>Just as we did with the SDT example, we’ll write a slow and a fast log likelihood function. The runtime difference is caused by calling the <code>dLBA</code> function line by line for the slow log likelihood and calling the <code>dLBA</code> function once for all the data in the fast log likelihood function. When writing a new log likelihood function, we suggest starting with a slow, line-by-line function for easier debugging.</p>
+<p>Now we have our parameter vector and priors object, we can write our log likelihood functions. Just as we did with the SDT example, we’ll write a slow and a fast log likelihood function. The runtime difference is caused by calling the <code>dLBA</code> function line-by-line for the slow log likelihood and calling the <code>dLBA</code> function once for all the data in the fast log likelihood function. When writing a new log likelihood function, we suggest starting with a slow, line-by-line function for easier debugging.</p>
+<p>The <code>lba_loglike</code> function takes three arguments:</p>
+<ul>
+<li><code>x</code> is a named parameter vector (e.g. <code>pars</code>)</li>
+<li><code>data</code> is your data set (e.g.<code>forstmann</code>)</li>
+<li><code>sample =</code> default is <code>FALSE</code> calculates a density function or set to <code>TRUE</code> to generate a posterior, predictive sample that matches the shape of data.</li>
+</ul>
 <p>The log-likelihood function requires three arguments: - x: a vector of named parameter values. - data: a data set (which must include a “subject” column) - sample: to generate a posterior predictive sample that matches the shape of data (when set to TRUE)</p>
-<p>The log-likelihood function shown below uses functions from the rtdists package for generating data and estimating density.</p>
-<p>The next step is to include your log likelihood function. This must be called before you create the sampler object in the following step. You can load your log likelihood function from an external script:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">source</span>(<span class="dt">file =</span> <span class="st">&quot;yourLogLikelihoodFile.R&quot;</span>)</code></pre></div>
+<p>The log likelihood function shown below includes functions from the <code>rtdists</code> package for generating data and estimating density.</p>
 <p>Or you can write a log likelihood function as we have done with the LBA log likelihood function below. If you’d like to run through this example, it is best to copy the <code>lba_loglike</code> function from the code block below rather than copying from the following separate code chunks, as some curly braces have been removed from code chunks.</p>
 <div class="sourceCode"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
 2
@@ -343,12 +347,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
   }
   out
 }</code></pre></td></tr></table></div>
-<p>The <code>lba_loglike</code> function takes three arguments:</p>
-<ul>
-<li><code>x</code> is a named parameter vector (e.g. <code>pars</code>)</li>
-<li><code>data</code> is your data set (e.g.<code>forstmann</code>)</li>
-<li><code>sample =</code> default is <code>FALSE</code> calculates a density function or set to <code>TRUE</code> to generate a sample that matches the shape of data.</li>
-</ul>
 <p>The first line in the <code>lba_loglike</code> function (Line 2 below) takes the exponent of the parameter values to move all parameter values to the real line. <b>The purpose of this is to….. </b> Line 3 and 4 then checks RTs are faster than the non-decision time parameter, and zero those RTs that are faster than non-decision time.</p>
 <div class="sourceCode"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
 2
@@ -412,6 +410,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
     out &lt;-<span class="st"> </span><span class="kw">sum</span>(<span class="kw">log</span>(out))
   }
   out</code></pre></td></tr></table></div>
+<p>The next step is to include your log likelihood function. This must be called before you create the sampler object in the following step. You can load your log likelihood function from an external script:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">source</span>(<span class="dt">file =</span> <span class="st">&quot;yourLogLikelihoodFile.R&quot;</span>)</code></pre></div>
 <p>Once you’ve setup your parameters, priors and your log likelihood function, the next step is to initialise the <code>sampler</code> object.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sampler &lt;-<span class="st"> </span><span class="kw">pmwgs</span>(
   <span class="dt">data =</span> forstmann,
