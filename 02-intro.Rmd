@@ -1,4 +1,4 @@
-# Sequential Sampling models with PMwG sampler 
+#PMwG sampler and sequential sampling models
 
 In this chapter we'll demonstrate how to use the PMwG sampler with a sequential sampling model; the Linear Ballistic Accumulator (LBA).
 Before we begin, please ensure the psamplers package is installed. We currently recommended installing psamplers via devtools.
