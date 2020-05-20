@@ -1,10 +1,7 @@
-# Example 2 - Forstmann et al. (2008) dataset
+# Sequential Sampling models with PMwG sampler 
 
-We begin with a simple use case of the psamplers package with data from @forstmann2008striatum.
-
-## Description of Forstmann experiment
-
-First we need to install the psamplers package. We currently recommended installing psamplers via devtools.
+In this chapter we'll demonstrate how to use the PMwG sampler with a sequential sampling model; the Linear Ballistic Accumulator (LBA).
+Before we begin, please ensure the psamplers package is installed. We currently recommended installing psamplers via devtools.
 ```{r getpkg, eval=FALSE}
 # The samplers package will be on CRAN - this step will be removed.
 install_github('newcastlecl\samplers')
@@ -12,6 +9,8 @@ install_github('newcastlecl\samplers')
 ```{r loadpkg}
 library(psamplers)
 ```
+
+## Description of Forstmann experiment
 
 Forstmann et al looked at neural correlates of decision making under time pressure, with an aim to identify areas of the brain associated with speed-accuracy tradeoff. Imaging (fMRI) and behavioural data was collected; however, we will analyse behavioural data from the decision-making task only. In terms of modelling the data, Forstmann expected to find differences in thresholds (direction?) for each of the three speed-emphasis conditions. We have included the Forstmann et als data in the psamplers package as a data frame object named `forstmann`. The sampler requires a data frame with a <b>`subject`</b> column. The subject column data type can be a factor or numeric.
 
@@ -23,7 +22,7 @@ kable(head(forstmann,10), caption = 'First 10 trials in Forstmann dataset. The `
 
 ## Setting up the sampler
 
-We will use the Linear Ballistic Accumulator (LBA) [@brown2008simplest] to demonstrate how to use the psamplers package. The LBA model parameters are:
+As mentioned above, we'll use the Linear Ballistic Accumulator (LBA) [@brown2008simplest] in this example. The LBA model parameters are:
 
 * `b` threshold parameter (the evidence required to make a response)
 * `v` is drift rate or average speed of evidence accumulation
@@ -32,7 +31,7 @@ We will use the Linear Ballistic Accumulator (LBA) [@brown2008simplest] to demon
 * <b>Do we need to mention `sv` here? </b>
 
 
-We begin by creating a vector of parameter names for the model. You can name this object as you wish; however, in our example, we will call it `pars`. The parameters you list in the `pars` vector must match the names and number of parameters you include in your likelihood function.
+We begin by creating a vector of model parameter names, which we'll use in our log likelihood function. You can name this object as you wish; however, in our example, we will call it `pars`. The parameters you list in the `pars` vector must match the names and number of parameters you include in your log likelihood function.
 ```{r pars}
 pars <- c("b1", "b2", "b3", "A", "v1", "v2", "t0")
 ```
