@@ -59,7 +59,7 @@ The `lba_loglike` function takes three arguments:
 
 * `x` is a named parameter vector (e.g. `pars`)
 * `data` is your data set (e.g.`forstmann`)
-* `sample = ` default is `FALSE` calculates a density function or set to `TRUE` to generate a posterior, predictive sample that matches the shape of data. 
+* `sample = FALSE` calculates a density function or `TRUE` generates a posterior, predictive sample that matches the shape of data. 
 
 
 
