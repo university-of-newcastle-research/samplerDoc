@@ -4,10 +4,10 @@ In this chapter we'll demonstrate how to use the PMwG sampler with a sequential 
 Please ensure the psamplers package is installed. We currently recommended installing psamplers via devtools.
 ```{r getpkg, eval=FALSE}
 # The samplers package will be on CRAN - this step will be removed.
-install_github('newcastlecl\samplers')
+install_github('newcastlecl\pmwg')
 ```
 ```{r loadpkg}
-library(psamplers)
+library(pmwg)
 ```
 
 ## Description of Forstmann experiment
