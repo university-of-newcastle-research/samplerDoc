@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 6 Common Problems (Better name required) Troubleshooting page | Particle Based Samplers for MCMC</title>
   <meta name="description" content="Particle Based Sampler for MCMC" />
-  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 6 Common Problems (Better name required) Troubleshooting page | Particle Based Samplers for MCMC" />
   <meta property="og:type" content="book" />
@@ -52,66 +52,41 @@
 
 
 <style type="text/css">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
-}
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(data-line-number);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
-div.sourceCode
-  {  }
-@media screen {
-a.sourceLine::before { text-decoration: underline; }
-}
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 </style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
@@ -200,12 +175,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="writing-your-log-likelihood-function-tips-errors-and-check-list" class="section level3">
 <h3><span class="header-section-number">6.1.1</span> Writing your log likelihood function: Tips, errors and check list</h3>
 <p><b>1. The parameter specified does not exist</b></p>
-<p>The parameter name is not specified to be estimated i.e. it is not in the parameter names argument or it is misspelled. Make sure <code>pars</code> vector contains the same parameter names you have included in your log likelihood function and it is the same length. Do not rely on the log likelihood function to throw an error in this case.
-(e.g.<code>x[‘b’]</code>)</p>
+<p>The parameter name is not specified to be estimated i.e. it is not in the parameter names argument or it is misspelled. Make sure <code>pars</code> vector contains the same parameter names you have included in your log likelihood function and it is the same length. Do not rely on the log likelihood function to throw an error in this case. (e.g.<code>x[‘b’]</code>)</p>
 <p><b>2. All non-continuous data frame variables must be a</b> <code>factor</code>.</p>
-<p>Data frame variables should be <a href="https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/factor"><code>factors</code></a> unless the variable is a continuous variable e.g. response time.
-If you pass <a href="https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/character"><code>character</code></a> variables to <code>if</code> statements and/or <code>for</code> loops in your log likelihood function, errors will not occur, however, your log likelihood estimate will be incorrect. For example,
-avoid using character strings like <code>data$condition == “easy”</code>. If you must use a character string, be sure to convert the string to a factor with <code>as.factor</code>.</p>
+<p>Data frame variables should be <a href="https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/factor"><code>factors</code></a> unless the variable is a continuous variable e.g. response time. If you pass <a href="https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/character"><code>character</code></a> variables to <code>if</code> statements and/or <code>for</code> loops in your log likelihood function, errors will not occur, however, your log likelihood estimate will be incorrect. For example, avoid using character strings like <code>data$condition == “easy”</code>. If you must use a character string, be sure to convert the string to a factor with <code>as.factor</code>.</p>
 <p><b>3. Spelling errors or mismatched column name references</b></p>
 <p>Correctly reference data frame column names in your log likelihood function e.g. <code>data$RT</code> != <code>data$rt</code>.</p>
 <p><b>4. When initialising a vector of parameter values - values are not filling in properly</b></p>
@@ -219,8 +191,8 @@ avoid using character strings like <code>data$condition == “easy”</code>. If
 <p>When sampling, the generated columns are not outputted</p>
 <p><b>9. When executing functions row by row (i.e. trial-wise), index MUST be included</b></p>
 <p>If writing a trial-wise/row-wise function (e.g. <code>if</code> statement, <code>for</code> loop), index <code>i</code> must be specified.</p>
-<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb64-1" data-line-number="1"><span class="cf">if</span> (data<span class="op">$</span>condition <span class="op">==</span><span class="st"> </span>“easy”)     <span class="co"># Incorrect reference when iterating over variable</span></a>
-<a class="sourceLine" id="cb64-2" data-line-number="2"><span class="cf">if</span> (data<span class="op">$</span>condition[i] <span class="op">==</span><span class="st"> </span>“easy”)  <span class="co"># Include i index</span></a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="cf">if</span> (data<span class="op">$</span>condition <span class="op">==</span><span class="st"> </span>“easy”)     <span class="co"># Incorrect reference when iterating over variable</span>
+<span class="cf">if</span> (data<span class="op">$</span>condition[i] <span class="op">==</span><span class="st"> </span>“easy”)  <span class="co"># Include i index</span></code></pre></div>
 <p><b>10. Changing parameter values changes the log likelihood estimate</b></p>
 <p>A simple check to run on your log likelihood function is to modify your parameter values and observe the change to log likelihood estimate. Then check if changing parameter values which rely on conditions actually change the log likelihood estimate.</p>
 <p><b>11. Make sure you have the latest version of the PMwG Samplers package</b></p>
@@ -290,7 +262,7 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    var src = "true";
+    var src = "";
     if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:")
       if (/^https?:/.test(src))
