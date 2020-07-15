@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 2 PMwG sampler and Signal Detection Theory | Particle Based Samplers for MCMC</title>
   <meta name="description" content="Particle Based Sampler for MCMC" />
-  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 2 PMwG sampler and Signal Detection Theory | Particle Based Samplers for MCMC" />
   <meta property="og:type" content="book" />
@@ -52,41 +52,66 @@
 
 
 <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
@@ -170,7 +195,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h3><span class="header-section-number">2.0.1</span> Signal Detection Theory analysis of lexical decision task</h3>
 <p>We assume you have an understanding of SDT and lexical decision tasks, so we’ll jump straight into how you can use the PMwG package with SDT in the context of a lexical decision task.<br></p>
 <p><b> Do we need to explain lexical decision tasks?? We desribe the procedure briefly below - Participants were asked to indicate whether a letter string was a <i>word</i> or a <i>non-word</i>. </b></p>
-We begin with the distributions for <i>non-word</i> and <i>word</i> stimuli. You can think of these two distributions as the ‘noise’ and ‘signal’ curves, respectively. Each distribution represents the evidence for ‘word-likeness’ and they are assumed to be normally distributed. The <i>non-word</i> distribution (or the ‘noise’ distribution) has a mean (<span class="math inline">\(\mu\)</span>) of 0 and a standard deviation (SD) of 1. We could estimate SD here, but we will use 1 in this example for simplicity. The mean for the <i>word</i> distribution is unknown at this point; however, we assign a d-prime (d’) parameter to denote the difference between the mean of the <i>non-word</i> and the mean of the <i>word</i> distributions (i.e. the ‘sensitivity’ to word stimuli or the signal-noise difference between <i>words</i> and <i>non-word</i>). As can be seen in Figure <a href="pmwg-sampler-and-signal-detection-theory.html#fig:SDT1">2.1</a>, the <i>word</i> distribution mean is greater than the <i>non-word</i> distribution mean (<b>in the positive direction?</b>); however, the distributions partially overlap where <i>non-words</i> and <i>words</i> are difficult to classify. <br>
+We begin with the distributions for <i>non-word</i> and <i>word</i> stimuli. You can think of these two distributions as the ‘noise’ and ‘signal’ curves, respectively. Each distribution represents the evidence for ‘word-likeness’ and they are assumed to be normally distributed. The <i>non-word</i> distribution (or the ‘noise’ distribution) has a mean (<span class="math inline">\(\mu\)</span>) of 0 and a standard deviation (SD) of 1. We could estimate SD here, but we will use 1 in this example for simplicity. The mean for the <i>word</i> distribution is unknown at this point; however, we assign a d-prime (d’) parameter to denote the difference between the mean of the <i>non-word</i> and the mean of the <i>word</i> distributions (i.e. the ‘sensitivity’ to word stimuli or the signal-noise difference between <i>words</i> and <i>non-word</i>). As can be seen in Figure <a href="pmwg-sampler-and-signal-detection-theory.html#fig:SDT1">2.1</a>, the <i>word</i> distribution mean is greater than the <i>non-word</i> distribution mean (<b>in the positive direction?</b>); however, the distributions partially overlap where <i>non-words</i> and <i>words</i> are difficult to classify.
+<br>
 <div class="figure"><span id="fig:SDT1"></span>
 <img src="SDT_1.png" alt="Simple SDT example of lexical decision task" width="100%" />
 <p class="caption">
@@ -189,9 +215,9 @@ Figure 2.2: Simple SDT example of lexical decision task
 <div id="writing-a-log-likelihood-function" class="section level3">
 <h3><span class="header-section-number">2.0.2</span> Writing a log-likelihood function</h3>
 <p>Let’s write a simple log likelihood function for a fabricated data set. You can copy the code below to follow along with the example.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">resp &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;word&quot;</span>, <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>, <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>, <span class="st">&quot;non-word&quot;</span>, <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)
-stim &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;word&quot;</span>, <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>, <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>, <span class="st">&quot;non-word&quot;</span>, <span class="st">&quot;non-word&quot;</span>, <span class="st">&quot;word&quot;</span>)
-fabData &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">cbind</span>(resp, stim))</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">resp &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;word&quot;</span>, <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>, <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>, <span class="st">&quot;non-word&quot;</span>, <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2">stim &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;word&quot;</span>, <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>, <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>, <span class="st">&quot;non-word&quot;</span>, <span class="st">&quot;non-word&quot;</span>, <span class="st">&quot;word&quot;</span>)</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3">fabData &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">cbind</span>(resp, stim))</a></code></pre></div>
 <p>We create our dataset by combining a response <code>resp</code> and a stimulus <code>stim</code> vector into a data frame as shown in <a href="pmwg-sampler-and-signal-detection-theory.html#tab:fakeHead">2.1</a> below.</p>
 <table>
 <caption><span id="tab:fakeHead">Table 2.1: </span>A fabricated dataset of 7 trials with a response and a stimuls column</caption>
@@ -237,132 +263,87 @@ fabData &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<spa
 </tbody>
 </table>
 <p>Our log likelihood function will step through the data, line by line, and find a likelihood value for each trial, under two parameters; d-prime <code>d</code> and criterion <code>C</code>.</p>
-<p><br><b> Remove this paragraph? Some info is covered above</b> As mentioned <a href="pmwg-sampler-and-signal-detection-theory.html#sdtOutline">above</a> the <i>non-word</i> distribution has a mean of 0 and SD of 1. This then gives a reference point for where the mean of the <i>word</i> distribution would sit and is denoted by d’. Now we must find the location of the criterion. Setting the criterion allows us to determine which response will be made i.e. above the criterion, participant will respond <i>word</i> and below the criterion, participant will respond <i>non-word</i>.</p>
+<p><br><b> Remove this paragraph? Some info is covered above</b>
+As mentioned <a href="pmwg-sampler-and-signal-detection-theory.html#sdtOutline">above</a> the <i>non-word</i> distribution has a mean of 0 and SD of 1. This then gives a reference point for where the mean of the <i>word</i> distribution would sit and is denoted by d’.
+Now we must find the location of the criterion. Setting the criterion allows us to determine which response will be made i.e. above the criterion, participant will respond <i>word</i> and below the criterion, participant will respond <i>non-word</i>.</p>
 <p>Here is our complete log likelihood function. We have omitted some code from the code blocks below to enhance appearance, so we encourage you to copy the log likelihood function from the following code block if you’d like to follow along with our example.</p>
-<div class="sourceCode"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-</pre></td><td class="sourceCode"><pre><code class="sourceCode r">SDT_ll &lt;-<span class="st"> </span><span class="cf">function</span>(x, data, <span class="dt">sample =</span> <span class="ot">FALSE</span>){
-  <span class="cf">if</span> (<span class="op">!</span>sample) {
-    out &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data))
-    <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(data)) {
-      <span class="cf">if</span> (stim[i] <span class="op">==</span><span class="st"> &quot;word&quot;</span>) {
-      <span class="cf">if</span> (resp[i] <span class="op">==</span><span class="st"> &quot;word&quot;</span>) {
-        out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, 
-                        <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-      } <span class="cf">else</span> {
-        out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, 
-                        <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
-      }
-    } <span class="cf">else</span> {
-      <span class="cf">if</span> (resp[i] <span class="op">==</span><span class="st"> &quot;word&quot;</span>) {
-        out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>, 
-                        <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-      } <span class="cf">else</span> {
-        out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>, 
-                        <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
-        }
-      }
-  }
-  <span class="kw">sum</span>(out)
-  }
-}</code></pre></td></tr></table></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource r numberLines"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">SDT_ll &lt;-<span class="st"> </span><span class="cf">function</span>(x, data, <span class="dt">sample =</span> <span class="ot">FALSE</span>){</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">  <span class="cf">if</span> (<span class="op">!</span>sample) {</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">    out &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data))</a>
+<a class="sourceLine" id="cb2-4" data-line-number="4">    <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(data)) {</a>
+<a class="sourceLine" id="cb2-5" data-line-number="5">      <span class="cf">if</span> (stim[i] <span class="op">==</span><span class="st"> &quot;word&quot;</span>) {</a>
+<a class="sourceLine" id="cb2-6" data-line-number="6">      <span class="cf">if</span> (resp[i] <span class="op">==</span><span class="st"> &quot;word&quot;</span>) {</a>
+<a class="sourceLine" id="cb2-7" data-line-number="7">        out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb2-8" data-line-number="8">                        <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb2-9" data-line-number="9">      } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb2-10" data-line-number="10">        out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb2-11" data-line-number="11">                        <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb2-12" data-line-number="12">      }</a>
+<a class="sourceLine" id="cb2-13" data-line-number="13">    } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb2-14" data-line-number="14">      <span class="cf">if</span> (resp[i] <span class="op">==</span><span class="st"> &quot;word&quot;</span>) {</a>
+<a class="sourceLine" id="cb2-15" data-line-number="15">        out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb2-16" data-line-number="16">                        <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb2-17" data-line-number="17">      } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb2-18" data-line-number="18">        out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb2-19" data-line-number="19">                        <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb2-20" data-line-number="20">        }</a>
+<a class="sourceLine" id="cb2-21" data-line-number="21">      }</a>
+<a class="sourceLine" id="cb2-22" data-line-number="22">  }</a>
+<a class="sourceLine" id="cb2-23" data-line-number="23">  <span class="kw">sum</span>(out)</a>
+<a class="sourceLine" id="cb2-24" data-line-number="24">  }</a>
+<a class="sourceLine" id="cb2-25" data-line-number="25">}</a></code></pre></div>
 <p>We initialise the log likelihood function with three arguments</p>
-<div class="sourceCode"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
-</pre></td><td class="sourceCode"><pre><code class="sourceCode r">SDT_ll &lt;-<span class="st"> </span><span class="cf">function</span>(x, data, <span class="dt">sample =</span> <span class="ot">FALSE</span>) {</code></pre></td></tr></table></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource r numberLines"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">SDT_ll &lt;-<span class="st"> </span><span class="cf">function</span>(x, data, <span class="dt">sample =</span> <span class="ot">FALSE</span>) {</a></code></pre></div>
 <ul>
 <li><code>x</code> is a named parameter vector (e.g.<code>pars</code>)</li>
 <li><code>data</code> is the dataset</li>
 <li><code>sample =</code> sample values from the posterior distribution (For this simple example, we do not require a <code>sample</code> argument.)</li>
 </ul>
 <p>The first if statement (line 2) checks if you want to sample, this is used for posterior predictive sampling which we will cover in later chapters. and assigns NAs to your data frames response column. If you’re not sampling (like us in this example), you need to create an output vector <code>out</code>. The <code>out</code> vector will contain the log likelihood value for each row/trial in your dataset. <b> Need to explain the <code>(sample)</code> part below </b></p>
-<div class="sourceCode" startFrom="2"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>2
-3
-4
-5
-6
-</pre></td><td class="sourceCode"><pre><code class="sourceCode r">  <span class="cf">if</span> (sample) {
-    data<span class="op">$</span>response &lt;-<span class="st"> </span><span class="ot">NA</span>
-    } <span class="cf">else</span> {
-      out &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data))
-      }</code></pre></td></tr></table></div>
-<p>From line 9, we check each row in the data set, first considering all trials with <i>word</i> stimuli <code>if (stim[i] == &quot;word&quot;</code> (line 10), and assign a likelihood for responding <i>word</i> (line 12-13) or <i>non-word</i> (line 15-16). The <i>word</i> distribution has a mean of <code>x[&quot;d&quot;]</code> (d-prime parameter) and a decision criterion parameter <code>x[&quot;C&quot;]</code>. If the response is <i>word</i>, we are considering values ABOVE or to the right of <B>C</B> in <a href="pmwg-sampler-and-signal-detection-theory.html#fig:SDT2">2.2</a>, so we set <code>lower.tail =</code> to <code>FALSE</code>. If the response is <i>non-word</i>, we look for values BELOW or to the left of <B>C</B> in <a href="pmwg-sampler-and-signal-detection-theory.html#fig:SDT2">2.2</a> and we set <code>lower.tail =</code> to <code>TRUE</code>. The <code>log.p =</code> argument takes the log of all likelihood values when set to <code>TRUE</code>. We do this so we can sum all likelihoods at the end of the log likelihood function. <b> Do we need to explain p-norm??</b></p>
-<div class="sourceCode" startFrom="8"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-</pre></td><td class="sourceCode"><pre><code class="sourceCode r">  <span class="cf">if</span> (<span class="op">!</span>sample) {
-    <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(data)) {
-      <span class="cf">if</span> (stim[i] <span class="op">==</span><span class="st"> &quot;word&quot;</span>) {
-        <span class="cf">if</span> (resp[i] <span class="op">==</span><span class="st"> &quot;word&quot;</span>) {
-          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, 
-                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-    } <span class="cf">else</span> {
-      out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, 
-                     <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
-      }</code></pre></td></tr></table></div>
+<div class="sourceCode" id="cb4" startFrom="2"><pre class="sourceCode numberSource r numberLines"><code class="sourceCode r"><a class="sourceLine" id="cb4-2" data-line-number="2">  <span class="cf">if</span> (sample) {</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3">    data<span class="op">$</span>response &lt;-<span class="st"> </span><span class="ot">NA</span></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4">    } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb4-5" data-line-number="5">      out &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data))</a>
+<a class="sourceLine" id="cb4-6" data-line-number="6">      }</a></code></pre></div>
+<p>From line 9, we check each row in the data set, first considering all trials with <i>word</i> stimuli <code>if (stim[i] == &quot;word&quot;</code> (line 10), and assign a likelihood for responding <i>word</i> (line 12-13) or <i>non-word</i> (line 15-16). The <i>word</i> distribution has a mean of <code>x[&quot;d&quot;]</code> (d-prime parameter) and a decision criterion parameter <code>x[&quot;C&quot;]</code>. If the response is <i>word</i>, we are considering values ABOVE or to the right of <B>C</B> in <a href="pmwg-sampler-and-signal-detection-theory.html#fig:SDT2">2.2</a>, so we set <code>lower.tail =</code> to <code>FALSE</code>. If the response is <i>non-word</i>, we look for values BELOW or to the left of <B>C</B> in <a href="pmwg-sampler-and-signal-detection-theory.html#fig:SDT2">2.2</a> and we set <code>lower.tail =</code> to <code>TRUE</code>. The <code>log.p =</code> argument takes the log of all likelihood values when set to <code>TRUE</code>. We do this so we can sum all likelihoods at the end of the log likelihood function.
+<b> Do we need to explain p-norm??</b></p>
+<div class="sourceCode" id="cb5" startFrom="8"><pre class="sourceCode numberSource r numberLines"><code class="sourceCode r"><a class="sourceLine" id="cb5-8" data-line-number="8">  <span class="cf">if</span> (<span class="op">!</span>sample) {</a>
+<a class="sourceLine" id="cb5-9" data-line-number="9">    <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(data)) {</a>
+<a class="sourceLine" id="cb5-10" data-line-number="10">      <span class="cf">if</span> (stim[i] <span class="op">==</span><span class="st"> &quot;word&quot;</span>) {</a>
+<a class="sourceLine" id="cb5-11" data-line-number="11">        <span class="cf">if</span> (resp[i] <span class="op">==</span><span class="st"> &quot;word&quot;</span>) {</a>
+<a class="sourceLine" id="cb5-12" data-line-number="12">          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb5-13" data-line-number="13">                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb5-14" data-line-number="14">    } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb5-15" data-line-number="15">      out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb5-16" data-line-number="16">                     <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb5-17" data-line-number="17">      }</a></code></pre></div>
 <p>From the else statement on line 18, we have the function for <i>non-word</i> trials i.e. <code>stim[i] == &quot;non-word&quot;</code>. As can be seen below, the output value <code>out[i]</code> for these trials is arrived at in a similar manner to the <i>word</i> trials. We set the <code>mean</code> to 0 and the standard deviation <code>sd</code> to 1. If the response is <i>word</i>, we are considering values ABOVE or to the right of <B>C</B> in <a href="pmwg-sampler-and-signal-detection-theory.html#fig:SDT2">2.2</a>, so we set <code>lower.tail =</code> to <code>FALSE</code>. If the response is <i>non-word</i>, we look for values BELOW or to the left of <B>C</B> in <a href="pmwg-sampler-and-signal-detection-theory.html#fig:SDT2">2.2</a> and we set <code>lower.tail =</code> to <code>TRUE</code>. Again we want the log of all likelihood values so we set <code>log.p = TRUE</code>.</p>
-<div class="sourceCode" startFrom="18"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>18
-19
-20
-21
-22
-23
-24
-25
-26
-</pre></td><td class="sourceCode"><pre><code class="sourceCode r"><span class="cf">else</span> {
-  <span class="cf">if</span> (resp[i] <span class="op">==</span><span class="st"> &quot;word&quot;</span>) {
-    out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>, 
-                    <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-        } <span class="cf">else</span> {
-          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>, 
-                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
-        }
-      }</code></pre></td></tr></table></div>
-<p>The final line of code on line 24 sums the <code>out</code> vector and returns a log-likelihood value for your model. <b> The text alignment/justification for code blocks is determined by the length of the longest line in the code block</b></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sum</span>(out)</code></pre></div>
+<div class="sourceCode" id="cb6" startFrom="18"><pre class="sourceCode numberSource r numberLines"><code class="sourceCode r"><a class="sourceLine" id="cb6-18" data-line-number="18"><span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb6-19" data-line-number="19">  <span class="cf">if</span> (resp[i] <span class="op">==</span><span class="st"> &quot;word&quot;</span>) {</a>
+<a class="sourceLine" id="cb6-20" data-line-number="20">    out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb6-21" data-line-number="21">                    <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb6-22" data-line-number="22">        } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb6-23" data-line-number="23">          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb6-24" data-line-number="24">                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb6-25" data-line-number="25">        }</a>
+<a class="sourceLine" id="cb6-26" data-line-number="26">      }</a></code></pre></div>
+<p>The final line of code on line 24 sums the <code>out</code> vector and returns a log-likelihood value for your model.
+<b> The text alignment/justification for code blocks is determined by the length of the longest line in the code block</b></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">sum</span>(out)</a></code></pre></div>
 </div>
 <div id="testing-the-sdt-log-likelihood-function" class="section level2">
 <h2><span class="header-section-number">2.1</span> Testing the SDT log likelihood function</h2>
 <p>Before we run the log likelihood function, we must create a parameter vector <code>pars</code> containing the same parameter names used in our log likelihood function above i.e. we name the criterion <code>C</code> and d-prime parameter <code>d</code> and we assign arbitrary values to each parameter.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pars &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">C =</span> <span class="fl">0.8</span>, <span class="dt">d =</span> <span class="dv">2</span>)</code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">pars &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">C =</span> <span class="fl">0.8</span>, <span class="dt">d =</span> <span class="dv">2</span>)</a></code></pre></div>
 <p>We can test run our log likelihood function by passing in the parameter vector <code>pars</code> and the fabricated dataset we created above <code>fabData</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">SDT_loglike</span>(pars, fabData)</code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">SDT_loglike</span>(pars, fabData)</a></code></pre></div>
 <pre><code>## [1] -4.795029</code></pre>
 <p>Now, if we change the parameter values, the log-likelihood value should also change.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pars &lt;-<span class="st"> </span><span class="kw">replace</span>(pars, <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), <span class="kw">c</span>(<span class="fl">0.5</span>, <span class="fl">1.2</span>))
-<span class="kw">SDT_loglike</span>(pars, fabData)</code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">pars &lt;-<span class="st"> </span><span class="kw">replace</span>(pars, <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), <span class="kw">c</span>(<span class="fl">0.5</span>, <span class="fl">1.2</span>))</a>
+<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="kw">SDT_loglike</span>(pars, fabData)</a></code></pre></div>
 <pre><code>## [1] -4.532791</code></pre>
-<p>We can see the log likelihood has changed, so these values are more accurate given the data. <b> What does this tell us? Seems insufficient to look for a change in the LL</b></p>
+<p>We can see the log likelihood has changed, so these values are more accurate given the data.
+<b> What does this tell us? Seems insufficient to look for a change in the LL</b></p>
 </div>
 <div id="sdt-log-likelihood-function-for-wagenmakers-experiment" class="section level2">
 <h2><span class="header-section-number">2.2</span> SDT log likelihood function for Wagenmakers experiment</h2>
@@ -490,318 +471,172 @@ Figure 2.3: Signal detection theory example of lexical decision task
 </p>
 </div>
 <p>Here is our complete log likelihood function for the Wagenmakers data set.</p>
-<div class="sourceCode"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57
-58
-59
-60
-61
-62
-63
-64
-65
-66
-67
-68
-69
-70
-71
-72
-73
-74
-75
-76
-77
-78
-79
-80
-81
-</pre></td><td class="sourceCode"><pre><code class="sourceCode r">SDT_ll &lt;-<span class="st"> </span><span class="cf">function</span>(x, data, <span class="dt">sample=</span><span class="ot">FALSE</span>){
-  <span class="cf">if</span> (sample){
-    data<span class="op">$</span>response &lt;-<span class="st"> </span><span class="ot">NA</span>
-  } <span class="cf">else</span> {
-    out &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data))
-  }
-  <span class="cf">if</span> (<span class="op">!</span>sample){
-  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(data)) {
-    <span class="cf">if</span> (data<span class="op">$</span>cond[i] <span class="op">==</span><span class="st"> &quot;w&quot;</span>) {
-    <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;hf&quot;</span>) {
-      <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
-        out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,
-                       <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-      } <span class="cf">else</span> {
-        out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,
-                       <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
-      }
-    } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;lf&quot;</span>){
-      <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>){
-        out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,
-                       <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-      } <span class="cf">else</span> {
-        out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,
-                       <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
-        }
-      } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;vlf&quot;</span>) {
-        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
-          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,
-                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-        } <span class="cf">else</span> {
-          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,
-                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
-          }
-        } <span class="cf">else</span> {
-      <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
-        out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>,
-                       <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-      } <span class="cf">else</span> {
-        out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>,
-                       <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
-        }
-      }
-    } <span class="cf">else</span> {
-      <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;hf&quot;</span>) {
-        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
-          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, 
-                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-        } <span class="cf">else</span> {
-          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, 
-                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
-        }
-      }  <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;lf&quot;</span>) {
-        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
-          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, 
-                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-        } <span class="cf">else</span> {
-          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, 
-                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
-        }
-      } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;vlf&quot;</span>) {
-        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
-          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, 
-                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-        } <span class="cf">else</span> {
-          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, 
-                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
-        }
-      } <span class="cf">else</span> {
-        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
-          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>, 
-                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-        } <span class="cf">else</span> {
-          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>, 
-                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
-        }
-      }
-    }
-  }
-  <span class="kw">sum</span>(out)
-  }
-}</code></pre></td></tr></table></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode numberSource r numberLines"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">SDT_ll &lt;-<span class="st"> </span><span class="cf">function</span>(x, data, <span class="dt">sample=</span><span class="ot">FALSE</span>){</a>
+<a class="sourceLine" id="cb13-2" data-line-number="2">  <span class="cf">if</span> (sample){</a>
+<a class="sourceLine" id="cb13-3" data-line-number="3">    data<span class="op">$</span>response &lt;-<span class="st"> </span><span class="ot">NA</span></a>
+<a class="sourceLine" id="cb13-4" data-line-number="4">  } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb13-5" data-line-number="5">    out &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data))</a>
+<a class="sourceLine" id="cb13-6" data-line-number="6">  }</a>
+<a class="sourceLine" id="cb13-7" data-line-number="7">  <span class="cf">if</span> (<span class="op">!</span>sample){</a>
+<a class="sourceLine" id="cb13-8" data-line-number="8">  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(data)) {</a>
+<a class="sourceLine" id="cb13-9" data-line-number="9">    <span class="cf">if</span> (data<span class="op">$</span>cond[i] <span class="op">==</span><span class="st"> &quot;w&quot;</span>) {</a>
+<a class="sourceLine" id="cb13-10" data-line-number="10">    <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;hf&quot;</span>) {</a>
+<a class="sourceLine" id="cb13-11" data-line-number="11">      <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {</a>
+<a class="sourceLine" id="cb13-12" data-line-number="12">        out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb13-13" data-line-number="13">                       <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb13-14" data-line-number="14">      } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb13-15" data-line-number="15">        out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb13-16" data-line-number="16">                       <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb13-17" data-line-number="17">      }</a>
+<a class="sourceLine" id="cb13-18" data-line-number="18">    } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;lf&quot;</span>){</a>
+<a class="sourceLine" id="cb13-19" data-line-number="19">      <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>){</a>
+<a class="sourceLine" id="cb13-20" data-line-number="20">        out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb13-21" data-line-number="21">                       <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb13-22" data-line-number="22">      } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb13-23" data-line-number="23">        out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb13-24" data-line-number="24">                       <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb13-25" data-line-number="25">        }</a>
+<a class="sourceLine" id="cb13-26" data-line-number="26">      } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;vlf&quot;</span>) {</a>
+<a class="sourceLine" id="cb13-27" data-line-number="27">        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {</a>
+<a class="sourceLine" id="cb13-28" data-line-number="28">          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb13-29" data-line-number="29">                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb13-30" data-line-number="30">        } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb13-31" data-line-number="31">          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb13-32" data-line-number="32">                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb13-33" data-line-number="33">          }</a>
+<a class="sourceLine" id="cb13-34" data-line-number="34">        } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb13-35" data-line-number="35">      <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {</a>
+<a class="sourceLine" id="cb13-36" data-line-number="36">        out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb13-37" data-line-number="37">                       <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb13-38" data-line-number="38">      } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb13-39" data-line-number="39">        out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb13-40" data-line-number="40">                       <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb13-41" data-line-number="41">        }</a>
+<a class="sourceLine" id="cb13-42" data-line-number="42">      }</a>
+<a class="sourceLine" id="cb13-43" data-line-number="43">    } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb13-44" data-line-number="44">      <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;hf&quot;</span>) {</a>
+<a class="sourceLine" id="cb13-45" data-line-number="45">        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {</a>
+<a class="sourceLine" id="cb13-46" data-line-number="46">          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb13-47" data-line-number="47">                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb13-48" data-line-number="48">        } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb13-49" data-line-number="49">          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb13-50" data-line-number="50">                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb13-51" data-line-number="51">        }</a>
+<a class="sourceLine" id="cb13-52" data-line-number="52">      }  <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;lf&quot;</span>) {</a>
+<a class="sourceLine" id="cb13-53" data-line-number="53">        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {</a>
+<a class="sourceLine" id="cb13-54" data-line-number="54">          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb13-55" data-line-number="55">                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb13-56" data-line-number="56">        } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb13-57" data-line-number="57">          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb13-58" data-line-number="58">                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb13-59" data-line-number="59">        }</a>
+<a class="sourceLine" id="cb13-60" data-line-number="60">      } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;vlf&quot;</span>) {</a>
+<a class="sourceLine" id="cb13-61" data-line-number="61">        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {</a>
+<a class="sourceLine" id="cb13-62" data-line-number="62">          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb13-63" data-line-number="63">                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb13-64" data-line-number="64">        } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb13-65" data-line-number="65">          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb13-66" data-line-number="66">                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb13-67" data-line-number="67">        }</a>
+<a class="sourceLine" id="cb13-68" data-line-number="68">      } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb13-69" data-line-number="69">        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {</a>
+<a class="sourceLine" id="cb13-70" data-line-number="70">          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb13-71" data-line-number="71">                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb13-72" data-line-number="72">        } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb13-73" data-line-number="73">          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb13-74" data-line-number="74">                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb13-75" data-line-number="75">        }</a>
+<a class="sourceLine" id="cb13-76" data-line-number="76">      }</a>
+<a class="sourceLine" id="cb13-77" data-line-number="77">    }</a>
+<a class="sourceLine" id="cb13-78" data-line-number="78">  }</a>
+<a class="sourceLine" id="cb13-79" data-line-number="79">  <span class="kw">sum</span>(out)</a>
+<a class="sourceLine" id="cb13-80" data-line-number="80">  }</a>
+<a class="sourceLine" id="cb13-81" data-line-number="81">}</a></code></pre></div>
 <p>Line 1 through to line 8 are the same as the log likelihood we wrote for the fabricated dataset above. From line 9, we calculate the log-likelihood <code>out[i]</code> for <i>word</i> condition trials <code>cond[i] == &quot;w&quot;</code> when the stimulus is a high frequency word <code>stim[i] == &quot;hf&quot;</code> for each response. We do this by considering the upper tail of the high frequency word distribution <code>lower.tail = FALSE</code>, from the word criterion <B>C<sub>w</sub></B>, for <i>word</i> responses <code>resp[i] == &quot;W&quot;</code> and the lower tail for <i>non-word</i> responses (<code>else</code> statement on line 14).</p>
-<div class="sourceCode" startFrom="9"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>9
-10
-11
-12
-13
-14
-15
-16
-17
-</pre></td><td class="sourceCode"><pre><code class="sourceCode r"> <span class="cf">if</span> (data<span class="op">$</span>cond[i] <span class="op">==</span><span class="st"> &quot;w&quot;</span>) {
-    <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;hf&quot;</span>) {
-      <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
-        out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,
-                       <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-      } <span class="cf">else</span> {
-        out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,
-                       <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
-      }</code></pre></td></tr></table></div>
+<div class="sourceCode" id="cb14" startFrom="9"><pre class="sourceCode numberSource r numberLines"><code class="sourceCode r"><a class="sourceLine" id="cb14-9" data-line-number="9"> <span class="cf">if</span> (data<span class="op">$</span>cond[i] <span class="op">==</span><span class="st"> &quot;w&quot;</span>) {</a>
+<a class="sourceLine" id="cb14-10" data-line-number="10">    <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;hf&quot;</span>) {</a>
+<a class="sourceLine" id="cb14-11" data-line-number="11">      <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {</a>
+<a class="sourceLine" id="cb14-12" data-line-number="12">        out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb14-13" data-line-number="13">                       <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb14-14" data-line-number="14">      } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb14-15" data-line-number="15">        out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb14-16" data-line-number="16">                       <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb14-17" data-line-number="17">      }</a></code></pre></div>
 <p>From line 18 and still considering trials from the <i>word</i> condition, we calculate the log likelihood for each response for low frequency words <code>stim[i] == &quot;lf&quot;</code>, very low frequency words <code>stim[i] == &quot;vlf&quot;</code> (line 26) and non-word stimuli (<code>else</code> statement on line 35).</p>
-<div class="sourceCode" startFrom="18"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-</pre></td><td class="sourceCode"><pre><code class="sourceCode r">  <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;lf&quot;</span>) {
-      <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
-        out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,
-                       <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-      } <span class="cf">else</span> {
-        out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,
-                       <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
-        }
-      } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;vlf&quot;</span>) {
-        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
-          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,
-                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-        } <span class="cf">else</span> {
-          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,
-                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
-          }
-        } <span class="cf">else</span> {
-      <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
-        out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>,
-                       <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-      } <span class="cf">else</span> {
-        out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>,
-                       <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
-        }
-      }</code></pre></td></tr></table></div>
+<div class="sourceCode" id="cb15" startFrom="18"><pre class="sourceCode numberSource r numberLines"><code class="sourceCode r"><a class="sourceLine" id="cb15-18" data-line-number="18">  <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;lf&quot;</span>) {</a>
+<a class="sourceLine" id="cb15-19" data-line-number="19">      <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {</a>
+<a class="sourceLine" id="cb15-20" data-line-number="20">        out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb15-21" data-line-number="21">                       <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb15-22" data-line-number="22">      } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb15-23" data-line-number="23">        out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb15-24" data-line-number="24">                       <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb15-25" data-line-number="25">        }</a>
+<a class="sourceLine" id="cb15-26" data-line-number="26">      } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;vlf&quot;</span>) {</a>
+<a class="sourceLine" id="cb15-27" data-line-number="27">        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {</a>
+<a class="sourceLine" id="cb15-28" data-line-number="28">          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb15-29" data-line-number="29">                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb15-30" data-line-number="30">        } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb15-31" data-line-number="31">          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb15-32" data-line-number="32">                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb15-33" data-line-number="33">          }</a>
+<a class="sourceLine" id="cb15-34" data-line-number="34">        } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb15-35" data-line-number="35">      <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {</a>
+<a class="sourceLine" id="cb15-36" data-line-number="36">        out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb15-37" data-line-number="37">                       <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb15-38" data-line-number="38">      } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb15-39" data-line-number="39">        out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>,</a>
+<a class="sourceLine" id="cb15-40" data-line-number="40">                       <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb15-41" data-line-number="41">        }</a>
+<a class="sourceLine" id="cb15-42" data-line-number="42">      }</a></code></pre></div>
 <p>That covers the <i>word</i> condition. From line 45 through 78, we repeat the same process for the <i>non-word</i> conditon….</p>
-<div class="sourceCode" startFrom="45"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>45
-46
-47
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57
-58
-59
-60
-61
-62
-63
-64
-65
-66
-67
-68
-69
-70
-71
-72
-73
-74
-75
-76
-77
-</pre></td><td class="sourceCode"><pre><code class="sourceCode r"><span class="cf">else</span> {
-      <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;hf&quot;</span>) {
-        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
-          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, 
-                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-        } <span class="cf">else</span> {
-          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, 
-                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
-        }
-      } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;lf&quot;</span>) {
-        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
-          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, 
-                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-        } <span class="cf">else</span> {
-          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, 
-                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
-        }
-      } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;vlf&quot;</span>) {
-        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
-          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, 
-                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-        } <span class="cf">else</span> {
-          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, 
-                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
-        }
-      } <span class="cf">else</span> {
-        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
-          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>, 
-                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-        } <span class="cf">else</span> {
-          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>, 
-                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
-        }</code></pre></td></tr></table></div>
+<div class="sourceCode" id="cb16" startFrom="45"><pre class="sourceCode numberSource r numberLines"><code class="sourceCode r"><a class="sourceLine" id="cb16-45" data-line-number="45"><span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb16-46" data-line-number="46">      <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;hf&quot;</span>) {</a>
+<a class="sourceLine" id="cb16-47" data-line-number="47">        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {</a>
+<a class="sourceLine" id="cb16-48" data-line-number="48">          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb16-49" data-line-number="49">                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb16-50" data-line-number="50">        } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb16-51" data-line-number="51">          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb16-52" data-line-number="52">                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb16-53" data-line-number="53">        }</a>
+<a class="sourceLine" id="cb16-54" data-line-number="54">      } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;lf&quot;</span>) {</a>
+<a class="sourceLine" id="cb16-55" data-line-number="55">        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {</a>
+<a class="sourceLine" id="cb16-56" data-line-number="56">          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb16-57" data-line-number="57">                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb16-58" data-line-number="58">        } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb16-59" data-line-number="59">          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb16-60" data-line-number="60">                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb16-61" data-line-number="61">        }</a>
+<a class="sourceLine" id="cb16-62" data-line-number="62">      } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;vlf&quot;</span>) {</a>
+<a class="sourceLine" id="cb16-63" data-line-number="63">        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {</a>
+<a class="sourceLine" id="cb16-64" data-line-number="64">          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb16-65" data-line-number="65">                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb16-66" data-line-number="66">        } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb16-67" data-line-number="67">          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb16-68" data-line-number="68">                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb16-69" data-line-number="69">        }</a>
+<a class="sourceLine" id="cb16-70" data-line-number="70">      } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb16-71" data-line-number="71">        <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {</a>
+<a class="sourceLine" id="cb16-72" data-line-number="72">          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb16-73" data-line-number="73">                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb16-74" data-line-number="74">        } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb16-75" data-line-number="75">          out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>, <span class="dt">sd =</span> <span class="dv">1</span>, </a>
+<a class="sourceLine" id="cb16-76" data-line-number="76">                         <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb16-77" data-line-number="77">        }</a></code></pre></div>
 <p>…and sum the values and return the log-likelihood for our model.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">  <span class="kw">sum</span>(out)</code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">  <span class="kw">sum</span>(out)</a></code></pre></div>
 <p>This give us a log likelihood for all data. Let’s test this…</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pars &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">c</span>(<span class="dt">C.w =</span> <span class="dv">1</span>, <span class="dt">C.nw =</span> <span class="fl">0.5</span>, <span class="dt">HF.d =</span> <span class="dv">3</span>, <span class="dt">LF.d =</span> <span class="fl">1.8</span>, <span class="dt">VLF.d =</span> <span class="fl">0.7</span>))
-<span class="kw">SDT_ll</span>(pars, wgnmks2008, <span class="dt">sample =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">pars &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">c</span>(<span class="dt">C.w =</span> <span class="dv">1</span>, <span class="dt">C.nw =</span> <span class="fl">0.5</span>, <span class="dt">HF.d =</span> <span class="dv">3</span>, <span class="dt">LF.d =</span> <span class="fl">1.8</span>, <span class="dt">VLF.d =</span> <span class="fl">0.7</span>))</a>
+<a class="sourceLine" id="cb18-2" data-line-number="2"><span class="kw">SDT_ll</span>(pars, wgnmks2008, <span class="dt">sample =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
 <pre><code>## [1] -30801.71</code></pre>
 </div>
 <div id="computation-time-of-log-likelihood-function" class="section level3">
 <h3><span class="header-section-number">2.2.2</span> Computation time of log likelihood function</h3>
-<p>You may have noticed that our log likelihood function is slow and heavy on computer time when processing the data trial by trial. We recommend you write a ‘slow’ log likelihood (as written above) to check it functions as it should before improving the function’s efficiency. <br> Now we’ll speed up our log likelihood function. We have 16 possible values that could be assigned per line in the previous function (for the 16 cells of the design given by proportion (2) x stimuli (4) x response (2)). Rather than looping over each trial, we could calculate the log-likelihood for each cell in the design and multiply the number of instances for each subject. To do this, we add a column to the dataframe by tabling as shown in the code below</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">wgnmks2008Fast &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">table</span>(wgnmks2008<span class="op">$</span>subject, wgnmks2008<span class="op">$</span>cond,
-                                  wgnmks2008<span class="op">$</span>stim, wgnmks2008<span class="op">$</span>resp))
-<span class="kw">names</span>(wgnmks2008Fast) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;subject&quot;</span>, <span class="st">&quot;cond&quot;</span>, <span class="st">&quot;stim&quot;</span>, <span class="st">&quot;resp&quot;</span>, <span class="st">&quot;n&quot;</span>)</code></pre></div>
+<p>You may have noticed that our log likelihood function is slow and heavy on computer time when processing the data trial by trial. We recommend you write a ‘slow’ log likelihood (as written above) to check it functions as it should before improving the function’s efficiency.
+<br>
+Now we’ll speed up our log likelihood function. We have 16 possible values that could be assigned per line in the previous function (for the 16 cells of the design given by proportion (2) x stimuli (4) x response (2)). Rather than looping over each trial, we could calculate the log-likelihood for each cell in the design and multiply the number of instances for each subject. To do this, we add a column to the dataframe by tabling as shown in the code below</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">wgnmks2008Fast &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">table</span>(wgnmks2008<span class="op">$</span>subject, wgnmks2008<span class="op">$</span>cond,</a>
+<a class="sourceLine" id="cb20-2" data-line-number="2">                                  wgnmks2008<span class="op">$</span>stim, wgnmks2008<span class="op">$</span>resp))</a>
+<a class="sourceLine" id="cb20-3" data-line-number="3"><span class="kw">names</span>(wgnmks2008Fast) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;subject&quot;</span>, <span class="st">&quot;cond&quot;</span>, <span class="st">&quot;stim&quot;</span>, <span class="st">&quot;resp&quot;</span>, <span class="st">&quot;n&quot;</span>)</a></code></pre></div>
 <p>Now our data frame looks like this..</p>
 <table>
 <thead>
@@ -859,93 +694,93 @@ Figure 2.3: Signal detection theory example of lexical decision task
 </tbody>
 </table>
 <p>For our SDT log likelihood function, we add <code>n*</code> (i.e. a multiplying factor) to each of these values to calculate the model log likelihood <b> Should we shorten this code block? Seems excessive.</b></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">SDT_ll_fast &lt;-<span class="st"> </span><span class="cf">function</span>(x, data, <span class="dt">sample =</span> <span class="ot">FALSE</span>) {
-  <span class="cf">if</span> (<span class="op">!</span>sample) {
-    out &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data))
-    <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(data)) {
-      <span class="cf">if</span> (data<span class="op">$</span>cond[i] <span class="op">==</span><span class="st"> &quot;w&quot;</span>) {
-        <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;hf&quot;</span>) {
-          <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
-            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>],
-                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-          } <span class="cf">else</span> {
-            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>],
-                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
-            }
-          } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;lf&quot;</span>) {
-          <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
-            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>],
-                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-          } <span class="cf">else</span> {
-            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>],
-                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
-          }
-        } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;vlf&quot;</span>) {
-          <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
-            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>],
-                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-          } <span class="cf">else</span> {
-            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>],
-                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
-          }
-        } <span class="cf">else</span> {
-          <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
-            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>,
-                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-          } <span class="cf">else</span> {
-            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>,
-                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
-          }
-        }
-      }<span class="cf">else</span>{
-        <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;hf&quot;</span>) {
-          <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
-            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>],
-                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-          } <span class="cf">else</span> {
-            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>],
-                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
-          }
-        }  <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;lf&quot;</span>){
-          <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
-            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>],
-                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-          } <span class="cf">else</span> {
-            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>],
-                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
-          }
-        } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;vlf&quot;</span>) {
-          <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
-            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>],
-                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-          } <span class="cf">else</span> {
-            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>],
-                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
-          }
-        } <span class="cf">else</span> {
-          <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {
-            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>,
-                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)
-          } <span class="cf">else</span> {
-            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>,
-                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
-          }
-        }
-      }
-    }
-    <span class="kw">sum</span>(out)
-  }</code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1">SDT_ll_fast &lt;-<span class="st"> </span><span class="cf">function</span>(x, data, <span class="dt">sample =</span> <span class="ot">FALSE</span>) {</a>
+<a class="sourceLine" id="cb21-2" data-line-number="2">  <span class="cf">if</span> (<span class="op">!</span>sample) {</a>
+<a class="sourceLine" id="cb21-3" data-line-number="3">    out &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data))</a>
+<a class="sourceLine" id="cb21-4" data-line-number="4">    <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(data)) {</a>
+<a class="sourceLine" id="cb21-5" data-line-number="5">      <span class="cf">if</span> (data<span class="op">$</span>cond[i] <span class="op">==</span><span class="st"> &quot;w&quot;</span>) {</a>
+<a class="sourceLine" id="cb21-6" data-line-number="6">        <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;hf&quot;</span>) {</a>
+<a class="sourceLine" id="cb21-7" data-line-number="7">          <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {</a>
+<a class="sourceLine" id="cb21-8" data-line-number="8">            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>],</a>
+<a class="sourceLine" id="cb21-9" data-line-number="9">                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb21-10" data-line-number="10">          } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb21-11" data-line-number="11">            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>],</a>
+<a class="sourceLine" id="cb21-12" data-line-number="12">                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb21-13" data-line-number="13">            }</a>
+<a class="sourceLine" id="cb21-14" data-line-number="14">          } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;lf&quot;</span>) {</a>
+<a class="sourceLine" id="cb21-15" data-line-number="15">          <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {</a>
+<a class="sourceLine" id="cb21-16" data-line-number="16">            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>],</a>
+<a class="sourceLine" id="cb21-17" data-line-number="17">                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb21-18" data-line-number="18">          } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb21-19" data-line-number="19">            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>],</a>
+<a class="sourceLine" id="cb21-20" data-line-number="20">                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb21-21" data-line-number="21">          }</a>
+<a class="sourceLine" id="cb21-22" data-line-number="22">        } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;vlf&quot;</span>) {</a>
+<a class="sourceLine" id="cb21-23" data-line-number="23">          <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {</a>
+<a class="sourceLine" id="cb21-24" data-line-number="24">            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>],</a>
+<a class="sourceLine" id="cb21-25" data-line-number="25">                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb21-26" data-line-number="26">          } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb21-27" data-line-number="27">            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>],</a>
+<a class="sourceLine" id="cb21-28" data-line-number="28">                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb21-29" data-line-number="29">          }</a>
+<a class="sourceLine" id="cb21-30" data-line-number="30">        } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb21-31" data-line-number="31">          <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {</a>
+<a class="sourceLine" id="cb21-32" data-line-number="32">            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>,</a>
+<a class="sourceLine" id="cb21-33" data-line-number="33">                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb21-34" data-line-number="34">          } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb21-35" data-line-number="35">            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.w&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>,</a>
+<a class="sourceLine" id="cb21-36" data-line-number="36">                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb21-37" data-line-number="37">          }</a>
+<a class="sourceLine" id="cb21-38" data-line-number="38">        }</a>
+<a class="sourceLine" id="cb21-39" data-line-number="39">      }<span class="cf">else</span>{</a>
+<a class="sourceLine" id="cb21-40" data-line-number="40">        <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;hf&quot;</span>) {</a>
+<a class="sourceLine" id="cb21-41" data-line-number="41">          <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {</a>
+<a class="sourceLine" id="cb21-42" data-line-number="42">            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>],</a>
+<a class="sourceLine" id="cb21-43" data-line-number="43">                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb21-44" data-line-number="44">          } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb21-45" data-line-number="45">            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>],</a>
+<a class="sourceLine" id="cb21-46" data-line-number="46">                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb21-47" data-line-number="47">          }</a>
+<a class="sourceLine" id="cb21-48" data-line-number="48">        }  <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;lf&quot;</span>){</a>
+<a class="sourceLine" id="cb21-49" data-line-number="49">          <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {</a>
+<a class="sourceLine" id="cb21-50" data-line-number="50">            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>],</a>
+<a class="sourceLine" id="cb21-51" data-line-number="51">                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb21-52" data-line-number="52">          } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb21-53" data-line-number="53">            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>],</a>
+<a class="sourceLine" id="cb21-54" data-line-number="54">                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb21-55" data-line-number="55">          }</a>
+<a class="sourceLine" id="cb21-56" data-line-number="56">        } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;vlf&quot;</span>) {</a>
+<a class="sourceLine" id="cb21-57" data-line-number="57">          <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {</a>
+<a class="sourceLine" id="cb21-58" data-line-number="58">            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>],</a>
+<a class="sourceLine" id="cb21-59" data-line-number="59">                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb21-60" data-line-number="60">          } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb21-61" data-line-number="61">            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>],</a>
+<a class="sourceLine" id="cb21-62" data-line-number="62">                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb21-63" data-line-number="63">          }</a>
+<a class="sourceLine" id="cb21-64" data-line-number="64">        } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb21-65" data-line-number="65">          <span class="cf">if</span> (data<span class="op">$</span>resp[i] <span class="op">==</span><span class="st"> &quot;W&quot;</span>) {</a>
+<a class="sourceLine" id="cb21-66" data-line-number="66">            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>,</a>
+<a class="sourceLine" id="cb21-67" data-line-number="67">                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb21-68" data-line-number="68">          } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb21-69" data-line-number="69">            out[i] &lt;-<span class="st"> </span>data<span class="op">$</span>n[i] <span class="op">*</span><span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C.nw&quot;</span>], <span class="dt">mean =</span> <span class="dv">0</span>,</a>
+<a class="sourceLine" id="cb21-70" data-line-number="70">                                     <span class="dt">sd =</span> <span class="dv">1</span>, <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb21-71" data-line-number="71">          }</a>
+<a class="sourceLine" id="cb21-72" data-line-number="72">        }</a>
+<a class="sourceLine" id="cb21-73" data-line-number="73">      }</a>
+<a class="sourceLine" id="cb21-74" data-line-number="74">    }</a>
+<a class="sourceLine" id="cb21-75" data-line-number="75">    <span class="kw">sum</span>(out)</a>
+<a class="sourceLine" id="cb21-76" data-line-number="76">  }</a></code></pre></div>
 <p>Now we have a fast(er) SDT log likelihood function and we can compare its output with the slow log likelihood function’s output to make sure it is functioning correctly.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pars &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">c</span>(<span class="dt">C.w =</span> <span class="dv">1</span>, <span class="dt">C.nw =</span> <span class="fl">0.5</span>, <span class="dt">HF.d =</span> <span class="dv">3</span>, <span class="dt">LF.d =</span> <span class="fl">1.8</span>, <span class="dt">VLF.d =</span> <span class="fl">0.7</span>))
-<span class="kw">SDT_ll</span>(pars, wgnmks2008, <span class="dt">sample =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">pars &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">c</span>(<span class="dt">C.w =</span> <span class="dv">1</span>, <span class="dt">C.nw =</span> <span class="fl">0.5</span>, <span class="dt">HF.d =</span> <span class="dv">3</span>, <span class="dt">LF.d =</span> <span class="fl">1.8</span>, <span class="dt">VLF.d =</span> <span class="fl">0.7</span>))</a>
+<a class="sourceLine" id="cb22-2" data-line-number="2"><span class="kw">SDT_ll</span>(pars, wgnmks2008, <span class="dt">sample =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
 <pre><code>## [1] -30801.71</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">SDT_ll_fast</span>(pars, wgnmks2008Fast, <span class="dt">sample =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1"><span class="kw">SDT_ll_fast</span>(pars, wgnmks2008Fast, <span class="dt">sample =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
 <pre><code>## [1] -30801.71</code></pre>
 <p>Great! Both functions produce the same log likelihood! And we can run one final check by modifying the parameter vector’s values</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pars &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">c</span>(<span class="dt">C.w =</span> <span class="dv">1</span>, <span class="dt">C.nw =</span> <span class="fl">0.8</span>, <span class="dt">HF.d =</span> <span class="fl">2.7</span>, <span class="dt">LF.d =</span> <span class="fl">1.8</span>, <span class="dt">VLF.d =</span> <span class="fl">1.3</span>))
-<span class="kw">SDT_ll</span>(pars, wgnmks2008, <span class="dt">sample =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1">pars &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">c</span>(<span class="dt">C.w =</span> <span class="dv">1</span>, <span class="dt">C.nw =</span> <span class="fl">0.8</span>, <span class="dt">HF.d =</span> <span class="fl">2.7</span>, <span class="dt">LF.d =</span> <span class="fl">1.8</span>, <span class="dt">VLF.d =</span> <span class="fl">1.3</span>))</a>
+<a class="sourceLine" id="cb26-2" data-line-number="2"><span class="kw">SDT_ll</span>(pars, wgnmks2008, <span class="dt">sample =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
 <pre><code>## [1] -22168.95</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">SDT_ll_fast</span>(pars, wgnmks2008Fast, <span class="dt">sample =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="kw">SDT_ll_fast</span>(pars, wgnmks2008Fast, <span class="dt">sample =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
 <pre><code>## [1] -22168.95</code></pre>
 <p><b> We recommend “speeding up” your code however you wish. We do it in the Forstmann code…. </b>. When you’re confident that your log likelihood functions correctly, you should save it as a separate script so it can be sourced when running the sampler.</p>
 </div>
@@ -953,30 +788,30 @@ Figure 2.3: Signal detection theory example of lexical decision task
 <div id="pmwg-framework" class="section level2">
 <h2><span class="header-section-number">2.3</span> PMwG Framework</h2>
 <p>Now that we have written a log likelihood function, we’re ready to use the PMwG sampler package.</p>
-<p>Let’s begin by installing the PMwG samplers package. <b>We currently recommended installing psamplers via devtools.</b></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># The samplers package will be on CRAN - this step will be removed.</span>
-<span class="kw">install_github</span>(<span class="st">&#39;newcastlecl\samplers&#39;</span>)</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(psamplers)</code></pre></div>
+<p>Let’s begin by installing the PMwG package. <b>We currently recommended installing pmwg via devtools.</b></p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1"><span class="co"># The pmwg package will be on CRAN - this step will be removed.</span></a>
+<a class="sourceLine" id="cb30-2" data-line-number="2"><span class="kw">install_github</span>(<span class="st">&#39;newcastlecl\pmwg&#39;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1"><span class="kw">library</span>(pmwg)</a></code></pre></div>
 <p>Now we require the parameter vector <code>pars</code> we specified above and a priors object called <code>priors</code>. The <code>priors</code> object is a list that contains two components:</p>
 <ul>
 <li><code>theta_mu</code> a vector containing the prior for model parameter means</li>
 <li><code>theta_sig</code> the prior covariance matrix for model parameters.</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pars &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;C.w&quot;</span>,<span class="st">&quot;C.nw&quot;</span>,<span class="st">&quot;HF.d&quot;</span>,<span class="st">&quot;LF.d&quot;</span>,<span class="st">&quot;VLF.d&quot;</span>) <span class="co"># This is the same as the `pars` vector specified above</span>
-priors &lt;-<span class="st"> </span><span class="kw">list</span>(
-  <span class="dt">theta_mu =</span> <span class="kw">rep</span>(<span class="dv">0</span>, <span class="kw">length</span>(pars)),
-  <span class="dt">theta_sig =</span> <span class="kw">diag</span>(<span class="kw">rep</span>(<span class="dv">1</span>, <span class="kw">length</span>(pars)))
-)</code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1">pars &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;C.w&quot;</span>,<span class="st">&quot;C.nw&quot;</span>,<span class="st">&quot;HF.d&quot;</span>,<span class="st">&quot;LF.d&quot;</span>,<span class="st">&quot;VLF.d&quot;</span>) <span class="co"># This is the same as the `pars` vector specified above</span></a>
+<a class="sourceLine" id="cb32-2" data-line-number="2">priors &lt;-<span class="st"> </span><span class="kw">list</span>(</a>
+<a class="sourceLine" id="cb32-3" data-line-number="3">  <span class="dt">theta_mu =</span> <span class="kw">rep</span>(<span class="dv">0</span>, <span class="kw">length</span>(pars)),</a>
+<a class="sourceLine" id="cb32-4" data-line-number="4">  <span class="dt">theta_sig =</span> <span class="kw">diag</span>(<span class="kw">rep</span>(<span class="dv">1</span>, <span class="kw">length</span>(pars)))</a>
+<a class="sourceLine" id="cb32-5" data-line-number="5">)</a></code></pre></div>
 <p>The <code>priors</code> object in our example is initiated with zeros. <b>Under what conditions would this priors object differ?</b></p>
 <p>The next step is to load your log likelihood function/script.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">source</span>(<span class="dt">file =</span> <span class="st">&quot;yourLogLikelihoodFile.R&quot;</span>)</code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1"><span class="kw">source</span>(<span class="dt">file =</span> <span class="st">&quot;yourLogLikelihoodFile.R&quot;</span>)</a></code></pre></div>
 <p>Once you’ve setup your parameters, priors and written a log likelihood function, the next step is to initialise the <code>sampler</code> object.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sampler &lt;-<span class="st"> </span><span class="kw">pmwgs</span>(
-  <span class="dt">data =</span> wgnmks2008Fast,
-  <span class="dt">pars =</span> pars,
-  <span class="dt">prior =</span> priors,
-  <span class="dt">ll_func =</span> SDT_ll_fast
-)</code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1">sampler &lt;-<span class="st"> </span><span class="kw">pmwgs</span>(</a>
+<a class="sourceLine" id="cb34-2" data-line-number="2">  <span class="dt">data =</span> wgnmks2008Fast,</a>
+<a class="sourceLine" id="cb34-3" data-line-number="3">  <span class="dt">pars =</span> pars,</a>
+<a class="sourceLine" id="cb34-4" data-line-number="4">  <span class="dt">prior =</span> priors,</a>
+<a class="sourceLine" id="cb34-5" data-line-number="5">  <span class="dt">ll_func =</span> SDT_ll_fast</a>
+<a class="sourceLine" id="cb34-6" data-line-number="6">)</a></code></pre></div>
 <p>The <code>pmwgs</code> function takes a set of arguments (listed below) and returns a list containing the required components for performing the particle metropolis within Gibbs steps.</p>
 <ul>
 <li><code>data =</code>a data frame (e.g.<code>wgnmks2008Fast</code>) with a column for participants called <b><code>subject</code></b></li>
@@ -984,19 +819,19 @@ priors &lt;-<span class="st"> </span><span class="kw">list</span>(
 <li><code>prior =</code> the priors to be used (e.g.<code>priors</code>)</li>
 <li><code>ll_func =</code> name of log likelihood function you’ve sourced above (e.g.<code>SDT_ll_fast</code>)</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sampler &lt;-<span class="st"> </span><span class="kw">pmwgs</span>(
-  <span class="dt">data =</span> wgnmks2008Fast,
-  <span class="dt">pars =</span> pars,
-  <span class="dt">prior =</span> priors,
-  <span class="dt">ll_func =</span> SDT_ll_fast
-)</code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb35-1" data-line-number="1">sampler &lt;-<span class="st"> </span><span class="kw">pmwgs</span>(</a>
+<a class="sourceLine" id="cb35-2" data-line-number="2">  <span class="dt">data =</span> wgnmks2008Fast,</a>
+<a class="sourceLine" id="cb35-3" data-line-number="3">  <span class="dt">pars =</span> pars,</a>
+<a class="sourceLine" id="cb35-4" data-line-number="4">  <span class="dt">prior =</span> priors,</a>
+<a class="sourceLine" id="cb35-5" data-line-number="5">  <span class="dt">ll_func =</span> SDT_ll_fast</a>
+<a class="sourceLine" id="cb35-6" data-line-number="6">)</a></code></pre></div>
 <div id="start-points" class="section level3">
 <h3><span class="header-section-number">2.3.1</span> Model start points</h3>
 <p>You have the option to set model start points. We use 0 for the mean (mu) and a variance of 0.01. If you chose not to specify start points, the sampler will randomly sample points from the prior distribution.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">start_points &lt;-<span class="st"> </span><span class="kw">list</span>(
-  <span class="dt">mu =</span> <span class="kw">rep</span>(<span class="dv">0</span>, <span class="dt">length.out =</span> <span class="kw">length</span>(pars)),
-  <span class="dt">sig2 =</span> <span class="kw">diag</span>(<span class="kw">rep</span>(.<span class="dv">01</span>, <span class="kw">length</span>(pars)))
-)</code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" data-line-number="1">start_points &lt;-<span class="st"> </span><span class="kw">list</span>(</a>
+<a class="sourceLine" id="cb36-2" data-line-number="2">  <span class="dt">mu =</span> <span class="kw">rep</span>(<span class="dv">0</span>, <span class="dt">length.out =</span> <span class="kw">length</span>(pars)),</a>
+<a class="sourceLine" id="cb36-3" data-line-number="3">  <span class="dt">sig2 =</span> <span class="kw">diag</span>(<span class="kw">rep</span>(.<span class="dv">01</span>, <span class="kw">length</span>(pars)))</a>
+<a class="sourceLine" id="cb36-4" data-line-number="4">)</a></code></pre></div>
 <p>The <code>start_points</code> object contains two vectors:</p>
 <ul>
 <li><code>mu</code> a vector of start points for the mu of each model parameter</li>
@@ -1006,8 +841,8 @@ priors &lt;-<span class="st"> </span><span class="kw">list</span>(
 <div id="run-sdtsampler" class="section level3">
 <h3><span class="header-section-number">2.3.2</span> Running the sampler</h3>
 <p>Okay - now we are ready to run the sampler.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sampler &lt;-<span class="st"> </span><span class="kw">init</span>(sampler, <span class="dt">theta_mu =</span> start_points<span class="op">$</span>mu,
-                <span class="dt">theta_sig =</span> start_points<span class="op">$</span>sig2)</code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb37-1" data-line-number="1">sampler &lt;-<span class="st"> </span><span class="kw">init</span>(sampler, <span class="dt">theta_mu =</span> start_points<span class="op">$</span>mu,</a>
+<a class="sourceLine" id="cb37-2" data-line-number="2">                <span class="dt">theta_sig =</span> start_points<span class="op">$</span>sig2)</a></code></pre></div>
 <p>Here we are using the <code>init</code> function to generate initial start points for the random effects and storing them in the <code>sampler</code> object. First we pass the <code>sampler</code> object from above that includes our data, parameters, priors and log likelihood function. If we decided to specify our own start points (as above), we would include the <code>theta_mu</code> and <code>theta_sig</code> arguments.</p>
 <p>Now we can run the sampler using the <code>run_stage</code> function. The <code>run_stage</code> function takes four arguments:</p>
 <ul>
@@ -1021,11 +856,11 @@ priors &lt;-<span class="st"> </span><span class="kw">list</span>(
 </ul>
 <p>It is optional to include the <code>iter =</code> and <code>particles =</code> arguments. If these are not included, <code>iter</code> and <code>particles</code> default to 1000. The number of iterations you choose for your burn in stage is similar to choices made when running deMCMC, however, this varies depending on the time the model takes to reach the ‘real’ posterior space.</p>
 <p>First we run our burn-in stage by setting <code>stage =</code> to <code>&quot;burn&quot;</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">burned &lt;-<span class="st"> </span><span class="kw">run_stage</span>(sampler, <span class="dt">stage =</span> <span class="st">&quot;burn&quot;</span>, <span class="dt">iter =</span> <span class="dv">1000</span>, <span class="dt">particles =</span> <span class="dv">20</span>, <span class="dt">display_progress =</span> <span class="ot">TRUE</span>, <span class="dt">n_cores =</span> <span class="dv">8</span>)</code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" data-line-number="1">burned &lt;-<span class="st"> </span><span class="kw">run_stage</span>(sampler, <span class="dt">stage =</span> <span class="st">&quot;burn&quot;</span>, <span class="dt">iter =</span> <span class="dv">1000</span>, <span class="dt">particles =</span> <span class="dv">20</span>, <span class="dt">display_progress =</span> <span class="ot">TRUE</span>, <span class="dt">n_cores =</span> <span class="dv">8</span>)</a></code></pre></div>
 <p>Now we run our adaptation stage by setting <code>stage = &quot;adapt&quot;</code>. This function creates an efficient proposal distribution. The sampler will attempt to create the proposal distribution after 20 unique particles have been accepted for each subject. The sampler will then test whether the distribution was able to be created and if it was created, the sampler will move to the next stage otherwise the sampler will continue to sample. The number of iterations needs to be great enough to generate enough unique samples, but not too large as to make….. <b>Check this with Scott/Guy</b></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">adapted &lt;-<span class="st"> </span><span class="kw">run_stage</span>(burned, <span class="dt">stage =</span> <span class="st">&quot;adapt&quot;</span>, <span class="dt">iter =</span> <span class="dv">1000</span>, <span class="dt">particles =</span> <span class="dv">20</span>, <span class="dt">n_cores =</span> <span class="dv">8</span>)</code></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb39-1" data-line-number="1">adapted &lt;-<span class="st"> </span><span class="kw">run_stage</span>(burned, <span class="dt">stage =</span> <span class="st">&quot;adapt&quot;</span>, <span class="dt">iter =</span> <span class="dv">1000</span>, <span class="dt">particles =</span> <span class="dv">20</span>, <span class="dt">n_cores =</span> <span class="dv">8</span>)</a></code></pre></div>
 <p>At the start of the <code>sampled</code> stage, the sampler object will create a ‘proposal’ distribution for each subject’s random effects using a conditional multi-variate normal. This proposal distribution is then used to efficiently generate new particles for each subject which means we can reduce the number of particles on each iteration whilst still achieving acceptance rates.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sampled &lt;-<span class="st"> </span><span class="kw">run_stage</span>(adapted, <span class="dt">stage =</span> <span class="st">&quot;sample&quot;</span>, <span class="dt">iter =</span> <span class="dv">1000</span>, <span class="dt">particles =</span> <span class="dv">20</span>, <span class="dt">n_cores =</span> <span class="dv">8</span>)</code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb40-1" data-line-number="1">sampled &lt;-<span class="st"> </span><span class="kw">run_stage</span>(adapted, <span class="dt">stage =</span> <span class="st">&quot;sample&quot;</span>, <span class="dt">iter =</span> <span class="dv">1000</span>, <span class="dt">particles =</span> <span class="dv">20</span>, <span class="dt">n_cores =</span> <span class="dv">8</span>)</a></code></pre></div>
 </div>
 </div>
 <div id="check-sampling-process" class="section level2">
@@ -1051,60 +886,60 @@ Figure 2.5: Posterior samples of subject log likelihoods
 <h2><span class="header-section-number">2.5</span> Simulating posterior data</h2>
 <p>Now we’ll cover the sample operation within the fast log likelihood function. We will use this on the full data set. The sample operation can be carried out in several ways (using rbinom etc). Please not that we do NOT recommend using this approach below and this should serve as an example only.</p>
 <p>The <code>sample</code> process is similar to what we’ve covered above. We begin by assigning <code>NA</code>s to the response column to prepare it for simulated response data. We then consider a subset of the data, beginning with <i>word</i> condition and high-frequency <code>hf</code> word stimuli trials.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">  <span class="cf">else</span>{
-    data<span class="op">$</span>resp &lt;-<span class="st"> </span><span class="ot">NA</span>
-   <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(data)){
-      <span class="cf">if</span> (data<span class="op">$</span>cond[i] <span class="op">==</span><span class="st"> &quot;w&quot;</span>){
-        <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;hf&quot;</span>){</code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb41-1" data-line-number="1">  <span class="cf">else</span>{</a>
+<a class="sourceLine" id="cb41-2" data-line-number="2">    data<span class="op">$</span>resp &lt;-<span class="st"> </span><span class="ot">NA</span></a>
+<a class="sourceLine" id="cb41-3" data-line-number="3">   <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(data)){</a>
+<a class="sourceLine" id="cb41-4" data-line-number="4">      <span class="cf">if</span> (data<span class="op">$</span>cond[i] <span class="op">==</span><span class="st"> &quot;w&quot;</span>){</a>
+<a class="sourceLine" id="cb41-5" data-line-number="5">        <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;hf&quot;</span>){</a></code></pre></div>
 <p>We then take the criterion for the <i>word</i> condition i.e. <code>C.w</code>. To simulate a response given our parameters we use <code>rnorm</code> to pick a random value from a normal distribution with <code>mean = HF.d</code> (i.e. high frequency word stimulus) and a SD of 1 and we test that value against the <i>word</i> criterion <code>C.w</code>. If the value is larger than <code>C.w</code>, the simulated response will be <i>word</i> otherwise, the simulated response will be <i>non-word</i>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="dt">test =</span> (<span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>], 
-                                     <span class="dt">sd =</span> <span class="dv">1</span>)) <span class="op">&gt;</span><span class="st"> </span>x[<span class="st">&quot;C.w&quot;</span>], <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)</code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb42-1" data-line-number="1">data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="dt">test =</span> (<span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>], </a>
+<a class="sourceLine" id="cb42-2" data-line-number="2">                                     <span class="dt">sd =</span> <span class="dv">1</span>)) <span class="op">&gt;</span><span class="st"> </span>x[<span class="st">&quot;C.w&quot;</span>], <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)</a></code></pre></div>
 <p>We repeat this process for each condition and stimulus combination as shown in the code block below.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">{ <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;lf&quot;</span>) {
-  data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="dt">test =</span> (<span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>], 
-                                       <span class="dt">sd =</span> <span class="dv">1</span>)) <span class="op">&gt;</span><span class="st"> </span>x[<span class="st">&quot;C.w&quot;</span>], <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)
-  } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;vlf&quot;</span>) {
-    data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="dt">test =</span> (<span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>], 
-                                         <span class="dt">sd =</span> <span class="dv">1</span>)) <span class="op">&gt;</span><span class="st"> </span>x[<span class="st">&quot;C.w&quot;</span>], <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)
-    } <span class="cf">else</span> {
-      data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="dt">test =</span> (<span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean =</span> <span class="dv">0</span>, 
-                                           <span class="dt">sd =</span> <span class="dv">1</span>)) <span class="op">&gt;</span><span class="st"> </span>x[<span class="st">&quot;C.w&quot;</span>], <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)
-      }
-} <span class="cf">else</span> {
-  <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;hf&quot;</span>) {
-    data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="dt">test =</span> (<span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>], 
-                                         <span class="dt">sd =</span> <span class="dv">1</span>)) <span class="op">&gt;</span><span class="st"> </span>x[<span class="st">&quot;C.nw&quot;</span>], <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)
-    } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;lf&quot;</span>) {
-          data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="dt">test =</span> (<span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>], 
-                                               <span class="dt">sd =</span> <span class="dv">1</span>)) <span class="op">&gt;</span><span class="st"> </span>x[<span class="st">&quot;C.nw&quot;</span>], <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)
-        } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;vlf&quot;</span>) {
-          data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="dt">test =</span> (<span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>], 
-                                               <span class="dt">sd =</span> <span class="dv">1</span>)) <span class="op">&gt;</span><span class="st"> </span>x[<span class="st">&quot;C.nw&quot;</span>], <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)
-        } <span class="cf">else</span> {
-          data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="dt">test =</span> (<span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean =</span> <span class="dv">0</span>, 
-                                               <span class="dt">sd =</span> <span class="dv">1</span>)) <span class="op">&gt;</span><span class="st"> </span>x[<span class="st">&quot;C.nw&quot;</span>], <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)
-          }
-        }</code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb43-1" data-line-number="1">{ <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;lf&quot;</span>) {</a>
+<a class="sourceLine" id="cb43-2" data-line-number="2">  data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="dt">test =</span> (<span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>], </a>
+<a class="sourceLine" id="cb43-3" data-line-number="3">                                       <span class="dt">sd =</span> <span class="dv">1</span>)) <span class="op">&gt;</span><span class="st"> </span>x[<span class="st">&quot;C.w&quot;</span>], <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)</a>
+<a class="sourceLine" id="cb43-4" data-line-number="4">  } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;vlf&quot;</span>) {</a>
+<a class="sourceLine" id="cb43-5" data-line-number="5">    data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="dt">test =</span> (<span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>], </a>
+<a class="sourceLine" id="cb43-6" data-line-number="6">                                         <span class="dt">sd =</span> <span class="dv">1</span>)) <span class="op">&gt;</span><span class="st"> </span>x[<span class="st">&quot;C.w&quot;</span>], <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)</a>
+<a class="sourceLine" id="cb43-7" data-line-number="7">    } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb43-8" data-line-number="8">      data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="dt">test =</span> (<span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean =</span> <span class="dv">0</span>, </a>
+<a class="sourceLine" id="cb43-9" data-line-number="9">                                           <span class="dt">sd =</span> <span class="dv">1</span>)) <span class="op">&gt;</span><span class="st"> </span>x[<span class="st">&quot;C.w&quot;</span>], <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)</a>
+<a class="sourceLine" id="cb43-10" data-line-number="10">      }</a>
+<a class="sourceLine" id="cb43-11" data-line-number="11">} <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb43-12" data-line-number="12">  <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;hf&quot;</span>) {</a>
+<a class="sourceLine" id="cb43-13" data-line-number="13">    data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="dt">test =</span> (<span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean =</span> x[<span class="st">&quot;HF.d&quot;</span>], </a>
+<a class="sourceLine" id="cb43-14" data-line-number="14">                                         <span class="dt">sd =</span> <span class="dv">1</span>)) <span class="op">&gt;</span><span class="st"> </span>x[<span class="st">&quot;C.nw&quot;</span>], <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)</a>
+<a class="sourceLine" id="cb43-15" data-line-number="15">    } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;lf&quot;</span>) {</a>
+<a class="sourceLine" id="cb43-16" data-line-number="16">          data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="dt">test =</span> (<span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean =</span> x[<span class="st">&quot;LF.d&quot;</span>], </a>
+<a class="sourceLine" id="cb43-17" data-line-number="17">                                               <span class="dt">sd =</span> <span class="dv">1</span>)) <span class="op">&gt;</span><span class="st"> </span>x[<span class="st">&quot;C.nw&quot;</span>], <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)</a>
+<a class="sourceLine" id="cb43-18" data-line-number="18">        } <span class="cf">else</span> <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> &quot;vlf&quot;</span>) {</a>
+<a class="sourceLine" id="cb43-19" data-line-number="19">          data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="dt">test =</span> (<span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean =</span> x[<span class="st">&quot;VLF.d&quot;</span>], </a>
+<a class="sourceLine" id="cb43-20" data-line-number="20">                                               <span class="dt">sd =</span> <span class="dv">1</span>)) <span class="op">&gt;</span><span class="st"> </span>x[<span class="st">&quot;C.nw&quot;</span>], <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)</a>
+<a class="sourceLine" id="cb43-21" data-line-number="21">        } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb43-22" data-line-number="22">          data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="dt">test =</span> (<span class="kw">rnorm</span>(<span class="dv">1</span>, <span class="dt">mean =</span> <span class="dv">0</span>, </a>
+<a class="sourceLine" id="cb43-23" data-line-number="23">                                               <span class="dt">sd =</span> <span class="dv">1</span>)) <span class="op">&gt;</span><span class="st"> </span>x[<span class="st">&quot;C.nw&quot;</span>], <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)</a>
+<a class="sourceLine" id="cb43-24" data-line-number="24">          }</a>
+<a class="sourceLine" id="cb43-25" data-line-number="25">        }</a></code></pre></div>
 <p>Now we can run our simulation. Below is some code to achieve this.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">n.posterior &lt;-<span class="st"> </span><span class="dv">20</span> <span class="co"># Number of samples from posterior distribution for each parameter.</span>
-pp.data &lt;-<span class="st"> </span><span class="kw">list</span>()
-S &lt;-<span class="st"> </span><span class="kw">unique</span>(wgnmks2008<span class="op">$</span>subject)
-data =<span class="st"> </span><span class="kw">split</span>(<span class="dt">x =</span> wgnmks2008, <span class="dt">f =</span> wgnmks2008<span class="op">$</span>subject)
-<span class="cf">for</span> (s <span class="cf">in</span> S) {
-  <span class="kw">cat</span>(s,<span class="st">&quot; &quot;</span>)
-  iterations =<span class="st"> </span><span class="kw">round</span>(<span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">1051</span>, <span class="dt">to =</span> sampled<span class="op">$</span>samples<span class="op">$</span>idx, <span class="dt">length.out =</span> n.posterior))
-  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(iterations)) {
-    x &lt;-<span class="st"> </span>sampled<span class="op">$</span>samples<span class="op">$</span>alpha[, s, iterations[i]]
-    <span class="kw">names</span>(x) &lt;-<span class="st"> </span>pars
-    tmp &lt;-<span class="st"> </span><span class="kw">SDT_ll_fast</span>(<span class="dt">x =</span> x, <span class="dt">data =</span> wgnmks2008[wgnmks2008<span class="op">$</span>subject <span class="op">==</span><span class="st"> </span>s,], <span class="dt">sample =</span> <span class="ot">TRUE</span>)
-    <span class="cf">if</span> (i <span class="op">==</span><span class="st"> </span><span class="dv">1</span>) {
-      pp.data[[s]] &lt;-<span class="st"> </span><span class="kw">cbind</span>(i,tmp)
-    } <span class="cf">else</span> {
-      pp.data[[s]] &lt;-<span class="st"> </span><span class="kw">rbind</span>(pp.data[[s]], <span class="kw">cbind</span>(i, tmp))
-    }
-  }
-  
-}</code></pre></div>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb44-1" data-line-number="1">n.posterior &lt;-<span class="st"> </span><span class="dv">20</span> <span class="co"># Number of samples from posterior distribution for each parameter.</span></a>
+<a class="sourceLine" id="cb44-2" data-line-number="2">pp.data &lt;-<span class="st"> </span><span class="kw">list</span>()</a>
+<a class="sourceLine" id="cb44-3" data-line-number="3">S &lt;-<span class="st"> </span><span class="kw">unique</span>(wgnmks2008<span class="op">$</span>subject)</a>
+<a class="sourceLine" id="cb44-4" data-line-number="4">data =<span class="st"> </span><span class="kw">split</span>(<span class="dt">x =</span> wgnmks2008, <span class="dt">f =</span> wgnmks2008<span class="op">$</span>subject)</a>
+<a class="sourceLine" id="cb44-5" data-line-number="5"><span class="cf">for</span> (s <span class="cf">in</span> S) {</a>
+<a class="sourceLine" id="cb44-6" data-line-number="6">  <span class="kw">cat</span>(s,<span class="st">&quot; &quot;</span>)</a>
+<a class="sourceLine" id="cb44-7" data-line-number="7">  iterations =<span class="st"> </span><span class="kw">round</span>(<span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">1051</span>, <span class="dt">to =</span> sampled<span class="op">$</span>samples<span class="op">$</span>idx, <span class="dt">length.out =</span> n.posterior))</a>
+<a class="sourceLine" id="cb44-8" data-line-number="8">  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(iterations)) {</a>
+<a class="sourceLine" id="cb44-9" data-line-number="9">    x &lt;-<span class="st"> </span>sampled<span class="op">$</span>samples<span class="op">$</span>alpha[, s, iterations[i]]</a>
+<a class="sourceLine" id="cb44-10" data-line-number="10">    <span class="kw">names</span>(x) &lt;-<span class="st"> </span>pars</a>
+<a class="sourceLine" id="cb44-11" data-line-number="11">    tmp &lt;-<span class="st"> </span><span class="kw">SDT_ll_fast</span>(<span class="dt">x =</span> x, <span class="dt">data =</span> wgnmks2008[wgnmks2008<span class="op">$</span>subject <span class="op">==</span><span class="st"> </span>s,], <span class="dt">sample =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb44-12" data-line-number="12">    <span class="cf">if</span> (i <span class="op">==</span><span class="st"> </span><span class="dv">1</span>) {</a>
+<a class="sourceLine" id="cb44-13" data-line-number="13">      pp.data[[s]] &lt;-<span class="st"> </span><span class="kw">cbind</span>(i,tmp)</a>
+<a class="sourceLine" id="cb44-14" data-line-number="14">    } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb44-15" data-line-number="15">      pp.data[[s]] &lt;-<span class="st"> </span><span class="kw">rbind</span>(pp.data[[s]], <span class="kw">cbind</span>(i, tmp))</a>
+<a class="sourceLine" id="cb44-16" data-line-number="16">    }</a>
+<a class="sourceLine" id="cb44-17" data-line-number="17">  }</a>
+<a class="sourceLine" id="cb44-18" data-line-number="18">  </a>
+<a class="sourceLine" id="cb44-19" data-line-number="19">}</a></code></pre></div>
 And now we can plot samples against the data.
 <div class="figure"><span id="fig:part12graph"></span>
 <img src="bookdown-demo_files/figure-html/part12graph-1.png" alt="Appropriate figure caption HERE" width="100%" />
@@ -1183,7 +1018,7 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    var src = "";
+    var src = "true";
     if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:")
       if (/^https?:/.test(src))

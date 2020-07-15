@@ -1,4 +1,4 @@
-#PMwG sampler and Signal Detection Theory
+# PMwG sampler and Signal Detection Theory
 ```{r, required packages, include=FALSE}
 library(tidyverse)
 library(knitr)
@@ -708,13 +708,13 @@ SDT_ll_fast(pars, wgnmks2008Fast, sample = FALSE)
 
 Now that we have written a log likelihood function, we're ready to use the PMwG sampler package. 
 
-Let's begin by installing the PMwG samplers package. <b>We currently recommended installing psamplers via devtools.</b>
+Let's begin by installing the PMwG package. <b>We currently recommended installing pmwg via devtools.</b>
 ```{r instlPMwGpkg, eval=FALSE}
-# The samplers package will be on CRAN - this step will be removed.
-install_github('newcastlecl\samplers')
+# The pmwg package will be on CRAN - this step will be removed.
+install_github('newcastlecl\pmwg')
 ```
 ```{r loadPMwGpkg}
-library(psamplers)
+library(pmwg)
 ```
 Now we require the parameter vector `pars` we specified above and a priors object called `priors`. The `priors` object is a list that contains two components:
 
