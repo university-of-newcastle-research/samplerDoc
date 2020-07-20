@@ -701,7 +701,7 @@ SDT_ll(pars, wgnmks2008, sample = FALSE)
 SDT_ll_fast(pars, wgnmks2008Fast, sample = FALSE)
 ```
 
-<b> We recommend "speeding up" your code however you wish. We do it in the Forstmann code.... </b>.  When you're confident that your log likelihood functions correctly, you should save it as a separate script so it can be sourced when running the sampler.
+<b> We recommend "speeding up" your code however you wish. We do it in the Forstmann code.... </b>.  When you're confident that your log likelihood functions correctly, you should save it as a separate script so it can be sourced and loaded when running the sampler.
 
 
 ## PMwG Framework
@@ -847,7 +847,7 @@ matplot(t(sampled$samples$subj_ll),type="l")
 
 ## Simulating posterior data
 
-Now we'll cover the sample operation within the fast log likelihood function. We will use this on the full data set. The sample operation can be carried out in several ways (using rbinom etc). Please not that we do NOT recommend using this approach below and this should serve as an example only.
+Now we'll cover the sample operation within the fast log likelihood function. We will use this on the full data set. The sample operation can be carried out in several ways (using rbinom etc). Please note that we do NOT recommend using this approach below and this should serve as an example only.
 
 The `sample` process is similar to what we've covered above. We begin by assigning `NA`s to the response column to prepare it for simulated response data. We then consider a subset of the data, beginning with <i>word</i> condition and high-frequency `hf` word stimuli trials.
 
