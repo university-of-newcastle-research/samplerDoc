@@ -7,6 +7,8 @@ library(ggplot2)
 ```
 Here we demonstrate how to use the PMwG sampler package to run a simple signal detection theory (SDT) analysis on a lexical decision task.  We recognise that it is unnecessary to use the sampler package for a simple analysis such as this; however, we hope this example demonstrates the usefulness of the PMwG sampler package.  
 
+This is a unnecessary change from Gavin
+
 ### Signal Detection Theory analysis of lexical decision task {#sdtOutline}
 
 We assume you have an understanding of SDT and lexical decision tasks, so we'll jump straight into how you can use the PMwG package with SDT in the context of a lexical decision task.<br>
