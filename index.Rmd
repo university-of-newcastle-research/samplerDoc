@@ -43,7 +43,7 @@ Benefits of the Particle Metropolis within Gibbs sampling algorithm include:
 
  
 
-## The Hierarhcical Structure Assumed  
+## The Hierarchical Structure Assumed  
 
 The PMwG package is very flexible in that it is agnostic about the data-level model; it allows the user to specify the model that defines the density of each subject’s data. However, the package makes fixed assumptions about the hierarchical structure across participants. The package assumes a multivariate normal random effects structure. For example, when estimating an LBA model, each participant will have several parameters, such as a start point (A), threshold (b), drift rate (v), and non-decision time (t0). The  PMwG package assumes that the vector of each subject’s parameter value follows a group-level distribution which is multivariate normal. The algorithm will estimate the group-level mean for each parameter, as well as its variance, and also the correlations between parameters in the sample.  
 
@@ -72,13 +72,13 @@ The key to making the algorithm efficient is to propose particles carefully. Our
 
 ## How do we generate proposals in PMwG sampling using Particle Metropolis 
 
-PMwG has three sampling stages. The first stage is called `burn-in`, the second `adaptation`, and the third is referred to as the `sampled` stage. The stages emploiy different numbers of particles, and different proposal distributions. This makes the algorithm most efficient. 
+PMwG has three sampling stages. The first stage is called `burn-in`, the second is `adaptation`, and the third is the `sampled` stage. The stages emploiy different numbers of particles, and different proposal distributions. This makes the algorithm most efficient. 
 
 <b>(include trace plot with ab lines separating these stages) </b>
 
 In the `burn-in` and `adaptation stages`, the proposals (or random effects vectors) for each subject are sampled from a mixture of two sources. One source is the group-level distribution and the second source is a multivariate normal distribution centred on the current best guess for the subject’s random effects vector (alpha), with a variance that is smaller than the group level distribution. We generate proposals from both sources, because proposals generated from the group level distribution act as a safety net in situations where proposals generated from the subject’s current alpha are unusual or unlikely. If this occurs instead of the sampler taking a long way to return a sensible vector of random effects, a group level proposal will instead be chosen, leading to a faster sampling time.  
 
-One thing we want to know is the posterior distribution for each subject’s random effects (alpha). For this reason, we throw away samples from the burn-in stage, because this is a period in which the sampler is trying to work its way away from an initial guess, and stabilise on samples which are from the true posterior distribution for each subjects random effects.  
+One thing we want to know is the posterior distribution for each subject’s random effects (`alpha`). For this reason, we throw away samples from the `burn-in` stage, because this is a period in which the sampler is trying to work its way away from an initial guess, and stabilise on samples which are from the true posterior distribution for each subjects random effects.  
 
 In the `adaptation stage`, we continue the algorithm used in the burn-in stage until we collect a minimum of 20 unique samples from each subject’s posterior. These samples are used to give a good idea of what the posterior distribution looks like for each subject’s random effects vector. That allows us to build an adaptive proposal distribution that makes very efficient proposals, in the next stage. 
 

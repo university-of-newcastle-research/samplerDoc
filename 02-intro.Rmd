@@ -22,13 +22,13 @@ kable(head(forstmann, 10), row.names = F,  align = "ccccc", caption = 'First 10 
 
 ## Setting up the sampler
 
-There are a number of preliminary steps we need to complete before running the sampler. Let's begin by defining the Linear Ballistic Accumulator (LBA) [@brown2008simplest] model parameters.
+There are preliminary steps we need to complete before running the sampler. Let's begin by defining the Linear Ballistic Accumulator (LBA) [@brown2008simplest] model parameters.
 
 * `b` threshold parameter (the evidence required to make a response)
 * `v` is drift rate or average speed of evidence accumulation
 * `A` is the model's start point 
-* `t0` is non-decision time. 
-* <b>Do we need to mention `sv` here? </b>
+* `t0` is non-decision time 
+* `sv` is the standard deviation of drift rate
 
 
 Now we know the LBA model parameters, we can create a vector of model parameter names, which we'll use in our log likelihood function. You can name this object as you wish; however, in our example, we will call it `pars`. The number of parameters and the parameter names you include in the `pars` vector <b>must</b> match those included in your log likelihood function.
