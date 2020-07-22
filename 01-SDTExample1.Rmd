@@ -5,6 +5,18 @@ library(knitr)
 library(devtools)
 library(ggplot2)
 ```
+
+```{css, echo=FALSE}
+pre {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+pre[class] {
+  max-height: 300px;
+}
+```
+
 Here we demonstrate how to use the PMwG sampler package to run a simple signal detection theory (SDT) analysis on a lexical decision task.  We recognise that it is unnecessary to use the sampler package for a simple analysis such as this; however, we hope this example demonstrates the usefulness of the PMwG sampler package.  
 
 ### Signal Detection Theory analysis of lexical decision task {#sdtOutline}
