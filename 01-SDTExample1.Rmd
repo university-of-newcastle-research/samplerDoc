@@ -25,7 +25,7 @@ We assume you have an understanding of SDT and lexical decision tasks, so we'll 
 
 <b> Do we need to explain lexical decision tasks?? We desribe the procedure briefly below -  Participants were asked to indicate whether a letter string was a <i>word</i> or a <i>non-word</i>. </b>
 
-We begin with the distributions for <i>non-word</i> and <i>word</i> stimuli. You can think of these two distributions as the 'noise' and 'signal' curves, respectively. Each distribution represents the evidence for 'word-likeness' and they are assumed to be normally distributed. The <i>non-word</i> distribution (or the 'noise' distribution) has a mean ($\mu$) of 0 and a standard deviation (SD) of 1. We could estimate SD here, but we will use 1 in this example for simplicity. The mean for the <i>word</i> distribution is unknown at this point; however, we assign a d-prime (d') parameter to denote the difference between the mean of the <i>non-word</i> and the mean of the <i>word</i> distributions (i.e. the 'sensitivity' to word stimuli or the signal-noise difference between <i>words</i> and <i>non-word</i>). As can be seen in Figure \@ref(fig:SDT1), the <i>word</i> distribution mean is greater than the <i>non-word</i> distribution mean (<b>in the positive direction?</b>); however, the distributions partially overlap where <i>non-words</i> and <i>words</i> are difficult to classify.
+We begin with the distributions for <i>non-word</i> and <i>word</i> stimuli. You can think of these two distributions as the 'noise' and 'signal' curves, respectively. Each distribution represents the evidence for 'word-likeness' and they are assumed to be normally distributed. The <i>non-word</i> distribution (or the 'noise' distribution) has a mean ($\mu$) of 0 and a standard deviation (SD) of 1. We could estimate SD here, but we will use 1 in this example for simplicity. The mean for the <i>word</i> distribution is unknown at this point; however, we assign a d-prime (d') parameter to denote the difference between the mean of the <i>non-word</i> and the mean of the <i>word</i> distributions (i.e. the 'sensitivity' to word stimuli or the signal-noise difference between <i>words</i> and <i>non-word</i>). As can be seen in Figure \@ref(fig:SDT1), the <i>word</i> distribution mean is greater than the <i>non-word</i> distribution mean; however, the distributions partially overlap where <i>non-words</i> and <i>words</i> are difficult to classify.
 <br>
 ```{r SDT1, echo=FALSE, out.width='100%', fig.show='hold', fig.cap='Simple SDT example of lexical decision task'}
 knitr::include_graphics('SDT_1.png')
@@ -37,29 +37,23 @@ The second parameter we denote is the criterion (<b>C</b>) parameter. The criter
 knitr::include_graphics('SDT_2.png')
 ```
 
-<b> Do we need to add something about means should be positive - to the right of NW mean of 0, otherwise the line about "given these parameters, one would expect that the <i>word</i> distribution would have a higher mean than the non-words, with partial overlap" does not make sense.</b>
 
 ### Writing a log-likelihood function
 
 Let's write a simple log likelihood function for a fabricated data set. You can copy the code below to follow along with the example.  
 ```{r setupllfab}
-resp <- c("word", "word", "non-word", "word", "non-word", "non-word", "word", "non-word")
 stim <- c("word", "word", "non-word", "word", "non-word", "non-word", "non-word", "word")
-fabData <- as.data.frame(cbind(resp, stim))
+resp <- c("word", "word", "non-word", "word", "non-word", "non-word", "word", "non-word")
+fab_data <- as.data.frame(cbind(resp, stim))
 ```
 We create our dataset by combining a response `resp` and a stimulus `stim` vector into a data frame as shown in \@ref(tab:fakeHead) below.
 ```{r fakeHead, out.width='80%', fig.asp=.75, fig.align='center', echo=FALSE}
-kable(fabData, caption = 'A fabricated dataset of 7 trials with a response and a stimuls column')
+kable(fab_data, caption = 'A fabricated dataset of 8 trials with a response and a stimuls column')
 ```
 
 Our log likelihood function will step through the data, line by line, and find a likelihood value for each trial, under two parameters; d-prime `d` and criterion `C`. 
 
-<br><b> Remove this paragraph? Some info is covered above</b>
-As mentioned [above](#sdtOutline) the <i>non-word</i> distribution has a mean of 0 and SD of 1. This then gives a reference point for where the mean of the <i>word</i> distribution would sit and is denoted by d’.
-Now we must find the location of the criterion. Setting the criterion allows us to determine which response will be made i.e. above the criterion, participant will respond <i>word</i> and below the criterion, participant will respond <i>non-word</i>.
-
-
-Here is our complete log likelihood function. We have omitted some code from the code blocks below to enhance appearance, so we encourage you to copy the log likelihood function from the following code block if you'd like to follow along with our example.
+Here is our complete log likelihood function. We have omitted some code from the code blocks below to enhance appearance, so we encourage you to copy the log likelihood function from the following code block if you'd like to follow along with our example. We'll now step through each component of the log likelihood below.
 ```{r sdtLlComplete, attr.source = '.numberLines', eval=FALSE}
 SDT_ll <- function(x, data, sample = FALSE){
   if (!sample) {
@@ -95,11 +89,11 @@ SDT_ll <- function(x, data, sample = FALSE) {
 ```
 * `x` is a named parameter vector (e.g.`pars`)
 * `data` is the dataset
-* `sample =` sample values from the posterior distribution (For this simple example, we do not require a `sample` argument.)
+* `sample =` sample values from the posterior distribution (For this simple example, we do not require a `sample` argument. )
 
-The first if statement (line 2) checks if you want to sample, this is used for posterior predictive sampling which we will cover in later chapters. and assigns NAs to your data frames response column. If you're not sampling (like us in this example), you need to create an output vector `out`. The `out` vector will contain the log likelihood value for each row/trial in your dataset. <b> Need to explain the `(sample)` part below </b>
+The first if statement (line 2) checks if you want to sample, this is used for posterior predictive sampling which we will cover in later chapters. If you're not sampling (like us in this example), you need to create an output vector `out`. The `out` vector will contain the log likelihood value for each row/trial in your dataset.
 ```{r sdtllL2, attr.source='.numberLines startFrom="2"', eval=FALSE}
-  if (sample) {
+  if (!sample) {
     data$response <- NA
     } else {
       out <- numeric(nrow(data))
@@ -107,7 +101,7 @@ The first if statement (line 2) checks if you want to sample, this is used for p
 ```
 
 From line 9, we check each row in the data set, first considering all trials with <i>word</i> stimuli `if (stim[i] == "word"` (line 10), and assign a likelihood for responding <i>word</i> (line 12-13) or <i>non-word</i> (line 15-16). The <i>word</i> distribution has a mean of `x["d"]` (d-prime parameter) and a decision criterion parameter `x["C"]`. If the response is <i>word</i>, we are considering values ABOVE or to the right of <B>C</B> in \@ref(fig:SDT2), so we set `lower.tail =` to `FALSE`. If the response is <i>non-word</i>, we look for values BELOW or to the left of <B>C</B> in \@ref(fig:SDT2) and we set `lower.tail =` to `TRUE`. The `log.p =` argument takes the log of all likelihood values when set to `TRUE`. We do this so we can sum all likelihoods at the end of the log likelihood function. 
-<b> Do we need to explain p-norm??</b>
+
 ```{r sdtllL8, attr.source='.numberLines startFrom="8"', eval=FALSE}
   if (!sample) {
     for (i in 1:nrow(data)) {
@@ -136,20 +130,20 @@ else {
 ```
 
 The final line of code on line 24 sums the `out` vector and returns a log-likelihood value for your model.
-<b> The text alignment/justification for code blocks is determined by the length of the longest line in the code block</b>
+
 ```{r part4.4,eval=FALSE}
 sum(out)
 ```
 
 ## Testing the SDT log likelihood function
 
-Before we run the log likelihood function, we must create a parameter vector `pars` containing the same parameter names used in our log likelihood function above i.e. we name the criterion `C` and d-prime parameter `d` and we assign arbitrary values to each parameter. 
+Before we run the log likelihood function, we must create a parameter vector `pars` containing the same parameter names used in our log likelihood function above i.e. we name the criterion `C` and d-prime parameter `d`. While we're testing the log likelihood we assign arbitrary values to each parameter. 
 
 ```{r, setupPars}
 pars <- c(C = 0.8, d = 2)
 ```
 
-We can test run our log likelihood function by passing in the parameter vector `pars` and the fabricated dataset we created above `fabData`. 
+We can test run our log likelihood function by passing in the parameter vector `pars` and the fabricated dataset we created above `fab_data`. 
 
 ```{r simple-SDT, include=FALSE}
 SDT_loglike <- function(x, data, sample = FALSE){
@@ -184,15 +178,14 @@ SDT_loglike <- function(x, data, sample = FALSE){
 ```
 
 ```{r part5}
-SDT_loglike(pars, fabData)
+SDT_loglike(pars, fab_data)
 ```
 Now, if we change the parameter values, the log-likelihood value should also change.
 ```{r part6}
 pars <- replace(pars, c(1,2), c(0.5, 1.2))
-SDT_loglike(pars, fabData)
+SDT_loglike(pars, fab_data)
 ```
-We can see the log likelihood has changed, so these values are more accurate given the data. 
-<b> What does this tell us? Seems insufficient to look for a change in the LL</b>
+We can see the log likelihood has changed. The second vector of parameter values are more likely than the first vector given the data.
 
 ## SDT log likelihood function for Wagenmakers experiment
 
@@ -202,7 +195,7 @@ Now that we've covered a simple test example, let's create a log likelihood func
 
 If you'd like to follow our example, you will need to access the Wagenmakers dataset. This can be done by installing the `rtdists` package and calling the `speed_acc` data frame. The structure of the `speed_acc` dataset will need to be modified in order to meet the requirements of the PMwG sampler. To do this, modify the dataset to match the structure illustrated in table \@ref(tab:wagenmakers10).
 
-Participants were asked to indicate whether a letter string was a <i>word</i> or a <i>non-word</i>.  A subset of Wagenmaker et al data are shown in table \@ref(tab:wagenmakers10), with each line representing a single trial. We have a `subject` column with a subject id (1-19), a condition column `cond` which indicates the proportion of <i>words</i> to <i>non-words</i> presented within a block of trials. In word blocks (`cond = w`) participants completed 75% word and 25% non-word trials and for non-word (`cond = nw`) blocks 75% non-word and 25% word trials. The `stim` column lists the word's frequency i.e. is the stimulus a <i>very low frequency</i> word (`stim = vlf`), a <i>low frequency</i> word (`stim = lf`), a <i>high frequency</i> word (`stim = hf`) or a <i>non-word</i> (`stim = nw`). The third column `resp` refers to the participant's response i.e. the participant responded <i>word</i> (`resp = W`) or <i>non-word</i> (`resp = NW`). The two remaining columns list the response time (`rt`) and whether the paricipant made a correct (`correct = 2`) or incorrect (`correct = 1`) choice. For more details about the experiment please see [the original paper](https://www.sciencedirect.com/science/article/pii/S0749596X07000496).  <b> Is this the correct paper to reference? </b>
+Participants were asked to indicate whether a letter string was a <i>word</i> or a <i>non-word</i>.  A subset of Wagenmakers et al data are shown in table \@ref(tab:wagenmakers10), with each line representing a single trial. We have a `subject` column with a subject id (1-19), a condition column `cond` which indicates the proportion of <i>words</i> to <i>non-words</i> presented within a block of trials. In word blocks (`cond = w`) participants completed 75% word and 25% non-word trials and for non-word (`cond = nw`) blocks 75% non-word and 25% word trials. The `stim` column lists the word's frequency i.e. is the stimulus a <i>very low frequency</i> word (`stim = vlf`), a <i>low frequency</i> word (`stim = lf`), a <i>high frequency</i> word (`stim = hf`) or a <i>non-word</i> (`stim = nw`). The third column `resp` refers to the participant's response i.e. the participant responded <i>word</i> (`resp = W`) or <i>non-word</i> (`resp = NW`). The two remaining columns list the response time (`rt`) and whether the paricipant made a correct (`correct = 2`) or incorrect (`correct = 1`) choice. For more details about the experiment please see [the original paper](https://www.sciencedirect.com/science/article/pii/S0749596X07000496).  <b> Is this the correct paper to reference? </b>
 
 
 ```{r setupWagen, include=FALSE}
@@ -211,7 +204,7 @@ wgnmks2008 <- data
 ```
 
 ```{r wagenmakers10, echo=FALSE, out.width='80%', fig.asp=.75, fig.align='center'}
-kable(slice(wgnmks2008, 91:102), row.names = FALSE, caption = 'Subset of 10 trials from the Wagenmakers (2008) dataset.')
+kable(slice(wgnmks2008, 91:102), row.names = FALSE, caption = 'Subset of 12 trials from the Wagenmakers (2008) dataset.')
 ```
 
 Our log-likelihood function for Wagenmakers experimental data is similar to the function we wrote above, except now we require a criterion parameter for each condition and a d-prime parameter for each of the `stim` <i>word</i> types. This is illustrated in figure \@ref(fig:SDT3) below, where we have a non-word criterion <B>C<sub>nw</sub></B>, a word criterion <B>C<sub>w</sub></B> and three distributions for each of the `stim` types with corresponding d-prime for each distribution: <b>d<sub>vlf</sub></b>, <b>d<sub>lf</sub></b>, <b>d<sub>hf</sub></b>.
@@ -224,7 +217,7 @@ knitr::include_graphics('SDT_3.png')
 Here is our complete log likelihood function for the Wagenmakers data set.
 
 ```{r wagenSDT, attr.source = '.numberLines', eval=FALSE}
-SDT_ll <- function(x, data, sample=FALSE){
+SDT_ll <- function(x, data, sample = FALSE){
   if (sample){
     data$response <- NA
   } else {
@@ -307,7 +300,7 @@ SDT_ll <- function(x, data, sample=FALSE){
 }
 ```
 
-Line 1 through to line 8 are the same as the log likelihood we wrote for the fabricated dataset above. From line 9, we calculate the log-likelihood `out[i]` for <i>word</i> condition trials `cond[i] == "w"` when the stimulus is a high frequency word `stim[i] == "hf"` for each response. We do this by considering the upper tail of the high frequency word distribution `lower.tail = FALSE`, from the word criterion <B>C<sub>w</sub></B>, for <i>word</i> responses `resp[i] == "W"` and the lower tail for <i>non-word</i> responses (`else` statement on line 14). 
+Line 1 through to line 8 are the same as the log likelihood we wrote for the fabricated dataset above. From line 9, we calculate the log-likelihood `out[i]` for <i>word</i> condition trials `cond[i] == "w"` when the stimulus is a high frequency word `stim[i] == "hf"` for each response. We do this by considering the upper tail of the high frequency word distribution `lower.tail = FALSE`, from the word criterion <B>C<sub>w</sub></B>, for <i>word</i> responses `resp[i] == "W"` and the lower tail for <i>non-word</i> responses (`else` statement on line 14). We then recycle this process for the remaining conditions/parameters in the experiment.
 
 ```{r wgnllSlow, attr.source='.numberLines startFrom="9"', eval=FALSE}
  if (data$cond[i] == "w") {
@@ -319,79 +312,6 @@ Line 1 through to line 8 are the same as the log likelihood we wrote for the fab
         out[i] <- pnorm(x["C.w"], mean = x["HF.d"], sd = 1,
                        log.p = TRUE, lower.tail = TRUE)
       }
-```
-
-From line 18 and still considering trials from the <i>word</i> condition, we calculate the log likelihood for each response for low frequency words `stim[i] == "lf"`, very low frequency words `stim[i] == "vlf"` (line 26) and non-word stimuli (`else` statement on line 35).
-
-```{r wgnllslow2, attr.source='.numberLines startFrom="18"', eval=FALSE}
-  else if (data$stim[i] == "lf") {
-      if (data$resp[i] == "W") {
-        out[i] <- pnorm(x["C.w"], mean = x["LF.d"], sd = 1,
-                       log.p = TRUE, lower.tail = FALSE)
-      } else {
-        out[i] <- pnorm(x["C.w"], mean = x["LF.d"], sd = 1,
-                       log.p = TRUE, lower.tail = TRUE)
-        }
-      } else if (data$stim[i] == "vlf") {
-        if (data$resp[i] == "W") {
-          out[i] <- pnorm(x["C.w"], mean = x["VLF.d"], sd = 1,
-                         log.p = TRUE, lower.tail = FALSE)
-        } else {
-          out[i] <- pnorm(x["C.w"], mean = x["VLF.d"], sd = 1,
-                         log.p = TRUE, lower.tail = TRUE)
-          }
-        } else {
-      if (data$resp[i] == "W") {
-        out[i] <- pnorm(x["C.w"], mean = 0, sd = 1,
-                       log.p = TRUE, lower.tail = FALSE)
-      } else {
-        out[i] <- pnorm(x["C.w"], mean = 0, sd = 1,
-                       log.p = TRUE, lower.tail = TRUE)
-        }
-      }
-    
-```
-That covers the <i>word</i> condition. From line 45 through 78, we repeat the same process for the <i>non-word</i> conditon....
-
-```{r wgnllslow3, attr.source='.numberLines startFrom="45"', eval=FALSE}
-else {
-      if (data$stim[i] == "hf") {
-        if (data$resp[i] == "W") {
-          out[i] <- pnorm(x["C.nw"], mean = x["HF.d"], sd = 1, 
-                         log.p = TRUE, lower.tail = FALSE)
-        } else {
-          out[i] <- pnorm(x["C.nw"], mean = x["HF.d"], sd = 1, 
-                         log.p = TRUE, lower.tail = TRUE)
-        }
-      } else if (data$stim[i] == "lf") {
-        if (data$resp[i] == "W") {
-          out[i] <- pnorm(x["C.nw"], mean = x["LF.d"], sd = 1, 
-                         log.p = TRUE, lower.tail = FALSE)
-        } else {
-          out[i] <- pnorm(x["C.nw"], mean = x["LF.d"], sd = 1, 
-                         log.p = TRUE, lower.tail = TRUE)
-        }
-      } else if (data$stim[i] == "vlf") {
-        if (data$resp[i] == "W") {
-          out[i] <- pnorm(x["C.nw"], mean = x["VLF.d"], sd = 1, 
-                         log.p = TRUE, lower.tail = FALSE)
-        } else {
-          out[i] <- pnorm(x["C.nw"], mean = x["VLF.d"], sd = 1, 
-                         log.p = TRUE, lower.tail = TRUE)
-        }
-      } else {
-        if (data$resp[i] == "W") {
-          out[i] <- pnorm(x["C.nw"], mean = 0, sd = 1, 
-                         log.p = TRUE, lower.tail = FALSE)
-        } else {
-          out[i] <- pnorm(x["C.nw"], mean = 0, sd = 1, 
-                         log.p = TRUE, lower.tail = TRUE)
-        }
-```
-
-...and sum the values and return the log-likelihood for our model.
-```{r part7.7, eval=FALSE}
-  sum(out)
 ```
 
 This give us a log likelihood for all data. Let's test this...
