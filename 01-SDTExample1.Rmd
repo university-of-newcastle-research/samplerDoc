@@ -426,7 +426,7 @@ kable(head(wgnmks2008Fast))
 ```
 
 
-For our SDT log likelihood function, we add `n*` (i.e. a multiplying factor) to each of these values to calculate the model log likelihood <b> Should we shorten this code block? Seems excessive.</b>
+For our SDT log likelihood function, we add `n*` (i.e. a multiplying factor) to each of these values to calculate the model log likelihood and we no longer loop over trials, otherwise the log likelihoods are the same.
 ```{r part8.2, eval=FALSE}
 SDT_ll_fast <- function(x, data, sample = FALSE) {
   if (!sample) {
@@ -625,7 +625,7 @@ SDT_ll(pars, wgnmks2008, sample = FALSE)
 SDT_ll_fast(pars, wgnmks2008Fast, sample = FALSE)
 ```
 
-Great! Both functions produce the same log likelihood! And we can run one final check by modifying the parameter vector's values
+Great. Both functions produce the same log likelihood! And we can run one final check by modifying the parameter vector's values
 
 ```{r part8.7,include=TRUE}
 pars <- log(c(C.w = 1, C.nw = 0.8, HF.d = 2.7, LF.d = 1.8, VLF.d = 1.3))
@@ -633,7 +633,7 @@ SDT_ll(pars, wgnmks2008, sample = FALSE)
 SDT_ll_fast(pars, wgnmks2008Fast, sample = FALSE)
 ```
 
-<b> We recommend "speeding up" your code however you wish. We do it in the Forstmann code.... </b>.  When you're confident that your log likelihood functions correctly, you should save it as a separate script so it can be sourced and loaded when running the sampler.
+We recommend "speeding up" your code however you wish.  When you're confident that your log likelihood functions correctly, you should save it as a separate script so it can be sourced and loaded when running the sampler.
 
 
 ## PMwG Framework
@@ -643,7 +643,7 @@ Now that we have written a log likelihood function, we're ready to use the PMwG 
 Let's begin by installing the PMwG package. <b>We currently recommended installing pmwg via devtools.</b>
 ```{r instlPMwGpkg, eval=FALSE}
 # The pmwg package will be on CRAN - this step will be removed.
-install_github('newcastlecl\pmwg')
+devtools::install_github('newcastlecl/pmwg', ref="release")
 ```
 ```{r loadPMwGpkg}
 library(pmwg)
@@ -653,17 +653,18 @@ Now we require the parameter vector `pars` we specified above and a priors objec
 
 
 * `theta_mu` a vector containing the prior for model parameter means
-* `theta_sig` the prior covariance matrix for model parameters.
+* `theta_sig` the prior on the variance of the mean parameters.
 
 ```{r part9.3, include=TRUE}
-pars <- c("C.w","C.nw","HF.d","LF.d","VLF.d") # This is the same as the `pars` vector specified above
+pars <- c("C.w", "C.nw", "HF.d", "LF.d", "VLF.d") # This is the same as the `pars` vector specified above
 priors <- list(
   theta_mu = rep(0, length(pars)),
   theta_sig = diag(rep(1, length(pars)))
 )
 
 ```
-The `priors` object in our example is initiated with zeros. <b>Under what conditions would this priors object  differ?</b>
+
+The `priors` object in our example is initiated with zeros. An important thing to note is that to facilitate Gibbs sampling from the multivariate normal distribution for the group parameters, the random effects must be estimated on the real line. In our SDT example, the parameters are free to vary along the real line so no transformation of the random effects is required. We expand on this point in more detail in later examples where parameters are bounded and require transformation. The prior on the covariance matrix is hard-coded as the marginally non-informative prior of Huang and  Wand, as discussed in the PMwG paper [add link to Gunawan et al. (2020) paper])
 
 
 The next step is to load your log likelihood function/script.
@@ -711,7 +712,7 @@ start_points <- list(
 
 The `start_points` object contains two vectors:
 
-* `mu` a vector of start points for the mu of each model parameter 
+* `mu` a vector of start points for the mean the model parameters 
 * `sig2` vector containing the start points of the covariance matrix of covariance between model parameters.
 
 
