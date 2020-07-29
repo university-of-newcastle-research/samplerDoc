@@ -204,14 +204,14 @@ Figure 2.2: Simple SDT example of lexical decision task
 <p>Let’s write a simple log likelihood function for a fabricated data set. You can copy the code below to follow along with the example.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">stim &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;word&quot;</span>, <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>, <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>, <span class="st">&quot;non-word&quot;</span>, <span class="st">&quot;non-word&quot;</span>, <span class="st">&quot;word&quot;</span>)
 resp &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;word&quot;</span>, <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>, <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>, <span class="st">&quot;non-word&quot;</span>, <span class="st">&quot;word&quot;</span>, <span class="st">&quot;non-word&quot;</span>)
-fab_data &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">cbind</span>(resp, stim))</code></pre></div>
+fab_data &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">cbind</span>(stim, resp))</code></pre></div>
 <p>We create our dataset by combining a response <code>resp</code> and a stimulus <code>stim</code> vector into a data frame as shown in <a href="pmwg-sampler-and-signal-detection-theory.html#tab:fakeHead">2.1</a> below.</p>
 <table>
 <caption><span id="tab:fakeHead">Table 2.1: </span>A fabricated dataset of 8 trials with a response and a stimuls column</caption>
 <thead>
 <tr class="header">
-<th align="left">resp</th>
 <th align="left">stim</th>
+<th align="left">resp</th>
 </tr>
 </thead>
 <tbody>
@@ -240,12 +240,12 @@ fab_data &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<sp
 <td align="left">non-word</td>
 </tr>
 <tr class="odd">
-<td align="left">word</td>
 <td align="left">non-word</td>
+<td align="left">word</td>
 </tr>
 <tr class="even">
-<td align="left">non-word</td>
 <td align="left">word</td>
+<td align="left">non-word</td>
 </tr>
 </tbody>
 </table>

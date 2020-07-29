@@ -44,7 +44,7 @@ Let's write a simple log likelihood function for a fabricated data set. You can 
 ```{r setupllfab}
 stim <- c("word", "word", "non-word", "word", "non-word", "non-word", "non-word", "word")
 resp <- c("word", "word", "non-word", "word", "non-word", "non-word", "word", "non-word")
-fab_data <- as.data.frame(cbind(resp, stim))
+fab_data <- as.data.frame(cbind(stim, resp))
 ```
 We create our dataset by combining a response `resp` and a stimulus `stim` vector into a data frame as shown in \@ref(tab:fakeHead) below.
 ```{r fakeHead, out.width='80%', fig.asp=.75, fig.align='center', echo=FALSE}
