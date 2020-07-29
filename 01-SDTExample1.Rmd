@@ -652,7 +652,7 @@ Now we require the parameter vector `pars` we specified above and a priors objec
 
 
 
-* `theta_mu` a vector containing the prior for model parameter means
+* `theta_mu_` a vector containing the prior for model parameter means
 * `theta_sig` the prior on the variance of the mean parameters.
 
 ```{r part9.3, include=TRUE}
