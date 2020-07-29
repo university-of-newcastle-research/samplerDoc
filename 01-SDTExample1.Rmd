@@ -652,8 +652,11 @@ Now we require the parameter vector `pars` we specified above and a priors objec
 
 
 
-* `theta_mu_` a vector containing the prior for model parameter means
-* `theta_sig` the prior on the variance of the mean parameters.
+* `theta_mu_mean` a vector that is the prior for the mean of the group-level mean parameters
+* `theta_mu_var` a covariance matrix that is the prior for the variance of the group-level mean parameters. In all examples we assume a diagonal matrix.
+
+
+
 
 ```{r part9.3, include=TRUE}
 pars <- c("C.w", "C.nw", "HF.d", "LF.d", "VLF.d") # This is the same as the `pars` vector specified above
@@ -727,13 +730,19 @@ Here we are using the `init` function to generate initial start points for the r
 
 Now we can run the sampler using the `run_stage` function. The `run_stage` function takes four arguments:
 
-* `x` the `sampler` object including parameters 
+* `x` the `sampler` object including parameters that was created from the init function above.
 * `stage =` the sampling stage (e.g. `"burn"`, `"adapt"` or `"sample"`)
 * `iter = ` is the number of iterations for the sampling stage 
-* `particles =` is the number of particles generated on each iteration
+* `particles =` is the number of particles generated on each iteration. Default = 1000.
 * `display_progress =` shows progress bar for current stage
 * `n_cores =` numner of processor cores to run stage on
-* `epsilon = ` must be >0<1 <b> We will write something here </b>
+* `epsilon = ` is a value between 0 and 1 which reduces the size of the sampling space. We use lower values of epsilon when there are more parameters to estimate. Default = 1.
+
+
+
+x = the sampler object including parameters that was created from the init function above.(stage = the sampling stage (These are:"burn", "adapt" or "sample" - in this order).(iter = is the number of iterations for the sampling stage. This is similar to running deMCMC, where it takes many iterations to reach the posterior space. Default = 1000.(particles = is the number of particles generated on each iteration. Default = 1000.(epsilon = is a value between 0 and 1 which reduces the size of the sampling space. We use lower values of epsilon when there are more parameters to estimate. Default = 1.(n_cores = the number of cores on a machine you wish to use to run the sammpler. This allows sampling to be run across cores (parallelising for subjects). Default = 1.)
+
+
 
 It is optional to include the `iter =` and `particles =` arguments. If these are not included, `iter` and `particles` default to 1000. The number of iterations you choose for your burn in stage is similar to choices made when running deMCMC, however, this varies depending on the time the model takes to reach the 'real' posterior space. 
 
@@ -742,7 +751,7 @@ First we run our burn-in stage by setting `stage =` to `"burn"`.
 burned <- run_stage(sampler, stage = "burn", iter = 1000, particles = 20, display_progress = TRUE, n_cores = 8)
 ```
 
-Now we run our adaptation stage by setting `stage = "adapt"`. This function creates an efficient proposal distribution. The sampler will attempt to create the proposal distribution after 20 unique particles have been accepted for each subject. The sampler will then test whether the distribution was able to be created and if it was created, the sampler will move to the next stage otherwise the sampler will continue to sample. The number of iterations needs to be great enough to generate enough unique samples, but not too large as to make..... <b>Check this with Scott/Guy</b> 
+Now we run our adaptation stage by setting `stage = "adapt"`. This function creates an efficient proposal distribution. The sampler will attempt to create the proposal distribution after 20 unique particles have been accepted for each subject. The sampler will then test whether the distribution was able to be created and if it was created, the sampler will move to the next stage otherwise the sampler will continue to sample. The number of iterations needs to be great enough to generate enough unique samples. The sampler will automatically exit the adapt stage when it has enough unique samples to create a multivariate normal ‘proposal’ distribution for each subject’s random effects. Thus we set iterations to a high number, as it should exit before reaching this point.
 ```{r SDTadaptation, echo=TRUE, eval=FALSE}
 adapted <- run_stage(burned, stage = "adapt", iter = 1000, particles = 20, n_cores = 8)
 ```
@@ -755,11 +764,10 @@ sampled <- run_stage(adapted, stage = "sample", iter = 1000, particles = 20, n_c
 
 ## Check sampling process
 
-It is a good idea to check your samples by producing some simple plots as shown below. The first plot gives an indication of the chains for the group level parameters. In this example, you will see the chains take only several iterations before arriving at the posterior, however, this may not always be the case. Each parameter chain (lines on plot \@ref(fig:parPlot)) should be stationary i.e. the chain should not trend up or down, and once the chain reaches the posterior, the chain should remain relatively 'thin'. If the chain is wide or continually jump between large values (e.g. move between -3 and 3) then there is likely an error in your log likelihood function. 
+It is a good idea to check your samples by producing some simple plots as shown below. The first plot gives an indication of the trace for the group level parameters. In this example, you will see the chains take only several iterations before arriving at the posterior, however, this may not always be the case. Each parameter trace (lines on plot \@ref(fig:parPlot)) should be stationary i.e. the trace should not trend up or down, and once the sampler reaches the posterior, the trace should remain relatively 'thin'. If the trace is wide or continually jump between large values (e.g. move between -3 and 3) then there is likely an error in your log likelihood function. 
 
-<b>Check with Reilly sentence below</b>
 
-As you can see in \@ref(fig:parPlot), the chains are clearly separate and are stable (not trending in any direction), as well as being relatively thin (largest variance ~1).
+As you can see in \@ref(fig:parPlot), the traces are clearly stable.
 
 ```{r load_data, include=FALSE}
 load("SDT_sampled.Rdata")
@@ -767,7 +775,7 @@ load("SDT_sampled.Rdata")
 
 
 ```{r parPlot, echo=FALSE, out.width='100%', fig.show='hold', fig.cap='Posterior samples of parameters'}
-matplot(t(sampled$samples$theta_mu),type="l")
+matplot(t(sampled$samples$theta_mu), type="l")
 ```
 
 The second plot  below (\@ref(fig:subjLLPlot)) shows the likelihoods across iterations for each subject. Again we see that the likelihood values jump up after only a few iterations and then remain stable, with only slight movement. 
