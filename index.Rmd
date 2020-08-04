@@ -13,10 +13,15 @@ description: " Particle Based Sampler for MCMC "
 ---
 
 ```{r, required packages, include=FALSE}
-library(tidyverse)
-library(knitr)
-library(devtools)
-library(ggplot2)
+pkgs <- c("tidyverse", "devtools", "ggplot2",
+          "knitr", "rtdists", "pmwg")
+
+for (pkg in pkgs){
+  if (!require(pkg, character.only = T)){
+    install.packages(pkg)
+    library(pkg)
+  }
+}
 ```
 
 

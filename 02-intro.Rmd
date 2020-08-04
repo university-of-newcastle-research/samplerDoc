@@ -14,13 +14,13 @@ library(pmwg)
 
 Forstmann et al looked at neural correlates of decision making under time pressure, with an aim to identify areas of the brain associated with speed-accuracy tradeoff. Imaging (fMRI) and behavioural data was collected; however, we will analyse behavioural data from the decision-making task only. In terms of modelling the data, Forstmann expected to find differences in thresholds (direction?) for each of the three speed-emphasis conditions. We have included the Forstmann et als data in the pmwg package as a data frame object named `forstmann`. The sampler requires a data frame with a <b>`subject`</b> column. The subject column data type can be a factor or numeric.
 
-Table \@ref(tab:forsthead10) shows the first ten trials from the Forstmann dataset. Participants `(n = 19)` were asked to indicate whether a cloud of dots in a random-dot kinematogram (RDK) moved to the left or the right of the screen. The IV was a within-subject, speed-accuracy manipulation where, before each trial began, pariticipants were instructed to make their choice <i>accurately</i> `(condition = 1)`, with <i>urgency</i>`(condition = 3)`or were presented with a <i>neutral</i> message `(condition = 2)`. Choice and response time data was collected. Choices were coded as correct `(resp = 2)` or incorrect `(resp =  1)` and response times `(rt)` were recorded in seconds. For more information about the design of the experiment please see [the original paper](https://www.pnas.org/content/105/45/17538.short).
+Table \@ref(tab:forsthead10) shows the first ten trials from the Forstmann dataset. Participants `(n = 19)` were asked to indicate whether a cloud of dots in a random-dot kinematogram (RDK) moved to the left or the right of the screen. The IV was a within-subject, speed-accuracy manipulation where, before each trial began, pariticipants were instructed to make their choice <i>accurately</i> `(condition = 1)`, with <i>urgency</i>`(condition = 3)`or were presented with a <i>neutral</i> message `(condition = 2)`. Stimuli were either <i>left</i> `(stim = 1)` or <i>right</i> `(stim =2)` and responses <i>left</i> `(resp = 1)` or <i>right</i> `(resp =2)`. Response times `(rt)` were recorded in seconds. For more information about the design of the experiment please see [the original paper](https://www.pnas.org/content/105/45/17538.short).
 
 ```{r forsthead10, echo=FALSE, out.width='80%', fig.asp=.75, fig.align='center'}
 kable(head(forstmann, 10), row.names = F,  align = "ccccc", caption = 'First 10 trials in Forstmann dataset. The `forstmann` dataset is an object/data frame ')
 ```
 
-## Setting up the sampler
+## Linear Ballistic Accumulator Parameters
 
 There are preliminary steps we need to complete before running the sampler. Let's begin by defining the Linear Ballistic Accumulator (LBA) [@brown2008simplest] model parameters.
 
@@ -31,7 +31,7 @@ There are preliminary steps we need to complete before running the sampler. Let'
 * `sv` is the standard deviation of drift rate
 
 
-Now we know the LBA model parameters, we can create a vector of model parameter names, which we'll use in our log likelihood function. You can name this object as you wish; however, in our example, we will call it `pars`. The number of parameters and the parameter names you include in the `pars` vector <b>must</b> match those included in your log likelihood function.
+Now we know the LBA model parameters, we can create a vector of model parameter names, which we'll use in our log-likelihood function. You can name this object as you wish; however, in our example, we will call it `pars`. The number of parameters and the parameter names you include in the `pars` vector <b>must</b> match those included in your log-likelihood function.
 ```{r pars}
 pars <- c("b1", "b2", "b3", "A", "v1", "v2", "t0")
 ```
@@ -51,11 +51,24 @@ priors <- list(start_mu = rep(0, length(pars)),
 The `priors` object in our example is initiated with zeros. <b>Under what conditions would this priors object differ?</b>
 
 
-## Writing the LBA log likelihood function
+## Writing the log-likelihood function
 
-Now we have our parameter vector and priors object, we can write our log likelihood functions. Just as we did with the SDT example, we'll write a slow and a fast log likelihood function. The LBA log likelihood function's runtime is dependent on the number of times we excute the `dLBA` function from the `rtdists` package.  For the slow LBA log likelihood function, `dLBA` is executed line-by-line whereas the `dLBA` function is executed once for all the data in the fast log likelihood function. When writing a new log likelihood function, we suggest starting with a slow, line-by-line function for easier debugging. The log likelihood function shown below also includes the `rLBA` function from the `rtdists` package.  If you'd like to follow our example, copy the code from the block directly below rather than copying from the small, separate code chunks, as some curly braces have been removed for style/clarity.
+Just as we did with the SDT example, we'll write a slow and a fast log likelihood function. The runtime difference is caused by calling the `dLBA` function line-by-line for the slow log likelihood and calling the `dLBA` function once for all the data in the fast log likelihood function. When writing a new log likelihood function, we suggest starting with a slow, line-by-line function for easier debugging. 
 
-### Trialwise LBA log likelihood function
+
+The LBA log-likelihood function takes three arguments: 
+
+* `x` is a named parameter vector (e.g. `pars`)
+* `data` is your data set (e.g.`forstmann`). Your dataset must include a `"subject"` column
+* `sample = FALSE` calculates a density function or `TRUE` generates a posterior, predictive sample that matches the shape of data.
+
+
+The log likelihood function shown below includes functions from the `rtdists` package for generating data and estimating density. If you'd like to run through this example, it is best to copy the `tw_lba_ll` function from the code block below rather than copying from the following separate code chunks, as some curly braces have been removed from code chunks.
+
+NOTE: This version of a loglikelihood is very slow and inneficient because rLBA and dLBA will be called on each line of the data. This will result in very slow sampling times and is a consequence of the rtdists package, not an issue with the PMwG sampling speed. We recommend people who have experience writing log likelihood write a faster version, or use the faster version we have created "HERE", however this method is easier for people new to modelling, and is less likely to result in mistakes.
+
+
+### Trialwise LBA log-likelihood function
 
 ```{r slow-lbaLL, attr.source = '.numberLines', eval=FALSE}
 tw_lba_ll <- function(x, data, sample = FALSE) {
@@ -123,13 +136,9 @@ tw_lba_ll <- function(x, data, sample = FALSE) {
 ```
 
 
-The trialwise log likelihood function takes three arguments: 
 
-* `x` is a named parameter vector (e.g. `pars`)
-* `data` is your data set (e.g.`forstmann`)
-* `sample` when `TRUE` generates a posterior predictive sample that matches the shape of data. 
 
-The first line in the trialwise LBA log likelihood function (Line 2 below) takes the exponent of the parameter values to move all parameter values to the real line. <b>The purpose of this is to..... </b>
+The first line in the trialwise LBA log-likelihood function (Line 2 below) takes the exponent of the parameter values to move all parameter values to the real line. <b>The purpose of this is to..... </b>
 Line 3 and 4 then checks RTs are faster than the non-decision time parameter, and zeroes those RTs that are faster than non-decision time. 
 
 ```{r lbaLL1, attr.source = '.numberLines', echo=TRUE, eval=FALSE}
@@ -192,7 +201,7 @@ Next on line we ensure the correct ordering of our drift rate parameters. Recall
 
 
 
-The `if else` statement below (Line 9-32) does one of two things: `if (sample)` calculates the posterior predictive data and the `else` statement calculates the density function. Toward the  end of the `else` statment (line 28) we take all implausible likelihood values, assign them to the `bad` object and set them to zero. The final line in the `else` statement takes the log of all likelihood values, sums them and then assigns the model's log likelihood value to the `out` variable.
+The `if else` statement below (Line 9-32) does one of two things: `if (sample)` calculates the posterior predictive data and the `else` statement calculates the density function. Toward the  end of the `else` statment (line 28) we take all implausible likelihood values, assign them to the `bad` object and set them to zero. The final line in the `else` statement takes the log of all likelihood values, sums them and then assigns the model's log-likelihood value to the `out` variable.
 ```{r lbaLL3, attr.source='.numberLines startFrom="9"', echo=TRUE, eval=FALSE}
   if (sample) {
     out <- rtdists::rLBA(n = nrow(data),
@@ -221,14 +230,14 @@ The `if else` statement below (Line 9-32) does one of two things: `if (sample)` 
 ```
 
 
-The next step is to include your log likelihood function. This must be called before you create the sampler object in the following step. You can load your log likelihood function from an external script:
+The next step is to include your log-likelihood function. This must be called before you create the sampler object in the following step. You can load your log-likelihood function from an external script:
 ```{r loadLL, echo=TRUE, eval=FALSE}
 source(file = "yourLogLikelihoodFile.R")
 ```
 
 
 
-Once you've setup your parameters, priors and your log likelihood function, the next step is to initialise the `sampler` object. 
+Once you've setup your parameters, priors and your log-likelihood function, the next step is to initialise the `sampler` object. 
 ```{r samplerObject, echo=TRUE, eval=FALSE}
 sampler <- pmwgs(
   data = forstmann,
@@ -243,7 +252,7 @@ The `pmwgs` function takes a set of arguments (listed below) and returns a list 
 * `data =` your data - a data frame (e.g.`forstmann`) with a column for participants called <b>`subject`</b>
 * `pars =` the model parameters to be used (e.g.`pars`)
 * `prior =` the priors to be used (e.g.`priors`)
-* `ll_func =` name of log likelihood function you've sourced above (e.g.`lba_loglike`)
+* `ll_func =` name of log-likelihood function you've sourced above (e.g.`lba_loglike`)
 
 ### Model start points {#start-points}
 You have the option to set model start points. We have specified sensible start points for the Forstmann dataset. If you chose not to specify start points, the sampler will randomly sample points from the prior distribution.
@@ -266,7 +275,7 @@ Okay - now we are ready to run the sampler.
 sampler <- init(sampler, theta_mu = start_points$mu,
                 theta_sig = start_points$sig2)
 ```
-Here we are using the `init` function to generate initial start points for the random effects and storing them in the `sampler` object.  First we pass the `sampler` object from above that includes our data, parameters, priors and log likelihood function.  If we decided to specify our own start points (as above), we would include the `theta_mu` and `theta_sig` arguments.
+Here we are using the `init` function to generate initial start points for the random effects and storing them in the `sampler` object.  First we pass the `sampler` object from above that includes our data, parameters, priors and log-likelihood function.  If we decided to specify our own start points (as above), we would include the `theta_mu` and `theta_sig` arguments.
 
 
 Now we can run the sampler using the `run_stage` function. The `run_stage` function takes four arguments:

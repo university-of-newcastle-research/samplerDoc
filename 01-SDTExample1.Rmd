@@ -1,11 +1,4 @@
 # PMwG sampler and Signal Detection Theory
-```{r, required packages, include=FALSE}
-library(tidyverse)
-library(knitr)
-library(devtools)
-library(ggplot2)
-```
-
 ```{css, echo=FALSE}
 pre {
   max-height: 600px;
@@ -21,7 +14,7 @@ Here we demonstrate how to use the PMwG sampler package to run a simple signal d
 
 ### Signal Detection Theory analysis of lexical decision task {#sdtOutline}
 
-We wont cover SDT and lexical decision tasks (LDT) in detail here, rather we'll explain how you can use the PMwG package with SDT in the context of a lexical decision task. If you require more information, please visit the [SDT](https://en.wikipedia.org/wiki/Detection_theory) and [LDT](https://en.wikipedia.org/wiki/Lexical_decision_task) wikipedia pages.
+We won't cover SDT and lexical decision tasks (LDT) in detail here, rather we'll explain how you can use the PMwG package with SDT in the context of a lexical decision task. If you require more information, please visit the [SDT](https://en.wikipedia.org/wiki/Detection_theory) and [LDT](https://en.wikipedia.org/wiki/Lexical_decision_task) wikipedia pages.
 <br> 
 
 Participants were asked to indicate whether a letter string was a <i>word</i> or a <i>non-word</i>. We begin with the distributions for <i>non-word</i> and <i>word</i> stimuli. You can think of these two distributions as the 'noise' and 'signal' curves, respectively. Each distribution represents the evidence for 'word-likeness' and they are assumed to be normally distributed. The <i>non-word</i> distribution (or the 'noise' distribution) has a mean ($\mu$) of 0 and a standard deviation (SD) of 1. We could estimate SD here, but we will use 1 in this example for simplicity. The mean for the <i>word</i> distribution is unknown at this point; however, we assign a d-prime (d') parameter to denote the difference between the mean of the <i>non-word</i> and the mean of the <i>word</i> distributions (i.e. the 'sensitivity' to word stimuli or the signal-noise difference between <i>words</i> and <i>non-word</i>). As can be seen in Figure \@ref(fig:SDT1), the <i>word</i> distribution mean is greater than the <i>non-word</i> distribution mean; however, the distributions partially overlap where <i>non-words</i> and <i>words</i> are difficult to classify.
@@ -39,7 +32,7 @@ knitr::include_graphics('SDT_2.png')
 
 ### Writing a log-likelihood function
 
-Let's write a simple log likelihood function for a fabricated data set. You can copy the code below to follow along with the example.  
+Let's write a simple log-likelihood  function for a fabricated data set. You can copy the code below to follow along with the example.  
 ```{r setupllfab}
 stim <- c("word", "word", "non-word", "word", "non-word", "non-word", "non-word", "word")
 resp <- c("word", "word", "non-word", "word", "non-word", "non-word", "word", "non-word")
@@ -50,9 +43,9 @@ We create our dataset by combining a response `resp` and a stimulus `stim` vecto
 kable(fab_data, caption = 'A fabricated dataset of 8 trials with a response and a stimuls column')
 ```
 
-Our log likelihood function will step through the data, line by line, and find a likelihood value for each trial, under two parameters; d-prime `d` and criterion `C`. 
+Our log-likelihood function will step through the data, line by line, and find a likelihood value for each trial, under two parameters; d-prime `d` and criterion `C`. 
 
-Here is our complete log likelihood function. We have omitted some code from the code blocks below to enhance appearance, so we encourage you to copy the log likelihood function from the following code block if you'd like to follow along with our example. We'll now step through each component of the log likelihood below.
+Here is our complete log-likelihood function. We have omitted some code from the code blocks below to enhance appearance, so we encourage you to copy the log-likelihood function from the following code block if you'd like to follow along with our example. We'll now step through each component of the log-likelihood below.
 ```{r sdtLlComplete, attr.source = '.numberLines', eval=FALSE}
 SDT_ll <- function(x, data, sample = FALSE){
   if (!sample) {
@@ -82,7 +75,7 @@ SDT_ll <- function(x, data, sample = FALSE){
 ```
 
 
-We initialise the log likelihood function with three arguments  
+We initialise the log-likelihood function with three arguments  
 ```{r llS1, attr.source = '.numberLines', eval=FALSE}
 SDT_ll <- function(x, data, sample = FALSE) {
 ```
@@ -90,7 +83,7 @@ SDT_ll <- function(x, data, sample = FALSE) {
 * `data` is the dataset
 * `sample =` sample values from the posterior distribution (For this simple example, we do not require a `sample` argument. )
 
-The first if statement (line 2) checks if you want to sample, this is used for posterior predictive sampling which we will cover in later chapters. If you're not sampling (like us in this example), you need to create an output vector `out`. The `out` vector will contain the log likelihood value for each row/trial in your dataset.
+The first if statement (line 2) checks if you want to sample, this is used for posterior predictive sampling which we will cover in later chapters. If you're not sampling (like us in this example), you need to create an output vector `out`. The `out` vector will contain the log-likelihood value for each row/trial in your dataset.
 ```{r sdtllL2, attr.source='.numberLines startFrom="2"', eval=FALSE}
   if (!sample) {
     data$response <- NA
@@ -99,7 +92,7 @@ The first if statement (line 2) checks if you want to sample, this is used for p
       }
 ```
 
-From line 9, we check each row in the data set, first considering all trials with <i>word</i> stimuli `if (stim[i] == "word"` (line 10), and assign a likelihood for responding <i>word</i> (line 12-13) or <i>non-word</i> (line 15-16). The <i>word</i> distribution has a mean of `x["d"]` (d-prime parameter) and a decision criterion parameter `x["C"]`. If the response is <i>word</i>, we are considering values ABOVE or to the right of <B>C</B> in \@ref(fig:SDT2), so we set `lower.tail =` to `FALSE`. If the response is <i>non-word</i>, we look for values BELOW or to the left of <B>C</B> in \@ref(fig:SDT2) and we set `lower.tail =` to `TRUE`. The `log.p =` argument takes the log of all likelihood values when set to `TRUE`. We do this so we can sum all likelihoods at the end of the log likelihood function. 
+From line 9, we check each row in the data set, first considering all trials with <i>word</i> stimuli `if (stim[i] == "word"` (line 10), and assign a likelihood for responding <i>word</i> (line 12-13) or <i>non-word</i> (line 15-16). The <i>word</i> distribution has a mean of `x["d"]` (d-prime parameter) and a decision criterion parameter `x["C"]`. If the response is <i>word</i>, we are considering values ABOVE or to the right of <B>C</B> in \@ref(fig:SDT2), so we set `lower.tail =` to `FALSE`. If the response is <i>non-word</i>, we look for values BELOW or to the left of <B>C</B> in \@ref(fig:SDT2) and we set `lower.tail =` to `TRUE`. The `log.p =` argument takes the log of all likelihood values when set to `TRUE`. We do this so we can sum all likelihoods at the end of the log-likelihood function. 
 
 ```{r sdtllL8, attr.source='.numberLines startFrom="8"', eval=FALSE}
   if (!sample) {
@@ -134,15 +127,15 @@ The final line of code on line 24 sums the `out` vector and returns a log-likeli
 sum(out)
 ```
 
-## Testing the SDT log likelihood function
+## Testing the SDT log-likelihood function
 
-Before we run the log likelihood function, we must create a parameter vector `pars` containing the same parameter names used in our log likelihood function above i.e. we name the criterion `C` and d-prime parameter `d`. While we're testing the log likelihood we assign arbitrary values to each parameter. 
+Before we run the log-likelihood function, we must create a parameter vector `pars` containing the same parameter names used in our log-likelihood function above i.e. we name the criterion `C` and d-prime parameter `d`. While we're testing the log-likelihood we assign arbitrary values to each parameter. 
 
 ```{r, setupPars}
 pars <- c(C = 0.8, d = 2)
 ```
 
-We can test run our log likelihood function by passing in the parameter vector `pars` and the fabricated dataset we created above `fab_data`. 
+We can test run our log-likelihood function by passing in the parameter vector `pars` and the fabricated dataset we created above `fab_data`. 
 
 ```{r simple-SDT, include=FALSE}
 SDT_loglike <- function(x, data, sample = FALSE){
@@ -184,11 +177,11 @@ Now, if we change the parameter values, the log-likelihood value should also cha
 pars <- replace(pars, c(1,2), c(0.5, 1.2))
 SDT_loglike(pars, fab_data)
 ```
-We can see the log likelihood has changed. The second vector of parameter values are more likely than the first vector given the data.
+We can see the log-likelihood has changed. The second vector of parameter values are more likely than the first vector given the data.
 
-## SDT log likelihood function for Wagenmakers experiment
+## SDT log-likelihood function for Wagenmakers experiment
 
-Now that we've covered a simple test example, let's create a log likelihood function for the @wagenmakers2008diffusion dataset. 
+Now that we've covered a simple test example, let's create a log-likelihood function for the @wagenmakers2008diffusion dataset. 
 
 ### Description of Wagenmakers experiment
 
@@ -213,9 +206,9 @@ knitr::include_graphics('SDT_3.png')
 ```
 
 
-Here is our complete log likelihood function for the Wagenmakers data set.
+Here is our complete log-likelihood function for the Wagenmakers data set.
 
-```{r wagenSDT, attr.source = '.numberLines', eval=FALSE}
+```{r wagenSDT, attr.source='.numberLines startFrom="1"', eval=FALSE}
 SDT_ll <- function(x, data, sample = FALSE){
   if (sample){
     data$response <- NA
@@ -299,7 +292,7 @@ SDT_ll <- function(x, data, sample = FALSE){
 }
 ```
 
-Line 1 through to line 8 are the same as the log likelihood we wrote for the fabricated dataset above. From line 9, we calculate the log-likelihood `out[i]` for <i>word</i> condition trials `cond[i] == "w"` when the stimulus is a high frequency word `stim[i] == "hf"` for each response. We do this by considering the upper tail of the high frequency word distribution `lower.tail = FALSE`, from the word criterion <B>C<sub>w</sub></B>, for <i>word</i> responses `resp[i] == "W"` and the lower tail for <i>non-word</i> responses (`else` statement on line 14). We then recycle this process for the remaining conditions/parameters in the experiment.
+Line 1 through to line 8 are the same as the log-likelihood we wrote for the fabricated dataset above. From line 9, we calculate the log-likelihood `out[i]` for <i>word</i> condition trials `cond[i] == "w"` when the stimulus is a high frequency word `stim[i] == "hf"` for each response. We do this by considering the upper tail of the high frequency word distribution `lower.tail = FALSE`, from the word criterion <B>C<sub>w</sub></B>, for <i>word</i> responses `resp[i] == "W"` and the lower tail for <i>non-word</i> responses (`else` statement on line 14). We then recycle this process for the remaining conditions/parameters in the experiment.
 
 ```{r wgnllSlow, attr.source='.numberLines startFrom="9"', eval=FALSE}
  if (data$cond[i] == "w") {
@@ -313,7 +306,7 @@ Line 1 through to line 8 are the same as the log likelihood we wrote for the fab
       }
 ```
 
-This give us a log likelihood for all data. Let's test this...
+This give us a log-likelihood for all data. Let's test this...
 
 ```{r sdt_freq, include=FALSE}
 SDT_ll <- function(x, data, sample=FALSE){
@@ -408,11 +401,11 @@ SDT_ll(pars, wgnmks2008, sample = FALSE)
 ```
 
 
-### Computation time of log likelihood function
+### Computation time of log-likelihood function
 
-You may have noticed that our log likelihood function is slow and heavy on computer time when processing the data trial by trial. We recommend you write a 'slow' log likelihood (as written above) to check it functions as it should before improving the function's efficiency.
+You may have noticed that our log-likelihood function is slow and heavy on computer time when processing the data trial by trial. We recommend you write a 'slow' log-likelihood (as written above) to check it functions as it should before improving the function's efficiency.
 <br>
-Now we'll speed up our log likelihood function. We have 16 possible values that could be assigned per line in the previous function (for the 16 cells of the design given by proportion (2) x stimuli (4) x response (2)). Rather than looping over each trial, we could calculate the log-likelihood for each cell in the design and multiply the number of instances for each subject. To do this, we add a column to the dataframe by tabling as shown in the code below
+Now we'll speed up our log-likelihood function. We have 16 possible values that could be assigned per line in the previous function (for the 16 cells of the design given by proportion (2) x stimuli (4) x response (2)). Rather than looping over each trial, we could calculate the log-likelihood for each cell in the design and multiply the number of instances for each subject. To do this, we add a column to the dataframe by tabling as shown in the code below
 ```{r part8.1,include=TRUE}
 wgnmks2008Fast <- as.data.frame(table(wgnmks2008$subject, wgnmks2008$cond,
                                   wgnmks2008$stim, wgnmks2008$resp))
@@ -425,7 +418,7 @@ kable(head(wgnmks2008Fast))
 ```
 
 
-For our SDT log likelihood function, we add `n*` (i.e. a multiplying factor) to each of these values to calculate the model log likelihood and we no longer loop over trials, otherwise the log likelihoods are the same.
+For our SDT log-likelihood function, we add `n*` (i.e. a multiplying factor) to each of these values to calculate the model log-likelihood and we no longer loop over trials, otherwise the log-likelihoods are the same.
 ```{r part8.2, eval=FALSE}
 SDT_ll_fast <- function(x, data, sample = FALSE) {
   if (!sample) {
@@ -505,7 +498,7 @@ SDT_ll_fast <- function(x, data, sample = FALSE) {
   }
 ```
 
-Now we have a fast(er) SDT log likelihood function and we can compare its output with the slow log likelihood function's output to make sure it is functioning correctly.
+Now we have a fast(er) SDT log-likelihood function and we can compare its output with the slow log-likelihood function's output to make sure it is functioning correctly.
 
 ```{r fast_sdt,include=FALSE}
 SDT_ll_fast = function(x,data,sample=FALSE){
@@ -624,7 +617,7 @@ SDT_ll(pars, wgnmks2008, sample = FALSE)
 SDT_ll_fast(pars, wgnmks2008Fast, sample = FALSE)
 ```
 
-Great. Both functions produce the same log likelihood! And we can run one final check by modifying the parameter vector's values
+Great. Both functions produce the same log-likelihood! And we can run one final check by modifying the parameter vector's values
 
 ```{r part8.7,include=TRUE}
 pars <- log(c(C.w = 1, C.nw = 0.8, HF.d = 2.7, LF.d = 1.8, VLF.d = 1.3))
@@ -632,12 +625,12 @@ SDT_ll(pars, wgnmks2008, sample = FALSE)
 SDT_ll_fast(pars, wgnmks2008Fast, sample = FALSE)
 ```
 
-We recommend "speeding up" your code however you wish.  When you're confident that your log likelihood functions correctly, you should save it as a separate script so it can be sourced and loaded when running the sampler.
+We recommend "speeding up" your code however you wish.  When you're confident that your log-likelihood functions correctly, you should save it as a separate script so it can be sourced and loaded when running the sampler.
 
 
 ## PMwG Framework
 
-Now that we have written a log likelihood function, we're ready to use the PMwG sampler package. 
+Now that we have written a log-likelihood function, we're ready to use the PMwG sampler package. 
 
 Let's begin by installing the PMwG package. <b>We currently recommended installing pmwg via devtools.</b>
 ```{r instlPMwGpkg, eval=FALSE}
@@ -669,13 +662,13 @@ priors <- list(
 The `priors` object in our example is initiated with zeros. An important thing to note is that to facilitate Gibbs sampling from the multivariate normal distribution for the group parameters, the random effects must be estimated on the real line. In our SDT example, the parameters are free to vary along the real line so no transformation of the random effects is required. We expand on this point in more detail in later examples where parameters are bounded and require transformation. The prior on the covariance matrix is hard-coded as the marginally non-informative prior of Huang and  Wand, as discussed in the PMwG paper [add link to Gunawan et al. (2020) paper])
 
 
-The next step is to load your log likelihood function/script.
+The next step is to load your log-likelihood function/script.
 
 ```{r loadYaLL, echo=TRUE, eval=FALSE}
 source(file = "yourLogLikelihoodFile.R")
 ```
 
-Once you've setup your parameters, priors and written a log likelihood function, the next step is to initialise the `sampler` object. 
+Once you've setup your parameters, priors and written a log-likelihood function, the next step is to initialise the `sampler` object. 
 ```{r SDTsamplerObject, echo=TRUE, eval=FALSE}
 sampler <- pmwgs(
   data = wgnmks2008Fast,
@@ -690,7 +683,7 @@ The `pmwgs` function takes a set of arguments (listed below) and returns a list 
 * `data =`a data frame (e.g.`wgnmks2008Fast`) with a column for participants called <b>`subject`</b>
 * `pars =` the model parameters to be used (e.g.`pars`)
 * `prior =` the priors to be used (e.g.`priors`)
-* `ll_func =` name of log likelihood function you've sourced above (e.g.`SDT_ll_fast`)
+* `ll_func =` name of log-likelihood function you've sourced above (e.g.`SDT_ll_fast`)
 
 
 ```{r part9.4, include=TRUE}
@@ -724,7 +717,7 @@ Okay - now we are ready to run the sampler.
 sampler <- init(sampler, theta_mu = start_points$mu,
                 theta_sig = start_points$sig2)
 ```
-Here we are using the `init` function to generate initial start points for the random effects and storing them in the `sampler` object.  First we pass the `sampler` object from above that includes our data, parameters, priors and log likelihood function.  If we decided to specify our own start points (as above), we would include the `theta_mu` and `theta_sig` arguments.
+Here we are using the `init` function to generate initial start points for the random effects and storing them in the `sampler` object.  First we pass the `sampler` object from above that includes our data, parameters, priors and log-likelihood function.  If we decided to specify our own start points (as above), we would include the `theta_mu` and `theta_sig` arguments.
 
 
 Now we can run the sampler using the `run_stage` function. The `run_stage` function takes four arguments:
@@ -763,7 +756,7 @@ sampled <- run_stage(adapted, stage = "sample", iter = 1000, particles = 20, n_c
 
 ## Check sampling process
 
-It is a good idea to check your samples by producing some simple plots as shown below. The first plot gives an indication of the trace for the group level parameters. In this example, you will see the chains take only several iterations before arriving at the posterior, however, this may not always be the case. Each parameter trace (lines on plot \@ref(fig:parPlot)) should be stationary i.e. the trace should not trend up or down, and once the sampler reaches the posterior, the trace should remain relatively 'thin'. If the trace is wide or continually jump between large values (e.g. move between -3 and 3) then there is likely an error in your log likelihood function. 
+It is a good idea to check your samples by producing some simple plots as shown below. The first plot gives an indication of the trace for the group level parameters. In this example, you will see the chains take only several iterations before arriving at the posterior, however, this may not always be the case. Each parameter trace (lines on plot \@ref(fig:parPlot)) should be stationary i.e. the trace should not trend up or down, and once the sampler reaches the posterior, the trace should remain relatively 'thin'. If the trace is wide or continually jump between large values (e.g. move between -3 and 3) then there is likely an error in your log-likelihood function. 
 
 
 As you can see in \@ref(fig:parPlot), the traces are clearly stable.
@@ -780,14 +773,14 @@ matplot(t(sampled$samples$theta_mu), type="l")
 The second plot  below (\@ref(fig:subjLLPlot)) shows the likelihoods across iterations for each subject. Again we see that the likelihood values jump up after only a few iterations and then remain stable, with only slight movement. 
 
 
-```{r subjLLPlot, echo=FALSE, out.width='100%', fig.show='hold', fig.cap='Posterior samples of subject log likelihoods'}
+```{r subjLLPlot, echo=FALSE, out.width='100%', fig.show='hold', fig.cap='Posterior samples of subject log-likelihoods'}
 matplot(t(sampled$samples$subj_ll),type="l")
 ```
 
 
 ## Simulating posterior data
 
-Now we'll cover the sample operation within the fast log likelihood function. We will use this on the full data set. The sample operation can be carried out in several ways (using rbinom etc). Please note that we do NOT recommend using this approach below and this should serve as an example only.
+Now we'll cover the sample operation within the fast log-likelihood function. We will use this on the full data set. The sample operation can be carried out in several ways (using rbinom etc). Please note that we do NOT recommend using this approach below and this should serve as an example only.
 
 The `sample` process is similar to what we've covered above. We begin by assigning `NA`s to the response column to prepare it for simulated response data. We then consider a subset of the data, beginning with <i>word</i> condition and high-frequency `hf` word stimuli trials.
 
