@@ -1,5 +1,6 @@
 # PMwG sampler and sequential sampling models
 
+
 In this chapter we'll demonstrate how to use the PMwG sampler with a sequential sampling model; the Linear Ballistic Accumulator (LBA).
 Please ensure the pmwg package is installed. We currently recommended installing pmwg via devtools.
 ```{r getpkg, eval=FALSE}
@@ -14,7 +15,7 @@ library(pmwg)
 
 Forstmann et al looked at neural correlates of decision making under time pressure, with an aim to identify areas of the brain associated with speed-accuracy tradeoff. Imaging (fMRI) and behavioural data was collected; however, we will analyse behavioural data from the decision-making task only. In terms of modelling the data, Forstmann expected to find differences in thresholds (direction?) for each of the three speed-emphasis conditions. We have included the Forstmann et als data in the pmwg package as a data frame object named `forstmann`. The sampler requires a data frame with a <b>`subject`</b> column. The subject column data type can be a factor or numeric.
 
-Table \@ref(tab:forsthead10) shows the first ten trials from the Forstmann dataset. Participants `(n = 19)` were asked to indicate whether a cloud of dots in a random-dot kinematogram (RDK) moved to the left or the right of the screen. The IV was a within-subject, speed-accuracy manipulation where, before each trial began, pariticipants were instructed to make their choice <i>accurately</i> `(condition = 1)`, with <i>urgency</i>`(condition = 3)`or were presented with a <i>neutral</i> message `(condition = 2)`. Stimuli were either <i>left</i> `(stim = 1)` or <i>right</i> `(stim =2)` and responses <i>left</i> `(resp = 1)` or <i>right</i> `(resp =2)`. Response times `(rt)` were recorded in seconds. For more information about the design of the experiment please see [the original paper](https://www.pnas.org/content/105/45/17538.short).
+Table \@ref(tab:forsthead10) shows the first ten trials from the Forstmann dataset. Participants `(n = 19)` were asked to indicate whether a cloud of dots in a random-dot kinematogram (RDK) moved to the left or the right of the screen. The IV was a within-subject, speed-accuracy manipulation where, before each trial began, pariticipants were instructed to make their choice <i>accurately</i> `(condition = 1)`, with <i>urgency</i>`(condition = 3)`or were presented with a <i>neutral</i> message `(condition = 2)`. Stimuli were either <i>left</i> `(stim = 1)` or <i>right</i> `(stim = 2)` and responses <i>left</i> `(resp = 1)` or <i>right</i> `(resp =2)`. Response times `(rt)` were recorded in seconds. For more information about the design of the experiment please see [the original paper](https://www.pnas.org/content/105/45/17538.short).
 
 ```{r forsthead10, echo=FALSE, out.width='80%', fig.asp=.75, fig.align='center'}
 kable(head(forstmann, 10), row.names = F,  align = "ccccc", caption = 'First 10 trials in Forstmann dataset. The `forstmann` dataset is an object/data frame ')
@@ -30,27 +31,6 @@ There are preliminary steps we need to complete before running the sampler. Let'
 * `t0` is non-decision time 
 * `sv` is the standard deviation of drift rate
 
-
-Now we know the LBA model parameters, we can create a vector of model parameter names, which we'll use in our log-likelihood function. You can name this object as you wish; however, in our example, we will call it `pars`. The number of parameters and the parameter names you include in the `pars` vector <b>must</b> match those included in your log-likelihood function.
-```{r pars}
-pars <- c("b1", "b2", "b3", "A", "v1", "v2", "t0")
-```
-
-For the Forstmann dataset, we need three threshold parameters (`b1`, `b2`, and `b3` i.e. one for each condition) because we assume response caution differs for each verbal instruction. We include two drift rate parameters: `v1` for the incorrect accumulator and `v2` for the correct accumulator, a start point parameter `A` and a non-decision time `t0` parameter.  We've made a decision to set the `sv` to 1 to satisfy the scaling properties of the model. We haven't included the `sv` parameter in the `pars` vector, however it is found in the LBA's likelihood function  below.
-
-Next we create a `priors` object; a list that contains two components <b> Do we need to explain what priors are and why we do this?</b>
-
-* `start_mu` a vector containing the prior for model parameter means
-* `start_sig` the prior covariance matrix for model parameters.
-
-```{r priors}
-priors <- list(start_mu = rep(0, length(pars)),
-  start_sig = diag(rep(1, length(pars)))
-)
-```
-The `priors` object in our example is initiated with zeros. <b>Under what conditions would this priors object differ?</b>
-
-
 ## Writing the log-likelihood function
 
 Just as we did with the SDT example, we'll write a slow and a fast log likelihood function. The runtime difference is caused by calling the `dLBA` function line-by-line for the slow log likelihood and calling the `dLBA` function once for all the data in the fast log likelihood function. When writing a new log likelihood function, we suggest starting with a slow, line-by-line function for easier debugging. 
@@ -63,14 +43,17 @@ The LBA log-likelihood function takes three arguments:
 * `sample = FALSE` calculates a density function or `TRUE` generates a posterior, predictive sample that matches the shape of data.
 
 
-The log likelihood function shown below includes functions from the `rtdists` package for generating data and estimating density. If you'd like to run through this example, it is best to copy the `tw_lba_ll` function from the code block below rather than copying from the following separate code chunks, as some curly braces have been removed from code chunks.
+The log-likelihood function shown below includes functions from the `rtdists` package for generating data and estimating density. If you'd like to run through this example, it is best to copy the `tw_lba_ll` function from the code block below rather than copying from the separate code chunks where curly braces have been removed.
 
-NOTE: This version of a loglikelihood is very slow and inneficient because rLBA and dLBA will be called on each line of the data. This will result in very slow sampling times and is a consequence of the rtdists package, not an issue with the PMwG sampling speed. We recommend people who have experience writing log likelihood write a faster version, or use the faster version we have created "HERE", however this method is easier for people new to modelling, and is less likely to result in mistakes.
+NOTE: This version of a log-likelihood is very slow and inneficient because rLBA and dLBA will be called on each line of the data. This will result in very slow sampling times and is a consequence of the rtdists package, not an issue with the PMwG sampling speed. We recommend people who have experience writing log-likelihoods write a faster version, or use the faster version we have created <b>"HERE"</b>, however this method is easier for people new to modelling, and is less likely to result in errors. Begin by installing `rtdists` package...
 
+```{r instrtdist}
+library(rtdists)
+```
 
-### Trialwise LBA log-likelihood function
+and now our complete trialwise (slow) log-likelihood function.
 
-```{r slow-lbaLL, attr.source = '.numberLines', eval=FALSE}
+```{r trialwiseLL, attr.source = '.numberLines', include=TRUE }
 tw_lba_ll <- function(x, data, sample = FALSE) {
   x <- exp(x)
   if (any(data$rt < x["t0"])) {
@@ -86,78 +69,73 @@ tw_lba_ll <- function(x, data, sample = FALSE) {
   }
   
   for (i in 1:nrow(data)) {
-    A <- x["A"]
-    b <- x[paste0("b.", data$condition[i])] + A
-    vc <- x["vc"]
-    ve <- x["ve"]
-    t0 <- x["t0"]
-    s <- c(1, 1)
-    
+    A = x["A"]
+    b = x[paste0("b.", data$condition[i])] + A
+    vc = x["vc"]
+    ve = x["ve"]
+    t0 = x["t0"]
+    s = c(1, 1)
     if (data$stim[i] == 1) {
-      vs <- c(vc, ve)
+      vs = c(vc, ve)
     } else {
-      vs <- c(ve, vc)
+      vs = c(ve, vc)
     }
-    
     if (sample) {
-      tmp <- rLBA(n = 1,
-                  A = A,
-                  b = b,
-                  mean_v = vs,
-                  sd_v = s,
-                  t0 = t0,
-                  dist = "norm",
-                  silent = TRUE
-                  )
+      tmp <-
+        rLBA(n = 1,
+          A = A,
+          b = b,
+          mean_v = vs,
+          sd_v = s,
+          t0 = t0,
+          dist = "norm",
+          silent = TRUE
+        )
       data$rt[i] <- tmp$rt
       data$resp[i] <- tmp$resp
       
+      
     } else {
-      out[i] <- dLBA(rt = data$rt[i],
-                     response = data$resp[i],
-                     A = A,
-                     b = b,
-                     mean_v = vs,
-                     sd_v = s,
-                     t0 = t0,
-                     dist = "norm",
-                     silent = TRUE
-                     )
-      }
+      out[i] <-
+        dLBA(
+          rt = data$rt[i],
+          response = data$resp[i],
+          A = A,
+          b = b,
+          mean_v = vs,
+          sd_v = s,
+          t0 = t0,
+          dist = "norm",
+          silent = TRUE
+        )
+    }
   }
-  
-  if (sample) {
+if (sample) {
     return(data)
   } else {
-    out <- sum(log(pmax(out, 1e-10)))
+    bad <- (out < 1e-10) | (!is.finite(out))
+    out[bad] <- 1e-10
+    out <- sum(log(out))
     return(out)
   }
 }
 ```
 
 
+The first line in the `tw_lba_ll` function (Line 2 below) takes the exponent of the parameter values. We do this as the LBA expects values on the real number line. Line 3 and 4 then checks RTs are faster than the non-decision time parameter `t0`, and return a low value, indicating that the given value of 't0' is not likely. 
 
-
-The first line in the trialwise LBA log-likelihood function (Line 2 below) takes the exponent of the parameter values to move all parameter values to the real line. <b>The purpose of this is to..... </b>
-Line 3 and 4 then checks RTs are faster than the non-decision time parameter, and zeroes those RTs that are faster than non-decision time. 
-
-```{r lbaLL1, attr.source = '.numberLines', echo=TRUE, eval=FALSE}
-tw_lba_ll <- function(x, data, sample = FALSE) {
+```{r twLBAll1, attr.source = '.numberLines startFrom="2"', echo=TRUE, eval=FALSE}
   x <- exp(x)
   if (any(data$rt < x["t0"])) {
     return(-1e10)
-  }
 ```
 
-<!-- Next (Line 7) we create a vector `bs` containing threshold parameters for each row (i.e. each choice) in the data set that takes into account the condition and adds the start point value. We add the start point parameter `A` value to each threshold parameter so that threshold is greater than the start point value.  -->
-<!-- ``` {r lbaLL2, attr.source='.numberLines startFrom="7"', echo=TRUE, eval=FALSE} -->
-<!--   bs <- x["A"] + x[c("b1", "b2", "b3")][data$condition] -->
-<!-- ``` -->
 
+Now we create a vector that will contain values sampled from the posterior distribution OR estimating the density. If `sample = TRUE`, we remove all responses (resp) and rts.  This means when we return `data`, we are returning the posterior predictive data which matches with the associated subject and condition.
 
-At line 7 `sample = TRUE` we create an empty vector `tmp` that will contain values sampled from the posterior distribution. Then we remove all responses `resp` and response times `rt` from the `data` object. This readies the `data` object for the posterior predictive data. If `sample = FALSE` (the else statement from line 11) we initiate an `out` vector with a length equal to the number of rows in the dataset, where likelihood values for each subject and condition will be stored.
+If `sample = FALSE` (the `else` statement from line 11) we create an `out` vector with a length equal to the number of rows in the dataset, where we store the likelihood value for each subject and condition.
 
-```{r part2.5, attr.source = '.numberLines startFrom="7"', echo=TRUE, eval=FALSE}
+```{r twLBAll2, attr.source = '.numberLines startFrom="7"', echo=TRUE, eval=FALSE}
   if (sample) {
     tmp <- numeric(nrow(data))
     data$rt <- rep(NA,nrow(data))
@@ -168,18 +146,12 @@ At line 7 `sample = TRUE` we create an empty vector `tmp` that will contain valu
 ```
 
 
-Next, we use a `for` loop to estimate the model parameter values (x) of each parameter for each choice or row in the data set, so that any conditional parameters (for example 'b' in our model) are correctly assigned. 
-
-conditional just means that when condition = (for example) "speed" (which is condition 3), then the "b" for that row will be assigned "b.3". 
+Next, we loop over each row in the datset. In this `for` loop, we find the values (`x`) of each parameter in our model for each row, so that any conditional parameters (for example `b` in our model) are correctly assigned. For example, we want to calculate the density for a model that has three threshold parameters (one for each condition; `1  = Accuracy`, `2 = neutral`, or `3 = speed`). In the loop, we paste `b.` to the condition in row `[i]` and add `A` (the start point - we do this to ensure the threshold is greater than the starting point). 
 
 
-Riley example - Next, we use a `for` loop to assign the proposed parameter values (x) to the corresponding row in the data set,. By doing this any conditional parameters (for example 'b' in our model) are assigned to the correct rows (for example, values for b.3 are assigned to rows where the condition was 3)
+On line 22 we ensure the correct ordering of our drift rate parameters. Recall that for `data$stim`, 1 = a left response. Therefore, when `stim = 1` (left), the correct accumulator `(vc)` is the first accumulator -- so we order the `vs`; (`vc`,`ve`). The else statement gives the opposite for right moving stimuli (`stim = 2`), the incorrect accumulator (ve) is the first accumulator, so the vs order is (ve,vc). This ensures that the matching correct and error drift rates line up with the stimulus for that condition. 
 
-For example, we want to calculate the density for a model that has three threshold parameters (one for each condition; 1  = Accuracy, 2 = neutral, or 3 = speed emphasis). In the loop, we paste 'b.' to the condition in row [i] and add 'A' (the start point - we do this to ensure the threshold is greater than the starting point). 
-
-Next on line we ensure the correct ordering of our drift rate parameters. Recall that for data$stim, 1 = a left response. Therefore, when stimulus = 1 (left), the correct accumulator (vc) is the first accumulator -- so we order the vs; (vc,ve). The else statement gives the opposite for right moving stimuli (stimulus = 2), the incorrect accumulator (ve) is the first accumulator, so the vs order is (ve,vc). This ensures that the matching correct and error drift rates line up with the stimulus for that condition. 
-
-```{r part2.6, attr.source = '.numberLines startFrom="15"', echo=TRUE, eval=FALSE}
+```{r twLBAll3, attr.source = '.numberLines startFrom="15"', echo=TRUE, eval=FALSE}
   for (i in 1:nrow(data)) {
     A = x["A"]
     b = x[paste0("b.", data$condition[i])] + A
@@ -196,6 +168,7 @@ Next on line we ensure the correct ordering of our drift rate parameters. Recall
 
 
 
+~##########################################################################################################~
 
 
 
@@ -228,6 +201,35 @@ The `if else` statement below (Line 9-32) does one of two things: `if (sample)` 
   }
   out
 ```
+
+
+
+
+
+
+
+Now we know the LBA model parameters, we can create a vector of model parameter names, which we'll use in our log-likelihood function. You can name this object as you wish; however, in our example, we will call it `pars`. The number of parameters and the parameter names you include in the `pars` vector <b>must</b> match those included in your log-likelihood function.
+```{r pars}
+pars <- c("b1", "b2", "b3", "A", "v1", "v2", "t0")
+```
+
+For the Forstmann dataset, we need three threshold parameters (`b1`, `b2`, and `b3` i.e. one for each condition) because we assume response caution differs for each verbal instruction. We include two drift rate parameters: `v1` for the incorrect accumulator and `v2` for the correct accumulator, a start point parameter `A` and a non-decision time `t0` parameter.  We've made a decision to set the `sv` to 1 to satisfy the scaling properties of the model. We haven't included the `sv` parameter in the `pars` vector, however it is found in the LBA's likelihood function  below.
+
+Next we create a `priors` object; a list that contains two components <b> Do we need to explain what priors are and why we do this?</b>
+
+* `start_mu` a vector containing the prior for model parameter means
+* `start_sig` the prior covariance matrix for model parameters.
+
+```{r priors}
+priors <- list(start_mu = rep(0, length(pars)),
+  start_sig = diag(rep(1, length(pars)))
+)
+```
+The `priors` object in our example is initiated with zeros. <b>Under what conditions would this priors object differ?</b>
+
+
+
+
 
 
 The next step is to include your log-likelihood function. This must be called before you create the sampler object in the following step. You can load your log-likelihood function from an external script:

@@ -133,9 +133,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="3.1" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#description-of-forstmann-experiment"><i class="fa fa-check"></i><b>3.1</b> Description of Forstmann experiment</a></li>
 <li class="chapter" data-level="3.2" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#linear-ballistic-accumulator-parameters"><i class="fa fa-check"></i><b>3.2</b> Linear Ballistic Accumulator Parameters</a></li>
 <li class="chapter" data-level="3.3" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#writing-the-log-likelihood-function"><i class="fa fa-check"></i><b>3.3</b> Writing the log-likelihood function</a><ul>
-<li class="chapter" data-level="3.3.1" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#trialwise-lba-log-likelihood-function"><i class="fa fa-check"></i><b>3.3.1</b> Trialwise LBA log-likelihood function</a></li>
-<li class="chapter" data-level="3.3.2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#start-points"><i class="fa fa-check"></i><b>3.3.2</b> Model start points</a></li>
-<li class="chapter" data-level="3.3.3" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#run-sampler"><i class="fa fa-check"></i><b>3.3.3</b> Running the sampler</a></li>
+<li class="chapter" data-level="3.3.1" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#start-points"><i class="fa fa-check"></i><b>3.3.1</b> Model start points</a></li>
+<li class="chapter" data-level="3.3.2" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#run-sampler"><i class="fa fa-check"></i><b>3.3.2</b> Running the sampler</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="example-2-single-threshold-parameter.html"><a href="example-2-single-threshold-parameter.html"><i class="fa fa-check"></i><b>4</b> Example 2 - Single threshold parameter</a></li>
@@ -176,7 +175,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="description-of-forstmann-experiment" class="section level2">
 <h2><span class="header-section-number">3.1</span> Description of Forstmann experiment</h2>
 <p>Forstmann et al looked at neural correlates of decision making under time pressure, with an aim to identify areas of the brain associated with speed-accuracy tradeoff. Imaging (fMRI) and behavioural data was collected; however, we will analyse behavioural data from the decision-making task only. In terms of modelling the data, Forstmann expected to find differences in thresholds (direction?) for each of the three speed-emphasis conditions. We have included the Forstmann et als data in the pmwg package as a data frame object named <code>forstmann</code>. The sampler requires a data frame with a <b><code>subject</code></b> column. The subject column data type can be a factor or numeric.</p>
-<p>Table <a href="pmwg-sampler-and-sequential-sampling-models.html#tab:forsthead10">3.1</a> shows the first ten trials from the Forstmann dataset. Participants <code>(n = 19)</code> were asked to indicate whether a cloud of dots in a random-dot kinematogram (RDK) moved to the left or the right of the screen. The IV was a within-subject, speed-accuracy manipulation where, before each trial began, pariticipants were instructed to make their choice <i>accurately</i> <code>(condition = 1)</code>, with <i>urgency</i><code>(condition = 3)</code>or were presented with a <i>neutral</i> message <code>(condition = 2)</code>. Stimuli were either <i>left</i> <code>(stim = 1)</code> or <i>right</i> <code>(stim =2)</code> and responses <i>left</i> <code>(resp = 1)</code> or <i>right</i> <code>(resp =2)</code>. Response times <code>(rt)</code> were recorded in seconds. For more information about the design of the experiment please see <a href="https://www.pnas.org/content/105/45/17538.short">the original paper</a>.</p>
+<p>Table <a href="pmwg-sampler-and-sequential-sampling-models.html#tab:forsthead10">3.1</a> shows the first ten trials from the Forstmann dataset. Participants <code>(n = 19)</code> were asked to indicate whether a cloud of dots in a random-dot kinematogram (RDK) moved to the left or the right of the screen. The IV was a within-subject, speed-accuracy manipulation where, before each trial began, pariticipants were instructed to make their choice <i>accurately</i> <code>(condition = 1)</code>, with <i>urgency</i><code>(condition = 3)</code>or were presented with a <i>neutral</i> message <code>(condition = 2)</code>. Stimuli were either <i>left</i> <code>(stim = 1)</code> or <i>right</i> <code>(stim = 2)</code> and responses <i>left</i> <code>(resp = 1)</code> or <i>right</i> <code>(resp =2)</code>. Response times <code>(rt)</code> were recorded in seconds. For more information about the design of the experiment please see <a href="https://www.pnas.org/content/105/45/17538.short">the original paper</a>.</p>
 <table>
 <caption><span id="tab:forsthead10">Table 3.1: </span>First 10 trials in Forstmann dataset. The <code>forstmann</code> dataset is an object/data frame</caption>
 <thead>
@@ -272,18 +271,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><code>t0</code> is non-decision time</li>
 <li><code>sv</code> is the standard deviation of drift rate</li>
 </ul>
-<p>Now we know the LBA model parameters, we can create a vector of model parameter names, which we’ll use in our log-likelihood function. You can name this object as you wish; however, in our example, we will call it <code>pars</code>. The number of parameters and the parameter names you include in the <code>pars</code> vector <b>must</b> match those included in your log-likelihood function.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pars &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;b1&quot;</span>, <span class="st">&quot;b2&quot;</span>, <span class="st">&quot;b3&quot;</span>, <span class="st">&quot;A&quot;</span>, <span class="st">&quot;v1&quot;</span>, <span class="st">&quot;v2&quot;</span>, <span class="st">&quot;t0&quot;</span>)</code></pre></div>
-<p>For the Forstmann dataset, we need three threshold parameters (<code>b1</code>, <code>b2</code>, and <code>b3</code> i.e. one for each condition) because we assume response caution differs for each verbal instruction. We include two drift rate parameters: <code>v1</code> for the incorrect accumulator and <code>v2</code> for the correct accumulator, a start point parameter <code>A</code> and a non-decision time <code>t0</code> parameter. We’ve made a decision to set the <code>sv</code> to 1 to satisfy the scaling properties of the model. We haven’t included the <code>sv</code> parameter in the <code>pars</code> vector, however it is found in the LBA’s likelihood function below.</p>
-<p>Next we create a <code>priors</code> object; a list that contains two components <b> Do we need to explain what priors are and why we do this?</b></p>
-<ul>
-<li><code>start_mu</code> a vector containing the prior for model parameter means</li>
-<li><code>start_sig</code> the prior covariance matrix for model parameters.</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">priors &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">start_mu =</span> <span class="kw">rep</span>(<span class="dv">0</span>, <span class="kw">length</span>(pars)),
-  <span class="dt">start_sig =</span> <span class="kw">diag</span>(<span class="kw">rep</span>(<span class="dv">1</span>, <span class="kw">length</span>(pars)))
-)</code></pre></div>
-<p>The <code>priors</code> object in our example is initiated with zeros. <b>Under what conditions would this priors object differ?</b></p>
 </div>
 <div id="writing-the-log-likelihood-function" class="section level2">
 <h2><span class="header-section-number">3.3</span> Writing the log-likelihood function</h2>
@@ -294,10 +281,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><code>data</code> is your data set (e.g.<code>forstmann</code>). Your dataset must include a <code>&quot;subject&quot;</code> column</li>
 <li><code>sample = FALSE</code> calculates a density function or <code>TRUE</code> generates a posterior, predictive sample that matches the shape of data.</li>
 </ul>
-<p>The log likelihood function shown below includes functions from the <code>rtdists</code> package for generating data and estimating density. If you’d like to run through this example, it is best to copy the <code>tw_lba_ll</code> function from the code block below rather than copying from the following separate code chunks, as some curly braces have been removed from code chunks.</p>
-<p>NOTE: This version of a loglikelihood is very slow and inneficient because rLBA and dLBA will be called on each line of the data. This will result in very slow sampling times and is a consequence of the rtdists package, not an issue with the PMwG sampling speed. We recommend people who have experience writing log likelihood write a faster version, or use the faster version we have created “HERE”, however this method is easier for people new to modelling, and is less likely to result in mistakes.</p>
-<div id="trialwise-lba-log-likelihood-function" class="section level3">
-<h3><span class="header-section-number">3.3.1</span> Trialwise LBA log-likelihood function</h3>
+<p>The log-likelihood function shown below includes functions from the <code>rtdists</code> package for generating data and estimating density. If you’d like to run through this example, it is best to copy the <code>tw_lba_ll</code> function from the code block below rather than copying from the separate code chunks where curly braces have been removed.</p>
+<p>NOTE: This version of a log-likelihood is very slow and inneficient because rLBA and dLBA will be called on each line of the data. This will result in very slow sampling times and is a consequence of the rtdists package, not an issue with the PMwG sampling speed. We recommend people who have experience writing log-likelihoods write a faster version, or use the faster version we have created <b>“HERE”</b>, however this method is easier for people new to modelling, and is less likely to result in errors. Begin by installing <code>rtdists</code> package…</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rtdists)</code></pre></div>
+<p>and now our complete trialwise (slow) log-likelihood function.</p>
 <div class="sourceCode"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
 2
 3
@@ -360,6 +347,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 60
 61
 62
+63
+64
+65
 </pre></td><td class="sourceCode"><pre><code class="sourceCode r">tw_lba_ll &lt;-<span class="st"> </span><span class="cf">function</span>(x, data, <span class="dt">sample =</span> <span class="ot">FALSE</span>) {
   x &lt;-<span class="st"> </span><span class="kw">exp</span>(x)
   <span class="cf">if</span> (<span class="kw">any</span>(data<span class="op">$</span>rt <span class="op">&lt;</span><span class="st"> </span>x[<span class="st">&quot;t0&quot;</span>])) {
@@ -375,69 +365,65 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
   }
   
   <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(data)) {
-    A &lt;-<span class="st"> </span>x[<span class="st">&quot;A&quot;</span>]
-    b &lt;-<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, data<span class="op">$</span>condition[i])] <span class="op">+</span><span class="st"> </span>A
-    vc &lt;-<span class="st"> </span>x[<span class="st">&quot;vc&quot;</span>]
-    ve &lt;-<span class="st"> </span>x[<span class="st">&quot;ve&quot;</span>]
-    t0 &lt;-<span class="st"> </span>x[<span class="st">&quot;t0&quot;</span>]
-    s &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>)
-    
+    A =<span class="st"> </span>x[<span class="st">&quot;A&quot;</span>]
+    b =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, data<span class="op">$</span>condition[i])] <span class="op">+</span><span class="st"> </span>A
+    vc =<span class="st"> </span>x[<span class="st">&quot;vc&quot;</span>]
+    ve =<span class="st"> </span>x[<span class="st">&quot;ve&quot;</span>]
+    t0 =<span class="st"> </span>x[<span class="st">&quot;t0&quot;</span>]
+    s =<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>)
     <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> </span><span class="dv">1</span>) {
-      vs &lt;-<span class="st"> </span><span class="kw">c</span>(vc, ve)
+      vs =<span class="st"> </span><span class="kw">c</span>(vc, ve)
     } <span class="cf">else</span> {
-      vs &lt;-<span class="st"> </span><span class="kw">c</span>(ve, vc)
+      vs =<span class="st"> </span><span class="kw">c</span>(ve, vc)
     }
-    
     <span class="cf">if</span> (sample) {
-      tmp &lt;-<span class="st"> </span><span class="kw">rLBA</span>(<span class="dt">n =</span> <span class="dv">1</span>,
-                  <span class="dt">A =</span> A,
-                  <span class="dt">b =</span> b,
-                  <span class="dt">mean_v =</span> vs,
-                  <span class="dt">sd_v =</span> s,
-                  <span class="dt">t0 =</span> t0,
-                  <span class="dt">dist =</span> <span class="st">&quot;norm&quot;</span>,
-                  <span class="dt">silent =</span> <span class="ot">TRUE</span>
-                  )
+      tmp &lt;-
+<span class="st">        </span><span class="kw">rLBA</span>(<span class="dt">n =</span> <span class="dv">1</span>,
+          <span class="dt">A =</span> A,
+          <span class="dt">b =</span> b,
+          <span class="dt">mean_v =</span> vs,
+          <span class="dt">sd_v =</span> s,
+          <span class="dt">t0 =</span> t0,
+          <span class="dt">dist =</span> <span class="st">&quot;norm&quot;</span>,
+          <span class="dt">silent =</span> <span class="ot">TRUE</span>
+        )
       data<span class="op">$</span>rt[i] &lt;-<span class="st"> </span>tmp<span class="op">$</span>rt
       data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span>tmp<span class="op">$</span>resp
       
+      
     } <span class="cf">else</span> {
-      out[i] &lt;-<span class="st"> </span><span class="kw">dLBA</span>(<span class="dt">rt =</span> data<span class="op">$</span>rt[i],
-                     <span class="dt">response =</span> data<span class="op">$</span>resp[i],
-                     <span class="dt">A =</span> A,
-                     <span class="dt">b =</span> b,
-                     <span class="dt">mean_v =</span> vs,
-                     <span class="dt">sd_v =</span> s,
-                     <span class="dt">t0 =</span> t0,
-                     <span class="dt">dist =</span> <span class="st">&quot;norm&quot;</span>,
-                     <span class="dt">silent =</span> <span class="ot">TRUE</span>
-                     )
-      }
+      out[i] &lt;-
+<span class="st">        </span><span class="kw">dLBA</span>(
+          <span class="dt">rt =</span> data<span class="op">$</span>rt[i],
+          <span class="dt">response =</span> data<span class="op">$</span>resp[i],
+          <span class="dt">A =</span> A,
+          <span class="dt">b =</span> b,
+          <span class="dt">mean_v =</span> vs,
+          <span class="dt">sd_v =</span> s,
+          <span class="dt">t0 =</span> t0,
+          <span class="dt">dist =</span> <span class="st">&quot;norm&quot;</span>,
+          <span class="dt">silent =</span> <span class="ot">TRUE</span>
+        )
+    }
   }
-  
-  <span class="cf">if</span> (sample) {
+<span class="cf">if</span> (sample) {
     <span class="kw">return</span>(data)
   } <span class="cf">else</span> {
-    out &lt;-<span class="st"> </span><span class="kw">sum</span>(<span class="kw">log</span>(<span class="kw">pmax</span>(out, <span class="fl">1e-10</span>)))
+    bad &lt;-<span class="st"> </span>(out <span class="op">&lt;</span><span class="st"> </span><span class="fl">1e-10</span>) <span class="op">|</span><span class="st"> </span>(<span class="op">!</span><span class="kw">is.finite</span>(out))
+    out[bad] &lt;-<span class="st"> </span><span class="fl">1e-10</span>
+    out &lt;-<span class="st"> </span><span class="kw">sum</span>(<span class="kw">log</span>(out))
     <span class="kw">return</span>(out)
   }
 }</code></pre></td></tr></table></div>
-<p>The first line in the trialwise LBA log-likelihood function (Line 2 below) takes the exponent of the parameter values to move all parameter values to the real line. <b>The purpose of this is to….. </b> Line 3 and 4 then checks RTs are faster than the non-decision time parameter, and zeroes those RTs that are faster than non-decision time.</p>
-<div class="sourceCode"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
-2
+<p>The first line in the <code>tw_lba_ll</code> function (Line 2 below) takes the exponent of the parameter values. We do this as the LBA expects values on the real number line. Line 3 and 4 then checks RTs are faster than the non-decision time parameter <code>t0</code>, and return a low value, indicating that the given value of ‘t0’ is not likely.</p>
+<div class="sourceCode" startFrom="2"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>2
 3
 4
-5
-</pre></td><td class="sourceCode"><pre><code class="sourceCode r">tw_lba_ll &lt;-<span class="st"> </span><span class="cf">function</span>(x, data, <span class="dt">sample =</span> <span class="ot">FALSE</span>) {
-  x &lt;-<span class="st"> </span><span class="kw">exp</span>(x)
+</pre></td><td class="sourceCode"><pre><code class="sourceCode r">  x &lt;-<span class="st"> </span><span class="kw">exp</span>(x)
   <span class="cf">if</span> (<span class="kw">any</span>(data<span class="op">$</span>rt <span class="op">&lt;</span><span class="st"> </span>x[<span class="st">&quot;t0&quot;</span>])) {
-    <span class="kw">return</span>(<span class="op">-</span><span class="fl">1e10</span>)
-  }</code></pre></td></tr></table></div>
-<!-- Next (Line 7) we create a vector `bs` containing threshold parameters for each row (i.e. each choice) in the data set that takes into account the condition and adds the start point value. We add the start point parameter `A` value to each threshold parameter so that threshold is greater than the start point value.  -->
-<!-- ``` {r lbaLL2, attr.source='.numberLines startFrom="7"', echo=TRUE, eval=FALSE} -->
-<!--   bs <- x["A"] + x[c("b1", "b2", "b3")][data$condition] -->
-<!-- ``` -->
-<p>At line 7 <code>sample = TRUE</code> we create an empty vector <code>tmp</code> that will contain values sampled from the posterior distribution. Then we remove all responses <code>resp</code> and response times <code>rt</code> from the <code>data</code> object. This readies the <code>data</code> object for the posterior predictive data. If <code>sample = FALSE</code> (the else statement from line 11) we initiate an <code>out</code> vector with a length equal to the number of rows in the dataset, where likelihood values for each subject and condition will be stored.</p>
+    <span class="kw">return</span>(<span class="op">-</span><span class="fl">1e10</span>)</code></pre></td></tr></table></div>
+<p>Now we create a vector that will contain values sampled from the posterior distribution OR estimating the density. If <code>sample = TRUE</code>, we remove all responses (resp) and rts. This means when we return <code>data</code>, we are returning the posterior predictive data which matches with the associated subject and condition.</p>
+<p>If <code>sample = FALSE</code> (the <code>else</code> statement from line 11) we create an <code>out</code> vector with a length equal to the number of rows in the dataset, where we store the likelihood value for each subject and condition.</p>
 <div class="sourceCode" startFrom="7"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>7
 8
 9
@@ -452,11 +438,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
   } <span class="cf">else</span> {
     out &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data))
   }</code></pre></td></tr></table></div>
-<p>Next, we use a <code>for</code> loop to estimate the model parameter values (x) of each parameter for each choice or row in the data set, so that any conditional parameters (for example ‘b’ in our model) are correctly assigned.</p>
-<p>conditional just means that when condition = (for example) “speed” (which is condition 3), then the “b” for that row will be assigned “b.3”.</p>
-<p>Riley example - Next, we use a <code>for</code> loop to assign the proposed parameter values (x) to the corresponding row in the data set,. By doing this any conditional parameters (for example ‘b’ in our model) are assigned to the correct rows (for example, values for b.3 are assigned to rows where the condition was 3)</p>
-<p>For example, we want to calculate the density for a model that has three threshold parameters (one for each condition; 1 = Accuracy, 2 = neutral, or 3 = speed emphasis). In the loop, we paste ‘b.’ to the condition in row [i] and add ‘A’ (the start point - we do this to ensure the threshold is greater than the starting point).</p>
-<p>Next on line we ensure the correct ordering of our drift rate parameters. Recall that for data$stim, 1 = a left response. Therefore, when stimulus = 1 (left), the correct accumulator (vc) is the first accumulator – so we order the vs; (vc,ve). The else statement gives the opposite for right moving stimuli (stimulus = 2), the incorrect accumulator (ve) is the first accumulator, so the vs order is (ve,vc). This ensures that the matching correct and error drift rates line up with the stimulus for that condition.</p>
+<p>Next, we loop over each row in the datset. In this <code>for</code> loop, we find the values (<code>x</code>) of each parameter in our model for each row, so that any conditional parameters (for example <code>b</code> in our model) are correctly assigned. For example, we want to calculate the density for a model that has three threshold parameters (one for each condition; <code>1  = Accuracy</code>, <code>2 = neutral</code>, or <code>3 = speed</code>). In the loop, we paste <code>b.</code> to the condition in row <code>[i]</code> and add <code>A</code> (the start point - we do this to ensure the threshold is greater than the starting point).</p>
+<p>On line 22 we ensure the correct ordering of our drift rate parameters. Recall that for <code>data$stim</code>, 1 = a left response. Therefore, when <code>stim = 1</code> (left), the correct accumulator <code>(vc)</code> is the first accumulator – so we order the <code>vs</code>; (<code>vc</code>,<code>ve</code>). The else statement gives the opposite for right moving stimuli (<code>stim = 2</code>), the incorrect accumulator (ve) is the first accumulator, so the vs order is (ve,vc). This ensures that the matching correct and error drift rates line up with the stimulus for that condition.</p>
 <div class="sourceCode" startFrom="15"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>15
 16
 17
@@ -481,6 +464,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
     } <span class="cf">else</span> {
       vs =<span class="st"> </span><span class="kw">c</span>(ve, vc)
     }</code></pre></td></tr></table></div>
+<p><sub>##########################################################################################################</sub></p>
 <p>The <code>if else</code> statement below (Line 9-32) does one of two things: <code>if (sample)</code> calculates the posterior predictive data and the <code>else</code> statement calculates the density function. Toward the end of the <code>else</code> statment (line 28) we take all implausible likelihood values, assign them to the <code>bad</code> object and set them to zero. The final line in the <code>else</code> statement takes the log of all likelihood values, sums them and then assigns the model’s log-likelihood value to the <code>out</code> variable.</p>
 <div class="sourceCode" startFrom="9"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>9
 10
@@ -530,6 +514,18 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
     out &lt;-<span class="st"> </span><span class="kw">sum</span>(<span class="kw">log</span>(out))
   }
   out</code></pre></td></tr></table></div>
+<p>Now we know the LBA model parameters, we can create a vector of model parameter names, which we’ll use in our log-likelihood function. You can name this object as you wish; however, in our example, we will call it <code>pars</code>. The number of parameters and the parameter names you include in the <code>pars</code> vector <b>must</b> match those included in your log-likelihood function.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pars &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;b1&quot;</span>, <span class="st">&quot;b2&quot;</span>, <span class="st">&quot;b3&quot;</span>, <span class="st">&quot;A&quot;</span>, <span class="st">&quot;v1&quot;</span>, <span class="st">&quot;v2&quot;</span>, <span class="st">&quot;t0&quot;</span>)</code></pre></div>
+<p>For the Forstmann dataset, we need three threshold parameters (<code>b1</code>, <code>b2</code>, and <code>b3</code> i.e. one for each condition) because we assume response caution differs for each verbal instruction. We include two drift rate parameters: <code>v1</code> for the incorrect accumulator and <code>v2</code> for the correct accumulator, a start point parameter <code>A</code> and a non-decision time <code>t0</code> parameter. We’ve made a decision to set the <code>sv</code> to 1 to satisfy the scaling properties of the model. We haven’t included the <code>sv</code> parameter in the <code>pars</code> vector, however it is found in the LBA’s likelihood function below.</p>
+<p>Next we create a <code>priors</code> object; a list that contains two components <b> Do we need to explain what priors are and why we do this?</b></p>
+<ul>
+<li><code>start_mu</code> a vector containing the prior for model parameter means</li>
+<li><code>start_sig</code> the prior covariance matrix for model parameters.</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">priors &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">start_mu =</span> <span class="kw">rep</span>(<span class="dv">0</span>, <span class="kw">length</span>(pars)),
+  <span class="dt">start_sig =</span> <span class="kw">diag</span>(<span class="kw">rep</span>(<span class="dv">1</span>, <span class="kw">length</span>(pars)))
+)</code></pre></div>
+<p>The <code>priors</code> object in our example is initiated with zeros. <b>Under what conditions would this priors object differ?</b></p>
 <p>The next step is to include your log-likelihood function. This must be called before you create the sampler object in the following step. You can load your log-likelihood function from an external script:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">source</span>(<span class="dt">file =</span> <span class="st">&quot;yourLogLikelihoodFile.R&quot;</span>)</code></pre></div>
 <p>Once you’ve setup your parameters, priors and your log-likelihood function, the next step is to initialise the <code>sampler</code> object.</p>
@@ -546,9 +542,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><code>prior =</code> the priors to be used (e.g.<code>priors</code>)</li>
 <li><code>ll_func =</code> name of log-likelihood function you’ve sourced above (e.g.<code>lba_loglike</code>)</li>
 </ul>
-</div>
 <div id="start-points" class="section level3">
-<h3><span class="header-section-number">3.3.2</span> Model start points</h3>
+<h3><span class="header-section-number">3.3.1</span> Model start points</h3>
 <p>You have the option to set model start points. We have specified sensible start points for the Forstmann dataset. If you chose not to specify start points, the sampler will randomly sample points from the prior distribution.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">start_points &lt;-<span class="st"> </span><span class="kw">list</span>(
   <span class="dt">mu =</span> <span class="kw">c</span>(.<span class="dv">2</span>, .<span class="dv">2</span>, .<span class="dv">2</span>, .<span class="dv">4</span>, .<span class="dv">3</span>, <span class="fl">1.3</span>, <span class="op">-</span><span class="dv">2</span>),
@@ -561,7 +556,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul>
 </div>
 <div id="run-sampler" class="section level3">
-<h3><span class="header-section-number">3.3.3</span> Running the sampler</h3>
+<h3><span class="header-section-number">3.3.2</span> Running the sampler</h3>
 <p>Okay - now we are ready to run the sampler.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sampler &lt;-<span class="st"> </span><span class="kw">init</span>(sampler, <span class="dt">theta_mu =</span> start_points<span class="op">$</span>mu,
                 <span class="dt">theta_sig =</span> start_points<span class="op">$</span>sig2)</code></pre></div>
