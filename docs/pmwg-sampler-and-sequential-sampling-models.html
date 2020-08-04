@@ -173,16 +173,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># The pmwg package will be on CRAN - this step will be removed.</span>
 <span class="kw">install_github</span>(<span class="st">&#39;newcastlecl\pmwg&#39;</span>)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(pmwg)</code></pre></div>
-<style type="text/css">
-pre {
-  max-height: 600px;
-  overflow-y: auto;
-}
-
-pre[class] {
-  max-height: 300px;
-}
-</style>
 <div id="description-of-forstmann-experiment" class="section level2">
 <h2><span class="header-section-number">3.1</span> Description of Forstmann experiment</h2>
 <p>Forstmann et al looked at neural correlates of decision making under time pressure, with an aim to identify areas of the brain associated with speed-accuracy tradeoff. Imaging (fMRI) and behavioural data was collected; however, we will analyse behavioural data from the decision-making task only. In terms of modelling the data, Forstmann expected to find differences in thresholds (direction?) for each of the three speed-emphasis conditions. We have included the Forstmann et als data in the pmwg package as a data frame object named <code>forstmann</code>. The sampler requires a data frame with a <b><code>subject</code></b> column. The subject column data type can be a factor or numeric.</p>

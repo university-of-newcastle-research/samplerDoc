@@ -11,6 +11,15 @@ link-citations: yes
 github-repo: rstudio/bookdown-demo
 description: " Particle Based Sampler for MCMC "
 ---
+
+```{r, required packages, include=FALSE}
+library(tidyverse)
+library(knitr)
+library(devtools)
+library(ggplot2)
+```
+
+
 # Introduction to Particle Based Sampler for MCMC
 
 Contains implementations of particle based sampling methods for model parameter estimation. Primarily an implementation of the Particle Metropolis within Gibbs sampler outlined in the paper available [here](https://www.sciencedirect.com/science/article/abs/pii/S0022249620300389), it also contains code for covariance estimation and time varying models.
