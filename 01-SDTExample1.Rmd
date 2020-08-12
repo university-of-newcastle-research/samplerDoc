@@ -92,7 +92,7 @@ The first if statement (line 2) checks if you want to sample, this is used for p
       }
 ```
 
-From line 9, we check each row in the data set, first considering all trials with <i>word</i> stimuli `if (stim[i] == "word"` (line 10), and assign a likelihood for responding <i>word</i> (line 12-13) or <i>non-word</i> (line 15-16). The <i>word</i> distribution has a mean of `x["d"]` (d-prime parameter) and a decision criterion parameter `x["C"]`. If the response is <i>word</i>, we are considering values ABOVE or to the right of <B>C</B> in \@ref(fig:SDT2), so we set `lower.tail =` to `FALSE`. If the response is <i>non-word</i>, we look for values BELOW or to the left of <B>C</B> in \@ref(fig:SDT2) and we set `lower.tail =` to `TRUE`. The `log.p =` argument takes the log of all likelihood values when set to `TRUE`. We do this so we can sum all likelihoods at the end of the log-likelihood function. 
+From line 9, we check each row in the data set, first considering all trials with <i>word</i> stimuli `if (stim[i] == "word"` (line 10), and assign a likelihood for responding <i>word</i> (line 12-13) or <i>non-word</i> (line 15-16). The <i>word</i> distribution has a mean of `x["d"]` (d-prime parameter) and a decision criterion parameter `x["C"]`. If the response is <i>word</i>, we are considering values ABOVE or to the right of <B>C</B> in figure \@ref(fig:SDT2), so we set `lower.tail =` to `FALSE`. If the response is <i>non-word</i>, we look for values BELOW or to the left of <B>C</B> in figure \@ref(fig:SDT2) and we set `lower.tail =` to `TRUE`. The `log.p =` argument takes the log of all likelihood values when set to `TRUE`. We do this so we can sum all likelihoods at the end of the log-likelihood function. 
 
 ```{r sdtllL8, attr.source='.numberLines startFrom="8"', eval=FALSE}
   if (!sample) {
@@ -107,7 +107,7 @@ From line 9, we check each row in the data set, first considering all trials wit
       }
 ```
 
-From the else statement on line 18, we have the function for <i>non-word</i> trials i.e. `stim[i] == "non-word"`. As can be seen below, the output value `out[i]` for these trials is arrived at in a similar manner to the <i>word</i> trials. We set the `mean` to 0 and the standard deviation `sd` to 1. If the response is <i>word</i>, we are considering values ABOVE or to the right of <B>C</B> in \@ref(fig:SDT2), so we set `lower.tail =` to `FALSE`. If the response is <i>non-word</i>, we look for values BELOW or to the left of <B>C</B> in \@ref(fig:SDT2) and we set `lower.tail =` to `TRUE`. Again we want the log of all likelihood values so we set `log.p = TRUE`.
+From the else statement on line 18, we have the function for <i>non-word</i> trials i.e. `stim[i] == "non-word"`. As can be seen below, the output value `out[i]` for these trials is arrived at in a similar manner to the <i>word</i> trials. We set the `mean` to 0 and the standard deviation `sd` to 1. If the response is <i>word</i>, we are considering values ABOVE or to the right of <B>C</B> in figure \@ref(fig:SDT2), so we set `lower.tail =` to `FALSE`. If the response is <i>non-word</i>, we look for values BELOW or to the left of <B>C</B> in figure \@ref(fig:SDT2) and we set `lower.tail =` to `TRUE`. Again we want the log of all likelihood values so we set `log.p = TRUE`.
 
 ```{r part4.3, attr.source='.numberLines startFrom="18"', eval=FALSE} 
 else {
@@ -138,7 +138,7 @@ pars <- c(C = 0.8, d = 2)
 We can test run our log-likelihood function by passing in the parameter vector `pars` and the fabricated dataset we created above `fab_data`. 
 
 ```{r simple-SDT, include=FALSE}
-SDT_loglike <- function(x, data, sample = FALSE){
+SDT_ll <- function(x, data, sample = FALSE){
   if (sample) {
     data$response <- NA
   } else {
@@ -170,12 +170,12 @@ SDT_loglike <- function(x, data, sample = FALSE){
 ```
 
 ```{r part5}
-SDT_loglike(pars, fab_data)
+SDT_ll(pars, fab_data)
 ```
 Now, if we change the parameter values, the log-likelihood value should also change.
 ```{r part6}
 pars <- replace(pars, c(1,2), c(0.5, 1.2))
-SDT_loglike(pars, fab_data)
+SDT_ll(pars, fab_data)
 ```
 We can see the log-likelihood has changed. The second vector of parameter values are more likely than the first vector given the data.
 
@@ -187,7 +187,7 @@ Now that we've covered a simple test example, let's create a log-likelihood func
 
 If you'd like to follow our example, you will need to access the Wagenmakers dataset. This can be done by installing the `rtdists` package and calling the `speed_acc` data frame. The structure of the `speed_acc` dataset will need to be modified in order to meet the requirements of the PMwG sampler. To do this, modify the dataset to match the structure illustrated in table \@ref(tab:wagenmakers10).
 
-Participants were asked to indicate whether a letter string was a <i>word</i> or a <i>non-word</i>.  A subset of Wagenmakers et al data are shown in table \@ref(tab:wagenmakers10), with each line representing a single trial. We have a `subject` column with a subject id (1-19), a condition column `cond` which indicates the proportion of <i>words</i> to <i>non-words</i> presented within a block of trials. In word blocks (`cond = w`) participants completed 75% word and 25% non-word trials and for non-word (`cond = nw`) blocks 75% non-word and 25% word trials. The `stim` column lists the word's frequency i.e. is the stimulus a <i>very low frequency</i> word (`stim = vlf`), a <i>low frequency</i> word (`stim = lf`), a <i>high frequency</i> word (`stim = hf`) or a <i>non-word</i> (`stim = nw`). The third column `resp` refers to the participant's response i.e. the participant responded <i>word</i> (`resp = W`) or <i>non-word</i> (`resp = NW`). The two remaining columns list the response time (`rt`) and whether the paricipant made a correct (`correct = 2`) or incorrect (`correct = 1`) choice. For more details about the experiment please see [the original paper](https://www.sciencedirect.com/science/article/pii/S0749596X07000496).  <b> Is this the correct paper to reference? </b>
+Participants were asked to indicate whether a letter string was a <i>word</i> or a <i>non-word</i>.  A subset of Wagenmakers et al data are shown in table \@ref(tab:wagenmakers10), with each line representing a single trial. We have a `subject` column with a subject id (1-19), a condition column `cond` which indicates the proportion of <i>words</i> to <i>non-words</i> presented within a block of trials. In word blocks (`cond = w`) participants completed 75% word and 25% non-word trials and for non-word (`cond = nw`) blocks 75% non-word and 25% word trials. The `stim` column lists the word's frequency i.e. is the stimulus a <i>very low frequency</i> word (`stim = vlf`), a <i>low frequency</i> word (`stim = lf`), a <i>high frequency</i> word (`stim = hf`) or a <i>non-word</i> (`stim = nw`). The third column `resp` refers to the participant's response i.e. the participant responded <i>word</i> (`resp = W`) or <i>non-word</i> (`resp = NW`). The two remaining columns list the response time (`rt`) and whether the paricipant made a correct (`correct = 2`) or incorrect (`correct = 1`) choice. For more details about the experiment please see [the original paper](https://www.sciencedirect.com/science/article/pii/S0749596X07000496).
 
 
 ```{r setupWagen, include=FALSE}
@@ -724,16 +724,11 @@ Now we can run the sampler using the `run_stage` function. The `run_stage` funct
 
 * `x` the `sampler` object including parameters that was created from the init function above.
 * `stage =` the sampling stage (e.g. `"burn"`, `"adapt"` or `"sample"`)
-* `iter = ` is the number of iterations for the sampling stage 
+* `iter = ` is the number of iterations for the sampling stage. This is similar to running deMCMC, where it takes many iterations to reach the posterior space. Default = 1000.
 * `particles =` is the number of particles generated on each iteration. Default = 1000.
 * `display_progress =` shows progress bar for current stage
-* `n_cores =` numner of processor cores to run stage on
+* `n_cores =` the number of cores to be used when running the sampler
 * `epsilon = ` is a value between 0 and 1 which reduces the size of the sampling space. We use lower values of epsilon when there are more parameters to estimate. Default = 1.
-
-
-
-x = the sampler object including parameters that was created from the init function above.(stage = the sampling stage (These are:"burn", "adapt" or "sample" - in this order).(iter = is the number of iterations for the sampling stage. This is similar to running deMCMC, where it takes many iterations to reach the posterior space. Default = 1000.(particles = is the number of particles generated on each iteration. Default = 1000.(epsilon = is a value between 0 and 1 which reduces the size of the sampling space. We use lower values of epsilon when there are more parameters to estimate. Default = 1.(n_cores = the number of cores on a machine you wish to use to run the sammpler. This allows sampling to be run across cores (parallelising for subjects). Default = 1.)
-
 
 
 It is optional to include the `iter =` and `particles =` arguments. If these are not included, `iter` and `particles` default to 1000. The number of iterations you choose for your burn in stage is similar to choices made when running deMCMC, however, this varies depending on the time the model takes to reach the 'real' posterior space. 
@@ -770,7 +765,7 @@ load("SDT_sampled.Rdata")
 matplot(t(sampled$samples$theta_mu), type="l")
 ```
 
-The second plot  below (\@ref(fig:subjLLPlot)) shows the likelihoods across iterations for each subject. Again we see that the likelihood values jump up after only a few iterations and then remain stable, with only slight movement. 
+The second plot below (figure \@ref(fig:subjLLPlot)) shows the likelihoods across iterations for each subject. Again we see that the likelihood values jump up after only a few iterations and then remain stable, with only slight movement. 
 
 
 ```{r subjLLPlot, echo=FALSE, out.width='100%', fig.show='hold', fig.cap='Posterior samples of subject log-likelihoods'}
@@ -835,7 +830,7 @@ Now we can run our simulation. Below is some code to achieve this.
 n.posterior <- 20 # Number of samples from posterior distribution for each parameter.
 pp.data <- list()
 S <- unique(wgnmks2008$subject)
-data = split(x = wgnmks2008, f = wgnmks2008$subject)
+data <- split(x = wgnmks2008, f = wgnmks2008$subject)
 for (s in S) {
   cat(s," ")
   iterations = round(seq(from = 1051, to = sampled$samples$idx, length.out = n.posterior))
@@ -849,7 +844,6 @@ for (s in S) {
       pp.data[[s]] <- rbind(pp.data[[s]], cbind(i, tmp))
     }
   }
-  
 }
 ```
 

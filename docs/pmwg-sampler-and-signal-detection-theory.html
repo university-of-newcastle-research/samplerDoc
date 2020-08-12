@@ -133,8 +133,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="3.1" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#description-of-forstmann-experiment"><i class="fa fa-check"></i><b>3.1</b> Description of Forstmann experiment</a></li>
 <li class="chapter" data-level="3.2" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#linear-ballistic-accumulator-parameters"><i class="fa fa-check"></i><b>3.2</b> Linear Ballistic Accumulator Parameters</a></li>
 <li class="chapter" data-level="3.3" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#writing-the-log-likelihood-function"><i class="fa fa-check"></i><b>3.3</b> Writing the log-likelihood function</a><ul>
-<li class="chapter" data-level="3.3.1" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#start-points"><i class="fa fa-check"></i><b>3.3.1</b> Model start points</a></li>
-<li class="chapter" data-level="3.3.2" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#run-sampler"><i class="fa fa-check"></i><b>3.3.2</b> Running the sampler</a></li>
+<li class="chapter" data-level="3.3.1" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#fstLBALL"><i class="fa fa-check"></i><b>3.3.1</b> Fast LBA Loglikelihood Function</a></li>
+<li class="chapter" data-level="3.3.2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#start-points"><i class="fa fa-check"></i><b>3.3.2</b> Model start points</a></li>
+<li class="chapter" data-level="3.3.3" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#run-sampler"><i class="fa fa-check"></i><b>3.3.3</b> Running the sampler</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="example-2-single-threshold-parameter.html"><a href="example-2-single-threshold-parameter.html"><i class="fa fa-check"></i><b>4</b> Example 2 - Single threshold parameter</a></li>
@@ -318,7 +319,7 @@ fab_data &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<sp
     } <span class="cf">else</span> {
       out &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data))
       }</code></pre></td></tr></table></div>
-<p>From line 9, we check each row in the data set, first considering all trials with <i>word</i> stimuli <code>if (stim[i] == &quot;word&quot;</code> (line 10), and assign a likelihood for responding <i>word</i> (line 12-13) or <i>non-word</i> (line 15-16). The <i>word</i> distribution has a mean of <code>x[&quot;d&quot;]</code> (d-prime parameter) and a decision criterion parameter <code>x[&quot;C&quot;]</code>. If the response is <i>word</i>, we are considering values ABOVE or to the right of <B>C</B> in <a href="pmwg-sampler-and-signal-detection-theory.html#fig:SDT2">2.2</a>, so we set <code>lower.tail =</code> to <code>FALSE</code>. If the response is <i>non-word</i>, we look for values BELOW or to the left of <B>C</B> in <a href="pmwg-sampler-and-signal-detection-theory.html#fig:SDT2">2.2</a> and we set <code>lower.tail =</code> to <code>TRUE</code>. The <code>log.p =</code> argument takes the log of all likelihood values when set to <code>TRUE</code>. We do this so we can sum all likelihoods at the end of the log-likelihood function.</p>
+<p>From line 9, we check each row in the data set, first considering all trials with <i>word</i> stimuli <code>if (stim[i] == &quot;word&quot;</code> (line 10), and assign a likelihood for responding <i>word</i> (line 12-13) or <i>non-word</i> (line 15-16). The <i>word</i> distribution has a mean of <code>x[&quot;d&quot;]</code> (d-prime parameter) and a decision criterion parameter <code>x[&quot;C&quot;]</code>. If the response is <i>word</i>, we are considering values ABOVE or to the right of <B>C</B> in figure <a href="pmwg-sampler-and-signal-detection-theory.html#fig:SDT2">2.2</a>, so we set <code>lower.tail =</code> to <code>FALSE</code>. If the response is <i>non-word</i>, we look for values BELOW or to the left of <B>C</B> in figure <a href="pmwg-sampler-and-signal-detection-theory.html#fig:SDT2">2.2</a> and we set <code>lower.tail =</code> to <code>TRUE</code>. The <code>log.p =</code> argument takes the log of all likelihood values when set to <code>TRUE</code>. We do this so we can sum all likelihoods at the end of the log-likelihood function.</p>
 <div class="sourceCode" startFrom="8"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>8
 9
 10
@@ -339,7 +340,7 @@ fab_data &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<sp
       out[i] &lt;-<span class="st"> </span><span class="kw">pnorm</span>(x[<span class="st">&quot;C&quot;</span>], <span class="dt">mean =</span> x[<span class="st">&quot;d&quot;</span>], <span class="dt">sd =</span> <span class="dv">1</span>, 
                      <span class="dt">log.p =</span> <span class="ot">TRUE</span>, <span class="dt">lower.tail =</span> <span class="ot">TRUE</span>)
       }</code></pre></td></tr></table></div>
-<p>From the else statement on line 18, we have the function for <i>non-word</i> trials i.e. <code>stim[i] == &quot;non-word&quot;</code>. As can be seen below, the output value <code>out[i]</code> for these trials is arrived at in a similar manner to the <i>word</i> trials. We set the <code>mean</code> to 0 and the standard deviation <code>sd</code> to 1. If the response is <i>word</i>, we are considering values ABOVE or to the right of <B>C</B> in <a href="pmwg-sampler-and-signal-detection-theory.html#fig:SDT2">2.2</a>, so we set <code>lower.tail =</code> to <code>FALSE</code>. If the response is <i>non-word</i>, we look for values BELOW or to the left of <B>C</B> in <a href="pmwg-sampler-and-signal-detection-theory.html#fig:SDT2">2.2</a> and we set <code>lower.tail =</code> to <code>TRUE</code>. Again we want the log of all likelihood values so we set <code>log.p = TRUE</code>.</p>
+<p>From the else statement on line 18, we have the function for <i>non-word</i> trials i.e. <code>stim[i] == &quot;non-word&quot;</code>. As can be seen below, the output value <code>out[i]</code> for these trials is arrived at in a similar manner to the <i>word</i> trials. We set the <code>mean</code> to 0 and the standard deviation <code>sd</code> to 1. If the response is <i>word</i>, we are considering values ABOVE or to the right of <B>C</B> in figure <a href="pmwg-sampler-and-signal-detection-theory.html#fig:SDT2">2.2</a>, so we set <code>lower.tail =</code> to <code>FALSE</code>. If the response is <i>non-word</i>, we look for values BELOW or to the left of <B>C</B> in figure <a href="pmwg-sampler-and-signal-detection-theory.html#fig:SDT2">2.2</a> and we set <code>lower.tail =</code> to <code>TRUE</code>. Again we want the log of all likelihood values so we set <code>log.p = TRUE</code>.</p>
 <div class="sourceCode" startFrom="18"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>18
 19
 20
@@ -366,11 +367,11 @@ fab_data &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<sp
 <p>Before we run the log-likelihood function, we must create a parameter vector <code>pars</code> containing the same parameter names used in our log-likelihood function above i.e. we name the criterion <code>C</code> and d-prime parameter <code>d</code>. While we’re testing the log-likelihood we assign arbitrary values to each parameter.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pars &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">C =</span> <span class="fl">0.8</span>, <span class="dt">d =</span> <span class="dv">2</span>)</code></pre></div>
 <p>We can test run our log-likelihood function by passing in the parameter vector <code>pars</code> and the fabricated dataset we created above <code>fab_data</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">SDT_loglike</span>(pars, fab_data)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">SDT_ll</span>(pars, fab_data)</code></pre></div>
 <pre><code>## [1] -4.795029</code></pre>
 <p>Now, if we change the parameter values, the log-likelihood value should also change.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pars &lt;-<span class="st"> </span><span class="kw">replace</span>(pars, <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), <span class="kw">c</span>(<span class="fl">0.5</span>, <span class="fl">1.2</span>))
-<span class="kw">SDT_loglike</span>(pars, fab_data)</code></pre></div>
+<span class="kw">SDT_ll</span>(pars, fab_data)</code></pre></div>
 <pre><code>## [1] -4.532791</code></pre>
 <p>We can see the log-likelihood has changed. The second vector of parameter values are more likely than the first vector given the data.</p>
 </div>
@@ -380,7 +381,7 @@ fab_data &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<sp
 <div id="description-of-wagenmakers-experiment" class="section level3">
 <h3><span class="header-section-number">2.2.1</span> Description of Wagenmakers experiment</h3>
 <p>If you’d like to follow our example, you will need to access the Wagenmakers dataset. This can be done by installing the <code>rtdists</code> package and calling the <code>speed_acc</code> data frame. The structure of the <code>speed_acc</code> dataset will need to be modified in order to meet the requirements of the PMwG sampler. To do this, modify the dataset to match the structure illustrated in table <a href="pmwg-sampler-and-signal-detection-theory.html#tab:wagenmakers10">2.2</a>.</p>
-<p>Participants were asked to indicate whether a letter string was a <i>word</i> or a <i>non-word</i>. A subset of Wagenmakers et al data are shown in table <a href="pmwg-sampler-and-signal-detection-theory.html#tab:wagenmakers10">2.2</a>, with each line representing a single trial. We have a <code>subject</code> column with a subject id (1-19), a condition column <code>cond</code> which indicates the proportion of <i>words</i> to <i>non-words</i> presented within a block of trials. In word blocks (<code>cond = w</code>) participants completed 75% word and 25% non-word trials and for non-word (<code>cond = nw</code>) blocks 75% non-word and 25% word trials. The <code>stim</code> column lists the word’s frequency i.e. is the stimulus a <i>very low frequency</i> word (<code>stim = vlf</code>), a <i>low frequency</i> word (<code>stim = lf</code>), a <i>high frequency</i> word (<code>stim = hf</code>) or a <i>non-word</i> (<code>stim = nw</code>). The third column <code>resp</code> refers to the participant’s response i.e. the participant responded <i>word</i> (<code>resp = W</code>) or <i>non-word</i> (<code>resp = NW</code>). The two remaining columns list the response time (<code>rt</code>) and whether the paricipant made a correct (<code>correct = 2</code>) or incorrect (<code>correct = 1</code>) choice. For more details about the experiment please see <a href="https://www.sciencedirect.com/science/article/pii/S0749596X07000496">the original paper</a>. <b> Is this the correct paper to reference? </b></p>
+<p>Participants were asked to indicate whether a letter string was a <i>word</i> or a <i>non-word</i>. A subset of Wagenmakers et al data are shown in table <a href="pmwg-sampler-and-signal-detection-theory.html#tab:wagenmakers10">2.2</a>, with each line representing a single trial. We have a <code>subject</code> column with a subject id (1-19), a condition column <code>cond</code> which indicates the proportion of <i>words</i> to <i>non-words</i> presented within a block of trials. In word blocks (<code>cond = w</code>) participants completed 75% word and 25% non-word trials and for non-word (<code>cond = nw</code>) blocks 75% non-word and 25% word trials. The <code>stim</code> column lists the word’s frequency i.e. is the stimulus a <i>very low frequency</i> word (<code>stim = vlf</code>), a <i>low frequency</i> word (<code>stim = lf</code>), a <i>high frequency</i> word (<code>stim = hf</code>) or a <i>non-word</i> (<code>stim = nw</code>). The third column <code>resp</code> refers to the participant’s response i.e. the participant responded <i>word</i> (<code>resp = W</code>) or <i>non-word</i> (<code>resp = NW</code>). The two remaining columns list the response time (<code>rt</code>) and whether the paricipant made a correct (<code>correct = 2</code>) or incorrect (<code>correct = 1</code>) choice. For more details about the experiment please see <a href="https://www.sciencedirect.com/science/article/pii/S0749596X07000496">the original paper</a>.</p>
 <table>
 <caption><span id="tab:wagenmakers10">Table 2.2: </span>Subset of 12 trials from the Wagenmakers (2008) dataset.</caption>
 <thead>
@@ -903,13 +904,12 @@ priors &lt;-<span class="st"> </span><span class="kw">list</span>(
 <ul>
 <li><code>x</code> the <code>sampler</code> object including parameters that was created from the init function above.</li>
 <li><code>stage =</code> the sampling stage (e.g. <code>&quot;burn&quot;</code>, <code>&quot;adapt&quot;</code> or <code>&quot;sample&quot;</code>)</li>
-<li><code>iter =</code> is the number of iterations for the sampling stage</li>
+<li><code>iter =</code> is the number of iterations for the sampling stage. This is similar to running deMCMC, where it takes many iterations to reach the posterior space. Default = 1000.</li>
 <li><code>particles =</code> is the number of particles generated on each iteration. Default = 1000.</li>
 <li><code>display_progress =</code> shows progress bar for current stage</li>
-<li><code>n_cores =</code> numner of processor cores to run stage on</li>
+<li><code>n_cores =</code> the number of cores to be used when running the sampler</li>
 <li><code>epsilon =</code> is a value between 0 and 1 which reduces the size of the sampling space. We use lower values of epsilon when there are more parameters to estimate. Default = 1.</li>
 </ul>
-<p>x = the sampler object including parameters that was created from the init function above.(stage = the sampling stage (These are:“burn”, “adapt” or “sample” - in this order).(iter = is the number of iterations for the sampling stage. This is similar to running deMCMC, where it takes many iterations to reach the posterior space. Default = 1000.(particles = is the number of particles generated on each iteration. Default = 1000.(epsilon = is a value between 0 and 1 which reduces the size of the sampling space. We use lower values of epsilon when there are more parameters to estimate. Default = 1.(n_cores = the number of cores on a machine you wish to use to run the sammpler. This allows sampling to be run across cores (parallelising for subjects). Default = 1.)</p>
 <p>It is optional to include the <code>iter =</code> and <code>particles =</code> arguments. If these are not included, <code>iter</code> and <code>particles</code> default to 1000. The number of iterations you choose for your burn in stage is similar to choices made when running deMCMC, however, this varies depending on the time the model takes to reach the ‘real’ posterior space.</p>
 <p>First we run our burn-in stage by setting <code>stage =</code> to <code>&quot;burn&quot;</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">burned &lt;-<span class="st"> </span><span class="kw">run_stage</span>(sampler, <span class="dt">stage =</span> <span class="st">&quot;burn&quot;</span>, <span class="dt">iter =</span> <span class="dv">1000</span>, <span class="dt">particles =</span> <span class="dv">20</span>, <span class="dt">display_progress =</span> <span class="ot">TRUE</span>, <span class="dt">n_cores =</span> <span class="dv">8</span>)</code></pre></div>
@@ -929,7 +929,7 @@ priors &lt;-<span class="st"> </span><span class="kw">list</span>(
 Figure 2.4: Posterior samples of parameters
 </p>
 </div>
-<p>The second plot below (<a href="pmwg-sampler-and-signal-detection-theory.html#fig:subjLLPlot">2.5</a>) shows the likelihoods across iterations for each subject. Again we see that the likelihood values jump up after only a few iterations and then remain stable, with only slight movement.</p>
+<p>The second plot below (figure <a href="pmwg-sampler-and-signal-detection-theory.html#fig:subjLLPlot">2.5</a>) shows the likelihoods across iterations for each subject. Again we see that the likelihood values jump up after only a few iterations and then remain stable, with only slight movement.</p>
 <div class="figure"><span id="fig:subjLLPlot"></span>
 <img src="bookdown-demo_files/figure-html/subjLLPlot-1.png" alt="Posterior samples of subject log-likelihoods" width="100%" />
 <p class="caption">
@@ -979,7 +979,7 @@ Figure 2.5: Posterior samples of subject log-likelihoods
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">n.posterior &lt;-<span class="st"> </span><span class="dv">20</span> <span class="co"># Number of samples from posterior distribution for each parameter.</span>
 pp.data &lt;-<span class="st"> </span><span class="kw">list</span>()
 S &lt;-<span class="st"> </span><span class="kw">unique</span>(wgnmks2008<span class="op">$</span>subject)
-data =<span class="st"> </span><span class="kw">split</span>(<span class="dt">x =</span> wgnmks2008, <span class="dt">f =</span> wgnmks2008<span class="op">$</span>subject)
+data &lt;-<span class="st"> </span><span class="kw">split</span>(<span class="dt">x =</span> wgnmks2008, <span class="dt">f =</span> wgnmks2008<span class="op">$</span>subject)
 <span class="cf">for</span> (s <span class="cf">in</span> S) {
   <span class="kw">cat</span>(s,<span class="st">&quot; &quot;</span>)
   iterations =<span class="st"> </span><span class="kw">round</span>(<span class="kw">seq</span>(<span class="dt">from =</span> <span class="dv">1051</span>, <span class="dt">to =</span> sampled<span class="op">$</span>samples<span class="op">$</span>idx, <span class="dt">length.out =</span> n.posterior))
@@ -993,7 +993,6 @@ data =<span class="st"> </span><span class="kw">split</span>(<span class="dt">x 
       pp.data[[s]] &lt;-<span class="st"> </span><span class="kw">rbind</span>(pp.data[[s]], <span class="kw">cbind</span>(i, tmp))
     }
   }
-  
 }</code></pre></div>
 And now we can plot samples against the data.
 <div class="figure"><span id="fig:part12graph"></span>
