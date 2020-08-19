@@ -133,7 +133,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="3.1" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#description-of-forstmann-experiment"><i class="fa fa-check"></i><b>3.1</b> Description of Forstmann experiment</a></li>
 <li class="chapter" data-level="3.2" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#linear-ballistic-accumulator-parameters"><i class="fa fa-check"></i><b>3.2</b> Linear Ballistic Accumulator Parameters</a></li>
 <li class="chapter" data-level="3.3" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#writing-the-log-likelihood-function"><i class="fa fa-check"></i><b>3.3</b> Writing the log-likelihood function</a><ul>
-<li class="chapter" data-level="3.3.1" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#fstLBALL"><i class="fa fa-check"></i><b>3.3.1</b> Fast LBA Loglikelihood Function</a></li>
+<li class="chapter" data-level="3.3.1" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#fstLBALL"><i class="fa fa-check"></i><b>3.3.1</b> Fast LBA Log-likelihood Function</a></li>
 <li class="chapter" data-level="3.3.2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#start-points"><i class="fa fa-check"></i><b>3.3.2</b> Model start points</a></li>
 <li class="chapter" data-level="3.3.3" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#run-sampler"><i class="fa fa-check"></i><b>3.3.3</b> Running the sampler</a></li>
 </ul></li>
@@ -832,7 +832,7 @@ Figure 2.3: Signal detection theory example of lexical decision task
 <pre><code>## [1] -30801.71</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">SDT_ll_fast</span>(pars, wgnmks2008Fast, <span class="dt">sample =</span> <span class="ot">FALSE</span>)</code></pre></div>
 <pre><code>## [1] -30801.71</code></pre>
-<p>Great. Both functions produce the same log-likelihood! And we can run one final check by modifying the parameter vector’s values</p>
+<p>Great—both functions produce the same log-likelihood! And we can run one final check by modifying the parameter vector’s values</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pars &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">c</span>(<span class="dt">C.w =</span> <span class="dv">1</span>, <span class="dt">C.nw =</span> <span class="fl">0.8</span>, <span class="dt">HF.d =</span> <span class="fl">2.7</span>, <span class="dt">LF.d =</span> <span class="fl">1.8</span>, <span class="dt">VLF.d =</span> <span class="fl">1.3</span>))
 <span class="kw">SDT_ll</span>(pars, wgnmks2008, <span class="dt">sample =</span> <span class="ot">FALSE</span>)</code></pre></div>
 <pre><code>## [1] -22168.95</code></pre>
@@ -855,10 +855,10 @@ devtools<span class="op">::</span><span class="kw">install_github</span>(<span c
 </ul>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pars &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;C.w&quot;</span>, <span class="st">&quot;C.nw&quot;</span>, <span class="st">&quot;HF.d&quot;</span>, <span class="st">&quot;LF.d&quot;</span>, <span class="st">&quot;VLF.d&quot;</span>) <span class="co"># This is the same as the `pars` vector specified above</span>
 priors &lt;-<span class="st"> </span><span class="kw">list</span>(
-  <span class="dt">theta_mu =</span> <span class="kw">rep</span>(<span class="dv">0</span>, <span class="kw">length</span>(pars)),
-  <span class="dt">theta_sig =</span> <span class="kw">diag</span>(<span class="kw">rep</span>(<span class="dv">1</span>, <span class="kw">length</span>(pars)))
+  <span class="dt">theta_mu_mean =</span> <span class="kw">rep</span>(<span class="dv">0</span>, <span class="kw">length</span>(pars)),
+  <span class="dt">theta_mu_var =</span> <span class="kw">diag</span>(<span class="kw">rep</span>(<span class="dv">1</span>, <span class="kw">length</span>(pars)))
 )</code></pre></div>
-<p>The <code>priors</code> object in our example is initiated with zeros. An important thing to note is that to facilitate Gibbs sampling from the multivariate normal distribution for the group parameters, the random effects must be estimated on the real line. In our SDT example, the parameters are free to vary along the real line so no transformation of the random effects is required. We expand on this point in more detail in later examples where parameters are bounded and require transformation. The prior on the covariance matrix is hard-coded as the marginally non-informative prior of Huang and Wand, as discussed in the PMwG paper [add link to Gunawan et al. (2020) paper])</p>
+<p>The <code>priors</code> object in our example is initiated with zeros. An important thing to note is that to facilitate Gibbs sampling from the multivariate normal distribution for the group parameters, the random effects must be estimated on the real line. In our SDT example, the parameters are free to vary along the real line so no transformation of the random effects is required. We expand on this point in more detail in later examples where parameters are bounded and require transformation. The prior on the covariance matrix is hard-coded as the marginally non-informative prior of Huang and Wand, as discussed in the PMwG paper <b>[add link to Gunawan et al. (2020) paper]) </b></p>
 <p>The next step is to load your log-likelihood function/script.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">source</span>(<span class="dt">file =</span> <span class="st">&quot;yourLogLikelihoodFile.R&quot;</span>)</code></pre></div>
 <p>Once you’ve setup your parameters, priors and written a log-likelihood function, the next step is to initialise the <code>sampler</code> object.</p>
@@ -897,9 +897,9 @@ priors &lt;-<span class="st"> </span><span class="kw">list</span>(
 <div id="run-sdtsampler" class="section level3">
 <h3><span class="header-section-number">2.3.2</span> Running the sampler</h3>
 <p>Okay - now we are ready to run the sampler.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sampler &lt;-<span class="st"> </span><span class="kw">init</span>(sampler, <span class="dt">theta_mu =</span> start_points<span class="op">$</span>mu,
-                <span class="dt">theta_sig =</span> start_points<span class="op">$</span>sig2)</code></pre></div>
-<p>Here we are using the <code>init</code> function to generate initial start points for the random effects and storing them in the <code>sampler</code> object. First we pass the <code>sampler</code> object from above that includes our data, parameters, priors and log-likelihood function. If we decided to specify our own start points (as above), we would include the <code>theta_mu</code> and <code>theta_sig</code> arguments.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sampler &lt;-<span class="st"> </span><span class="kw">init</span>(sampler, <span class="dt">start_mu =</span> start_points<span class="op">$</span>mu,
+                <span class="dt">start_sig =</span> start_points<span class="op">$</span>sig2)</code></pre></div>
+<p>Here we are using the <code>init</code> function to generate initial start points for the random effects and storing them in the <code>sampler</code> object. First we pass the <code>sampler</code> object from above that includes our data, parameters, priors and log-likelihood function. If we decided to specify our own start points (as above), we would include the <code>start_mu</code> and <code>start_sig</code> arguments.</p>
 <p>Now we can run the sampler using the <code>run_stage</code> function. The <code>run_stage</code> function takes four arguments:</p>
 <ul>
 <li><code>x</code> the <code>sampler</code> object including parameters that was created from the init function above.</li>

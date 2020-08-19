@@ -15,7 +15,7 @@ library(pmwg)
 
 Forstmann et al looked at neural correlates of decision making under time pressure, with an aim to identify areas of the brain associated with speed-accuracy tradeoff. Imaging (fMRI) and behavioural data was collected; however, we will analyse behavioural data from the decision-making task only. In terms of modelling the data, Forstmann expected to find differences in thresholds (direction?) for each of the three speed-emphasis conditions. We have included the Forstmann et als data in the pmwg package as a data frame object named `forstmann`. The sampler requires a data frame with a <b>`subject`</b> column. The subject column data type can be a factor or numeric.
 
-Table \@ref(tab:forsthead10) shows the first ten trials from the Forstmann dataset. Participants `(n = 19)` were asked to indicate whether a cloud of dots in a random-dot kinematogram (RDK) moved to the left or the right of the screen. The IV was a within-subject, speed-accuracy manipulation where, before each trial began, pariticipants were instructed to make their choice <i>accurately</i> `(condition = 1)`, with <i>urgency</i>`(condition = 3)`or were presented with a <i>neutral</i> message `(condition = 2)`. Stimuli moved either <i>left</i> `(stim = 1)` or <i>right</i> `(stim = 2)` and responses <i>left</i> `(resp = 1)` or <i>right</i> `(resp = 2)`. Response times `(rt)` were recorded in seconds. For more information about the design of the experiment please see [the original paper](https://www.pnas.org/content/105/45/17538.short).
+Table \@ref(tab:forsthead10) shows the first ten trials from the Forstmann dataset. Participants `(n = 19)` were asked to indicate whether a cloud of dots in a random-dot kinematogram (RDK) moved to the left or the right of the screen. The IV was a within-subject, speed-accuracy manipulation where, before each trial began, pariticipants were instructed to make their choice <i>accurately</i> `(condition = 1)`, with <i>urgency</i>`(condition = 3)`or were presented with a <i>neutral</i> message `(condition = 2)`. Stimuli moved either <i>left</i> `(stim = 1)` or <i>right</i> `(stim = 2)` and responses were <i>left</i> `(resp = 1)` or <i>right</i> `(resp = 2)`. Response times `(rt)` were recorded in seconds. For more information about the design of the experiment please see [the original paper](https://www.pnas.org/content/105/45/17538.short).
 
 ```{r forsthead10, echo=FALSE, out.width='80%', fig.asp=.75, fig.align='center'}
 kable(head(forstmann, 10), row.names = F,  align = "ccccc", caption = 'First 10 trials in Forstmann dataset. The `forstmann` dataset is an object/data frame ')
@@ -170,6 +170,12 @@ The following section calls the relevant `rtdists` function depending on whether
 
 From line 23 to 25 in the code block above, we reversed the order of the correct and incorrect drift rate parameters. We can now explain this with reference to line (....) in the else section above.  If `stim = 1` (left) - the first accumulator is `vc` (correct) and the second accumulaor is `ve` (incorrect).  If `resp[i] = 1` (left response), then this tells the sampler that the first accumulator was chosen (the correct accumulator). If `resp[i] = 2` (right response), this tells the sampler that the second (incorrect) accumulator was chosen. Now lets flip this, so that `data$stim[i] == 2` (right) as per the else statement on line (...). Now the drfit rate for the incorrect accumulator `(ve)` is first, and the drift rate for the correct accumulator `(vc)` is second.   If `data$resp[i] == 1` (left response), then this tells the sampler that the first accumulator was chosen (the incorrect accumulator `ve`). If `data$resp[i] == 2` (right response), this tells the sampler that the second accumulator (correct accumulator `vc`) was chosen. 
 
+```{r}
+load("llsplain.RData")
+kable(llSplain)
+```
+
+
 ```{r lbaLL3, attr.source='.numberLines startFrom="29"', echo=TRUE, eval=FALSE}
   if (sample) {
       tmp <- rLBA(n = 1,
@@ -211,7 +217,7 @@ if (sample) {
 ```
 
 
-### Fast LBA Loglikelihood Function {#fstLBALL}
+### Fast LBA Log-likelihood Function {#fstLBALL}
 
 As the data is large, and the dlba takes time to run, the function above is computationally inefficient. Below, we show a faster log-likelihood function. There are several methods of making the log-likelihood faster; in the current example, we reduce the number of calls to dlba (and rlba when sampling) to one call. We do this by passing a list of dlba parameter values for the length of the data. 
 
@@ -235,8 +241,8 @@ Next we create a `priors` object; a list that contains two components <b> Do we 
 * `start_sig` the prior covariance matrix for model parameters.
 
 ```{r priors}
-priors <- list(start_mu = rep(0, length(pars)),
-  start_sig = diag(rep(1, length(pars)))
+priors <- list(theta_mu_mean = rep(0, length(pars)),
+  theta_mu_var = diag(rep(1, length(pars)))
 )
 ```
 The `priors` object in our example is initiated with zeros. <b>Under what conditions would this priors object differ?</b>
