@@ -437,7 +437,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
     out &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data))
   }</code></pre></td></tr></table></div>
 <p>Next, we loop over rows in the datset. In this <code>for</code> loop, we find the values <code>(x)</code> of each parameter in our model for each row, so that any conditional parameters (for example <code>b</code> in our model) are correctly assigned. For example, we want to calculate the density for a model that has three threshold parameters (one for each condition; <code>1  = accuracy</code>, <code>2 = neutral</code>, or <code>3 = speed</code>). In the loop, we paste <code>b.</code> to the condition in row <code>[i]</code> and add <code>A</code> (the start point - we do this to ensure the threshold is greater than the starting point).</p>
-<p>On line 22 we set the correct order of our drift rate parameters. Recall that <code>stim = 1</code> is a stimulus moving to the left. Therefore, when <code>data$stim[i] == 1</code>, the drift rate for the correct accumulator <code>(vc)</code> is first – so we order the drift rates (i.e. Vs or <code>vs</code> in the code); <code>vs = c(vc, ve)</code>. The <code>else</code> statement takes care of right moving stimuli <code>data$stim[i] == 2</code>, the incorrect accumulator <code>(ve)</code> is the first accumulator, so the drift rate parameter order is <code>vs = c(ve, vc)</code>. This ensures that the correct <code>(vc)</code> and error <code>(ve)</code> drift rates align with the correct stimulus/response ????? for that condition.</p>
+<p>On line 22 we set the order of our drift rate parameters. Recall that <code>stim = 1</code> is a stimulus moving to the left. <code>dLBA</code> requires the drift accumulators to be matched i.e. when <code>data$stim[i] == 1</code>, the drift rate for the correct accumulator <code>(vc)</code> is in position one, so we order the drift rates; <code>vs = c(vc, ve)</code>. The <code>else</code> statement addresses right moving stimuli <code>data$stim[i] == 2</code>, the incorrect accumulator <code>(ve)</code> is the first accumulator, so the drift rate parameter order is <code>vs = c(ve, vc)</code>. This ensures that the correct <code>(vc)</code> and error <code>(ve)</code> drift rates match with the corresponding accumulators for given stimuli.</p>
 <div class="sourceCode" startFrom="15"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>15
 16
 17
@@ -463,171 +463,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       vs =<span class="st"> </span><span class="kw">c</span>(ve, vc)
     }</code></pre></td></tr></table></div>
 <p>The following section calls the relevant <code>rtdists</code> function depending on whether we are sampling from the posterior <code>(rLBA)</code> or estimating the density <code>(dLBA)</code>. We then input the parameters from above (using the names set above) to the relevant function. When generating data from the posterior (Line 30-37), <code>rLBA</code> is called for each line of the data, storing the generated <code>rt</code> and <code>response</code> given the posterior parameter estimates in the <code>tmp</code> vector (which we then reassign to the empty <code>data$rt</code> and <code>data$resp</code> columns). We set <code>n = 1</code>, since we are calling <code>rLBA</code> on 1 row of the data. When estimating the density (Line 42 to 50), dLBA is called for each line of the data, storing the probability of the <code>rt</code> and <code>response</code> under the proposed parameters <code>(x)</code> in the <code>out</code> vector.</p>
-<p>From line 23 to 25 in the code block above, we reversed the order of the correct and incorrect drift rate parameters. We can now explain this with reference to line (….) in the else section above. If <code>stim = 1</code> (left) - the first accumulator is <code>vc</code> (correct) and the second accumulaor is <code>ve</code> (incorrect). If <code>resp[i] = 1</code> (left response), then this tells the sampler that the first accumulator was chosen (the correct accumulator). If <code>resp[i] = 2</code> (right response), this tells the sampler that the second (incorrect) accumulator was chosen. Now lets flip this, so that <code>data$stim[i] == 2</code> (right) as per the else statement on line (…). Now the drfit rate for the incorrect accumulator <code>(ve)</code> is first, and the drift rate for the correct accumulator <code>(vc)</code> is second. If <code>data$resp[i] == 1</code> (left response), then this tells the sampler that the first accumulator was chosen (the incorrect accumulator <code>ve</code>). If <code>data$resp[i] == 2</code> (right response), this tells the sampler that the second accumulator (correct accumulator <code>vc</code>) was chosen.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">load</span>(<span class="st">&quot;llsplain.RData&quot;</span>)
-<span class="kw">kable</span>(llSplain)</code></pre></div>
-<table>
-<thead>
-<tr class="header">
-<th align="right">subject</th>
-<th align="right">condition</th>
-<th align="right">stim</th>
-<th align="right">resp</th>
-<th align="right">rt</th>
-<th align="right">A</th>
-<th align="right">b</th>
-<th align="right">vLeft</th>
-<th align="right">vRight</th>
-<th align="right">t0</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">0.4319</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td align="right">1</td>
-<td align="right">2</td>
-<td align="right">2</td>
-<td align="right">2</td>
-<td align="right">0.4319</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">2</td>
-<td align="right">2</td>
-<td align="right">0</td>
-</tr>
-<tr class="odd">
-<td align="right">1</td>
-<td align="right">3</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">0.4319</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">2</td>
-<td align="right">2</td>
-<td align="right">0.4319</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">2</td>
-<td align="right">2</td>
-<td align="right">0</td>
-</tr>
-<tr class="odd">
-<td align="right">1</td>
-<td align="right">2</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">0.4319</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td align="right">1</td>
-<td align="right">3</td>
-<td align="right">2</td>
-<td align="right">2</td>
-<td align="right">0.4319</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">2</td>
-<td align="right">2</td>
-<td align="right">0</td>
-</tr>
-<tr class="odd">
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">0.4319</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td align="right">1</td>
-<td align="right">2</td>
-<td align="right">2</td>
-<td align="right">2</td>
-<td align="right">0.4319</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">2</td>
-<td align="right">2</td>
-<td align="right">0</td>
-</tr>
-<tr class="odd">
-<td align="right">1</td>
-<td align="right">3</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">0.4319</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">2</td>
-<td align="right">2</td>
-<td align="right">0.4319</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">2</td>
-<td align="right">2</td>
-<td align="right">0</td>
-</tr>
-<tr class="odd">
-<td align="right">1</td>
-<td align="right">2</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">0.4319</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td align="right">1</td>
-<td align="right">3</td>
-<td align="right">2</td>
-<td align="right">2</td>
-<td align="right">0.4319</td>
-<td align="right">0</td>
-<td align="right">1</td>
-<td align="right">2</td>
-<td align="right">2</td>
-<td align="right">0</td>
-</tr>
-</tbody>
-</table>
 <div class="sourceCode" startFrom="29"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>29
 30
 31
@@ -695,7 +530,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
   }</code></pre></td></tr></table></div>
 <div id="fstLBALL" class="section level3">
 <h3><span class="header-section-number">3.3.1</span> Fast LBA Log-likelihood Function</h3>
-<p>As the data is large, and the dlba takes time to run, the function above is computationally inefficient. Below, we show a faster log-likelihood function. There are several methods of making the log-likelihood faster; in the current example, we reduce the number of calls to dlba (and rlba when sampling) to one call. We do this by passing a list of dlba parameter values for the length of the data.</p>
+<p>As the data is large, and the <code>dLBA</code> takes time to run, the log-likelihood function above is computationally inefficient. Below, we show a faster log-likelihood function. There are several methods of making the log-likelihood faster; in the current example, we reduce the number of calls to <code>dLBA</code> (and <code>rLBA</code> when sampling) to one call. We do this by passing a list of dlba parameter values for the length of the data.</p>
 <p>NOTE: in the example below, we don’t change the function to sample from the posterior. When generating posterior predictive data, we only call the function several times, so computational efficiency is not as important. Running this line by line gives us a “safe” method of generating posterior predictive data.</p>
 <p>Now we know the LBA model parameters, we can create a vector of model parameter names, which we’ll use in our log-likelihood function. You can name this object as you wish; however, in our example, we will call it <code>pars</code>. The number of parameters and the parameter names you include in the <code>pars</code> vector <b>must</b> match those included in your log-likelihood function.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pars &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;b1&quot;</span>, <span class="st">&quot;b2&quot;</span>, <span class="st">&quot;b3&quot;</span>, <span class="st">&quot;A&quot;</span>, <span class="st">&quot;v1&quot;</span>, <span class="st">&quot;v2&quot;</span>, <span class="st">&quot;t0&quot;</span>)</code></pre></div>

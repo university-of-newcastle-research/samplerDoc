@@ -148,7 +148,7 @@ If `sample = FALSE` (the `else` statement from line 11) we create an `out` vecto
 
 Next, we loop over rows in the datset. In this `for` loop, we find the values `(x)` of each parameter in our model for each row, so that any conditional parameters (for example `b` in our model) are correctly assigned. For example, we want to calculate the density for a model that has three threshold parameters (one for each condition; `1  = accuracy`, `2 = neutral`, or `3 = speed`). In the loop, we paste `b.` to the condition in row `[i]` and add `A` (the start point - we do this to ensure the threshold is greater than the starting point). 
 
-On line 22 we set the correct order of our drift rate parameters. Recall that `stim = 1` is a stimulus moving to the left. Therefore, when `data$stim[i] == 1`, the drift rate for the correct accumulator `(vc)` is first -- so we order the drift rates (i.e. Vs or `vs` in the code); `vs = c(vc, ve)`. The `else` statement takes care of right moving stimuli `data$stim[i] == 2`, the incorrect accumulator `(ve)` is the first accumulator, so the drift rate parameter order is `vs = c(ve, vc)`. This ensures that the correct `(vc)` and error `(ve)` drift rates align with the correct stimulus/response ????? for that condition. 
+On line 22 we set the order of our drift rate parameters. Recall that `stim = 1` is a stimulus moving to the left. `dLBA` requires the drift accumulators to be matched i.e. when `data$stim[i] == 1`, the drift rate for the correct accumulator `(vc)` is in position one, so we order the drift rates; `vs = c(vc, ve)`. The `else` statement addresses right moving stimuli `data$stim[i] == 2`, the incorrect accumulator `(ve)` is the first accumulator, so the drift rate parameter order is `vs = c(ve, vc)`. This ensures that the correct `(vc)` and error `(ve)` drift rates match with the corresponding accumulators for given stimuli. 
 
 ```{r twLBAll3, attr.source = '.numberLines startFrom="15"', echo=TRUE, eval=FALSE}
   for (i in 1:nrow(data)) {
@@ -166,14 +166,6 @@ On line 22 we set the correct order of our drift rate parameters. Recall that `s
 ```
 
 The following section calls the relevant `rtdists` function depending on whether we are sampling from the posterior `(rLBA)` or estimating the density `(dLBA)`. We then input the parameters from above (using the names set above) to the relevant function. When generating data from the posterior (Line 30-37), `rLBA` is called for each line of the data, storing the generated `rt` and `response` given the posterior parameter estimates in the `tmp` vector (which we then reassign to the empty `data$rt` and `data$resp` columns). We set `n = 1`, since we are calling `rLBA` on 1 row of the data. When estimating the density (Line 42 to 50), dLBA is called for each line of the data, storing the probability of the `rt` and `response` under the proposed parameters `(x)` in the `out` vector. 
-
-
-From line 23 to 25 in the code block above, we reversed the order of the correct and incorrect drift rate parameters. We can now explain this with reference to line (....) in the else section above.  If `stim = 1` (left) - the first accumulator is `vc` (correct) and the second accumulaor is `ve` (incorrect).  If `resp[i] = 1` (left response), then this tells the sampler that the first accumulator was chosen (the correct accumulator). If `resp[i] = 2` (right response), this tells the sampler that the second (incorrect) accumulator was chosen. Now lets flip this, so that `data$stim[i] == 2` (right) as per the else statement on line (...). Now the drfit rate for the incorrect accumulator `(ve)` is first, and the drift rate for the correct accumulator `(vc)` is second.   If `data$resp[i] == 1` (left response), then this tells the sampler that the first accumulator was chosen (the incorrect accumulator `ve`). If `data$resp[i] == 2` (right response), this tells the sampler that the second accumulator (correct accumulator `vc`) was chosen. 
-
-```{r}
-load("llsplain.RData")
-kable(llSplain)
-```
 
 
 ```{r lbaLL3, attr.source='.numberLines startFrom="29"', echo=TRUE, eval=FALSE}
@@ -219,7 +211,7 @@ if (sample) {
 
 ### Fast LBA Log-likelihood Function {#fstLBALL}
 
-As the data is large, and the dlba takes time to run, the function above is computationally inefficient. Below, we show a faster log-likelihood function. There are several methods of making the log-likelihood faster; in the current example, we reduce the number of calls to dlba (and rlba when sampling) to one call. We do this by passing a list of dlba parameter values for the length of the data. 
+As the data is large, and the `dLBA` takes time to run, the log-likelihood function above is computationally inefficient. Below, we show a faster log-likelihood function. There are several methods of making the log-likelihood faster; in the current example, we reduce the number of calls to `dLBA` (and `rLBA` when sampling) to one call. We do this by passing a list of dlba parameter values for the length of the data. 
 
 NOTE: in the example below, we don't change the function to sample from the posterior. When generating posterior predictive data, we only call the function several times, so computational efficiency is not as important. Running this line by line gives us a "safe" method of generating posterior predictive data. 
 
