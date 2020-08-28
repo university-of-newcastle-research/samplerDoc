@@ -2,7 +2,7 @@
 
 
 In this chapter we'll demonstrate how to use the PMwG sampler with a sequential sampling model; the Linear Ballistic Accumulator (LBA).
-Please ensure the pmwg package is installed. We currently recommended installing pmwg via devtools.
+Please ensure the `PMwG` and `rtdists` packages are installed. We currently recommended installing `PMwG` via devtools.
 ```{r getpkg, eval=FALSE}
 # The pmwg package will be on CRAN - this step will be removed.
 install_github('newcastlecl\pmwg')
@@ -13,7 +13,7 @@ library(pmwg)
 
 ## Description of Forstmann experiment
 
-Forstmann et al looked at neural correlates of decision making under time pressure, with an aim to identify areas of the brain associated with speed-accuracy tradeoff. Imaging (fMRI) and behavioural data was collected; however, we will analyse behavioural data from the decision-making task only. In terms of modelling the data, Forstmann expected to find differences in thresholds (direction?) for each of the three speed-emphasis conditions. We have included the Forstmann et als data in the pmwg package as a data frame object named `forstmann`. The sampler requires a data frame with a <b>`subject`</b> column. The subject column data type can be a factor or numeric.
+Forstmann et al looked at neural correlates of decision making under time pressure, with an aim to identify areas of the brain associated with speed-accuracy tradeoff. Imaging (fMRI) and behavioural data was collected; however, we will analyse behavioural data from the decision-making task only. In terms of modelling the data, Forstmann expected to find differences in thresholds (direction?) for each of the three speed-emphasis conditions. We have included the Forstmann et als data in the `PMwG` package as a data frame named `forstmann`. The sampler requires a data frame with a <b>`subject`</b> column. The subject column data type can be a factor or numeric.
 
 Table \@ref(tab:forsthead10) shows the first ten trials from the Forstmann dataset. Participants `(n = 19)` were asked to indicate whether a cloud of dots in a random-dot kinematogram (RDK) moved to the left or the right of the screen. The IV was a within-subject, speed-accuracy manipulation where, before each trial began, pariticipants were instructed to make their choice <i>accurately</i> `(condition = 1)`, with <i>urgency</i>`(condition = 3)`or were presented with a <i>neutral</i> message `(condition = 2)`. Stimuli moved either <i>left</i> `(stim = 1)` or <i>right</i> `(stim = 2)` and responses were <i>left</i> `(resp = 1)` or <i>right</i> `(resp = 2)`. Response times `(rt)` were recorded in seconds. For more information about the design of the experiment please see [the original paper](https://www.pnas.org/content/105/45/17538.short).
 
@@ -39,7 +39,7 @@ Just as we did with the SDT example, we'll write a slow and a fast log-likelihoo
 The LBA log-likelihood function takes three arguments: 
 
 * `x` is a named parameter vector (e.g. `pars`)
-* `data` is your data set (e.g.`forstmann`). Your dataset must include a `"subject"` column
+* `data` is your dataset (e.g.`forstmann`). Your dataset must include a `"subject"` column
 * `sample = FALSE` calculates a density function or `TRUE` generates a posterior, predictive sample that matches the shape of data.
 
 
@@ -146,7 +146,7 @@ If `sample = FALSE` (the `else` statement from line 11) we create an `out` vecto
 ```
 
 
-Next, we loop over rows in the datset. In this `for` loop, we find the values `(x)` of each parameter in our model for each row, so that any conditional parameters (for example `b` in our model) are correctly assigned. For example, we want to calculate the density for a model that has three threshold parameters (one for each condition; `1  = accuracy`, `2 = neutral`, or `3 = speed`). In the loop, we paste `b.` to the condition in row `[i]` and add `A` (the start point - we do this to ensure the threshold is greater than the starting point). 
+Next, we loop over rows in the dataset. In this `for` loop, we find the values `(x)` of each parameter in our model for each row, so that any conditional parameters (for example `b` in our model) are correctly assigned. For example, we want to calculate the density for a model that has three threshold parameters (one for each condition; `1  = accuracy`, `2 = neutral`, or `3 = speed`). In the loop, we paste `b.` to the condition in row `[i]` and add `A` (the start point - we do this to ensure the threshold is greater than the starting point). 
 
 On line 22 we set the order of our drift rate parameters. Recall that `stim = 1` is a stimulus moving to the left. `dLBA` requires the drift accumulators to be matched i.e. when `data$stim[i] == 1`, the drift rate for the correct accumulator `(vc)` is in position one, so we order the drift rates; `vs = c(vc, ve)`. The `else` statement addresses right moving stimuli `data$stim[i] == 2`, the incorrect accumulator `(ve)` is the first accumulator, so the drift rate parameter order is `vs = c(ve, vc)`. This ensures that the correct `(vc)` and error `(ve)` drift rates match with the corresponding accumulators for given stimuli. 
 
@@ -165,7 +165,7 @@ On line 22 we set the order of our drift rate parameters. Recall that `stim = 1`
     }
 ```
 
-The following section calls the relevant `rtdists` function depending on whether we are sampling from the posterior `(rLBA)` or estimating the density `(dLBA)`. We then input the parameters from above (using the names set above) to the relevant function. When generating data from the posterior (Line 30-37), `rLBA` is called for each line of the data, storing the generated `rt` and `response` given the posterior parameter estimates in the `tmp` vector (which we then reassign to the empty `data$rt` and `data$resp` columns). We set `n = 1`, since we are calling `rLBA` on 1 row of the data. When estimating the density (Line 42 to 50), dLBA is called for each line of the data, storing the probability of the `rt` and `response` under the proposed parameters `(x)` in the `out` vector. 
+The following section calls the relevant `rtdists` function depending on whether we are sampling from the posterior `(rLBA)` or estimating the density `(dLBA)`. We then input the parameters from above (using the names set above) into the relevant function. When generating data from the posterior (Line 30-37), `rLBA` is called for each line of the data, storing the generated `rt` and `response` given the posterior parameter estimates in the `tmp` vector (which we then reassign to the empty `data$rt` and `data$resp` columns). We set `n = 1`, since we are calling `rLBA` on 1 row of the data. When estimating the density (Line 42 to 50), dLBA is called for each line of the data, storing the probability of the `rt` and `response` under the proposed parameters `(x)` in the `out` vector. 
 
 
 ```{r lbaLL3, attr.source='.numberLines startFrom="29"', echo=TRUE, eval=FALSE}
@@ -208,119 +208,203 @@ if (sample) {
   }
 ```
 
-
 ### Fast LBA Log-likelihood Function {#fstLBALL}
 
-As the data is large, and the `dLBA` takes time to run, the log-likelihood function above is computationally inefficient. Below, we show a faster log-likelihood function. There are several methods of making the log-likelihood faster; in the current example, we reduce the number of calls to `dLBA` (and `rLBA` when sampling) to one call. We do this by passing a list of dlba parameter values for the length of the data. 
+As the data is large, and the `dLBA` function takes some time to run, the log-likelihood code above is computationally inefficient. There are several ways to improve the log-likelihood's performance; in our example below, we reduce the number of calls to `dLBA` (and `rLBA` when sampling) to one call. We do this by passing a list of `dLBA` parameter values for the length of the data. 
 
-NOTE: in the example below, we don't change the function to sample from the posterior. When generating posterior predictive data, we only call the function several times, so computational efficiency is not as important. Running this line by line gives us a "safe" method of generating posterior predictive data. 
-
-
-
+<b>NOTE:</b> When generating posterior predictive data, the `rLBA` function is still executed for each row of data; however,
+it is only executed several times, so computational efficiency is uncompromised.
 
 
+```{r fast_lba_ll, include=TRUE}
+fast_lba_ll <- function(x, data, sample = FALSE) {
+  x <- exp(x)
+  if (any(data$rt < x["t0"])) {
+    return(-1e10)
+  }
+  if (sample) {
+    data$rt <- rep(NA, nrow(data))
+    data$resp <- rep(NA, nrow(data))
+  } else {
+    out <- numeric(nrow(data))
+  }
+  if (sample) {
+    for (i in 1:nrow(data)) {
+      A = x["A"]
+      b = x[paste0("b.", data$condition[i])] + A
+      vc = x["vc"]
+      ve = x["ve"]
+      t0 = x["t0"]
+      s = c(1, 1)
+      if (data$stim[i] == 1) {
+        vs = c(vc, ve)
+      } else {
+        vs = c(ve, vc)
+      }
+      
+      tmp <- rLBA(n = 1,
+                  A = A,
+                  b = b,
+                  mean_v = vs,
+                  sd_v = s,
+                  t0 = t0,
+                  dist = "norm",
+                  silent = TRUE
+                  )
+      data$rt[i] <- tmp$rt
+      data$resp[i] <- tmp$resp
+    }
+  } else {
+    all_b <- numeric(nrow(data))
+    vlist <- list("v.1" = numeric(nrow(data)), 
+                 "v.2" = numeric(nrow(data)))
+    stim <- levels(data$stim)
+    con <- levels(data$condition)
+    
+    for (c in con) {
+      for (s in stim) {
+        use <- data$condition == c & data$stim == s
+        if (any(use)) {
+          bs = x[paste0("b.", c)] + x["A"]
+          all_b[use] = bs
+          vc = x["vc"]
+          ve = x["ve"]
+          if (s == 1) {
+            vlist$v.1[use] = vc
+            vlist$v.2[use] = ve
+          } else {
+            vlist$v.1[use] = ve
+            vlist$v.2[use] = vc
+          }
+        }
+      }
+    }
+    
+    out <- dLBA(rt = data$rt,
+                response = data$resp,
+                A = x["A"],
+                b =  all_b,
+                mean_v = vlist,
+                sd_v = c(1, 1),
+                t0 = x["t0"],
+                distribution = "norm",
+                silent = TRUE
+    )
+    }
+  
+  if (sample) {
+    return(data)
+  } else {
+    bad <- (out < 1e-10) | (!is.finite(out))
+    out[bad] <- 1e-10
+    out <- sum(log(out))
+    return(out)
+  }
+}
+```
 
-Now we know the LBA model parameters, we can create a vector of model parameter names, which we'll use in our log-likelihood function. You can name this object as you wish; however, in our example, we will call it `pars`. The number of parameters and the parameter names you include in the `pars` vector <b>must</b> match those included in your log-likelihood function.
+You should improve your log-likelihood's performance as you see fit.  When you're confident that your log-likelihood code functions correctly, we suggest saving it as a separate script so it can be sourced and loaded when running the sampler. If you're learning how to write log-likelihood functions, take a look at our [troubleshooting section](#troubleshoot) for tips. 
+
+## PMwG Framework
+
+Now that we have a log-likelihood function, we can set up the `PMwG` sampler. Running the sampler follows the same procedure outlined in the [SDT chapter](#sdtPMwG); we need to set up a vector of model parameter names, create a `priors` object, source our LBA log-likelihood script and then create our `sampler` object.
+
+
+Let's begin by creating a vector of model parameter names, which we'll use in our log-likelihood function. You can name this object as you wish; however, in our example, we name it `pars`. <br><b>IMPORTANT NOTE:</B> The parameters you list in the `pars` vector <b>must</b> match those included in your log-likelihood function i.e. they must have the same names and the same number of parameters.
+
+For the `forstmann` dataset, we use three threshold parameters (one `b` for each condition) because we assume that the condition has an effect on level of caution. We include two drift rate parameters: `v1` for the incorrect accumulator and `v2` for the correct accumulator, a start point parameter `A` and a non-decision time `t0` parameter. 
+
+We've made a decision to set the `sv` to 1 to satisfy the scaling properties of the model. As such, we haven't included the `sv` parameter in the `pars` vector - it is found in the LBA's log-likelihood function (see above).
+
 ```{r pars}
 pars <- c("b1", "b2", "b3", "A", "v1", "v2", "t0")
 ```
 
-For the Forstmann dataset, we need three threshold parameters (`b1`, `b2`, and `b3` i.e. one for each condition) because we assume response caution differs for each verbal instruction. We include two drift rate parameters: `v1` for the incorrect accumulator and `v2` for the correct accumulator, a start point parameter `A` and a non-decision time `t0` parameter.  We've made a decision to set the `sv` to 1 to satisfy the scaling properties of the model. We haven't included the `sv` parameter in the `pars` vector, however it is found in the LBA's likelihood function  below.
 
-Next we create a `priors` object; a list that contains two components <b> Do we need to explain what priors are and why we do this?</b>
+Next we create our `priors` object; a list that contains two components:
 
-* `start_mu` a vector containing the prior for model parameter means
-* `start_sig` the prior covariance matrix for model parameters.
+* `theta_mu_mean` a vector containing the prior for model parameter means
+* `theta_mu_var` the prior covariance matrix for model parameters.
+
+<b>The `theta_mu_mean` object is initiated with zeros, and the covariance  has the diagonal of 1 and 0's for the off diagonal. We use generic priors here which are broad. This means that the prior is <b>blah</b> and the covariance matrix posterior space is able to be explored. In some examples, the prior will need to be adjusted to account for different factors or priors we already know. </b> 
+
 
 ```{r priors}
 priors <- list(theta_mu_mean = rep(0, length(pars)),
-  theta_mu_var = diag(rep(1, length(pars)))
+  theat_mu_var = diag(rep(1, length(pars)))
 )
 ```
-The `priors` object in our example is initiated with zeros. <b>Under what conditions would this priors object differ?</b>
 
-
-
-
-
-
-The next step is to include your log-likelihood function. This must be called before you create the sampler object in the following step. You can load your log-likelihood function from an external script:
+Now source and load your log-likelihood script <i>before</i> you create the sampler object.
 ```{r loadLL, echo=TRUE, eval=FALSE}
-source(file = "yourLogLikelihoodFile.R")
+source(file = "fast_lba_ll.R")
 ```
 
-
-
-Once you've setup your parameters, priors and your log-likelihood function, the next step is to initialise the `sampler` object. 
-```{r samplerObject, echo=TRUE, eval=FALSE}
-sampler <- pmwgs(
-  data = forstmann,
-  pars = pars,
-  prior = priors,
-  ll_func = lba_loglike
-)
-```
-
+Next we specify the PMwG `sampler` object. 
 The `pmwgs` function takes a set of arguments (listed below) and returns a list containing the required components for performing the particle metropolis within Gibbs steps.
 
 * `data =` your data - a data frame (e.g.`forstmann`) with a column for participants called <b>`subject`</b>
 * `pars =` the model parameters to be used (e.g.`pars`)
 * `prior =` the priors to be used (e.g.`priors`)
-* `ll_func =` name of log-likelihood function you've sourced above (e.g.`lba_loglike`)
+* `ll_func =` name of log-likelihood function to be used (e.g.`fast_lba_ll`)
 
-### Model start points {#start-points}
-You have the option to set model start points. We have specified sensible start points for the Forstmann dataset. If you chose not to specify start points, the sampler will randomly sample points from the prior distribution.
-```{r modStartPoints, echo=TRUE, eval=FALSE}
-start_points <- list(
-  mu = c(.2, .2, .2, .4, .3, 1.3, -2),
-  sig2 = diag(rep(.01, length(pars)))
-)
+```{r forstSampObj, eval=FALSE}
+sampler <- pmwgs(data = data,
+                 pars = pars,
+                 prior = priors,
+                 ll_func = fast_lba_ll
+                 )
 ```
+
+
+### Model start points {#lbaStartPts}
+There is also an option to set model start points. We have specified sensible start points for the `forstmann` dataset under the LBA model. If you choose not to specify start points, the sampler will randomly sample points from the prior distribution. 
 
 The `start_points` object contains two vectors:
 
 * `mu` a vector of start points for the mu of each model parameter 
 * `sig2` vector containing the start points of the covariance matrix of covariance between model parameters.
 
+NOTE: Start points must be on the real line. Our log-likelihood function immediately takes the exponent of these start points and returns only positive values, so we use the log of sensible start points here. 
+
+```{r lbaStartPts, echo=TRUE, eval=FALSE}
+start_points <- list(
+  mu = c(log(1.2), log(1.2), log(1.2), log(1.4), log(1.3), log(3.5), log(0.13)),
+  sig2 = diag(rep(.01, length(pars)))
+)
+```
+
 
 ### Running the sampler {#run-sampler}
-Okay - now we are ready to run the sampler.  
-```{r runSampler, echo=TRUE, eval=FALSE}
-sampler <- init(sampler, theta_mu = start_points$mu,
-                theta_sig = start_points$sig2)
-```
-Here we are using the `init` function to generate initial start points for the random effects and storing them in the `sampler` object.  First we pass the `sampler` object from above that includes our data, parameters, priors and log-likelihood function.  If we decided to specify our own start points (as above), we would include the `theta_mu` and `theta_sig` arguments.
 
+The sampler setup is now complete and we can run the sampler. First we use the `init` function to generate initial start points for the random effects and store them in the `sampler` object. Here we specify start points by providing values for the `start_mu` and `start_sig` arguments.
 
-Now we can run the sampler using the `run_stage` function. The `run_stage` function takes four arguments:
-
-* `x` the `sampler` object including parameters 
-* `stage =` the sampling stage (e.g. `"burn"`, `"adapt"` or `"sample"`)
-* `iter = ` is the number of iterations for the sampling stage 
-* `particles =` is the number of particles generated on each iteration 
-
-It is optional to include the `iter =` and `particles =` arguments. If these are not included, `iter` and `particles` default to 1000. The number of iterations you choose for your burn in stage is similar to choices made when running deMCMC, however, this varies depending on the time the model takes to reach the 'real' posterior space. 
-
-First we run our burn in stage by setting `stage =` to `"burn"`. Here we have set iterations to be 500, which may take some time. 
-```{r burn, echo=TRUE, eval=FALSE}
-burned <- run_stage(sampler, stage = "burn", iter = 500, particles = 1000)
-```
-
-Now we run our adaptation stage by setting `stage = "adapt"` Because we have not specified number of iterations or particles, the sampler will use the default value of 1000 for each of these arguments. N.B. The sampler will quit adaptation stage after 20 unique values have been accepted for each subject. This means adaptation may not use all 1000 iterations.
-```{r adaptation, echo=TRUE, eval=FALSE}
-adapted <- run_stage(burned, stage = "adapt")
+```{r runlbaSampler, echo=TRUE, eval=FALSE}
+sampler <- init(sampler, start_mu = start_points$mu,
+                start_sig = start_points$sig2)
 ```
 
 
-At the start of the `sampled` stage, the sampler object will create a 'proposal' distribution for each subject's random effects using a conditional multi-variate normal. This proposal distribution is then used to efficiently generate new particles for each subject which means we can reduce the number of particles on each iteration whilst still achieving acceptance rates.
-```{r sampled, echo=TRUE, eval=FALSE}
-sampled <- run_stage(adapted, stage = "sample", iter = 100, particles = 100)
-```
+To run the sampler, we use the `run_stage` function. The `run_stage` function takes four arguments:
+
+* `x =` the `sampler` object including parameters that was created from the `init` function above.
+* `stage =` the sampling stage (These are:`"burn"`, `"adapt"` or `"sample"` - in this order).
+* `iter =` is the number of iterations for the sampling stage. This is similar to running deMCMC, where it takes many iterations to reach the posterior space. Default = 1000.
+* `particles =` is the number of particles generated on each iteration. Default = 1000.
+* `epsilon =` is a value between 0 and 1 which reduces the size of the sampling space. We use lower values of epsilon when there are more parameters to estimate. Default = 1.
+* `n_cores =` the number of cores on a machine you wish to use to run the sammpler. This allows sampling to be run across cores (parallelising for subjects). Default = 1. 
+
+The speed of the sampling process is dependent upon the number of cores used i.e. the more cores you use, the faster sampling proceeds.
 
 
+<!-- This needs to be added to troubleshoot page with references from each other page
+
+NOTE: We advocate running burn-in for a low number of iterations and particles first. This will give you a sense of a) whether the sampler is working as intended (see troubleshooting/checks for what parameter chains should look like), b) the number of iterations & particles needed to achieve the target acceptance rate, as well as the appropriate epsilon value. The acceptance rate is generally very high for the first few iterations ( > 100) and then declines. By doing a short run, you can check and then optimise the number of particles being used (and the balance with epsilon), so that acceptance rate is close to 30% on a longer, full run. We recommend you start with epsilon = .5 to increase efficiency, then adjust as needed.  -->
+
+<!-- NOTE: Overall, we aim for ~30% acceptance rate of particles. Acceptance rates which are too high may be inaccurate if not run for long enough. Acceptance rates which are too low will be inefficient and may fail to create an efficient distribution for the sampling stage.  -->
 
 
-
+<!-- To run burn in, set the stage argument to "burn". -->
 
 
 

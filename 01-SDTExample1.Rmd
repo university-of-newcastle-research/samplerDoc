@@ -628,7 +628,7 @@ SDT_ll_fast(pars, wgnmks2008Fast, sample = FALSE)
 We recommend "speeding up" your code however you wish.  When you're confident that your log-likelihood functions correctly, you should save it as a separate script so it can be sourced and loaded when running the sampler.
 
 
-## PMwG Framework
+## PMwG Framework {#sdtPMwG}
 
 Now that we have written a log-likelihood function, we're ready to use the PMwG sampler package. 
 
@@ -670,12 +670,11 @@ source(file = "yourLogLikelihoodFile.R")
 
 Once you've setup your parameters, priors and written a log-likelihood function, the next step is to initialise the `sampler` object. 
 ```{r SDTsamplerObject, echo=TRUE, eval=FALSE}
-sampler <- pmwgs(
-  data = wgnmks2008Fast,
-  pars = pars,
-  prior = priors,
-  ll_func = SDT_ll_fast
-)
+sampler <- pmwgs(data = wgnmks2008Fast,
+                 pars = pars,
+                 prior = priors,
+                 ll_func = SDT_ll_fast
+                 )
 ```
 
 The `pmwgs` function takes a set of arguments (listed below) and returns a list containing the required components for performing the particle metropolis within Gibbs steps.
@@ -687,21 +686,19 @@ The `pmwgs` function takes a set of arguments (listed below) and returns a list 
 
 
 ```{r part9.4, include=TRUE}
-sampler <- pmwgs(
-  data = wgnmks2008Fast,
-  pars = pars,
-  prior = priors,
-  ll_func = SDT_ll_fast
-)
+sampler <- pmwgs(data = wgnmks2008Fast,
+                 pars = pars,
+                 prior = priors,
+                 ll_func = SDT_ll_fast
+                 )
 ```
 
 
 ### Model start points {#start-points}
 You have the option to set model start points. We use 0 for the mean (mu) and a variance of 0.01. If you chose not to specify start points, the sampler will randomly sample points from the prior distribution.
 ```{r part9.5, include=TRUE}
-start_points <- list(
-  mu = rep(0, length.out = length(pars)),
-  sig2 = diag(rep(.01, length(pars)))
+start_points <- list(mu = rep(0, length.out = length(pars)),
+                     sig2 = diag(rep(.01, length(pars)))
 )
 ```
 
