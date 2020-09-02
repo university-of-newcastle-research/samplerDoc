@@ -310,9 +310,7 @@ You should improve your log-likelihood's performance as you see fit.  When you'r
 Now that we have a log-likelihood function, we can set up the `PMwG` sampler. Running the sampler follows the same procedure outlined in the [SDT chapter](#sdtPMwG); we need to set up a vector of model parameter names, create a `priors` object, source our LBA log-likelihood script and then create our `sampler` object.
 
 
-Let's begin by creating a vector of model parameter names, which we'll use in our log-likelihood function. You can name this object as you wish; however, in our example, we name it `pars`. <br><b>IMPORTANT NOTE:</B> The parameters you list in the `pars` vector <b>must</b> match those included in your log-likelihood function i.e. they must have the same names and the same number of parameters.
-
-For the `forstmann` dataset, we use three threshold parameters (one `b` for each condition) because we assume that the condition has an effect on level of caution. We include two drift rate parameters: `v1` for the incorrect accumulator and `v2` for the correct accumulator, a start point parameter `A` and a non-decision time `t0` parameter. 
+Let's begin by creating a vector of model parameter names, which we'll use in our log-likelihood function. You can name this object as you wish; however, in our example, we name it `pars`. ^[The parameters you list in the `pars` vector <b>must</b> match those included in your log-likelihood function i.e. they must have the same names and the same number of parameters. Refer to the [troubleshooting section](#troubleshoot) for more detail.] For the `forstmann` dataset, we use three threshold parameters (one `b` for each condition) because we assume that the condition has an effect on level of caution, we include two drift rate parameters: `v1` for the incorrect accumulator and `v2` for the correct accumulator, a start point parameter `A` and a non-decision time `t0` parameter. 
 
 We've made a decision to set the `sv` to 1 to satisfy the scaling properties of the model. As such, we haven't included the `sv` parameter in the `pars` vector - it is found in the LBA's log-likelihood function (see above).
 
@@ -365,16 +363,12 @@ The `start_points` object contains two vectors:
 * `mu` a vector of start points for the mu of each model parameter 
 * `sig2` vector containing the start points of the covariance matrix of covariance between model parameters.
 
-NOTE: Start points must be on the real line. Our log-likelihood function immediately takes the exponent of these start points and returns only positive values, so we use the log of sensible start points here. 
+<b>Note:</b> <i>Start points must be on the real line. Our log-likelihood function immediately takes the exponent of these start points and returns only positive values, so we use the log of sensible start points here.</i> 
 
 ```{r lbaStartPts, echo=TRUE, eval=FALSE}
 start_points <- list(
-  mu = c(log(1.2),
-         log(1.2), 
-         log(1.2),
-         log(1.4),
-         log(1.3),
-         log(3.5),
+  mu = c(log(1.2), log(1.2), log(1.2),
+         log(1.4), log(1.3), log(3.5),
          log(0.13)),
   sig2 = diag(rep(.01,
                   length(pars)))
@@ -392,21 +386,26 @@ sampler <- init(sampler,
                 start_sig = start_points$sig2)
 ```
 
-
-To run the sampler, we use the `run_stage` function. The `run_stage` function takes four arguments:
-
-REQUIRED - PMWGS AND STAGE, OTHERS ARE OPTIONAL
+<br>
+To run the sampler, we use the `run_stage` function. The execute the `run_stage` function, you must provide values for two arguments: 
 
 
 * `pmwgs =` the `sampler` object including parameters that was created from the `init` function above.
-* `stage =` the sampling stage (These are:`"burn"`, `"adapt"` or `"sample"` - in this order).
+* `stage =` the sampling stage (In order; `"burn"`, `"adapt"` or `"sample"`).
+
+The following arguments listed below are optional:
+
+
 * `iter =` is the number of iterations for the sampling stage. This is similar to running deMCMC, where it takes many iterations to reach the posterior space. Default = 1000.
 * `particles =` is the number of particles generated on each iteration. Default = 1000.
+* `display_progress =` display a progress bar during sampling
 * `epsilon =` is a value between 0 and 1 which reduces the size of the sampling space. We use lower values of epsilon when there are more parameters to estimate. Default = 1.
-* `n_cores =` the number of cores on a machine you wish to use to run the sampler. This allows sampling to be run across cores (parallelising for subjects). Default = 1. 
+* `n_cores =` the number of cores on a machine you wish to use to run the sampler. This allows sampling to be run across cores (parallelising for subjects). Default = 1. <b> Note:</b> Setting `n_cores` greater than 1 is only permitted on Linux and Mac OS X machines.
 
 
-The first sampling stage to run is 'burn in', so we set the stage argument to (`"burn"`) and assign the outcome to a variable called `burned`.
+<br>
+The first sampling stage is burn-in. The burn-in stage by default selects 50 parameter sample (selected through a Gibbs step) and 50 the previous random effect of each participant. It assesses each particle with the log-likelihood function and samples from all particles weighted by their log-likelihood. We take the `sampler` object created in the `init` function above, set the stage argument to `"burn"` and assign the outcome to a variable called `burned`. 
+<br><b> What about iter, particles and epsilon?</b>
 
 ```{r forstlbaburn, echo=TRUE, eval=FALSE}
 burned <- run_stage(sampler, 
@@ -417,8 +416,7 @@ burned <- run_stage(sampler,
 ```
 
 
-Next we run the adaptation stage by setting `stage = "adapt"`. The sampler will automatically exit the adapt stage when it has enough unique samples to create a multivariate normal 'proposal' distribution for each subject's random effects. So we set iterations `iter =` to a high number, as it should exit before reaching this point. If it doesn't, there is likely an issue with acceptance rates, the likelihood function or limited data to operate on (i.e. few trials in some conditions). 
-
+Next is the adaptation stage `"adapt"`. The sampler will automatically exit the adapt stage when it has enough unique samples to create a multivariate normal 'proposal' distribution for each subject's random effects. The adaptation stage selects and assesses particle in the same ways as burnin; however, on each iteration, it also checks whether each participant has enough unique random effect samples to attempt to create a conditional distribution for efficient sampling in the next stage. If the attempt at creating a conditional distribution fails, then the number of unique samples is increased and sampling continues. If the attempt succeeds then the stage is finished early. So we take the `burned` object created in the previous stage and set iterations `iter =` to a high number, as it should exit before reaching this point. If it doesn't, there is likely an issue with acceptance rates, the likelihood function or limited data to operate on (i.e. few trials in some conditions). 
 
 ```{r adaptation, echo=TRUE, eval=FALSE}
 adapted <- run_stage(burned, 
@@ -428,5 +426,55 @@ adapted <- run_stage(burned,
                      epsilon = .5)
 ```
 
+The final stage is the `sample` stage. At the start of this stage, an 'efficient proposal' distribution is created. This proposal distribution is a mix of the group distribution and the subjects distribution, and is used to generate new, accurate particles for each subject. This means we can reduce the number of particles on each iteration whilst still achieving acceptance rates. Further, samples from this stage are taken from the 'posterior distribution' and stored in the `sampled` object. 
+
+The final stage (sampling) by default samples predominantly from the conditional distribution created at the end of adaptation. This is more efficient and allows the number of particles to be reduced whilst still getting a high enough acceptance rate of new samples.
+
+``` {r part 7.12,eval=FALSE}
+sampled <- run_stage(adapted, 
+                     stage = "sample",
+                     iter = 1000, 
+                     particles = 200,
+                     epsilon = .5)
+
+```
 
 
+The `sampled` object includes all samples from the `"sample"` stage above and the following elements:
+
+* `data`
+* `par_names`: parameter names 
+* `n_pars`: number of parameters
+* `n_subjects`: number of subjects
+* `subjects`: subject IDs
+* `prior`: list of the prior used
+* `ll_func`: the likelihood function specified
+* `samples`;
+* `alpha`: three dimensional array of random effects draws (dim = parameters x subjects x samples)
+* `theta_mu`: two dimensional array of parameter draws (dim = parameters x samples)
+* `theta_sig`: three dimensional array of covariance matrix draws (dim = covariance x samples)
+* `stage`: specifies the stage the sample is from (length = samples)
+* `subj_ll`: likelihood value for each subject for each iteration (dim = subject x samples)
+* `a_half`: the parameter used in calculating the inverse Wishart (dim = parameters x samples)
+* `idx`: total number of samples
+* `last_theta_sig_inv`: the inverse of the last sample for theta_sig (the variance-covariance matrix).
+
+## Checking Convergence 
+
+As parameters are concurrently estimated, we cannot observe 'convergence', at least in the same sense as deMCMC. Rather, it is best to check for stationarity of parameters. We can check for convergence if we are uncertain of reasonable parameter values and to be sure of our estimates. 
+
+To check for convergence, we run multiple 'chains' (runs) of the sampler, and check if these chains converge. To do this, we repeat the above steps, being sure to save the output of each chain under a different name. In this example we run the sampler 3 times, without specifying start points. You may want to vary the start points or priors to check convergence as well. You could run this process by running the same script n.chains times. In this example, we run them three separate times and save the output as different names. 
+
+The function below gets the names for each chain to operate on. 
+```{r chainlist,include=TRUE}
+list.chains <- function (location, name, samplestage = "sampled") {
+  chain.names <- dir(path = location, 
+                     pattern = name) 
+  tmp <- vector("list", length(chain.names))
+  for (i in seq_along(chain.names)) {
+    load(paste0(location, "/", chain.names[i]))
+    tmp[[i]] <- get(samplestage)
+  }
+  return(tmp)
+}
+```

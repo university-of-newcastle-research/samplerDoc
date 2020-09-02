@@ -139,6 +139,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="3.4.1" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#lbaStartPts"><i class="fa fa-check"></i><b>3.4.1</b> Model start points</a></li>
 <li class="chapter" data-level="3.4.2" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#run-sampler"><i class="fa fa-check"></i><b>3.4.2</b> Running the sampler</a></li>
 </ul></li>
+<li class="chapter" data-level="3.5" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#checking-convergence"><i class="fa fa-check"></i><b>3.5</b> Checking Convergence</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="example-2-single-threshold-parameter.html"><a href="example-2-single-threshold-parameter.html"><i class="fa fa-check"></i><b>4</b> Example 2 - Single threshold parameter</a></li>
 <li class="chapter" data-level="5" data-path="example-3-wagenmakers-2008-experiment-2.html"><a href="example-3-wagenmakers-2008-experiment-2.html"><i class="fa fa-check"></i><b>5</b> Example 3 - Wagenmakers (2008) Experiment 2</a></li>
@@ -624,8 +625,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="pmwg-framework" class="section level2">
 <h2><span class="header-section-number">3.4</span> PMwG Framework</h2>
 <p>Now that we have a log-likelihood function, we can set up the <code>PMwG</code> sampler. Running the sampler follows the same procedure outlined in the <a href="pmwg-sampler-and-signal-detection-theory.html#sdtPMwG">SDT chapter</a>; we need to set up a vector of model parameter names, create a <code>priors</code> object, source our LBA log-likelihood script and then create our <code>sampler</code> object.</p>
-<p>Let’s begin by creating a vector of model parameter names, which we’ll use in our log-likelihood function. You can name this object as you wish; however, in our example, we name it <code>pars</code>. <br><b>IMPORTANT NOTE:</B> The parameters you list in the <code>pars</code> vector <b>must</b> match those included in your log-likelihood function i.e. they must have the same names and the same number of parameters.</p>
-<p>For the <code>forstmann</code> dataset, we use three threshold parameters (one <code>b</code> for each condition) because we assume that the condition has an effect on level of caution. We include two drift rate parameters: <code>v1</code> for the incorrect accumulator and <code>v2</code> for the correct accumulator, a start point parameter <code>A</code> and a non-decision time <code>t0</code> parameter.</p>
+<p>Let’s begin by creating a vector of model parameter names, which we’ll use in our log-likelihood function. You can name this object as you wish; however, in our example, we name it <code>pars</code>.<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> For the <code>forstmann</code> dataset, we use three threshold parameters (one <code>b</code> for each condition) because we assume that the condition has an effect on level of caution, we include two drift rate parameters: <code>v1</code> for the incorrect accumulator and <code>v2</code> for the correct accumulator, a start point parameter <code>A</code> and a non-decision time <code>t0</code> parameter.</p>
 <p>We’ve made a decision to set the <code>sv</code> to 1 to satisfy the scaling properties of the model. As such, we haven’t included the <code>sv</code> parameter in the <code>pars</code> vector - it is found in the LBA’s log-likelihood function (see above).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pars &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;b1&quot;</span>, <span class="st">&quot;b2&quot;</span>, <span class="st">&quot;b3&quot;</span>, <span class="st">&quot;A&quot;</span>, <span class="st">&quot;v1&quot;</span>, <span class="st">&quot;v2&quot;</span>, <span class="st">&quot;t0&quot;</span>)</code></pre></div>
 <p>Next we create our <code>priors</code> object; a list that contains two components:</p>
@@ -659,14 +659,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><code>mu</code> a vector of start points for the mu of each model parameter</li>
 <li><code>sig2</code> vector containing the start points of the covariance matrix of covariance between model parameters.</li>
 </ul>
-<p>NOTE: Start points must be on the real line. Our log-likelihood function immediately takes the exponent of these start points and returns only positive values, so we use the log of sensible start points here.</p>
+<p><b>Note:</b> <i>Start points must be on the real line. Our log-likelihood function immediately takes the exponent of these start points and returns only positive values, so we use the log of sensible start points here.</i></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">start_points &lt;-<span class="st"> </span><span class="kw">list</span>(
-  <span class="dt">mu =</span> <span class="kw">c</span>(<span class="kw">log</span>(<span class="fl">1.2</span>),
-         <span class="kw">log</span>(<span class="fl">1.2</span>), 
-         <span class="kw">log</span>(<span class="fl">1.2</span>),
-         <span class="kw">log</span>(<span class="fl">1.4</span>),
-         <span class="kw">log</span>(<span class="fl">1.3</span>),
-         <span class="kw">log</span>(<span class="fl">3.5</span>),
+  <span class="dt">mu =</span> <span class="kw">c</span>(<span class="kw">log</span>(<span class="fl">1.2</span>), <span class="kw">log</span>(<span class="fl">1.2</span>), <span class="kw">log</span>(<span class="fl">1.2</span>),
+         <span class="kw">log</span>(<span class="fl">1.4</span>), <span class="kw">log</span>(<span class="fl">1.3</span>), <span class="kw">log</span>(<span class="fl">3.5</span>),
          <span class="kw">log</span>(<span class="fl">0.13</span>)),
   <span class="dt">sig2 =</span> <span class="kw">diag</span>(<span class="kw">rep</span>(.<span class="dv">01</span>,
                   <span class="kw">length</span>(pars)))
@@ -678,30 +674,75 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sampler &lt;-<span class="st"> </span><span class="kw">init</span>(sampler, 
                 <span class="dt">start_mu =</span> start_points<span class="op">$</span>mu,
                 <span class="dt">start_sig =</span> start_points<span class="op">$</span>sig2)</code></pre></div>
-<p>To run the sampler, we use the <code>run_stage</code> function. The <code>run_stage</code> function takes four arguments:</p>
-<p>REQUIRED - PMWGS AND STAGE, OTHERS ARE OPTIONAL</p>
+<p><br> To run the sampler, we use the <code>run_stage</code> function. The execute the <code>run_stage</code> function, you must provide values for two arguments:</p>
 <ul>
 <li><code>pmwgs =</code> the <code>sampler</code> object including parameters that was created from the <code>init</code> function above.</li>
-<li><code>stage =</code> the sampling stage (These are:<code>&quot;burn&quot;</code>, <code>&quot;adapt&quot;</code> or <code>&quot;sample&quot;</code> - in this order).</li>
+<li><code>stage =</code> the sampling stage (In order; <code>&quot;burn&quot;</code>, <code>&quot;adapt&quot;</code> or <code>&quot;sample&quot;</code>).</li>
+</ul>
+<p>The following arguments listed below are optional:</p>
+<ul>
 <li><code>iter =</code> is the number of iterations for the sampling stage. This is similar to running deMCMC, where it takes many iterations to reach the posterior space. Default = 1000.</li>
 <li><code>particles =</code> is the number of particles generated on each iteration. Default = 1000.</li>
+<li><code>display_progress =</code> display a progress bar during sampling</li>
 <li><code>epsilon =</code> is a value between 0 and 1 which reduces the size of the sampling space. We use lower values of epsilon when there are more parameters to estimate. Default = 1.</li>
-<li><code>n_cores =</code> the number of cores on a machine you wish to use to run the sampler. This allows sampling to be run across cores (parallelising for subjects). Default = 1.</li>
+<li><code>n_cores =</code> the number of cores on a machine you wish to use to run the sampler. This allows sampling to be run across cores (parallelising for subjects). Default = 1. <b> Note:</b> Setting <code>n_cores</code> greater than 1 is only permitted on Linux and Mac OS X machines.</li>
 </ul>
-<p>The first sampling stage to run is ‘burn in’, so we set the stage argument to (<code>&quot;burn&quot;</code>) and assign the outcome to a variable called <code>burned</code>.</p>
+<p><br> The first sampling stage is burn-in. The burn-in stage by default selects 50 parameter sample (selected through a Gibbs step) and 50 the previous random effect of each participant. It assesses each particle with the log-likelihood function and samples from all particles weighted by their log-likelihood. We take the <code>sampler</code> object created in the <code>init</code> function above, set the stage argument to <code>&quot;burn&quot;</code> and assign the outcome to a variable called <code>burned</code>. <br><b> What about iter, particles and epsilon?</b></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">burned &lt;-<span class="st"> </span><span class="kw">run_stage</span>(sampler, 
                     <span class="dt">stage =</span> <span class="st">&quot;burn&quot;</span>,
                     <span class="dt">iter =</span> <span class="dv">500</span>,
                     <span class="dt">particles =</span> <span class="dv">2000</span>,
                     <span class="dt">epsilon =</span> .<span class="dv">5</span>)</code></pre></div>
-<p>Next we run the adaptation stage by setting <code>stage = &quot;adapt&quot;</code>. The sampler will automatically exit the adapt stage when it has enough unique samples to create a multivariate normal ‘proposal’ distribution for each subject’s random effects. So we set iterations <code>iter =</code> to a high number, as it should exit before reaching this point. If it doesn’t, there is likely an issue with acceptance rates, the likelihood function or limited data to operate on (i.e. few trials in some conditions).</p>
+<p>Next is the adaptation stage <code>&quot;adapt&quot;</code>. The sampler will automatically exit the adapt stage when it has enough unique samples to create a multivariate normal ‘proposal’ distribution for each subject’s random effects. The adaptation stage selects and assesses particle in the same ways as burnin; however, on each iteration, it also checks whether each participant has enough unique random effect samples to attempt to create a conditional distribution for efficient sampling in the next stage. If the attempt at creating a conditional distribution fails, then the number of unique samples is increased and sampling continues. If the attempt succeeds then the stage is finished early. So we take the <code>burned</code> object created in the previous stage and set iterations <code>iter =</code> to a high number, as it should exit before reaching this point. If it doesn’t, there is likely an issue with acceptance rates, the likelihood function or limited data to operate on (i.e. few trials in some conditions).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">adapted &lt;-<span class="st"> </span><span class="kw">run_stage</span>(burned, 
                      <span class="dt">stage =</span> <span class="st">&quot;adapt&quot;</span>, 
                      <span class="dt">iter =</span> <span class="dv">10000</span>, 
                      <span class="dt">particles =</span> <span class="dv">2000</span>,
                      <span class="dt">epsilon =</span> .<span class="dv">5</span>)</code></pre></div>
-
+<p>The final stage is the <code>sample</code> stage. At the start of this stage, an ‘efficient proposal’ distribution is created. This proposal distribution is a mix of the group distribution and the subjects distribution, and is used to generate new, accurate particles for each subject. This means we can reduce the number of particles on each iteration whilst still achieving acceptance rates. Further, samples from this stage are taken from the ‘posterior distribution’ and stored in the <code>sampled</code> object.</p>
+<p>The final stage (sampling) by default samples predominantly from the conditional distribution created at the end of adaptation. This is more efficient and allows the number of particles to be reduced whilst still getting a high enough acceptance rate of new samples.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sampled &lt;-<span class="st"> </span><span class="kw">run_stage</span>(adapted, 
+                     <span class="dt">stage =</span> <span class="st">&quot;sample&quot;</span>,
+                     <span class="dt">iter =</span> <span class="dv">1000</span>, 
+                     <span class="dt">particles =</span> <span class="dv">200</span>,
+                     <span class="dt">epsilon =</span> .<span class="dv">5</span>)</code></pre></div>
+<p>The <code>sampled</code> object includes all samples from the <code>&quot;sample&quot;</code> stage above and the following elements:</p>
+<ul>
+<li><code>data</code></li>
+<li><code>par_names</code>: parameter names</li>
+<li><code>n_pars</code>: number of parameters</li>
+<li><code>n_subjects</code>: number of subjects</li>
+<li><code>subjects</code>: subject IDs</li>
+<li><code>prior</code>: list of the prior used</li>
+<li><code>ll_func</code>: the likelihood function specified</li>
+<li><code>samples</code>;</li>
+<li><code>alpha</code>: three dimensional array of random effects draws (dim = parameters x subjects x samples)</li>
+<li><code>theta_mu</code>: two dimensional array of parameter draws (dim = parameters x samples)</li>
+<li><code>theta_sig</code>: three dimensional array of covariance matrix draws (dim = covariance x samples)</li>
+<li><code>stage</code>: specifies the stage the sample is from (length = samples)</li>
+<li><code>subj_ll</code>: likelihood value for each subject for each iteration (dim = subject x samples)</li>
+<li><code>a_half</code>: the parameter used in calculating the inverse Wishart (dim = parameters x samples)</li>
+<li><code>idx</code>: total number of samples</li>
+<li><code>last_theta_sig_inv</code>: the inverse of the last sample for theta_sig (the variance-covariance matrix).</li>
+</ul>
 </div>
+</div>
+<div id="checking-convergence" class="section level2">
+<h2><span class="header-section-number">3.5</span> Checking Convergence</h2>
+<p>As parameters are concurrently estimated, we cannot observe ‘convergence’, at least in the same sense as deMCMC. Rather, it is best to check for stationarity of parameters. We can check for convergence if we are uncertain of reasonable parameter values and to be sure of our estimates.</p>
+<p>To check for convergence, we run multiple ‘chains’ (runs) of the sampler, and check if these chains converge. To do this, we repeat the above steps, being sure to save the output of each chain under a different name. In this example we run the sampler 3 times, without specifying start points. You may want to vary the start points or priors to check convergence as well. You could run this process by running the same script n.chains times. In this example, we run them three separate times and save the output as different names.</p>
+<p>The function below gets the names for each chain to operate on.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">list.chains &lt;-<span class="st"> </span><span class="cf">function</span> (location, name, <span class="dt">samplestage =</span> <span class="st">&quot;sampled&quot;</span>) {
+  chain.names &lt;-<span class="st"> </span><span class="kw">dir</span>(<span class="dt">path =</span> location, 
+                     <span class="dt">pattern =</span> name) 
+  tmp &lt;-<span class="st"> </span><span class="kw">vector</span>(<span class="st">&quot;list&quot;</span>, <span class="kw">length</span>(chain.names))
+  <span class="cf">for</span> (i <span class="cf">in</span> <span class="kw">seq_along</span>(chain.names)) {
+    <span class="kw">load</span>(<span class="kw">paste0</span>(location, <span class="st">&quot;/&quot;</span>, chain.names[i]))
+    tmp[[i]] &lt;-<span class="st"> </span><span class="kw">get</span>(samplestage)
+  }
+  <span class="kw">return</span>(tmp)
+}</code></pre></div>
+
 </div>
 </div>
 <h3>References</h3>
@@ -709,6 +750,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="ref-brown2008simplest">
 <p>Brown, Scott, and Andrew Heathcote. 2008. “The Simplest Complete Model of Choice Response Time: Linear Ballistic Accumulation.” <em>Cognitive Psychology</em> 57 (3). Elsevier: 153–78.</p>
 </div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="1">
+<li id="fn1"><p>The parameters you list in the <code>pars</code> vector <b>must</b> match those included in your log-likelihood function i.e. they must have the same names and the same number of parameters. Refer to the <a href="troubleshoot.html#troubleshoot">troubleshooting section</a> for more detail.<a href="pmwg-sampler-and-sequential-sampling-models.html#fnref1">↩</a></p></li>
+</ol>
 </div>
             </section>
 
