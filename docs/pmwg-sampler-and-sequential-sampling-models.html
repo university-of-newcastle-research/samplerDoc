@@ -661,30 +661,45 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul>
 <p>NOTE: Start points must be on the real line. Our log-likelihood function immediately takes the exponent of these start points and returns only positive values, so we use the log of sensible start points here.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">start_points &lt;-<span class="st"> </span><span class="kw">list</span>(
-  <span class="dt">mu =</span> <span class="kw">c</span>(<span class="kw">log</span>(<span class="fl">1.2</span>), <span class="kw">log</span>(<span class="fl">1.2</span>), <span class="kw">log</span>(<span class="fl">1.2</span>), <span class="kw">log</span>(<span class="fl">1.4</span>), <span class="kw">log</span>(<span class="fl">1.3</span>), <span class="kw">log</span>(<span class="fl">3.5</span>), <span class="kw">log</span>(<span class="fl">0.13</span>)),
-  <span class="dt">sig2 =</span> <span class="kw">diag</span>(<span class="kw">rep</span>(.<span class="dv">01</span>, <span class="kw">length</span>(pars)))
+  <span class="dt">mu =</span> <span class="kw">c</span>(<span class="kw">log</span>(<span class="fl">1.2</span>),
+         <span class="kw">log</span>(<span class="fl">1.2</span>), 
+         <span class="kw">log</span>(<span class="fl">1.2</span>),
+         <span class="kw">log</span>(<span class="fl">1.4</span>),
+         <span class="kw">log</span>(<span class="fl">1.3</span>),
+         <span class="kw">log</span>(<span class="fl">3.5</span>),
+         <span class="kw">log</span>(<span class="fl">0.13</span>)),
+  <span class="dt">sig2 =</span> <span class="kw">diag</span>(<span class="kw">rep</span>(.<span class="dv">01</span>,
+                  <span class="kw">length</span>(pars)))
 )</code></pre></div>
 </div>
 <div id="run-sampler" class="section level3">
 <h3><span class="header-section-number">3.4.2</span> Running the sampler</h3>
-<p>The sampler setup is now complete and we can run the sampler. First we use the <code>init</code> function to generate initial start points for the random effects and store them in the <code>sampler</code> object. Here we specify start points by providing values for the <code>start_mu</code> and <code>start_sig</code> arguments.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sampler &lt;-<span class="st"> </span><span class="kw">init</span>(sampler, <span class="dt">start_mu =</span> start_points<span class="op">$</span>mu,
+<p>Setup is now complete and we can run the sampler. First, we use the <code>init</code> function to generate initial start points for the random effects and store them in the <code>sampler</code> object. Here we specify start points by providing values for the <code>start_mu</code> and <code>start_sig</code> arguments.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sampler &lt;-<span class="st"> </span><span class="kw">init</span>(sampler, 
+                <span class="dt">start_mu =</span> start_points<span class="op">$</span>mu,
                 <span class="dt">start_sig =</span> start_points<span class="op">$</span>sig2)</code></pre></div>
 <p>To run the sampler, we use the <code>run_stage</code> function. The <code>run_stage</code> function takes four arguments:</p>
+<p>REQUIRED - PMWGS AND STAGE, OTHERS ARE OPTIONAL</p>
 <ul>
-<li><code>x =</code> the <code>sampler</code> object including parameters that was created from the <code>init</code> function above.</li>
+<li><code>pmwgs =</code> the <code>sampler</code> object including parameters that was created from the <code>init</code> function above.</li>
 <li><code>stage =</code> the sampling stage (These are:<code>&quot;burn&quot;</code>, <code>&quot;adapt&quot;</code> or <code>&quot;sample&quot;</code> - in this order).</li>
 <li><code>iter =</code> is the number of iterations for the sampling stage. This is similar to running deMCMC, where it takes many iterations to reach the posterior space. Default = 1000.</li>
 <li><code>particles =</code> is the number of particles generated on each iteration. Default = 1000.</li>
 <li><code>epsilon =</code> is a value between 0 and 1 which reduces the size of the sampling space. We use lower values of epsilon when there are more parameters to estimate. Default = 1.</li>
-<li><code>n_cores =</code> the number of cores on a machine you wish to use to run the sammpler. This allows sampling to be run across cores (parallelising for subjects). Default = 1.</li>
+<li><code>n_cores =</code> the number of cores on a machine you wish to use to run the sampler. This allows sampling to be run across cores (parallelising for subjects). Default = 1.</li>
 </ul>
-<p>The speed of the sampling process is dependent upon the number of cores used i.e. the more cores you use, the faster sampling proceeds.</p>
-<!-- This needs to be added to troubleshoot page with references from each other page
-
-NOTE: We advocate running burn-in for a low number of iterations and particles first. This will give you a sense of a) whether the sampler is working as intended (see troubleshooting/checks for what parameter chains should look like), b) the number of iterations & particles needed to achieve the target acceptance rate, as well as the appropriate epsilon value. The acceptance rate is generally very high for the first few iterations ( > 100) and then declines. By doing a short run, you can check and then optimise the number of particles being used (and the balance with epsilon), so that acceptance rate is close to 30% on a longer, full run. We recommend you start with epsilon = .5 to increase efficiency, then adjust as needed.  -->
-<!-- NOTE: Overall, we aim for ~30% acceptance rate of particles. Acceptance rates which are too high may be inaccurate if not run for long enough. Acceptance rates which are too low will be inefficient and may fail to create an efficient distribution for the sampling stage.  -->
-<!-- To run burn in, set the stage argument to "burn". -->
+<p>The first sampling stage to run is ‘burn in’, so we set the stage argument to (<code>&quot;burn&quot;</code>) and assign the outcome to a variable called <code>burned</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">burned &lt;-<span class="st"> </span><span class="kw">run_stage</span>(sampler, 
+                    <span class="dt">stage =</span> <span class="st">&quot;burn&quot;</span>,
+                    <span class="dt">iter =</span> <span class="dv">500</span>,
+                    <span class="dt">particles =</span> <span class="dv">2000</span>,
+                    <span class="dt">epsilon =</span> .<span class="dv">5</span>)</code></pre></div>
+<p>Next we run the adaptation stage by setting <code>stage = &quot;adapt&quot;</code>. The sampler will automatically exit the adapt stage when it has enough unique samples to create a multivariate normal ‘proposal’ distribution for each subject’s random effects. So we set iterations <code>iter =</code> to a high number, as it should exit before reaching this point. If it doesn’t, there is likely an issue with acceptance rates, the likelihood function or limited data to operate on (i.e. few trials in some conditions).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">adapted &lt;-<span class="st"> </span><span class="kw">run_stage</span>(burned, 
+                     <span class="dt">stage =</span> <span class="st">&quot;adapt&quot;</span>, 
+                     <span class="dt">iter =</span> <span class="dv">10000</span>, 
+                     <span class="dt">particles =</span> <span class="dv">2000</span>,
+                     <span class="dt">epsilon =</span> .<span class="dv">5</span>)</code></pre></div>
 
 </div>
 </div>
