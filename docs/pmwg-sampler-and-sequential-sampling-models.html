@@ -533,8 +533,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
   }</code></pre></td></tr></table></div>
 <div id="fstLBALL" class="section level3">
 <h3><span class="header-section-number">3.3.1</span> Fast LBA Log-likelihood Function</h3>
-<p>As the data is large, and the <code>dLBA</code> function takes some time to run, the log-likelihood code above is computationally inefficient. There are several ways to improve the log-likelihood’s performance; in our example below, we reduce the number of calls to <code>dLBA</code> (and <code>rLBA</code> when sampling) to one call. We do this by passing a list of <code>dLBA</code> parameter values for the length of the data.</p>
-<p><b>NOTE:</b> When generating posterior predictive data, the <code>rLBA</code> function is still executed for each row of data; however, it is only executed several times, so computational efficiency is uncompromised.</p>
+<p>As the data is large, and the <code>dLBA</code> function takes some time to run, the log-likelihood code above is computationally inefficient. There are several ways to improve the log-likelihood’s performance; in our example below, we reduce the number of calls to <code>dLBA</code> to one call. We do this by passing a list of <code>dLBA</code> parameter values for the length of the data.</p>
+<p><b>Note:</b> When generating posterior predictive data, the <code>rLBA</code> function is still executed for each row of data; however, it is only executed several times, so computational efficiency is uncompromised.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fast_lba_ll &lt;-<span class="st"> </span><span class="cf">function</span>(x, data, <span class="dt">sample =</span> <span class="ot">FALSE</span>) {
   x &lt;-<span class="st"> </span><span class="kw">exp</span>(x)
   <span class="cf">if</span> (<span class="kw">any</span>(data<span class="op">$</span>rt <span class="op">&lt;</span><span class="st"> </span>x[<span class="st">&quot;t0&quot;</span>])) {
@@ -628,12 +628,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>Let’s begin by creating a vector of model parameter names, which we’ll use in our log-likelihood function. You can name this object as you wish; however, in our example, we name it <code>pars</code>.<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> For the <code>forstmann</code> dataset, we use three threshold parameters (one <code>b</code> for each condition) because we assume that the condition has an effect on level of caution, we include two drift rate parameters: <code>v1</code> for the incorrect accumulator and <code>v2</code> for the correct accumulator, a start point parameter <code>A</code> and a non-decision time <code>t0</code> parameter.</p>
 <p>We’ve made a decision to set the <code>sv</code> to 1 to satisfy the scaling properties of the model. As such, we haven’t included the <code>sv</code> parameter in the <code>pars</code> vector - it is found in the LBA’s log-likelihood function (see above).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pars &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;b1&quot;</span>, <span class="st">&quot;b2&quot;</span>, <span class="st">&quot;b3&quot;</span>, <span class="st">&quot;A&quot;</span>, <span class="st">&quot;v1&quot;</span>, <span class="st">&quot;v2&quot;</span>, <span class="st">&quot;t0&quot;</span>)</code></pre></div>
-<p>Next we create our <code>priors</code> object; a list that contains two components:</p>
+<p>For the mean of the distribution for random effects (theta_mu), we assume a multivariate normal prior. The user can specify the mean and variance of this prior distribution using the object <code>priors</code>, which has elements <code>theta_mu_mean</code> and <code>theta_mu_var</code>. A typical setting for LBA models is to set <code>theta_mu_mean</code> to be a zero vector and to set <code>theta_mu_var</code> to be a multiple of the identity matrix, e.g. with 9 on the diagonal (representing a standard deviation of 3 for the subject-level means in the prior).</p>
+<p>We create our <code>priors</code> object; a list that contains two components:</p>
 <ul>
 <li><code>theta_mu_mean</code> a vector containing the prior for model parameter means</li>
 <li><code>theta_mu_var</code> the prior covariance matrix for model parameters.</li>
 </ul>
-<p><b>The <code>theta_mu_mean</code> object is initiated with zeros, and the covariance has the diagonal of 1 and 0’s for the off diagonal. We use generic priors here which are broad. This means that the prior is <b>blah</b> and the covariance matrix posterior space is able to be explored. In some examples, the prior will need to be adjusted to account for different factors or priors we already know. </b></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">priors &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">theta_mu_mean =</span> <span class="kw">rep</span>(<span class="dv">0</span>, <span class="kw">length</span>(pars)),
   <span class="dt">theat_mu_var =</span> <span class="kw">diag</span>(<span class="kw">rep</span>(<span class="dv">1</span>, <span class="kw">length</span>(pars)))
 )</code></pre></div>
@@ -742,6 +742,16 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
   }
   <span class="kw">return</span>(tmp)
 }</code></pre></div>
+<p>Below illustrates the location we saved our outputs, and how we named our sample chains. Your path/name will likely be different.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">chains &lt;-<span class="st"> </span><span class="kw">list.chains</span>(<span class="dt">location =</span> <span class="st">&quot;data/output&quot;</span>,
+                     <span class="dt">name =</span> <span class="st">&quot;sampled_chain&quot;</span>,
+                     <span class="dt">samplestage =</span> <span class="st">&quot;sampled&quot;</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># chains &lt;- list.chains(location = &quot;~/Desktop/samplerDoc_caro&quot;,</span>
+<span class="co">#                       name = &quot;sampled_chain&quot;,</span>
+<span class="co">#                       samplestage = &quot;sampled&quot;)</span></code></pre></div>
+<p>Using the coda and mcmcplots package, we provide a function which gathers samples from the chains in a single object.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># library(coda)</span>
+<span class="co"># library(mcmcplots)</span></code></pre></div>
 
 </div>
 </div>

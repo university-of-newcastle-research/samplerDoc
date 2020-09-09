@@ -210,10 +210,9 @@ if (sample) {
 
 ### Fast LBA Log-likelihood Function {#fstLBALL}
 
-As the data is large, and the `dLBA` function takes some time to run, the log-likelihood code above is computationally inefficient. There are several ways to improve the log-likelihood's performance; in our example below, we reduce the number of calls to `dLBA` (and `rLBA` when sampling) to one call. We do this by passing a list of `dLBA` parameter values for the length of the data. 
+As the data is large, and the `dLBA` function takes some time to run, the log-likelihood code above is computationally inefficient. There are several ways to improve the log-likelihood's performance; in our example below, we reduce the number of calls to `dLBA` to one call. We do this by passing a list of `dLBA` parameter values for the length of the data. 
 
-<b>NOTE:</b> When generating posterior predictive data, the `rLBA` function is still executed for each row of data; however,
-it is only executed several times, so computational efficiency is uncompromised.
+<b>Note:</b> When generating posterior predictive data, the `rLBA` function is still executed for each row of data; however, it is only executed several times, so computational efficiency is uncompromised.
 
 
 ```{r fast_lba_ll, include=TRUE}
@@ -319,12 +318,12 @@ pars <- c("b1", "b2", "b3", "A", "v1", "v2", "t0")
 ```
 
 
-Next we create our `priors` object; a list that contains two components:
+For the mean of the distribution for random effects (theta_mu), we assume a multivariate normal prior. The user can specify the mean and variance of this prior distribution using the object `priors`, which has elements `theta_mu_mean` and `theta_mu_var`. A typical setting for LBA models is to set `theta_mu_mean` to be a zero vector and to set `theta_mu_var` to be a multiple of the identity matrix, e.g. with 9 on the diagonal (representing a standard deviation of 3 for the subject-level means in the prior). 
+
+We create our `priors` object; a list that contains two components:
 
 * `theta_mu_mean` a vector containing the prior for model parameter means
 * `theta_mu_var` the prior covariance matrix for model parameters.
-
-<b>The `theta_mu_mean` object is initiated with zeros, and the covariance  has the diagonal of 1 and 0's for the off diagonal. We use generic priors here which are broad. This means that the prior is <b>blah</b> and the covariance matrix posterior space is able to be explored. In some examples, the prior will need to be adjusted to account for different factors or priors we already know. </b> 
 
 
 ```{r priors}
@@ -477,4 +476,30 @@ list.chains <- function (location, name, samplestage = "sampled") {
   }
   return(tmp)
 }
+```
+
+
+Below illustrates the location we saved our outputs, and how we named our sample chains. Your path/name will likely be different.
+```{r lbachains,eval=FALSE}
+
+chains <- list.chains(location = "data/output",
+                     name = "sampled_chain",
+                     samplestage = "sampled")
+
+```
+
+```{r part8.2.2,eval=FALSE}
+
+# chains <- list.chains(location = "~/Desktop/samplerDoc_caro",
+#                       name = "sampled_chain",
+#                       samplestage = "sampled")
+
+```
+
+Using the coda and mcmcplots package, we provide a function which gathers samples from the chains in a single object. 
+
+```{r lbacoda,include=TRUE}
+
+# library(coda)
+# library(mcmcplots)
 ```
