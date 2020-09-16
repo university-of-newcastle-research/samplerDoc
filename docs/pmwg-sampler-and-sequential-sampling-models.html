@@ -139,7 +139,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="3.4.1" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#lbaStartPts"><i class="fa fa-check"></i><b>3.4.1</b> Model start points</a></li>
 <li class="chapter" data-level="3.4.2" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#run-sampler"><i class="fa fa-check"></i><b>3.4.2</b> Running the sampler</a></li>
 </ul></li>
-<li class="chapter" data-level="3.5" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#checking-convergence"><i class="fa fa-check"></i><b>3.5</b> Checking Convergence</a></li>
+<li class="chapter" data-level="3.5" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#simulating-posterior-data-1"><i class="fa fa-check"></i><b>3.5</b> Simulating Posterior Data</a><ul>
+<li class="chapter" data-level="3.5.1" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#assessing-descriptive-adequacy-goodness-of-fit"><i class="fa fa-check"></i><b>3.5.1</b> Assessing Descriptive Adequacy (goodness of fit)</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="example-2-single-threshold-parameter.html"><a href="example-2-single-threshold-parameter.html"><i class="fa fa-check"></i><b>4</b> Example 2 - Single threshold parameter</a></li>
 <li class="chapter" data-level="5" data-path="example-3-wagenmakers-2008-experiment-2.html"><a href="example-3-wagenmakers-2008-experiment-2.html"><i class="fa fa-check"></i><b>5</b> Example 3 - Wagenmakers (2008) Experiment 2</a></li>
@@ -659,14 +661,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><code>mu</code> a vector of start points for the mu of each model parameter</li>
 <li><code>sig2</code> vector containing the start points of the covariance matrix of covariance between model parameters.</li>
 </ul>
-<p><b>Note:</b> <i>Start points must be on the real line. Our log-likelihood function immediately takes the exponent of these start points and returns only positive values, so we use the log of sensible start points here.</i></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">start_points &lt;-<span class="st"> </span><span class="kw">list</span>(
-  <span class="dt">mu =</span> <span class="kw">c</span>(<span class="kw">log</span>(<span class="fl">1.2</span>), <span class="kw">log</span>(<span class="fl">1.2</span>), <span class="kw">log</span>(<span class="fl">1.2</span>),
-         <span class="kw">log</span>(<span class="fl">1.4</span>), <span class="kw">log</span>(<span class="fl">1.3</span>), <span class="kw">log</span>(<span class="fl">3.5</span>),
-         <span class="kw">log</span>(<span class="fl">0.13</span>)),
-  <span class="dt">sig2 =</span> <span class="kw">diag</span>(<span class="kw">rep</span>(.<span class="dv">01</span>,
-                  <span class="kw">length</span>(pars)))
-)</code></pre></div>
+<p><b>Note:</b> <i>Start points must be on the real line. Our log-likelihood function immediately takes the exponent of the start points and only returns positive values, so we use the log of sensible start points here.</i></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">start_points &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">mu =</span> <span class="kw">c</span>(<span class="kw">log</span>(<span class="fl">1.2</span>), <span class="kw">log</span>(<span class="fl">1.2</span>), <span class="kw">log</span>(<span class="fl">1.2</span>),
+                            <span class="kw">log</span>(<span class="fl">1.4</span>), <span class="kw">log</span>(<span class="fl">1.3</span>), <span class="kw">log</span>(<span class="fl">3.5</span>),
+                            <span class="kw">log</span>(<span class="fl">0.13</span>)),
+                     <span class="dt">sig2 =</span> <span class="kw">diag</span>(<span class="kw">rep</span>(.<span class="dv">01</span>, <span class="kw">length</span>(pars)))
+                     )</code></pre></div>
 </div>
 <div id="run-sampler" class="section level3">
 <h3><span class="header-section-number">3.4.2</span> Running the sampler</h3>
@@ -674,9 +674,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sampler &lt;-<span class="st"> </span><span class="kw">init</span>(sampler, 
                 <span class="dt">start_mu =</span> start_points<span class="op">$</span>mu,
                 <span class="dt">start_sig =</span> start_points<span class="op">$</span>sig2)</code></pre></div>
-<p><br> To run the sampler, we use the <code>run_stage</code> function. The execute the <code>run_stage</code> function, you must provide values for two arguments:</p>
+<p><br> To run the sampler, we use the <code>run_stage</code> function. To execute the <code>run_stage</code> function, you <b>must</b> provide values for two arguments:</p>
 <ul>
-<li><code>pmwgs =</code> the <code>sampler</code> object including parameters that was created from the <code>init</code> function above.</li>
+<li><code>pmwgs =</code> the <code>sampler</code> object including parameters that were created by the <code>init</code> function above.</li>
 <li><code>stage =</code> the sampling stage (In order; <code>&quot;burn&quot;</code>, <code>&quot;adapt&quot;</code> or <code>&quot;sample&quot;</code>).</li>
 </ul>
 <p>The following arguments listed below are optional:</p>
@@ -687,20 +687,19 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><code>epsilon =</code> is a value between 0 and 1 which reduces the size of the sampling space. We use lower values of epsilon when there are more parameters to estimate. Default = 1.</li>
 <li><code>n_cores =</code> the number of cores on a machine you wish to use to run the sampler. This allows sampling to be run across cores (parallelising for subjects). Default = 1. <b> Note:</b> Setting <code>n_cores</code> greater than 1 is only permitted on Linux and Mac OS X machines.</li>
 </ul>
-<p><br> The first sampling stage is burn-in. The burn-in stage by default selects 50 parameter sample (selected through a Gibbs step) and 50 the previous random effect of each participant. It assesses each particle with the log-likelihood function and samples from all particles weighted by their log-likelihood. We take the <code>sampler</code> object created in the <code>init</code> function above, set the stage argument to <code>&quot;burn&quot;</code> and assign the outcome to a variable called <code>burned</code>. <br><b> What about iter, particles and epsilon?</b></p>
+<p><br> The first sampling stage is burn-in <code>&quot;burn&quot;</code>. The burn-in stage allows time for the sampler to move from the (arbitrary) start points that were provided by the user to the mode of the posterior distribution. This can be checked by examining the chains for stationarity. We take the <code>sampler</code> object created in the <code>init</code> function above, set the stage argument to <code>&quot;burn&quot;</code> and assign the outcome to an object called <code>burned</code>. <br><b> What about iter, particles and epsilon?</b></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">burned &lt;-<span class="st"> </span><span class="kw">run_stage</span>(sampler, 
                     <span class="dt">stage =</span> <span class="st">&quot;burn&quot;</span>,
                     <span class="dt">iter =</span> <span class="dv">500</span>,
                     <span class="dt">particles =</span> <span class="dv">2000</span>,
                     <span class="dt">epsilon =</span> .<span class="dv">5</span>)</code></pre></div>
-<p>Next is the adaptation stage <code>&quot;adapt&quot;</code>. The sampler will automatically exit the adapt stage when it has enough unique samples to create a multivariate normal ‘proposal’ distribution for each subject’s random effects. The adaptation stage selects and assesses particle in the same ways as burnin; however, on each iteration, it also checks whether each participant has enough unique random effect samples to attempt to create a conditional distribution for efficient sampling in the next stage. If the attempt at creating a conditional distribution fails, then the number of unique samples is increased and sampling continues. If the attempt succeeds then the stage is finished early. So we take the <code>burned</code> object created in the previous stage and set iterations <code>iter =</code> to a high number, as it should exit before reaching this point. If it doesn’t, there is likely an issue with acceptance rates, the likelihood function or limited data to operate on (i.e. few trials in some conditions).</p>
+<p>Next is the adaptation stage <code>&quot;adapt&quot;</code>. The adaptation stage draws samples using a simple, but relatively inefficient proposal distribution (the same proposal distribution as the <code>&quot;burn&quot;</code>stage). Enough samples are drawn to allow the algorithm to estimate a much more sophisticated and efficient proposal distribution, using conditional normal distributions. We take the <code>burned</code> object created in the previous stage and set iterations <code>iter =</code> to a high number (e.g. <code>10000</code>), as it should exit before reaching this point. If it doesn’t, there is likely an issue with acceptance rates, the likelihood function or limited data to operate on (i.e. few trials in some conditions). Here, we have saved the outcome of the adaptation stage to an object called <code>adapted</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">adapted &lt;-<span class="st"> </span><span class="kw">run_stage</span>(burned, 
                      <span class="dt">stage =</span> <span class="st">&quot;adapt&quot;</span>, 
                      <span class="dt">iter =</span> <span class="dv">10000</span>, 
                      <span class="dt">particles =</span> <span class="dv">2000</span>,
                      <span class="dt">epsilon =</span> .<span class="dv">5</span>)</code></pre></div>
-<p>The final stage is the <code>sample</code> stage. At the start of this stage, an ‘efficient proposal’ distribution is created. This proposal distribution is a mix of the group distribution and the subjects distribution, and is used to generate new, accurate particles for each subject. This means we can reduce the number of particles on each iteration whilst still achieving acceptance rates. Further, samples from this stage are taken from the ‘posterior distribution’ and stored in the <code>sampled</code> object.</p>
-<p>The final stage (sampling) by default samples predominantly from the conditional distribution created at the end of adaptation. This is more efficient and allows the number of particles to be reduced whilst still getting a high enough acceptance rate of new samples.</p>
+<p>The final stage is the sampling stage <code>&quot;sample&quot;</code>. The sampling stage uses the sophisticated and adaptive conditional normal proposal distributions. This allows for very efficient sampling, using far fewer particles. Samples from this stage are taken from the ‘posterior distribution’ and stored in the <code>sampled</code> object.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sampled &lt;-<span class="st"> </span><span class="kw">run_stage</span>(adapted, 
                      <span class="dt">stage =</span> <span class="st">&quot;sample&quot;</span>,
                      <span class="dt">iter =</span> <span class="dv">1000</span>, 
@@ -725,34 +724,147 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><code>idx</code>: total number of samples</li>
 <li><code>last_theta_sig_inv</code>: the inverse of the last sample for theta_sig (the variance-covariance matrix).</li>
 </ul>
+<!-- ## Checking Convergence  -->
+<!-- As parameters are concurrently estimated, we cannot observe 'convergence', at least in the same sense as deMCMC. Rather, it is best to check for stationarity of parameters. We can check for convergence if we are uncertain of reasonable parameter values and to be sure of our estimates.  -->
+<!-- To check for convergence, we run multiple 'chains' (runs) of the sampler, and check if these chains converge. To do this, we repeat the above steps, being sure to save the output of each chain under a different name. In this example, we run the sampler 3 times, without specifying start points. You can vary the start points or priors to check convergence as well. You could run this process by running the same script n.chains times. In this example, we run them three separate times and save the output as different names.  -->
+<!-- The function below gets the names for each chain to operate on.  -->
+<!-- ```{r chainlist,include=TRUE} -->
+<!-- list.chains <- function (location, name, samplestage = "sampled") { -->
+<!--   chain.names <- dir(path = location,  -->
+<!--                      pattern = name)  -->
+<!--   tmp <- vector("list", length(chain.names)) -->
+<!--   for (i in seq_along(chain.names)) { -->
+<!--     load(paste0(location, "/", chain.names[i])) -->
+<!--     tmp[[i]] <- get(samplestage) -->
+<!--   } -->
+<!--   return(tmp) -->
+<!-- } -->
+<!-- ``` -->
+<!-- Below illustrates the location we saved our outputs, and how we named our sample chains. Your path/name will likely be different. -->
+<!-- ```{r lbachains,eval=FALSE} -->
+<!-- chains <- list.chains(location = "data/output", -->
+<!--                      name = "sampled_chain", -->
+<!--                      samplestage = "sampled") -->
+<!-- ``` -->
+<!-- ```{r HiddenSamples, include=FALSE} -->
+<!--  chains <- list.chains(location = "~/Desktop/samplerDoc_caro", -->
+<!--                        name = "sampled_chain", -->
+<!--                        samplestage = "sampled") -->
+<!-- ``` -->
+<!-- Using the coda and mcmcplots package, we provide a function which gathers samples from the chains in a single object.  -->
+<!-- ```{r lbacoda,include=TRUE} -->
+<!-- library(coda) -->
+<!-- library(mcmcplots) -->
+<!-- as_mcmc = function(x) { -->
+<!--   theta_mu = (t(x$samples$theta_mu[,x$samples$stage=="sample"])) -->
+<!--   colnames(theta_mu) = paste0("mu_", x$par_names) -->
+<!--   par_names <- x$par_names -->
+<!--   sig_names <- matrix(nrow = length(par_names), ncol = length(par_names)) -->
+<!--   for (i in seq_along(par_names)) { -->
+<!--     for (j in seq_along(par_names)) { -->
+<!--       sig_names[i,j] <- paste0("sig[", par_names[i], ",", par_names[j], "]") -->
+<!--     } -->
+<!--   } -->
+<!--   theta_sig <- t(apply(x$samples$theta_sig[,,x$samples$stage=="sample"], 3, as.vector)) -->
+<!--   colnames(theta_sig) <- as.vector(sig_names) -->
+<!--   S = x$n_subjects -->
+<!--   alpha_names <- matrix(nrow = length(par_names), ncol = S) -->
+<!--   for (i in seq_along(par_names)) { -->
+<!--     for (j in seq_len(S)) { -->
+<!--       alpha_names[i,j] <- paste0("alpha[", par_names[i], ",","sub",j, "]") -->
+<!--     } -->
+<!--   } -->
+<!--   alpha <- t(apply(x$samples$alpha[,,x$samples$stage=="sample"], 3, as.vector)) -->
+<!--   colnames(alpha) <- as.vector(alpha_names) -->
+<!--   tmp2 <- cbind(theta_mu,theta_sig,alpha) -->
+<!--   return(mcmc(tmp2)) -->
+<!-- } -->
+<!-- create.mcmc.list <- function(x) { -->
+<!--   mcmc.list(lapply(x,as_mcmc)) -->
+<!-- } -->
+<!-- ``` -->
+<!-- We call the above function to create our mcmc lists. -->
+<!-- ```{r mcmclists,include=TRUE} -->
+<!-- test_lists = create.mcmc.list(chains) -->
+<!-- ``` -->
+<!-- Next, we create plots (using the coda and mcmcplots packages) to check convergence. -->
+<!-- ```{r plotmcmclists,eval=FALSE} -->
+<!-- mcmcplot(test_lists) -->
+<!-- ``` -->
+<!-- ```{r hiddenmcmcplot,include=FALSE} -->
+<!-- mcmcplot(test_lists) -->
+<!-- ``` -->
+<!-- Bellow we've included a snipped of the generated MCMC plots. When viewing these, you want to check that... (ASK SCOTT for WORDING) -->
+<!-- ```{r part8.5.3,echo=FALSE,out.width='100%', fig.show='hold', fig.cap='Example of output of MCMC plot function when used with 3 chains.'} -->
+<!-- knitr::include_graphics('_images/MCMCplotexample.PNG') -->
+<!-- ``` -->
+<!-- In another test of convergence, we use the gelman.diag function to produce an r hat value (similar to that used in rjags). -->
+<!-- NOTE: Approximate convergence is diagnosed when rhat values are less than 1. -->
+<!-- ```{r gelmandiag,eval=FALSE} -->
+<!-- gelman.diag(test_lists,multivariate = FALSE) -->
+<!-- ``` -->
+<!-- Bellow we just show the head of the gelman.diag function, -->
+<!-- ```{r headgelm,echo=FALSE,eval=TRUE} -->
+<!-- tmp = gelman.diag(test_lists,multivariate = FALSE) -->
+<!-- tmp2 = head(tmp$psrf) -->
+<!-- print(tmp2) -->
+<!-- ``` -->
+<!-- You may also wish to use the following lines of code to find the maximum rhat value.  -->
+<!-- ```{r maxrhat,eval = FALSE} -->
+<!-- apply(gelman.diag(test_lists,multivariate = FALSE)[[1]],2,max) -->
+<!-- apply(gelman.diag(test_lists,multivariate = FALSE)[[1]],2,which.max) -->
+<!-- ``` -->
+<!-- ```{r hiddenmaxrhat,echo=FALSE,eval=TRUE} -->
+<!-- tmp1=apply(gelman.diag(test_lists,multivariate = FALSE)[[1]],2,max) -->
+<!-- tmp2=apply(gelman.diag(test_lists,multivariate = FALSE)[[1]],2,which.max) -->
+<!-- print(tmp1) -->
+<!-- print(tmp2) -->
+<!-- ``` -->
 </div>
 </div>
-<div id="checking-convergence" class="section level2">
-<h2><span class="header-section-number">3.5</span> Checking Convergence</h2>
-<p>As parameters are concurrently estimated, we cannot observe ‘convergence’, at least in the same sense as deMCMC. Rather, it is best to check for stationarity of parameters. We can check for convergence if we are uncertain of reasonable parameter values and to be sure of our estimates.</p>
-<p>To check for convergence, we run multiple ‘chains’ (runs) of the sampler, and check if these chains converge. To do this, we repeat the above steps, being sure to save the output of each chain under a different name. In this example we run the sampler 3 times, without specifying start points. You may want to vary the start points or priors to check convergence as well. You could run this process by running the same script n.chains times. In this example, we run them three separate times and save the output as different names.</p>
-<p>The function below gets the names for each chain to operate on.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">list.chains &lt;-<span class="st"> </span><span class="cf">function</span> (location, name, <span class="dt">samplestage =</span> <span class="st">&quot;sampled&quot;</span>) {
-  chain.names &lt;-<span class="st"> </span><span class="kw">dir</span>(<span class="dt">path =</span> location, 
-                     <span class="dt">pattern =</span> name) 
-  tmp &lt;-<span class="st"> </span><span class="kw">vector</span>(<span class="st">&quot;list&quot;</span>, <span class="kw">length</span>(chain.names))
-  <span class="cf">for</span> (i <span class="cf">in</span> <span class="kw">seq_along</span>(chain.names)) {
-    <span class="kw">load</span>(<span class="kw">paste0</span>(location, <span class="st">&quot;/&quot;</span>, chain.names[i]))
-    tmp[[i]] &lt;-<span class="st"> </span><span class="kw">get</span>(samplestage)
-  }
-  <span class="kw">return</span>(tmp)
+<div id="simulating-posterior-data-1" class="section level2">
+<h2><span class="header-section-number">3.5</span> Simulating Posterior Data</h2>
+<p>To generate posterior predictive data we use the <code>SAMPLE = TRUE</code> part of our likelihood function we used above. This part of the likelihood function stores the generated rt and responses given the posterior parameter estimates.</p>
+<p>Below we have included code you can use to simulate posterior predictive data given the <code>sampled</code> object is loaded in your work environment. <code>n</code> specifies the number of posterior samples. To generate this you will to load your <code>sampled</code> object for the 3b model.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gen_ppdata &lt;-<span class="st"> </span><span class="cf">function</span> (sampled, n, <span class="dt">ll_func =</span> sampled<span class="op">$</span>ll_func, <span class="dt">rbind.data =</span> <span class="ot">TRUE</span>) {
+  index =<span class="st"> </span><span class="kw">which</span>(sampled<span class="op">$</span>samples<span class="op">$</span>stage <span class="op">==</span><span class="st"> &quot;sample&quot;</span>)
+  iterations =<span class="st"> </span><span class="kw">round</span>(<span class="kw">seq</span>(<span class="dt">from =</span> index[<span class="dv">1</span>], <span class="dt">to =</span> index[<span class="kw">length</span>(index)], <span class="dt">length.out =</span> n))
+  data =<span class="st"> </span>sampled<span class="op">$</span>data
+  S =<span class="st"> </span>sampled<span class="op">$</span>n_subjects
+  pp_data =<span class="st"> </span><span class="kw">list</span>()
+    <span class="cf">for</span> (s <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>S){
+       <span class="kw">print</span>(<span class="kw">paste0</span>(<span class="st">&quot;subject&quot;</span>, s))
+      <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(iterations)) {
+       <span class="kw">print</span>(i)
+        x &lt;-<span class="st"> </span>sampled<span class="op">$</span>samples<span class="op">$</span>alpha[, s, iterations[i]]
+        <span class="kw">names</span>(x) &lt;-<span class="st"> </span>pars
+        out &lt;-<span class="st"> </span><span class="kw">ll_func</span>(<span class="dt">x=</span> x, <span class="dt">data =</span> data[data<span class="op">$</span>subject <span class="op">==</span><span class="st"> </span>s,], <span class="dt">sample =</span> <span class="ot">TRUE</span>)
+        <span class="cf">if</span> (i <span class="op">==</span><span class="st"> </span><span class="dv">1</span>){
+          pp_data[[s]] =<span class="st"> </span><span class="kw">cbind</span>(<span class="dt">pp_subj =</span> i, out)
+        }
+        <span class="cf">else</span> {
+          pp_data[[s]] =<span class="st"> </span><span class="kw">rbind</span>(pp_data[[s]], <span class="kw">cbind</span>(<span class="dt">pp_subj =</span> i, out))
+        }
+      }
+    }
+    <span class="cf">if</span> (rbind.data){
+    tidy_pp_data =<span class="st"> </span><span class="kw">do.call</span>(rbind, pp.data)  
+    <span class="kw">return</span>(tidy.pp.data)
+    }
+    <span class="cf">else</span> {
+      <span class="kw">return</span>(pp.data)
+    }
 }</code></pre></div>
-<p>Below illustrates the location we saved our outputs, and how we named our sample chains. Your path/name will likely be different.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">chains &lt;-<span class="st"> </span><span class="kw">list.chains</span>(<span class="dt">location =</span> <span class="st">&quot;data/output&quot;</span>,
-                     <span class="dt">name =</span> <span class="st">&quot;sampled_chain&quot;</span>,
-                     <span class="dt">samplestage =</span> <span class="st">&quot;sampled&quot;</span>)</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># chains &lt;- list.chains(location = &quot;~/Desktop/samplerDoc_caro&quot;,</span>
-<span class="co">#                       name = &quot;sampled_chain&quot;,</span>
-<span class="co">#                       samplestage = &quot;sampled&quot;)</span></code></pre></div>
-<p>Using the coda and mcmcplots package, we provide a function which gathers samples from the chains in a single object.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># library(coda)</span>
-<span class="co"># library(mcmcplots)</span></code></pre></div>
+<p>We generate 20 posterior predictive data samples for each model.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pp_data_3b &lt;-<span class="st"> </span><span class="kw">generate.ppdata</span>(sampled, <span class="dt">n =</span> <span class="dv">20</span>)</code></pre></div>
+<p>The returned data is a matrix with the same dimensions and names as data – with the exception of column <code>&quot;pp_subj&quot;</code>. <code>pp_subj</code> is the iteration of posterior sample (in this example i = 1:20) for the corresponding subject. We now have two matrices based on samples from either model. “The response (resp) and response time (rt) columns are now replaced with the posterior predictive data.</p>
+<p>In the next section, we will use this to assess descriptive adequacy.</p>
+<div id="assessing-descriptive-adequacy-goodness-of-fit" class="section level3">
+<h3><span class="header-section-number">3.5.1</span> Assessing Descriptive Adequacy (goodness of fit)</h3>
+<p>Here we use tidyverse to plot the posterior predictive data against the real data. You may choose to plot this in other ways such as the inter-quantile range or via other packages.</p>
+<p>This may only be useful for some, as what you do with your data is domain specific knowledge.</p>
 
+</div>
 </div>
 </div>
 <h3>References</h3>
