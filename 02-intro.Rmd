@@ -601,12 +601,15 @@ The `sampled` object includes all samples from the `"sample"` stage above and th
 
 ## Simulating Posterior Data
 
-To generate posterior predictive data we set `sample = TRUE` in the log-likelihood function above, which generates rt and responses given the posterior parameter estimates. 
+We can generate posterior predictive data by setting `sample = TRUE` in the log-likelihood function above, which generates response times and responses <i>given</i> the posterior parameter estimates. To do this, we used the `gen_pp_data` function below simulate posterior predictive data from the `sampled` object for the 3b model we created above. Our `gen_pp_data` function takes four arguments:
 
-Below is code you can use to simulate posterior predictive data from the `sampled` object loaded in your R-studio environment. `n` specifies the number of posterior samples. To generate this you will to load your `sampled` object for the 3b model.
+* `sampled`
+* `n` specifies the number of posterior samples
+* `ll_func =` the log-likelihood function embeded in the `sampled` object
+* `rbind.data = ` bind the rows of each predictive sample to SOMETHING
 
 ```{r genPPDataFunc, Include=TRUE}
-gen_ppdata <- function (sampled, n, ll_func = sampled$ll_func, rbind.data = TRUE) {
+gen_pp_data <- function (sampled, n, ll_func = sampled$ll_func, rbind.data = TRUE) {
   sampled_stage <- length(sampled$samples$stage[sampled$samples$stage == "sample"])
   iterations <- round(seq(from = (sampled$samples$idx - sampled_stage),
                             to = sampled$samples$idx,
@@ -649,7 +652,7 @@ load("ppdata3b.RData")
 
 We generate 20 posterior predictive data samples for each model. 
 ```{r genppdata, eval=FALSE}
-pp_data_3b <- gen_ppdata(sampled, n = 20)
+pp_data_3b <- gen_pp_data(sampled, n = 20)
 ```
 
 The returned data is a matrix with the same dimensions and names as `data` -- with the exception of column `"pp_subj"`. `pp_subj` is the iteration of posterior sample (in this example `i = 1:20`) for the corresponding subject. We now have two matrices based on samples from either model. The response (`resp`) and response time (`rt`) columns now contain posterior predictive data.
@@ -660,173 +663,154 @@ In the next section, we will use this to assess descriptive adequacy.
 
 Now we will plot the posterior predictive data against the real data. You may choose to plot this in other ways such as the interquartile range or with other packages. 
 
-This may only be useful for some, as what you do with your data is domain specific.
+This may only be useful for some users, as what you do with your data is domain specific.
 
-```{r plotppdata, include=TRUE,warning=FALSE,message=FALSE}
-
-# qL = function(x)
-#   quantile(x, prob = 0.25, na.rm = T)
-# qH = function(x)
-#   quantile(x, prob = 0.75, na.rm = T)
-# medianNA = function(x)
-#   median(x, na.rm = T)
-
-
+```{r plotppdata, include=TRUE, warning=FALSE, message=FALSE}
+# Subject x condition Q1, median and Q3 respone time
 pq <- data %>% 
   group_by(condition, subject) %>% 
   summarise_at(vars(rt),
-               list(Q1 = ~quantile(.,probs = 0.25),
+               list(Q1 = ~ quantile(., probs = 0.25),
                     median = median, 
-                    Q3 = ~quantile(., probs = 0.75)))
+                    Q3 = ~ quantile(., probs = 0.75)))
 
-
-# pq = data %>% group_by(condition, subject) %>% summarise_at(vars(rt), funs(qL, medianNA, qH))
-tmp <- data %>%
+# Mean accuracy for subject x condition 
+acc <- data %>%
   group_by(condition, subject) %>%
   summarise(acc = mean(resp == stim))
 
-pq <- cbind(pq, acc = tmp$acc)
+# Dataframe with Q1, median, Q3 for response times and accuracy
+pq <- cbind(pq, acc = acc$acc)
 
+# Subject x condition Q1, median and Q3 respone time for posterior predictive data
 pp_pq <- pp_data_3b %>%
   group_by(condition, pp_subj, subject) %>%
   summarise_at(vars(rt),
-               list(Q1 = ~quantile(.,probs = 0.25),
+               list(Q1 = ~ quantile(., probs = 0.25),
                     median = median, 
-                    Q3 = ~quantile(., probs = 0.75)))
-
-tmp <- pp_data_3b %>%
+                    Q3 = ~ quantile(., probs = 0.75)))
+# Mean accuracy for subject x condition for posterior predictive data
+pp_acc <- pp_data_3b %>%
   group_by(condition, pp_subj, subject) %>%
   summarise(acc = mean(resp == stim))
 
-pp_pq <- cbind(pp_pq, acc = tmp$acc)
+# Posterior predictive data with Q1, median, Q3 for response time and accuracy 
+pp_pq <- cbind(pp_pq, acc = pp_acc$acc)
 
+# Combine data with posterior predictive data 
 pq <- bind_rows(cbind(src = rep("data", nrow(pq)), pq),
                 cbind(src = rep("model", nrow(pp_pq)), pp_pq))
 
-
-## Averages to plot.
+# Mean Q1, median, Q4 and accuracy for data and posterior predictive data 
 av_pq <- pq %>%
   group_by(src, condition) %>%
   summarise_at(vars(Q1:acc), mean)
 
-## Variances of posterior samples.
-post_var <- pq %>%
+# Variances of posterior samples
+pp_var <- pq %>%
   filter(src != "data") %>%
   group_by(condition, pp_subj, src) %>%
   summarise_at(vars(Q1:acc), mean)
 
-## These make the plots better:
+# Make source column a factor and add labels
 av_pq$src <- factor(av_pq$src,
                     levels = c("model", "data"),
                     labels = c("model", "(Data)")
                     )
 
-post_varsrc <- factor(post_var$src,
-  levels = c("model", "data"),
-  labels = c("model", "(Data)")
-)
+pp_varsrc <- factor(pp_var$src,
+                    levels = c("model", "data"),
+                    labels = c("model", "(Data)")
+                    )
 
-## Change some level labels, for pretty plotting.
-av_pq$condition <- factor(av_pq$condition, levels = c("1", "2", "3"))
-post_var$condition <- factor(post_var$condition, levels = c("1", "2", "3"))
 
 levels(av_pq$condition) <-
-  levels(post_var$condition) <- c("Accuracy", "Neutral", "Speed")
+  levels(pp_var$condition) <- c("Accuracy", "Neutral", "Speed")
 
-## Make for msec and percentages.
+# Convert rt to milliseconds and acc percentage
 av_pq$acc = 100 * av_pq$acc
-post_var$acc = 100 * post_var$acc
+pp_var$acc = 100 * pp_var$acc
 av_pq[, c("Q1", "median", "Q3")] <- 1000 * av_pq[, c("Q1", "median", "Q3")]
-post_var[, c("Q1", "median", "Q3")] <- 1000 * post_var[, c("Q1", "median", "Q3")]
+pp_var[, c("Q1", "median", "Q3")] <- 1000 * pp_var[, c("Q1", "median", "Q3")]
 
-  ##response time plots
-  rtplot = ggplot(
-    data = av_pq,
-    mapping = aes(
-      x = condition,
-      y = median,
-      group = src,
-      colour = src
-    )
-  ) + geom_point(size = 4)
-  
-  rtplot = rtplot + geom_point(
-    aes(
-      x = condition,
-      y = Q1,
-      color = src,
-      group = src
-    ),
-    size = 2)
-  
-  rtplot = rtplot + geom_point(
-    aes(
-      x = condition,
-      y = Q3,
-      color = src,
-      group = src
-    ),
-    size = 2
-  )
-  
-  rtplot = rtplot + labs(x = "Emphasis Condition", y = "RT Percentiles (ms.)", colour =
-                           "Model")
-  
-  
-  rtplot = rtplot + geom_point(
-    data = post_var,
-    aes(x = condition, y = Q1, group = src),
-    size = 1,
-    color = "black",
-    alpha = 0.2
-  )
-  rtplot = rtplot + geom_point(
-    data = post_var,
-    aes(x = condition, y = Q3, group = src),
-    size = 1,
-    color = "black",
-    alpha = 0.2
-  )
-  rtplot = rtplot + geom_point(
-    data = post_var,
-    aes(x = condition, y = median, group = src),
-    size = 2,
-    color = "black",
-    alpha = 0.2
-  )
-  
-  rtplot = rtplot + guides(colour = FALSE)
+# Plot response times for data and posterior predictive data
+rtplot <- ggplot(data = av_pq,
+                 mapping = aes(x = condition,
+                               y = median,
+                               group = src,
+                                colour = src
+                               )) + 
+  geom_point(size = 4) +
+  geom_point(mapping = aes(x = condition,
+                           y = Q1,
+                           color = src,
+                           group = src
+                           ),
+             size = 2) + 
+  geom_point(mapping = aes(x = condition,
+                           y = Q3,
+                           color = src,
+                           group = src
+                           ), 
+             size = 2) + 
+  labs(x = "Condition",
+       y = "RT Percentiles (ms)", 
+       colour = "Model") +
+  geom_point(data = pp_var,
+             mapping =  aes(x = condition,
+                            y = Q1, 
+                            group = src),
+             size = 1,
+             color = "black",
+             alpha = 0.2
+             ) +
+  geom_point(data = pp_var,
+             mapping = aes(x = condition,
+                           y = median,
+                           group = src),
+             size = 1,
+             color = "black",
+             alpha = 0.2
+             ) +
+  geom_point(data = pp_var,
+             mapping = aes(x = condition,
+                           y = Q3,
+                           group = src),
+             size = 2,
+             color = "black",
+             alpha = 0.2
+             ) +
+  guides(colour = FALSE)
   
   
-  ##accuracy plots
-  accplot = ggplot(data = av_pq,
-                   mapping = aes(
-                     x = condition,
-                     y = acc,
-                     color = src,
-                     group = src
-                   )) + geom_point(size=4)
+# Plot accuracy for data and posterior predictive data 
+accplot <- ggplot(data = av_pq,
+                  mapping = aes(x = condition,
+                                y = acc,
+                                color = src,
+                                group = src
+                                )) +
+  geom_point(size = 4) +
+  geom_point(data = pp_var,
+             mapping = aes(x = condition,
+                           y = acc,
+                           group = src),
+             color = "black",
+             alpha = .2
+             ) +
+  labs(x = "Condition",
+       y = "Mean Accuracy (%)",
+       colour = "Model") +
+  guides(colour = FALSE)
   
-  accplot = accplot + geom_point(
-    data = post_var,
-    aes(x = condition, y = acc, group = src),
-    color = "black",
-    alpha = .2
-  )
+# Combine plots
+library(gridExtra)
+library(grid)
   
-  accplot = accplot + labs(x = "Emphasis Instruction", y = "Mean Accuracy (%)", colour =
-                             "Model")
-  accplot = accplot + guides(colour = FALSE)
-  
-  ##Join plots
-  library(gridExtra)
-  library(grid)
-  
-  gA = ggplotGrob(rtplot)
-  gB = ggplotGrob(accplot)
-  maxWidth = grid::unit.pmax(gA$widths[2:5], gB$widths[2:5])
-  gA$widths[2:5] <- as.list(maxWidth)
-  gB$widths[2:5] <- as.list(maxWidth)
-  bothplot = grid.arrange(gA, gB, ncol = 1)
-  
+gA <- ggplotGrob(rtplot)
+gB <- ggplotGrob(accplot)
+maxWidth <- grid::unit.pmax(gA$widths[2:5], gB$widths[2:5])
+gA$widths[2:5] <- as.list(maxWidth)
+gB$widths[2:5] <- as.list(maxWidth)
+bothplot <- grid.arrange(gA, gB, ncol = 1)
 ```
