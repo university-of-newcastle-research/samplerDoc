@@ -824,45 +824,215 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </div>
 <div id="simulating-posterior-data-1" class="section level2">
 <h2><span class="header-section-number">3.5</span> Simulating Posterior Data</h2>
-<p>To generate posterior predictive data we use the <code>SAMPLE = TRUE</code> part of our likelihood function we used above. This part of the likelihood function stores the generated rt and responses given the posterior parameter estimates.</p>
-<p>Below we have included code you can use to simulate posterior predictive data given the <code>sampled</code> object is loaded in your work environment. <code>n</code> specifies the number of posterior samples. To generate this you will to load your <code>sampled</code> object for the 3b model.</p>
+<p>To generate posterior predictive data we set <code>sample = TRUE</code> in the log-likelihood function above, which generates rt and responses given the posterior parameter estimates.</p>
+<p>Below is code you can use to simulate posterior predictive data from the <code>sampled</code> object loaded in your R-studio environment. <code>n</code> specifies the number of posterior samples. To generate this you will to load your <code>sampled</code> object for the 3b model.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gen_ppdata &lt;-<span class="st"> </span><span class="cf">function</span> (sampled, n, <span class="dt">ll_func =</span> sampled<span class="op">$</span>ll_func, <span class="dt">rbind.data =</span> <span class="ot">TRUE</span>) {
-  index =<span class="st"> </span><span class="kw">which</span>(sampled<span class="op">$</span>samples<span class="op">$</span>stage <span class="op">==</span><span class="st"> &quot;sample&quot;</span>)
-  iterations =<span class="st"> </span><span class="kw">round</span>(<span class="kw">seq</span>(<span class="dt">from =</span> index[<span class="dv">1</span>], <span class="dt">to =</span> index[<span class="kw">length</span>(index)], <span class="dt">length.out =</span> n))
-  data =<span class="st"> </span>sampled<span class="op">$</span>data
-  S =<span class="st"> </span>sampled<span class="op">$</span>n_subjects
-  pp_data =<span class="st"> </span><span class="kw">list</span>()
+  sampled_stage &lt;-<span class="st"> </span><span class="kw">length</span>(sampled<span class="op">$</span>samples<span class="op">$</span>stage[sampled<span class="op">$</span>samples<span class="op">$</span>stage <span class="op">==</span><span class="st"> &quot;sample&quot;</span>])
+  iterations &lt;-<span class="st"> </span><span class="kw">round</span>(<span class="kw">seq</span>(<span class="dt">from =</span> (sampled<span class="op">$</span>samples<span class="op">$</span>idx <span class="op">-</span><span class="st"> </span>sampled_stage),
+                            <span class="dt">to =</span> sampled<span class="op">$</span>samples<span class="op">$</span>idx,
+                            <span class="dt">length.out =</span> n))
+  data &lt;-<span class="st"> </span>sampled<span class="op">$</span>data
+  S &lt;-<span class="st"> </span>sampled<span class="op">$</span>n_subjects
+  pp_data &lt;-<span class="st"> </span><span class="kw">list</span>()
     <span class="cf">for</span> (s <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>S){
        <span class="kw">print</span>(<span class="kw">paste0</span>(<span class="st">&quot;subject&quot;</span>, s))
       <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(iterations)) {
-       <span class="kw">print</span>(i)
+        <span class="kw">print</span>(i)
         x &lt;-<span class="st"> </span>sampled<span class="op">$</span>samples<span class="op">$</span>alpha[, s, iterations[i]]
         <span class="kw">names</span>(x) &lt;-<span class="st"> </span>pars
-        out &lt;-<span class="st"> </span><span class="kw">ll_func</span>(<span class="dt">x=</span> x, <span class="dt">data =</span> data[data<span class="op">$</span>subject <span class="op">==</span><span class="st"> </span>s,], <span class="dt">sample =</span> <span class="ot">TRUE</span>)
+        out &lt;-<span class="st"> </span><span class="kw">ll_func</span>(<span class="dt">x =</span> x, 
+                       <span class="dt">data =</span> data[data<span class="op">$</span>subject <span class="op">==</span><span class="st"> </span>s, ],
+                       <span class="dt">sample =</span> <span class="ot">TRUE</span>)
         <span class="cf">if</span> (i <span class="op">==</span><span class="st"> </span><span class="dv">1</span>){
           pp_data[[s]] =<span class="st"> </span><span class="kw">cbind</span>(<span class="dt">pp_subj =</span> i, out)
         }
         <span class="cf">else</span> {
-          pp_data[[s]] =<span class="st"> </span><span class="kw">rbind</span>(pp_data[[s]], <span class="kw">cbind</span>(<span class="dt">pp_subj =</span> i, out))
+          pp_data[[s]] =<span class="st"> </span><span class="kw">rbind</span>(pp_data[[s]],
+                         <span class="kw">cbind</span>(<span class="dt">pp_subj =</span> i, out))
         }
       }
     }
     <span class="cf">if</span> (rbind.data){
-    tidy_pp_data =<span class="st"> </span><span class="kw">do.call</span>(rbind, pp.data)  
-    <span class="kw">return</span>(tidy.pp.data)
+    tidy_pp_data &lt;-<span class="st"> </span><span class="kw">do.call</span>(rbind, pp_data)  
+    <span class="kw">return</span>(tidy_pp_data)
     }
     <span class="cf">else</span> {
-      <span class="kw">return</span>(pp.data)
+      <span class="kw">return</span>(pp_data)
     }
 }</code></pre></div>
 <p>We generate 20 posterior predictive data samples for each model.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pp_data_3b &lt;-<span class="st"> </span><span class="kw">generate.ppdata</span>(sampled, <span class="dt">n =</span> <span class="dv">20</span>)</code></pre></div>
-<p>The returned data is a matrix with the same dimensions and names as data – with the exception of column <code>&quot;pp_subj&quot;</code>. <code>pp_subj</code> is the iteration of posterior sample (in this example i = 1:20) for the corresponding subject. We now have two matrices based on samples from either model. “The response (resp) and response time (rt) columns are now replaced with the posterior predictive data.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pp_data_3b &lt;-<span class="st"> </span><span class="kw">gen_ppdata</span>(sampled, <span class="dt">n =</span> <span class="dv">20</span>)</code></pre></div>
+<p>The returned data is a matrix with the same dimensions and names as <code>data</code> – with the exception of column <code>&quot;pp_subj&quot;</code>. <code>pp_subj</code> is the iteration of posterior sample (in this example <code>i = 1:20</code>) for the corresponding subject. We now have two matrices based on samples from either model. The response (<code>resp</code>) and response time (<code>rt</code>) columns now contain posterior predictive data.</p>
 <p>In the next section, we will use this to assess descriptive adequacy.</p>
 <div id="assessing-descriptive-adequacy-goodness-of-fit" class="section level3">
 <h3><span class="header-section-number">3.5.1</span> Assessing Descriptive Adequacy (goodness of fit)</h3>
-<p>Here we use tidyverse to plot the posterior predictive data against the real data. You may choose to plot this in other ways such as the inter-quantile range or via other packages.</p>
-<p>This may only be useful for some, as what you do with your data is domain specific knowledge.</p>
+<p>Now we will plot the posterior predictive data against the real data. You may choose to plot this in other ways such as the interquartile range or with other packages.</p>
+<p>This may only be useful for some, as what you do with your data is domain specific.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># qL = function(x)</span>
+<span class="co">#   quantile(x, prob = 0.25, na.rm = T)</span>
+<span class="co"># qH = function(x)</span>
+<span class="co">#   quantile(x, prob = 0.75, na.rm = T)</span>
+<span class="co"># medianNA = function(x)</span>
+<span class="co">#   median(x, na.rm = T)</span>
+
+
+pq &lt;-<span class="st"> </span>data <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">group_by</span>(condition, subject) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(rt),
+               <span class="kw">list</span>(<span class="dt">Q1 =</span> <span class="op">~</span><span class="kw">quantile</span>(.,<span class="dt">probs =</span> <span class="fl">0.25</span>),
+                    <span class="dt">median =</span> median, 
+                    <span class="dt">Q3 =</span> <span class="op">~</span><span class="kw">quantile</span>(., <span class="dt">probs =</span> <span class="fl">0.75</span>)))
+
+
+<span class="co"># pq = data %&gt;% group_by(condition, subject) %&gt;% summarise_at(vars(rt), funs(qL, medianNA, qH))</span>
+tmp &lt;-<span class="st"> </span>data <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">group_by</span>(condition, subject) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">acc =</span> <span class="kw">mean</span>(resp <span class="op">==</span><span class="st"> </span>stim))
+
+pq &lt;-<span class="st"> </span><span class="kw">cbind</span>(pq, <span class="dt">acc =</span> tmp<span class="op">$</span>acc)
+
+pp_pq &lt;-<span class="st"> </span>pp_data_3b <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">group_by</span>(condition, pp_subj, subject) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(rt),
+               <span class="kw">list</span>(<span class="dt">Q1 =</span> <span class="op">~</span><span class="kw">quantile</span>(.,<span class="dt">probs =</span> <span class="fl">0.25</span>),
+                    <span class="dt">median =</span> median, 
+                    <span class="dt">Q3 =</span> <span class="op">~</span><span class="kw">quantile</span>(., <span class="dt">probs =</span> <span class="fl">0.75</span>)))
+
+tmp &lt;-<span class="st"> </span>pp_data_3b <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">group_by</span>(condition, pp_subj, subject) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">acc =</span> <span class="kw">mean</span>(resp <span class="op">==</span><span class="st"> </span>stim))
+
+pp_pq &lt;-<span class="st"> </span><span class="kw">cbind</span>(pp_pq, <span class="dt">acc =</span> tmp<span class="op">$</span>acc)
+
+pq &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(<span class="kw">cbind</span>(<span class="dt">src =</span> <span class="kw">rep</span>(<span class="st">&quot;data&quot;</span>, <span class="kw">nrow</span>(pq)), pq),
+                <span class="kw">cbind</span>(<span class="dt">src =</span> <span class="kw">rep</span>(<span class="st">&quot;model&quot;</span>, <span class="kw">nrow</span>(pp_pq)), pp_pq))
+
+
+## Averages to plot.
+av_pq &lt;-<span class="st"> </span>pq <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">group_by</span>(src, condition) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(Q1<span class="op">:</span>acc), mean)
+
+## Variances of posterior samples.
+post_var &lt;-<span class="st"> </span>pq <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">filter</span>(src <span class="op">!=</span><span class="st"> &quot;data&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">group_by</span>(condition, pp_subj, src) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(Q1<span class="op">:</span>acc), mean)
+
+## These make the plots better:
+av_pq<span class="op">$</span>src &lt;-<span class="st"> </span><span class="kw">factor</span>(av_pq<span class="op">$</span>src,
+                    <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;model&quot;</span>, <span class="st">&quot;data&quot;</span>),
+                    <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;model&quot;</span>, <span class="st">&quot;(Data)&quot;</span>)
+                    )
+
+post_varsrc &lt;-<span class="st"> </span><span class="kw">factor</span>(post_var<span class="op">$</span>src,
+  <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;model&quot;</span>, <span class="st">&quot;data&quot;</span>),
+  <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;model&quot;</span>, <span class="st">&quot;(Data)&quot;</span>)
+)
+
+## Change some level labels, for pretty plotting.
+av_pq<span class="op">$</span>condition &lt;-<span class="st"> </span><span class="kw">factor</span>(av_pq<span class="op">$</span>condition, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;1&quot;</span>, <span class="st">&quot;2&quot;</span>, <span class="st">&quot;3&quot;</span>))
+post_var<span class="op">$</span>condition &lt;-<span class="st"> </span><span class="kw">factor</span>(post_var<span class="op">$</span>condition, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;1&quot;</span>, <span class="st">&quot;2&quot;</span>, <span class="st">&quot;3&quot;</span>))
+
+<span class="kw">levels</span>(av_pq<span class="op">$</span>condition) &lt;-
+<span class="st">  </span><span class="kw">levels</span>(post_var<span class="op">$</span>condition) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Accuracy&quot;</span>, <span class="st">&quot;Neutral&quot;</span>, <span class="st">&quot;Speed&quot;</span>)
+
+## Make for msec and percentages.
+av_pq<span class="op">$</span>acc =<span class="st"> </span><span class="dv">100</span> <span class="op">*</span><span class="st"> </span>av_pq<span class="op">$</span>acc
+post_var<span class="op">$</span>acc =<span class="st"> </span><span class="dv">100</span> <span class="op">*</span><span class="st"> </span>post_var<span class="op">$</span>acc
+av_pq[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)] &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="op">*</span><span class="st"> </span>av_pq[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)]
+post_var[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)] &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="op">*</span><span class="st"> </span>post_var[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)]
+
+  ##response time plots
+  rtplot =<span class="st"> </span><span class="kw">ggplot</span>(
+    <span class="dt">data =</span> av_pq,
+    <span class="dt">mapping =</span> <span class="kw">aes</span>(
+      <span class="dt">x =</span> condition,
+      <span class="dt">y =</span> median,
+      <span class="dt">group =</span> src,
+      <span class="dt">colour =</span> src
+    )
+  ) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">4</span>)
+  
+  rtplot =<span class="st"> </span>rtplot <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>(
+    <span class="kw">aes</span>(
+      <span class="dt">x =</span> condition,
+      <span class="dt">y =</span> Q1,
+      <span class="dt">color =</span> src,
+      <span class="dt">group =</span> src
+    ),
+    <span class="dt">size =</span> <span class="dv">2</span>)
+  
+  rtplot =<span class="st"> </span>rtplot <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>(
+    <span class="kw">aes</span>(
+      <span class="dt">x =</span> condition,
+      <span class="dt">y =</span> Q3,
+      <span class="dt">color =</span> src,
+      <span class="dt">group =</span> src
+    ),
+    <span class="dt">size =</span> <span class="dv">2</span>
+  )
+  
+  rtplot =<span class="st"> </span>rtplot <span class="op">+</span><span class="st"> </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Emphasis Condition&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;RT Percentiles (ms.)&quot;</span>, <span class="dt">colour =</span>
+                           <span class="st">&quot;Model&quot;</span>)
+  
+  
+  rtplot =<span class="st"> </span>rtplot <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>(
+    <span class="dt">data =</span> post_var,
+    <span class="kw">aes</span>(<span class="dt">x =</span> condition, <span class="dt">y =</span> Q1, <span class="dt">group =</span> src),
+    <span class="dt">size =</span> <span class="dv">1</span>,
+    <span class="dt">color =</span> <span class="st">&quot;black&quot;</span>,
+    <span class="dt">alpha =</span> <span class="fl">0.2</span>
+  )
+  rtplot =<span class="st"> </span>rtplot <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>(
+    <span class="dt">data =</span> post_var,
+    <span class="kw">aes</span>(<span class="dt">x =</span> condition, <span class="dt">y =</span> Q3, <span class="dt">group =</span> src),
+    <span class="dt">size =</span> <span class="dv">1</span>,
+    <span class="dt">color =</span> <span class="st">&quot;black&quot;</span>,
+    <span class="dt">alpha =</span> <span class="fl">0.2</span>
+  )
+  rtplot =<span class="st"> </span>rtplot <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>(
+    <span class="dt">data =</span> post_var,
+    <span class="kw">aes</span>(<span class="dt">x =</span> condition, <span class="dt">y =</span> median, <span class="dt">group =</span> src),
+    <span class="dt">size =</span> <span class="dv">2</span>,
+    <span class="dt">color =</span> <span class="st">&quot;black&quot;</span>,
+    <span class="dt">alpha =</span> <span class="fl">0.2</span>
+  )
+  
+  rtplot =<span class="st"> </span>rtplot <span class="op">+</span><span class="st"> </span><span class="kw">guides</span>(<span class="dt">colour =</span> <span class="ot">FALSE</span>)
+  
+  
+  ##accuracy plots
+  accplot =<span class="st"> </span><span class="kw">ggplot</span>(<span class="dt">data =</span> av_pq,
+                   <span class="dt">mapping =</span> <span class="kw">aes</span>(
+                     <span class="dt">x =</span> condition,
+                     <span class="dt">y =</span> acc,
+                     <span class="dt">color =</span> src,
+                     <span class="dt">group =</span> src
+                   )) <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>(<span class="dt">size=</span><span class="dv">4</span>)
+  
+  accplot =<span class="st"> </span>accplot <span class="op">+</span><span class="st"> </span><span class="kw">geom_point</span>(
+    <span class="dt">data =</span> post_var,
+    <span class="kw">aes</span>(<span class="dt">x =</span> condition, <span class="dt">y =</span> acc, <span class="dt">group =</span> src),
+    <span class="dt">color =</span> <span class="st">&quot;black&quot;</span>,
+    <span class="dt">alpha =</span> .<span class="dv">2</span>
+  )
+  
+  accplot =<span class="st"> </span>accplot <span class="op">+</span><span class="st"> </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Emphasis Instruction&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;Mean Accuracy (%)&quot;</span>, <span class="dt">colour =</span>
+                             <span class="st">&quot;Model&quot;</span>)
+  accplot =<span class="st"> </span>accplot <span class="op">+</span><span class="st"> </span><span class="kw">guides</span>(<span class="dt">colour =</span> <span class="ot">FALSE</span>)
+  
+  ##Join plots
+  <span class="kw">library</span>(gridExtra)
+  <span class="kw">library</span>(grid)
+  
+  gA =<span class="st"> </span><span class="kw">ggplotGrob</span>(rtplot)
+  gB =<span class="st"> </span><span class="kw">ggplotGrob</span>(accplot)
+  maxWidth =<span class="st"> </span>grid<span class="op">::</span><span class="kw">unit.pmax</span>(gA<span class="op">$</span>widths[<span class="dv">2</span><span class="op">:</span><span class="dv">5</span>], gB<span class="op">$</span>widths[<span class="dv">2</span><span class="op">:</span><span class="dv">5</span>])
+  gA<span class="op">$</span>widths[<span class="dv">2</span><span class="op">:</span><span class="dv">5</span>] &lt;-<span class="st"> </span><span class="kw">as.list</span>(maxWidth)
+  gB<span class="op">$</span>widths[<span class="dv">2</span><span class="op">:</span><span class="dv">5</span>] &lt;-<span class="st"> </span><span class="kw">as.list</span>(maxWidth)
+  bothplot =<span class="st"> </span><span class="kw">grid.arrange</span>(gA, gB, <span class="dt">ncol =</span> <span class="dv">1</span>)</code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/plotppdata-1.png" width="672" /></p>
 
 </div>
 </div>
