@@ -142,6 +142,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="3.5" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#simulating-posterior-data-1"><i class="fa fa-check"></i><b>3.5</b> Simulating Posterior Data</a><ul>
 <li class="chapter" data-level="3.5.1" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#assessing-descriptive-adequacy-goodness-of-fit"><i class="fa fa-check"></i><b>3.5.1</b> Assessing Descriptive Adequacy (goodness of fit)</a></li>
 </ul></li>
+<li class="chapter" data-level="3.6" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#evaluating-different-models---single-threshold-lba."><i class="fa fa-check"></i><b>3.6</b> Evaluating different models - single threshold LBA.</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="example-2-single-threshold-parameter.html"><a href="example-2-single-threshold-parameter.html"><i class="fa fa-check"></i><b>4</b> Example 2 - Single threshold parameter</a></li>
 <li class="chapter" data-level="5" data-path="example-3-wagenmakers-2008-experiment-2.html"><a href="example-3-wagenmakers-2008-experiment-2.html"><i class="fa fa-check"></i><b>5</b> Example 3 - Wagenmakers (2008) Experiment 2</a></li>
@@ -673,7 +674,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>Setup is now complete and we can run the sampler. First, we use the <code>init</code> function to generate initial start points for the random effects and store them in the <code>sampler</code> object. Here we specify start points by providing values for the <code>start_mu</code> and <code>start_sig</code> arguments.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sampler &lt;-<span class="st"> </span><span class="kw">init</span>(sampler, 
                 <span class="dt">start_mu =</span> start_points<span class="op">$</span>mu,
-                <span class="dt">start_sig =</span> start_points<span class="op">$</span>sig2)</code></pre></div>
+                <span class="dt">start_sig =</span> start_points<span class="op">$</span>sig2
+                )</code></pre></div>
 <p><br> To run the sampler, we use the <code>run_stage</code> function. To execute the <code>run_stage</code> function, you <b>must</b> provide values for two arguments:</p>
 <ul>
 <li><code>pmwgs =</code> the <code>sampler</code> object including parameters that were created by the <code>init</code> function above.</li>
@@ -692,19 +694,22 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
                     <span class="dt">stage =</span> <span class="st">&quot;burn&quot;</span>,
                     <span class="dt">iter =</span> <span class="dv">500</span>,
                     <span class="dt">particles =</span> <span class="dv">2000</span>,
-                    <span class="dt">epsilon =</span> .<span class="dv">5</span>)</code></pre></div>
+                    <span class="dt">epsilon =</span> .<span class="dv">5</span>
+                    )</code></pre></div>
 <p>Next is the adaptation stage <code>&quot;adapt&quot;</code>. The adaptation stage draws samples using a simple, but relatively inefficient proposal distribution (the same proposal distribution as the <code>&quot;burn&quot;</code>stage). Enough samples are drawn to allow the algorithm to estimate a much more sophisticated and efficient proposal distribution, using conditional normal distributions. We take the <code>burned</code> object created in the previous stage and set iterations <code>iter =</code> to a high number (e.g. <code>10000</code>), as it should exit before reaching this point. If it doesn’t, there is likely an issue with acceptance rates, the likelihood function or limited data to operate on (i.e. few trials in some conditions). Here, we have saved the outcome of the adaptation stage to an object called <code>adapted</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">adapted &lt;-<span class="st"> </span><span class="kw">run_stage</span>(burned, 
                      <span class="dt">stage =</span> <span class="st">&quot;adapt&quot;</span>, 
                      <span class="dt">iter =</span> <span class="dv">10000</span>, 
                      <span class="dt">particles =</span> <span class="dv">2000</span>,
-                     <span class="dt">epsilon =</span> .<span class="dv">5</span>)</code></pre></div>
+                     <span class="dt">epsilon =</span> .<span class="dv">5</span>
+                     )</code></pre></div>
 <p>The final stage is the sampling stage <code>&quot;sample&quot;</code>. The sampling stage uses the sophisticated and adaptive conditional normal proposal distributions. This allows for very efficient sampling, using far fewer particles. Samples from this stage are taken from the ‘posterior distribution’ and stored in the <code>sampled</code> object.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sampled &lt;-<span class="st"> </span><span class="kw">run_stage</span>(adapted, 
                      <span class="dt">stage =</span> <span class="st">&quot;sample&quot;</span>,
                      <span class="dt">iter =</span> <span class="dv">1000</span>, 
                      <span class="dt">particles =</span> <span class="dv">200</span>,
-                     <span class="dt">epsilon =</span> .<span class="dv">5</span>)</code></pre></div>
+                     <span class="dt">epsilon =</span> .<span class="dv">5</span>
+                     )</code></pre></div>
 <p>The <code>sampled</code> object includes all samples from the <code>&quot;sample&quot;</code> stage above and the following elements:</p>
 <ul>
 <li><code>data</code></li>
@@ -839,6 +844,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
   data &lt;-<span class="st"> </span>sampled<span class="op">$</span>data
   S &lt;-<span class="st"> </span>sampled<span class="op">$</span>n_subjects
   pp_data &lt;-<span class="st"> </span><span class="kw">list</span>()
+  
     <span class="cf">for</span> (s <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>S){
        <span class="kw">print</span>(<span class="kw">paste0</span>(<span class="st">&quot;subject&quot;</span>, s))
       <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(iterations)) {
@@ -848,6 +854,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
         out &lt;-<span class="st"> </span><span class="kw">ll_func</span>(<span class="dt">x =</span> x, 
                        <span class="dt">data =</span> data[data<span class="op">$</span>subject <span class="op">==</span><span class="st"> </span>s, ],
                        <span class="dt">sample =</span> <span class="ot">TRUE</span>)
+        
         <span class="cf">if</span> (i <span class="op">==</span><span class="st"> </span><span class="dv">1</span>){
           pp_data[[s]] =<span class="st"> </span><span class="kw">cbind</span>(<span class="dt">pp_subj =</span> i, out)
         }
@@ -857,6 +864,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
         }
       }
     }
+  
     <span class="cf">if</span> (rbind.data){
     tidy_pp_data &lt;-<span class="st"> </span><span class="kw">do.call</span>(rbind, pp_data)  
     <span class="kw">return</span>(tidy_pp_data)
@@ -867,48 +875,35 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 }</code></pre></div>
 <p>We generate 20 posterior predictive data samples for each model.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pp_data_3b &lt;-<span class="st"> </span><span class="kw">gen_pp_data</span>(sampled, <span class="dt">n =</span> <span class="dv">20</span>)</code></pre></div>
-<p>The returned data is a matrix with the same dimensions and names as <code>data</code> – with the exception of column <code>&quot;pp_subj&quot;</code>. <code>pp_subj</code> is the iteration of posterior sample (in this example <code>i = 1:20</code>) for the corresponding subject. We now have two matrices based on samples from either model. The response (<code>resp</code>) and response time (<code>rt</code>) columns now contain posterior predictive data.</p>
+<p>The returned data is a matrix with the same dimensions and names as <code>data</code> – with the exception of column <code>pp_subj</code>. <code>pp_subj</code> is the iteration of posterior sample (in this example <code>i = 1:20</code>) for the corresponding subject. We now have two matrices based on samples from either model. The response (<code>resp</code>) and response time (<code>rt</code>) columns now contain posterior predictive data.</p>
 <p>In the next section, we will use this to assess descriptive adequacy.</p>
 <div id="assessing-descriptive-adequacy-goodness-of-fit" class="section level3">
 <h3><span class="header-section-number">3.5.1</span> Assessing Descriptive Adequacy (goodness of fit)</h3>
-<p>Now we will plot the posterior predictive data against the real data. You may choose to plot this in other ways such as the interquartile range or with other packages.</p>
-<p>This may only be useful for some users, as what you do with your data is domain specific.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Subject x condition Q1, median and Q3 respone time</span>
+<p>Now we will plot the posterior predictive data against the real data. This may only be useful for some users, as what you do with your data is domain specific.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Subject x condition Q1, median and Q3 respone time + mean accuracy</span>
 pq &lt;-<span class="st"> </span>data <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">group_by</span>(condition, subject) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(rt),
-               <span class="kw">list</span>(<span class="dt">Q1 =</span> <span class="op">~</span><span class="st"> </span><span class="kw">quantile</span>(., <span class="dt">probs =</span> <span class="fl">0.25</span>),
-                    <span class="dt">median =</span> median, 
-                    <span class="dt">Q3 =</span> <span class="op">~</span><span class="st"> </span><span class="kw">quantile</span>(., <span class="dt">probs =</span> <span class="fl">0.75</span>)))
-
-<span class="co"># Mean accuracy for subject x condition </span>
-acc &lt;-<span class="st"> </span>data <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">group_by</span>(condition, subject) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">acc =</span> <span class="kw">mean</span>(resp <span class="op">==</span><span class="st"> </span>stim))
-
-<span class="co"># Dataframe with Q1, median, Q3 for response times and accuracy</span>
-pq &lt;-<span class="st"> </span><span class="kw">cbind</span>(pq, <span class="dt">acc =</span> acc<span class="op">$</span>acc)
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">Q1 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.25</span>),
+            <span class="dt">median =</span> <span class="kw">median</span>(rt), 
+            <span class="dt">Q3 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.75</span>),
+            <span class="dt">acc =</span>  <span class="kw">mean</span>(<span class="kw">ifelse</span>(stim <span class="op">==</span><span class="st"> </span>resp, <span class="dv">1</span>, <span class="dv">0</span>))
+            )
 
 <span class="co"># Subject x condition Q1, median and Q3 respone time for posterior predictive data</span>
 pp_pq &lt;-<span class="st"> </span>pp_data_3b <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">group_by</span>(condition, pp_subj, subject) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(rt),
-               <span class="kw">list</span>(<span class="dt">Q1 =</span> <span class="op">~</span><span class="st"> </span><span class="kw">quantile</span>(., <span class="dt">probs =</span> <span class="fl">0.25</span>),
-                    <span class="dt">median =</span> median, 
-                    <span class="dt">Q3 =</span> <span class="op">~</span><span class="st"> </span><span class="kw">quantile</span>(., <span class="dt">probs =</span> <span class="fl">0.75</span>)))
-<span class="co"># Mean accuracy for subject x condition for posterior predictive data</span>
-pp_acc &lt;-<span class="st"> </span>pp_data_3b <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">group_by</span>(condition, pp_subj, subject) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">acc =</span> <span class="kw">mean</span>(resp <span class="op">==</span><span class="st"> </span>stim))
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">Q1 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.25</span>),
+            <span class="dt">median =</span> <span class="kw">median</span>(rt), 
+            <span class="dt">Q3 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.75</span>),
+            <span class="dt">acc =</span> <span class="kw">mean</span>(<span class="kw">ifelse</span>(stim <span class="op">==</span><span class="st"> </span>resp, <span class="dv">1</span>, <span class="dv">0</span>))
+            )
 
-<span class="co"># Posterior predictive data with Q1, median, Q3 for response time and accuracy </span>
-pp_pq &lt;-<span class="st"> </span><span class="kw">cbind</span>(pp_pq, <span class="dt">acc =</span> pp_acc<span class="op">$</span>acc)
-
-<span class="co"># Combine data with posterior predictive data </span>
+<span class="co"># Combine data with posterior predictive data and add data source</span>
 pq &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(<span class="kw">cbind</span>(<span class="dt">src =</span> <span class="kw">rep</span>(<span class="st">&quot;data&quot;</span>, <span class="kw">nrow</span>(pq)), pq),
-                <span class="kw">cbind</span>(<span class="dt">src =</span> <span class="kw">rep</span>(<span class="st">&quot;model&quot;</span>, <span class="kw">nrow</span>(pp_pq)), pp_pq))
+                <span class="kw">cbind</span>(<span class="dt">src =</span> <span class="kw">rep</span>(<span class="st">&quot;model&quot;</span>, <span class="kw">nrow</span>(pp_pq)), pp_pq)
+                )
 
-<span class="co"># Mean Q1, median, Q4 and accuracy for data and posterior predictive data </span>
+<span class="co"># Mean Q1, median, Q4 and accuracy for data and posterior predictive data</span>
 av_pq &lt;-<span class="st"> </span>pq <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">group_by</span>(src, condition) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(Q1<span class="op">:</span>acc), mean)
@@ -919,7 +914,7 @@ pp_var &lt;-<span class="st"> </span>pq <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">group_by</span>(condition, pp_subj, src) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(Q1<span class="op">:</span>acc), mean)
 
-<span class="co"># Make source column a factor and add labels</span>
+<span class="co"># Convert source column a factor and add labels</span>
 av_pq<span class="op">$</span>src &lt;-<span class="st"> </span><span class="kw">factor</span>(av_pq<span class="op">$</span>src,
                     <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;model&quot;</span>, <span class="st">&quot;data&quot;</span>),
                     <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;model&quot;</span>, <span class="st">&quot;(Data)&quot;</span>)
@@ -929,12 +924,11 @@ pp_varsrc &lt;-<span class="st"> </span><span class="kw">factor</span>(pp_var<sp
                     <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;model&quot;</span>, <span class="st">&quot;data&quot;</span>),
                     <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;model&quot;</span>, <span class="st">&quot;(Data)&quot;</span>)
                     )
-
-
+<span class="co"># Rename conditions</span>
 <span class="kw">levels</span>(av_pq<span class="op">$</span>condition) &lt;-
 <span class="st">  </span><span class="kw">levels</span>(pp_var<span class="op">$</span>condition) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Accuracy&quot;</span>, <span class="st">&quot;Neutral&quot;</span>, <span class="st">&quot;Speed&quot;</span>)
 
-<span class="co"># Convert rt to milliseconds and acc percentage</span>
+<span class="co"># Convert rt to milliseconds and acc to percentage</span>
 av_pq<span class="op">$</span>acc =<span class="st"> </span><span class="dv">100</span> <span class="op">*</span><span class="st"> </span>av_pq<span class="op">$</span>acc
 pp_var<span class="op">$</span>acc =<span class="st"> </span><span class="dv">100</span> <span class="op">*</span><span class="st"> </span>pp_var<span class="op">$</span>acc
 av_pq[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)] &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="op">*</span><span class="st"> </span>av_pq[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)]
@@ -943,13 +937,14 @@ pp_var[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span
 <span class="co"># Plot response times for data and posterior predictive data</span>
 rtplot &lt;-<span class="st"> </span><span class="kw">ggplot</span>(<span class="dt">data =</span> av_pq,
                  <span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> condition,
-                               <span class="dt">y =</span> median,
+                               <span class="dt">y =</span> Q1,
                                <span class="dt">group =</span> src,
                                 <span class="dt">colour =</span> src
-                               )) <span class="op">+</span><span class="st"> </span>
+                               )
+                 ) <span class="op">+</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">4</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> condition,
-                           <span class="dt">y =</span> Q1,
+                           <span class="dt">y =</span> median,
                            <span class="dt">color =</span> src,
                            <span class="dt">group =</span> src
                            ),
@@ -960,13 +955,10 @@ rtplot &lt;-<span class="st"> </span><span class="kw">ggplot</span>(<span class=
                            <span class="dt">group =</span> src
                            ), 
              <span class="dt">size =</span> <span class="dv">2</span>) <span class="op">+</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Condition&quot;</span>,
-       <span class="dt">y =</span> <span class="st">&quot;RT Percentiles (ms)&quot;</span>, 
-       <span class="dt">colour =</span> <span class="st">&quot;Model&quot;</span>) <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data =</span> pp_var,
-             <span class="dt">mapping =</span>  <span class="kw">aes</span>(<span class="dt">x =</span> condition,
-                            <span class="dt">y =</span> Q1, 
-                            <span class="dt">group =</span> src),
+             <span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x =</span> condition,
+                           <span class="dt">y =</span> Q1, 
+                           <span class="dt">group =</span> src),
              <span class="dt">size =</span> <span class="dv">1</span>,
              <span class="dt">color =</span> <span class="st">&quot;black&quot;</span>,
              <span class="dt">alpha =</span> <span class="fl">0.2</span>
@@ -986,9 +978,17 @@ rtplot &lt;-<span class="st"> </span><span class="kw">ggplot</span>(<span class=
              <span class="dt">size =</span> <span class="dv">2</span>,
              <span class="dt">color =</span> <span class="st">&quot;black&quot;</span>,
              <span class="dt">alpha =</span> <span class="fl">0.2</span>
-             ) <span class="op">+</span>
-<span class="st">  </span><span class="kw">guides</span>(<span class="dt">colour =</span> <span class="ot">FALSE</span>)
-  
+             ) <span class="op">+</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Condition&quot;</span>,
+       <span class="dt">y =</span> <span class="st">&quot;RT Percentiles (ms)&quot;</span>, 
+       <span class="dt">colour =</span> <span class="st">&quot;Model&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">guides</span>(<span class="dt">colour =</span> <span class="ot">FALSE</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.title.y =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">14</span>, <span class="dt">face =</span> <span class="st">&#39;bold&#39;</span>),
+        <span class="dt">axis.text.y =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">14</span>), 
+        <span class="dt">axis.title.x =</span> <span class="kw">element_blank</span>(),
+        <span class="dt">axis.text.x =</span> <span class="kw">element_blank</span>(),
+        <span class="dt">axis.ticks.x =</span> <span class="kw">element_blank</span>()) <span class="op">+</span>
+<span class="st">   </span><span class="kw">ylim</span>(<span class="dv">275</span>, <span class="dv">650</span>)
   
 <span class="co"># Plot accuracy for data and posterior predictive data </span>
 accplot &lt;-<span class="st"> </span><span class="kw">ggplot</span>(<span class="dt">data =</span> av_pq,
@@ -1008,21 +1008,180 @@ accplot &lt;-<span class="st"> </span><span class="kw">ggplot</span>(<span class
 <span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Condition&quot;</span>,
        <span class="dt">y =</span> <span class="st">&quot;Mean Accuracy (%)&quot;</span>,
        <span class="dt">colour =</span> <span class="st">&quot;Model&quot;</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw">guides</span>(<span class="dt">colour =</span> <span class="ot">FALSE</span>)
-  
-<span class="co"># Combine plots</span>
-<span class="kw">library</span>(gridExtra)
-<span class="kw">library</span>(grid)
-  
-gA &lt;-<span class="st"> </span><span class="kw">ggplotGrob</span>(rtplot)
-gB &lt;-<span class="st"> </span><span class="kw">ggplotGrob</span>(accplot)
-maxWidth &lt;-<span class="st"> </span>grid<span class="op">::</span><span class="kw">unit.pmax</span>(gA<span class="op">$</span>widths[<span class="dv">2</span><span class="op">:</span><span class="dv">5</span>], gB<span class="op">$</span>widths[<span class="dv">2</span><span class="op">:</span><span class="dv">5</span>])
-gA<span class="op">$</span>widths[<span class="dv">2</span><span class="op">:</span><span class="dv">5</span>] &lt;-<span class="st"> </span><span class="kw">as.list</span>(maxWidth)
-gB<span class="op">$</span>widths[<span class="dv">2</span><span class="op">:</span><span class="dv">5</span>] &lt;-<span class="st"> </span><span class="kw">as.list</span>(maxWidth)
-bothplot &lt;-<span class="st"> </span><span class="kw">grid.arrange</span>(gA, gB, <span class="dt">ncol =</span> <span class="dv">1</span>)</code></pre></div>
-<p><img src="bookdown-demo_files/figure-html/plotppdata-1.png" width="672" /></p>
-
+<span class="st">  </span><span class="kw">guides</span>(<span class="dt">colour =</span> <span class="ot">FALSE</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.title.y =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">14</span>, <span class="dt">face =</span> <span class="st">&#39;bold&#39;</span>), 
+        <span class="dt">axis.text.y =</span> <span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">14</span>), 
+        <span class="dt">axis.title.x =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">14</span>, <span class="dt">face =</span> <span class="st">&#39;bold&#39;</span>),
+        <span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">14</span>),
+        <span class="dt">legend.text =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">12</span>),
+        <span class="dt">legend.key.size =</span> <span class="kw">unit</span>(<span class="fl">0.75</span>, <span class="st">&#39;cm&#39;</span>),
+        <span class="dt">legend.title =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">14</span>, <span class="dt">face =</span> <span class="st">&#39;bold&#39;</span>),
+        <span class="dt">legend.title.align =</span> <span class="fl">0.5</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">ylim</span>(<span class="dv">75</span>, <span class="dv">90</span>)</code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/ppdataplotarrangment-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
+</div>
+<div id="evaluating-different-models---single-threshold-lba." class="section level2">
+<h2><span class="header-section-number">3.6</span> Evaluating different models - single threshold LBA.</h2>
+<p>Now let’s run through an example where we change our model slightly and assume that participants’s level of caution does not change with emphasis instructions i.e. their threshold is identical in the <code>Accuracy</code>, <code>Neutral</code>, and <code>Speed</code> conditions. We will call this our “single threshold model” (STM). The STM’s log-likelihood has one <code>b</code> parameter, instead of three. This change is seen on lines (x) and (y) below.</p>
+<p>For brevity, we specify only the fast version of the loglikelihood function for the single threshold model.</p>
+<div class="sourceCode"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+</pre></td><td class="sourceCode"><pre><code class="sourceCode r">fast_lba_loglike &lt;-<span class="st"> </span><span class="cf">function</span>(x, data, <span class="dt">sample =</span> <span class="ot">FALSE</span>) {
+  x &lt;-<span class="st"> </span><span class="kw">exp</span>(x)
+  <span class="cf">if</span> (<span class="kw">any</span>(data<span class="op">$</span>rt <span class="op">&lt;</span><span class="st"> </span>x[<span class="st">&quot;t0&quot;</span>])) {
+    <span class="kw">return</span>(<span class="op">-</span><span class="fl">1e10</span>)
+  }
+  
+  <span class="cf">if</span> (sample) {
+    tmp &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data))
+    data<span class="op">$</span>rt &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="ot">NA</span>, <span class="kw">nrow</span>(data))
+    data<span class="op">$</span>resp &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="ot">NA</span>, <span class="kw">nrow</span>(data))
+  } <span class="cf">else</span> {
+    out &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data))
+  }
+  
+  <span class="cf">if</span> (sample) { 
+    <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(data)) {
+      A =<span class="st"> </span>x[<span class="st">&quot;A&quot;</span>]
+      b =<span class="st"> </span>x[<span class="st">&quot;b&quot;</span>] <span class="op">+</span><span class="st"> </span>A
+      vc =<span class="st"> </span>x[<span class="st">&quot;vc&quot;</span>]
+      ve =<span class="st"> </span>x[<span class="st">&quot;ve&quot;</span>]
+      t0 =<span class="st"> </span>x[<span class="st">&quot;t0&quot;</span>]
+      s =<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>)
+      <span class="cf">if</span> (data<span class="op">$</span>stim[i] <span class="op">==</span><span class="st"> </span><span class="dv">1</span>) {
+        vs =<span class="st"> </span><span class="kw">c</span>(vc, ve)
+      } <span class="cf">else</span> {
+        vs =<span class="st"> </span><span class="kw">c</span>(ve, vc)
+      }
+      
+      tmp &lt;-<span class="st"> </span><span class="kw">rLBA</span>(<span class="dt">n =</span> <span class="dv">1</span>,
+                  <span class="dt">A =</span> A,
+                  <span class="dt">b =</span> b,
+                  <span class="dt">mean_v =</span> vs,
+                  <span class="dt">sd_v =</span> s,
+                  <span class="dt">t0 =</span> t0,
+                  <span class="dt">dist =</span> <span class="st">&quot;norm&quot;</span>,
+          <span class="dt">silent =</span> <span class="ot">TRUE</span>
+        )
+      data<span class="op">$</span>rt[i] &lt;-<span class="st"> </span>tmp<span class="op">$</span>rt
+      data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span>tmp<span class="op">$</span>resp
+    } 
+  } <span class="cf">else</span> {
+
+  vlist =<span class="st"> </span><span class="kw">list</span>(<span class="st">&quot;v.1&quot;</span> =<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data)), <span class="st">&quot;v.2&quot;</span> =<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data)))
+  
+  
+  <span class="cf">for</span> (c <span class="cf">in</span> <span class="kw">levels</span>(data<span class="op">$</span>condition)) {
+    <span class="cf">for</span> (s <span class="cf">in</span> <span class="kw">levels</span>(data<span class="op">$</span>stim)) {
+      use &lt;-<span class="st"> </span>data<span class="op">$</span>condition <span class="op">==</span><span class="st"> </span>c <span class="op">&amp;</span><span class="st"> </span>data<span class="op">$</span>stim <span class="op">==</span><span class="st"> </span>s
+        vc =<span class="st"> </span>x[<span class="st">&quot;vc&quot;</span>]
+        ve =<span class="st"> </span>x[<span class="st">&quot;ve&quot;</span>]
+        <span class="cf">if</span> (s <span class="op">==</span><span class="st"> </span><span class="dv">1</span>) {
+          vlist<span class="op">$</span>v.<span class="dv">1</span>[use] =<span class="st"> </span>vc
+          vlist<span class="op">$</span>v.<span class="dv">2</span>[use] =<span class="st"> </span>ve
+        } <span class="cf">else</span> {
+          vlist<span class="op">$</span>v.<span class="dv">1</span>[use] =<span class="st"> </span>ve
+          vlist<span class="op">$</span>v.<span class="dv">2</span>[use] =<span class="st"> </span>vc
+        }
+    }
+  }
+    out &lt;-<span class="st"> </span><span class="kw">dLBA</span>(
+      <span class="dt">rt =</span> data<span class="op">$</span>rt,
+      <span class="dt">response =</span> data<span class="op">$</span>resp,
+      <span class="dt">A =</span> x[<span class="st">&quot;A&quot;</span>],
+      <span class="dt">b =</span> x[<span class="st">&quot;b&quot;</span>] <span class="op">+</span><span class="st"> </span>x[<span class="st">&quot;A&quot;</span>],
+      <span class="dt">mean_v =</span> vlist,
+      <span class="dt">sd_v =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>),
+      <span class="dt">t0 =</span> x[<span class="st">&quot;t0&quot;</span>],
+      <span class="dt">distribution =</span> <span class="st">&quot;norm&quot;</span>,
+      <span class="dt">silent =</span> <span class="ot">TRUE</span>)
+  }
+  
+  <span class="cf">if</span> (sample) {
+    <span class="kw">return</span>(data)
+  } <span class="cf">else</span> {
+    out&lt;-<span class="kw">sum</span>(<span class="kw">log</span>(<span class="kw">pmax</span>(out,<span class="fl">1e-10</span>)))
+    <span class="kw">return</span>(out)
+  }
+}</code></pre></td></tr></table></div>
+
 </div>
 </div>
 <h3>References</h3>

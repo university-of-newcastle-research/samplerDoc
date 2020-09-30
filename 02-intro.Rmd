@@ -380,7 +380,8 @@ Setup is now complete and we can run the sampler. First, we use the `init` funct
 ```{r runlbaSampler, echo=TRUE, eval=FALSE}
 sampler <- init(sampler, 
                 start_mu = start_points$mu,
-                start_sig = start_points$sig2)
+                start_sig = start_points$sig2
+                )
 ```
 
 <br>
@@ -409,7 +410,8 @@ burned <- run_stage(sampler,
                     stage = "burn",
                     iter = 500,
                     particles = 2000,
-                    epsilon = .5)
+                    epsilon = .5
+                    )
 ```
 
 
@@ -420,7 +422,8 @@ adapted <- run_stage(burned,
                      stage = "adapt", 
                      iter = 10000, 
                      particles = 2000,
-                     epsilon = .5)
+                     epsilon = .5
+                     )
 ```
 
 The final stage is the sampling stage `"sample"`. The sampling stage uses the sophisticated and adaptive conditional normal proposal distributions. This allows for very efficient sampling, using far fewer particles. Samples from this stage are taken from the 'posterior distribution' and stored in the `sampled` object. 
@@ -430,8 +433,8 @@ sampled <- run_stage(adapted,
                      stage = "sample",
                      iter = 1000, 
                      particles = 200,
-                     epsilon = .5)
-
+                     epsilon = .5
+                     )
 ```
 
 
@@ -617,6 +620,7 @@ gen_pp_data <- function (sampled, n, ll_func = sampled$ll_func, rbind.data = TRU
   data <- sampled$data
   S <- sampled$n_subjects
   pp_data <- list()
+  
     for (s in 1:S){
        print(paste0("subject", s))
       for (i in 1:length(iterations)) {
@@ -626,6 +630,7 @@ gen_pp_data <- function (sampled, n, ll_func = sampled$ll_func, rbind.data = TRU
         out <- ll_func(x = x, 
                        data = data[data$subject == s, ],
                        sample = TRUE)
+        
         if (i == 1){
           pp_data[[s]] = cbind(pp_subj = i, out)
         }
@@ -635,6 +640,7 @@ gen_pp_data <- function (sampled, n, ll_func = sampled$ll_func, rbind.data = TRU
         }
       }
     }
+  
     if (rbind.data){
     tidy_pp_data <- do.call(rbind, pp_data)  
     return(tidy_pp_data)
@@ -655,53 +661,39 @@ We generate 20 posterior predictive data samples for each model.
 pp_data_3b <- gen_pp_data(sampled, n = 20)
 ```
 
-The returned data is a matrix with the same dimensions and names as `data` -- with the exception of column `"pp_subj"`. `pp_subj` is the iteration of posterior sample (in this example `i = 1:20`) for the corresponding subject. We now have two matrices based on samples from either model. The response (`resp`) and response time (`rt`) columns now contain posterior predictive data.
+The returned data is a matrix with the same dimensions and names as `data` -- with the exception of column `pp_subj`. `pp_subj` is the iteration of posterior sample (in this example `i = 1:20`) for the corresponding subject. We now have two matrices based on samples from either model. The response (`resp`) and response time (`rt`) columns now contain posterior predictive data.
 
 In the next section, we will use this to assess descriptive adequacy.
 
 ### Assessing Descriptive Adequacy (goodness of fit)
 
-Now we will plot the posterior predictive data against the real data. You may choose to plot this in other ways such as the interquartile range or with other packages. 
-
-This may only be useful for some users, as what you do with your data is domain specific.
+Now we will plot the posterior predictive data against the real data. This may only be useful for some users, as what you do with your data is domain specific.
 
 ```{r plotppdata, include=TRUE, warning=FALSE, message=FALSE}
-# Subject x condition Q1, median and Q3 respone time
+# Subject x condition Q1, median and Q3 respone time + mean accuracy
 pq <- data %>% 
   group_by(condition, subject) %>% 
-  summarise_at(vars(rt),
-               list(Q1 = ~ quantile(., probs = 0.25),
-                    median = median, 
-                    Q3 = ~ quantile(., probs = 0.75)))
-
-# Mean accuracy for subject x condition 
-acc <- data %>%
-  group_by(condition, subject) %>%
-  summarise(acc = mean(resp == stim))
-
-# Dataframe with Q1, median, Q3 for response times and accuracy
-pq <- cbind(pq, acc = acc$acc)
+  summarise(Q1 = quantile(rt, prob = 0.25),
+            median = median(rt), 
+            Q3 = quantile(rt, prob = 0.75),
+            acc =  mean(ifelse(stim == resp, 1, 0))
+            )
 
 # Subject x condition Q1, median and Q3 respone time for posterior predictive data
 pp_pq <- pp_data_3b %>%
   group_by(condition, pp_subj, subject) %>%
-  summarise_at(vars(rt),
-               list(Q1 = ~ quantile(., probs = 0.25),
-                    median = median, 
-                    Q3 = ~ quantile(., probs = 0.75)))
-# Mean accuracy for subject x condition for posterior predictive data
-pp_acc <- pp_data_3b %>%
-  group_by(condition, pp_subj, subject) %>%
-  summarise(acc = mean(resp == stim))
+  summarise(Q1 = quantile(rt, prob = 0.25),
+            median = median(rt), 
+            Q3 = quantile(rt, prob = 0.75),
+            acc = mean(ifelse(stim == resp, 1, 0))
+            )
 
-# Posterior predictive data with Q1, median, Q3 for response time and accuracy 
-pp_pq <- cbind(pp_pq, acc = pp_acc$acc)
-
-# Combine data with posterior predictive data 
+# Combine data with posterior predictive data and add data source
 pq <- bind_rows(cbind(src = rep("data", nrow(pq)), pq),
-                cbind(src = rep("model", nrow(pp_pq)), pp_pq))
+                cbind(src = rep("model", nrow(pp_pq)), pp_pq)
+                )
 
-# Mean Q1, median, Q4 and accuracy for data and posterior predictive data 
+# Mean Q1, median, Q4 and accuracy for data and posterior predictive data
 av_pq <- pq %>%
   group_by(src, condition) %>%
   summarise_at(vars(Q1:acc), mean)
@@ -712,7 +704,7 @@ pp_var <- pq %>%
   group_by(condition, pp_subj, src) %>%
   summarise_at(vars(Q1:acc), mean)
 
-# Make source column a factor and add labels
+# Convert source column a factor and add labels
 av_pq$src <- factor(av_pq$src,
                     levels = c("model", "data"),
                     labels = c("model", "(Data)")
@@ -722,12 +714,11 @@ pp_varsrc <- factor(pp_var$src,
                     levels = c("model", "data"),
                     labels = c("model", "(Data)")
                     )
-
-
+# Rename conditions
 levels(av_pq$condition) <-
   levels(pp_var$condition) <- c("Accuracy", "Neutral", "Speed")
 
-# Convert rt to milliseconds and acc percentage
+# Convert rt to milliseconds and acc to percentage
 av_pq$acc = 100 * av_pq$acc
 pp_var$acc = 100 * pp_var$acc
 av_pq[, c("Q1", "median", "Q3")] <- 1000 * av_pq[, c("Q1", "median", "Q3")]
@@ -736,13 +727,14 @@ pp_var[, c("Q1", "median", "Q3")] <- 1000 * pp_var[, c("Q1", "median", "Q3")]
 # Plot response times for data and posterior predictive data
 rtplot <- ggplot(data = av_pq,
                  mapping = aes(x = condition,
-                               y = median,
+                               y = Q1,
                                group = src,
                                 colour = src
-                               )) + 
+                               )
+                 ) + 
   geom_point(size = 4) +
   geom_point(mapping = aes(x = condition,
-                           y = Q1,
+                           y = median,
                            color = src,
                            group = src
                            ),
@@ -753,13 +745,10 @@ rtplot <- ggplot(data = av_pq,
                            group = src
                            ), 
              size = 2) + 
-  labs(x = "Condition",
-       y = "RT Percentiles (ms)", 
-       colour = "Model") +
   geom_point(data = pp_var,
-             mapping =  aes(x = condition,
-                            y = Q1, 
-                            group = src),
+             mapping = aes(x = condition,
+                           y = Q1, 
+                           group = src),
              size = 1,
              color = "black",
              alpha = 0.2
@@ -779,9 +768,17 @@ rtplot <- ggplot(data = av_pq,
              size = 2,
              color = "black",
              alpha = 0.2
-             ) +
-  guides(colour = FALSE)
-  
+             ) + 
+  labs(x = "Condition",
+       y = "RT Percentiles (ms)", 
+       colour = "Model") +
+  guides(colour = FALSE) +
+  theme(axis.title.y = element_text(size = 14, face = 'bold'),
+        axis.text.y = element_text(size = 14), 
+        axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank()) +
+   ylim(275, 650)
   
 # Plot accuracy for data and posterior predictive data 
 accplot <- ggplot(data = av_pq,
@@ -801,16 +798,114 @@ accplot <- ggplot(data = av_pq,
   labs(x = "Condition",
        y = "Mean Accuracy (%)",
        colour = "Model") +
-  guides(colour = FALSE)
-  
-# Combine plots
-library(gridExtra)
-library(grid)
-  
+  guides(colour = FALSE) +
+  theme(axis.title.y = element_text(size = 14, face = 'bold'), 
+        axis.text.y = element_text(size=14), 
+        axis.title.x = element_text(size = 14, face = 'bold'),
+        axis.text.x = element_text(size=14),
+        legend.text = element_text(size = 12),
+        legend.key.size = unit(0.75, 'cm'),
+        legend.title = element_text(size = 14, face = 'bold'),
+        legend.title.align = 0.5) +
+  ylim(75, 90)
+```  
+
+```{r ppdataplotarrangment, fig.align='center', fig.height=10, echo=FALSE}
 gA <- ggplotGrob(rtplot)
 gB <- ggplotGrob(accplot)
-maxWidth <- grid::unit.pmax(gA$widths[2:5], gB$widths[2:5])
+maxWidth <- unit.pmax(gA$widths[2:5], gB$widths[2:5])
 gA$widths[2:5] <- as.list(maxWidth)
 gB$widths[2:5] <- as.list(maxWidth)
 bothplot <- grid.arrange(gA, gB, ncol = 1)
 ```
+
+##Evaluating different models - single threshold LBA. 
+
+Now let's run through an example where we change our model slightly and assume that participants's level of caution does not change with emphasis instructions i.e. their threshold is identical in the `Accuracy`, `Neutral`, and `Speed` conditions. We will call this our "single threshold model" (STM). The STM's log-likelihood has one `b` parameter, instead of three. This change is seen on lines (x) and (y) below.
+
+For brevity, we specify only the fast version of the loglikelihood function for the single threshold model. 
+
+
+```{r 1bfastll,attr.source = '.numberLines',include=TRUE}
+fast_lba_loglike <- function(x, data, sample = FALSE) {
+  x <- exp(x)
+  if (any(data$rt < x["t0"])) {
+    return(-1e10)
+  }
+  
+  if (sample) {
+    tmp <- numeric(nrow(data))
+    data$rt <- rep(NA, nrow(data))
+    data$resp <- rep(NA, nrow(data))
+  } else {
+    out <- numeric(nrow(data))
+  }
+  
+  if (sample) { 
+    for (i in 1:nrow(data)) {
+      A = x["A"]
+      b = x["b"] + A
+      vc = x["vc"]
+      ve = x["ve"]
+      t0 = x["t0"]
+      s = c(1, 1)
+      if (data$stim[i] == 1) {
+        vs = c(vc, ve)
+      } else {
+        vs = c(ve, vc)
+      }
+      
+      tmp <- rLBA(n = 1,
+                  A = A,
+                  b = b,
+                  mean_v = vs,
+                  sd_v = s,
+                  t0 = t0,
+                  dist = "norm",
+          silent = TRUE
+        )
+      data$rt[i] <- tmp$rt
+      data$resp[i] <- tmp$resp
+    } 
+  } else {
+
+  vlist = list("v.1" = numeric(nrow(data)), "v.2" = numeric(nrow(data)))
+  
+  
+  for (c in levels(data$condition)) {
+    for (s in levels(data$stim)) {
+      use <- data$condition == c & data$stim == s
+        vc = x["vc"]
+        ve = x["ve"]
+        if (s == 1) {
+          vlist$v.1[use] = vc
+          vlist$v.2[use] = ve
+        } else {
+          vlist$v.1[use] = ve
+          vlist$v.2[use] = vc
+        }
+    }
+  }
+    out <- dLBA(
+      rt = data$rt,
+      response = data$resp,
+      A = x["A"],
+      b = x["b"] + x["A"],
+      mean_v = vlist,
+      sd_v = c(1, 1),
+      t0 = x["t0"],
+      distribution = "norm",
+      silent = TRUE)
+  }
+  
+  if (sample) {
+    return(data)
+  } else {
+    out<-sum(log(pmax(out,1e-10)))
+    return(out)
+  }
+}
+
+```
+
+
