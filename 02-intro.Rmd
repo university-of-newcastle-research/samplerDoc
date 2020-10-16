@@ -17,7 +17,7 @@ Forstmann et al looked at neural correlates of decision making under time pressu
 
 Table \@ref(tab:forsthead10) shows the first ten trials from the Forstmann dataset. Participants `(n = 19)` were asked to indicate whether a cloud of dots in a random-dot kinematogram (RDK) moved to the left or the right of the screen. The IV was a within-subject, speed-accuracy manipulation where, before each trial began, pariticipants were instructed to make their choice <i>accurately</i> `(condition = 1)`, with <i>urgency</i>`(condition = 3)`or were presented with a <i>neutral</i> message `(condition = 2)`. Stimuli moved either <i>left</i> `(stim = 1)` or <i>right</i> `(stim = 2)` and responses were <i>left</i> `(resp = 1)` or <i>right</i> `(resp = 2)`. Response times `(rt)` were recorded in seconds. For more information about the design of the experiment please see [the original paper](https://www.pnas.org/content/105/45/17538.short).
 
-```{r forsthead10, echo=FALSE, out.width='80%', fig.asp=.75, fig.align='center'}
+```{r forsthead10, echo=FALSE, out.width='80%', fig.asp=.75, fig.align='center', warning=FALSE}
 kable(head(forstmann, 10), row.names = F,  align = "ccccc", caption = 'First 10 trials in Forstmann dataset. The `forstmann` dataset is an object/data frame ')
 ```
 
@@ -216,17 +216,19 @@ As the data is large, and the `dLBA` function takes some time to run, the log-li
 
 
 ```{r fast_lba_ll, include=TRUE}
-fast_lba_ll <- function(x, data, sample = FALSE) {
+fast_lba_ll3b <- function(x, data, sample = FALSE) {
   x <- exp(x)
   if (any(data$rt < x["t0"])) {
     return(-1e10)
   }
+  
   if (sample) {
     data$rt <- rep(NA, nrow(data))
     data$resp <- rep(NA, nrow(data))
   } else {
     out <- numeric(nrow(data))
   }
+  
   if (sample) {
     for (i in 1:nrow(data)) {
       A = x["A"]
@@ -235,6 +237,7 @@ fast_lba_ll <- function(x, data, sample = FALSE) {
       ve = x["ve"]
       t0 = x["t0"]
       s = c(1, 1)
+      
       if (data$stim[i] == 1) {
         vs = c(vc, ve)
       } else {
@@ -334,7 +337,7 @@ priors <- list(theta_mu_mean = rep(0, length(pars)),
 
 Now source and load your log-likelihood script <i>before</i> you create the sampler object.
 ```{r loadLL, echo=TRUE, eval=FALSE}
-source(file = "fast_lba_ll.R")
+source(file = "fast_lba_ll3b.R")
 ```
 
 Next we specify the PMwG `sampler` object. 
@@ -349,7 +352,7 @@ The `pmwgs` function takes a set of arguments (listed below) and returns a list 
 sampler <- pmwgs(data = data,
                  pars = pars,
                  prior = priors,
-                 ll_func = fast_lba_ll
+                 ll_func = fast_lba_ll3b
                  )
 ```
 
@@ -440,14 +443,14 @@ sampled <- run_stage(adapted,
 
 The `sampled` object includes all samples from the `"sample"` stage above and the following elements:
 
-* `data`
+* `data` : your data (data frame) you included in your analysis
 * `par_names`: parameter names 
 * `n_pars`: number of parameters
 * `n_subjects`: number of subjects
-* `subjects`: subject IDs
+* `subjects`: subject IDs (1:n)
 * `prior`: list of the prior used
 * `ll_func`: the likelihood function specified
-* `samples`;
+* `samples`:
 * `alpha`: three dimensional array of random effects draws (dim = parameters x subjects x samples)
 * `theta_mu`: two dimensional array of parameter draws (dim = parameters x samples)
 * `theta_sig`: three dimensional array of covariance matrix draws (dim = covariance x samples)
@@ -457,159 +460,20 @@ The `sampled` object includes all samples from the `"sample"` stage above and th
 * `idx`: total number of samples
 * `last_theta_sig_inv`: the inverse of the last sample for theta_sig (the variance-covariance matrix).
 
-<!-- ## Checking Convergence  -->
 
-<!-- As parameters are concurrently estimated, we cannot observe 'convergence', at least in the same sense as deMCMC. Rather, it is best to check for stationarity of parameters. We can check for convergence if we are uncertain of reasonable parameter values and to be sure of our estimates.  -->
+You should save your sampled object at this point.
+```{r}
+save(sampled, file = "forst3b_sampled.RData")
+```
 
-<!-- To check for convergence, we run multiple 'chains' (runs) of the sampler, and check if these chains converge. To do this, we repeat the above steps, being sure to save the output of each chain under a different name. In this example, we run the sampler 3 times, without specifying start points. You can vary the start points or priors to check convergence as well. You could run this process by running the same script n.chains times. In this example, we run them three separate times and save the output as different names.  -->
+## Simulating Posterior Predictive Data
 
-<!-- The function below gets the names for each chain to operate on.  -->
-<!-- ```{r chainlist,include=TRUE} -->
-<!-- list.chains <- function (location, name, samplestage = "sampled") { -->
-<!--   chain.names <- dir(path = location,  -->
-<!--                      pattern = name)  -->
-<!--   tmp <- vector("list", length(chain.names)) -->
-<!--   for (i in seq_along(chain.names)) { -->
-<!--     load(paste0(location, "/", chain.names[i])) -->
-<!--     tmp[[i]] <- get(samplestage) -->
-<!--   } -->
-<!--   return(tmp) -->
-<!-- } -->
-<!-- ``` -->
+We can generate posterior predictive data by setting `sample = TRUE` in our log-likelihood function to generate response times and responses <i>given</i> the posterior parameter estimates for each subject. To do this, we use the `gen_pp_data` function below, which calls our log-likelihood function embedded in our `sampled` object. The `gen_pp_data` function takes four arguments:
 
-
-<!-- Below illustrates the location we saved our outputs, and how we named our sample chains. Your path/name will likely be different. -->
-<!-- ```{r lbachains,eval=FALSE} -->
-<!-- chains <- list.chains(location = "data/output", -->
-<!--                      name = "sampled_chain", -->
-<!--                      samplestage = "sampled") -->
-<!-- ``` -->
-
-<!-- ```{r HiddenSamples, include=FALSE} -->
-<!--  chains <- list.chains(location = "~/Desktop/samplerDoc_caro", -->
-<!--                        name = "sampled_chain", -->
-<!--                        samplestage = "sampled") -->
-<!-- ``` -->
-
-<!-- Using the coda and mcmcplots package, we provide a function which gathers samples from the chains in a single object.  -->
-
-<!-- ```{r lbacoda,include=TRUE} -->
-
-<!-- library(coda) -->
-<!-- library(mcmcplots) -->
-
-<!-- as_mcmc = function(x) { -->
-<!--   theta_mu = (t(x$samples$theta_mu[,x$samples$stage=="sample"])) -->
-<!--   colnames(theta_mu) = paste0("mu_", x$par_names) -->
-
-<!--   par_names <- x$par_names -->
-<!--   sig_names <- matrix(nrow = length(par_names), ncol = length(par_names)) -->
-<!--   for (i in seq_along(par_names)) { -->
-<!--     for (j in seq_along(par_names)) { -->
-<!--       sig_names[i,j] <- paste0("sig[", par_names[i], ",", par_names[j], "]") -->
-<!--     } -->
-<!--   } -->
-<!--   theta_sig <- t(apply(x$samples$theta_sig[,,x$samples$stage=="sample"], 3, as.vector)) -->
-<!--   colnames(theta_sig) <- as.vector(sig_names) -->
-
-<!--   S = x$n_subjects -->
-<!--   alpha_names <- matrix(nrow = length(par_names), ncol = S) -->
-<!--   for (i in seq_along(par_names)) { -->
-<!--     for (j in seq_len(S)) { -->
-<!--       alpha_names[i,j] <- paste0("alpha[", par_names[i], ",","sub",j, "]") -->
-<!--     } -->
-<!--   } -->
-<!--   alpha <- t(apply(x$samples$alpha[,,x$samples$stage=="sample"], 3, as.vector)) -->
-<!--   colnames(alpha) <- as.vector(alpha_names) -->
-
-<!--   tmp2 <- cbind(theta_mu,theta_sig,alpha) -->
-<!--   return(mcmc(tmp2)) -->
-<!-- } -->
-
-<!-- create.mcmc.list <- function(x) { -->
-<!--   mcmc.list(lapply(x,as_mcmc)) -->
-<!-- } -->
-
-<!-- ``` -->
-
-
-
-
-<!-- We call the above function to create our mcmc lists. -->
-<!-- ```{r mcmclists,include=TRUE} -->
-
-<!-- test_lists = create.mcmc.list(chains) -->
-
-<!-- ``` -->
-
-<!-- Next, we create plots (using the coda and mcmcplots packages) to check convergence. -->
-
-<!-- ```{r plotmcmclists,eval=FALSE} -->
-
-<!-- mcmcplot(test_lists) -->
-
-<!-- ``` -->
-
-
-<!-- ```{r hiddenmcmcplot,include=FALSE} -->
-
-<!-- mcmcplot(test_lists) -->
-
-<!-- ``` -->
-
-<!-- Bellow we've included a snipped of the generated MCMC plots. When viewing these, you want to check that... (ASK SCOTT for WORDING) -->
-<!-- ```{r part8.5.3,echo=FALSE,out.width='100%', fig.show='hold', fig.cap='Example of output of MCMC plot function when used with 3 chains.'} -->
-<!-- knitr::include_graphics('_images/MCMCplotexample.PNG') -->
-<!-- ``` -->
-
-<!-- In another test of convergence, we use the gelman.diag function to produce an r hat value (similar to that used in rjags). -->
-
-<!-- NOTE: Approximate convergence is diagnosed when rhat values are less than 1. -->
-
-<!-- ```{r gelmandiag,eval=FALSE} -->
-
-<!-- gelman.diag(test_lists,multivariate = FALSE) -->
-
-<!-- ``` -->
-
-<!-- Bellow we just show the head of the gelman.diag function, -->
-
-<!-- ```{r headgelm,echo=FALSE,eval=TRUE} -->
-
-<!-- tmp = gelman.diag(test_lists,multivariate = FALSE) -->
-<!-- tmp2 = head(tmp$psrf) -->
-<!-- print(tmp2) -->
-
-<!-- ``` -->
-
-<!-- You may also wish to use the following lines of code to find the maximum rhat value.  -->
-
-<!-- ```{r maxrhat,eval = FALSE} -->
-
-<!-- apply(gelman.diag(test_lists,multivariate = FALSE)[[1]],2,max) -->
-<!-- apply(gelman.diag(test_lists,multivariate = FALSE)[[1]],2,which.max) -->
-
-
-<!-- ``` -->
-
-
-<!-- ```{r hiddenmaxrhat,echo=FALSE,eval=TRUE} -->
-
-<!-- tmp1=apply(gelman.diag(test_lists,multivariate = FALSE)[[1]],2,max) -->
-<!-- tmp2=apply(gelman.diag(test_lists,multivariate = FALSE)[[1]],2,which.max) -->
-<!-- print(tmp1) -->
-<!-- print(tmp2) -->
-
-<!-- ``` -->
-
-## Simulating Posterior Data
-
-We can generate posterior predictive data by setting `sample = TRUE` in the log-likelihood function above, which generates response times and responses <i>given</i> the posterior parameter estimates. To do this, we used the `gen_pp_data` function below simulate posterior predictive data from the `sampled` object for the 3b model we created above. Our `gen_pp_data` function takes four arguments:
-
-* `sampled`
-* `n` specifies the number of posterior samples
-* `ll_func =` the log-likelihood function embeded in the `sampled` object
-* `rbind.data = ` bind the rows of each predictive sample to SOMETHING
+* `sampled`: is the object/output from the PMwG sampler
+* `n`: the number of posterior samples
+* `ll_func =`: the log-likelihood function embedded in the `sampled` object
+* `rbind.data = `: bind the rows of each predictive sample to <b>SOMETHING</b>
 
 ```{r genPPDataFunc, Include=TRUE}
 gen_pp_data <- function (sampled, n, ll_func = sampled$ll_func, rbind.data = TRUE) {
@@ -661,7 +525,7 @@ We generate 20 posterior predictive data samples for each model.
 pp_data_3b <- gen_pp_data(sampled, n = 20)
 ```
 
-The returned data is a matrix with the same dimensions and names as `data` -- with the exception of column `pp_subj`. `pp_subj` is the iteration of posterior sample (in this example `i = 1:20`) for the corresponding subject. We now have two matrices based on samples from either model. The response (`resp`) and response time (`rt`) columns now contain posterior predictive data.
+The returned data is a matrix with the same dimensions and names as `forstmann` -- with the addition of `pp_iter` column. `pp_iter` is the iteration of posterior sample (in this example `i = 1:20`) for the corresponding subject. We now have two matrices based on samples from either model. The response (`resp`) and response time (`rt`) columns now contain posterior predictive data.
 
 In the next section, we will use this to assess descriptive adequacy.
 
@@ -669,14 +533,15 @@ In the next section, we will use this to assess descriptive adequacy.
 
 Now we will plot the posterior predictive data against the real data. This may only be useful for some users, as what you do with your data is domain specific.
 
-```{r plotppdata, include=TRUE, warning=FALSE, message=FALSE}
-# Subject x condition Q1, median and Q3 respone time + mean accuracy
-pq <- data %>% 
+```{r plotppdata, include=TRUE}
+# Subject x condition Q1, median and Q3 respone time + mean accuracy for Forstmann dataset
+pq <- forstmann %>% 
   group_by(condition, subject) %>% 
   summarise(Q1 = quantile(rt, prob = 0.25),
             median = median(rt), 
             Q3 = quantile(rt, prob = 0.75),
-            acc =  mean(ifelse(stim == resp, 1, 0))
+            acc =  mean(ifelse(stim == resp, 1, 0)),
+            .groups = "keep"
             )
 
 # Subject x condition Q1, median and Q3 respone time for posterior predictive data
@@ -685,7 +550,8 @@ pp_pq <- pp_data_3b %>%
   summarise(Q1 = quantile(rt, prob = 0.25),
             median = median(rt), 
             Q3 = quantile(rt, prob = 0.75),
-            acc = mean(ifelse(stim == resp, 1, 0))
+            acc = mean(ifelse(stim == resp, 1, 0)),
+            .groups = "keep"
             )
 
 # Combine data with posterior predictive data and add data source
@@ -704,7 +570,7 @@ pp_var <- pq %>%
   group_by(condition, pp_subj, src) %>%
   summarise_at(vars(Q1:acc), mean)
 
-# Convert source column a factor and add labels
+# Convert source column to a factor and add labels
 av_pq$src <- factor(av_pq$src,
                     levels = c("model", "data"),
                     labels = c("model", "(Data)")
@@ -723,7 +589,9 @@ av_pq$acc = 100 * av_pq$acc
 pp_var$acc = 100 * pp_var$acc
 av_pq[, c("Q1", "median", "Q3")] <- 1000 * av_pq[, c("Q1", "median", "Q3")]
 pp_var[, c("Q1", "median", "Q3")] <- 1000 * pp_var[, c("Q1", "median", "Q3")]
+```
 
+```{r hideppdataplots, include=FALSE}
 # Plot response times for data and posterior predictive data
 rtplot <- ggplot(data = av_pq,
                  mapping = aes(x = condition,
@@ -731,23 +599,23 @@ rtplot <- ggplot(data = av_pq,
                                group = src,
                                 colour = src
                                )
-                 ) + 
+                 ) +
   geom_point(size = 4) +
   geom_point(mapping = aes(x = condition,
                            y = median,
                            color = src,
                            group = src
                            ),
-             size = 2) + 
+             size = 2) +
   geom_point(mapping = aes(x = condition,
                            y = Q3,
                            color = src,
                            group = src
-                           ), 
-             size = 2) + 
+                           ),
+             size = 2) +
   geom_point(data = pp_var,
              mapping = aes(x = condition,
-                           y = Q1, 
+                           y = Q1,
                            group = src),
              size = 1,
              color = "black",
@@ -768,19 +636,19 @@ rtplot <- ggplot(data = av_pq,
              size = 2,
              color = "black",
              alpha = 0.2
-             ) + 
+             ) +
   labs(x = "Condition",
-       y = "RT Percentiles (ms)", 
+       y = "RT Percentiles (ms)",
        colour = "Model") +
   guides(colour = FALSE) +
   theme(axis.title.y = element_text(size = 14, face = 'bold'),
-        axis.text.y = element_text(size = 14), 
+        axis.text.y = element_text(size = 14),
         axis.title.x = element_blank(),
         axis.text.x = element_blank(),
         axis.ticks.x = element_blank()) +
    ylim(275, 650)
-  
-# Plot accuracy for data and posterior predictive data 
+
+# Plot accuracy for data and posterior predictive data
 accplot <- ggplot(data = av_pq,
                   mapping = aes(x = condition,
                                 y = acc,
@@ -799,8 +667,8 @@ accplot <- ggplot(data = av_pq,
        y = "Mean Accuracy (%)",
        colour = "Model") +
   guides(colour = FALSE) +
-  theme(axis.title.y = element_text(size = 14, face = 'bold'), 
-        axis.text.y = element_text(size=14), 
+  theme(axis.title.y = element_text(size = 14, face = 'bold'),
+        axis.text.y = element_text(size=14),
         axis.title.x = element_text(size = 14, face = 'bold'),
         axis.text.x = element_text(size=14),
         legend.text = element_text(size = 12),
@@ -819,15 +687,13 @@ gB$widths[2:5] <- as.list(maxWidth)
 bothplot <- grid.arrange(gA, gB, ncol = 1)
 ```
 
-##Evaluating different models - single threshold LBA. 
+##Evaluating different models - single threshold LBA 
 
-Now let's run through an example where we change our model slightly and assume that participants's level of caution does not change with emphasis instructions i.e. their threshold is identical in the `Accuracy`, `Neutral`, and `Speed` conditions. We will call this our "single threshold model" (STM). The STM's log-likelihood has one `b` parameter, instead of three. This change is seen on lines (x) and (y) below.
+Now let's run through an example where we change our model slightly and assume that participants's level of caution does not change with emphasis instructions i.e. their threshold is identical in the `Accuracy`, `Neutral`, and `Speed` conditions. We will call this our "single threshold LBA model". The single threhold LBA model's log-likelihood has one `b` parameter, instead of three (see line 18, 31 and 64 below).
 
-For brevity, we specify only the fast version of the loglikelihood function for the single threshold model. 
-
-
-```{r 1bfastll,attr.source = '.numberLines',include=TRUE}
-fast_lba_loglike <- function(x, data, sample = FALSE) {
+For brevity, we specify only the '<i>fast</i>' log-likelihood function for the single threshold model. 
+```{r 1bfastll, attr.source = '.numberLines', include=TRUE}
+fast_lba_ll1b <- function(x, data, sample = FALSE) {
   x <- exp(x)
   if (any(data$rt < x["t0"])) {
     return(-1e10)
@@ -862,14 +728,15 @@ fast_lba_loglike <- function(x, data, sample = FALSE) {
                   sd_v = s,
                   t0 = t0,
                   dist = "norm",
-          silent = TRUE
-        )
+                  silent = TRUE
+                  )
       data$rt[i] <- tmp$rt
       data$resp[i] <- tmp$resp
     } 
   } else {
 
-  vlist = list("v.1" = numeric(nrow(data)), "v.2" = numeric(nrow(data)))
+  vlist = list("v.1" = numeric(nrow(data)), 
+               "v.2" = numeric(nrow(data)))
   
   
   for (c in levels(data$condition)) {
@@ -886,26 +753,93 @@ fast_lba_loglike <- function(x, data, sample = FALSE) {
         }
     }
   }
-    out <- dLBA(
-      rt = data$rt,
-      response = data$resp,
-      A = x["A"],
-      b = x["b"] + x["A"],
-      mean_v = vlist,
-      sd_v = c(1, 1),
-      t0 = x["t0"],
-      distribution = "norm",
-      silent = TRUE)
-  }
+    out <- dLBA(rt = data$rt,
+                response = data$resp,
+                A = x["A"],
+                b = x["b"] + x["A"],
+                mean_v = vlist,
+                sd_v = c(1, 1),
+                t0 = x["t0"],
+                distribution = "norm",
+                silent = TRUE)
+    }
   
   if (sample) {
     return(data)
   } else {
-    out<-sum(log(pmax(out,1e-10)))
+    out<-sum(log(pmax(out, 1e-10)))
     return(out)
   }
 }
-
 ```
+
+### PmWG framework for a single threshold model
+The PmWG sampler procedure remains the same for all models. For our three threshold LBA model, we need the updated log-likelihood function from above, an updated parameter vector, start points and priors.
+
+```{r part9.8,eval = FALSE}
+# Load the log-likelihood script
+source(file = "fast_lba_ll1b.R")
+
+# Specify the parameter vector with single threshold (b) parameter
+pars <- c("A","b","vc","ve","t0")
+
+# Specifiy a priors list
+priors <- list(
+  theta_mu = rep(0, length(pars)),
+  theta_sig = diag(rep(1, length(pars)))
+)
+
+# Setup your sampler object - include your data, parameter vector, 
+# priors and log-likelihood function
+# Note: Your log-likelihood function must be loaded before this point
+sampler <- pmwgs(
+  data = forstmann,
+  pars = pars,
+  prior = priors,
+  ll_func = fast_lba_ll1b
+)
+
+# Start points are not included in this example
+# Initiatlise the sampler
+sampler <- init(sampler)
+
+# Burn-in stage
+burned <- run_stage(sampler, 
+                    stage = "burn",
+                    iter = 500,
+                    particles = 1000,
+                    epsilon = .5)
+# Adaptation stage
+adapted <- run_stage(burned,
+                     stage = "adapt",
+                     iter = 10000,
+                     particles = 1000,
+                     epsilon = .5)
+# Sample stage
+sampled <- run_stage(adapted, 
+                     stage = "sample",
+                     iter = 1000,
+                     particles = 200,
+                     epsilon = .5)
+```
+<b>Note:</b> we keep the priors, start points, number of iterations and particles the same as our three threshold LBA model, so there is no bias for either model.
+
+## Checking Descriptive Adequacy of 1b model.
+
+The checking procedure below is the same as the three threshold LBA model, but we'll use the single threshold LBA model's `sampled` object/data. 
+
+```{r part10.5.1, eval=FALSE}
+load("forstmann1b_sampled.RData")
+```
+
+As for the t generate 20 posterior predictive data samples for each model. 
+```{r part10.5.3, eval=FALSE}
+pp.data.1b <- generate.ppdata(sampled, n = 20)
+```
+
+```{r part10.5.4, include=FALSE}
+load("ppdata1b.RData")
+```
+
 
 
