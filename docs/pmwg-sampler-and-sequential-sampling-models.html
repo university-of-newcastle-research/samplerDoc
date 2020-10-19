@@ -139,7 +139,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="3.4.1" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#lbaStartPts"><i class="fa fa-check"></i><b>3.4.1</b> Model start points</a></li>
 <li class="chapter" data-level="3.4.2" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#run-sampler"><i class="fa fa-check"></i><b>3.4.2</b> Running the sampler</a></li>
 </ul></li>
-<li class="chapter" data-level="3.5" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#simulating-posterior-predictive-data"><i class="fa fa-check"></i><b>3.5</b> Simulating Posterior Predictive Data</a><ul>
+<li class="chapter" data-level="3.5" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#genppdatafunc"><i class="fa fa-check"></i><b>3.5</b> Simulating Posterior Predictive Data</a><ul>
 <li class="chapter" data-level="3.5.1" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#assessing-descriptive-adequacy-goodness-of-fit"><i class="fa fa-check"></i><b>3.5.1</b> Assessing Descriptive Adequacy (goodness of fit)</a></li>
 </ul></li>
 <li class="chapter" data-level="3.6" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#evaluating-different-models---single-threshold-lba"><i class="fa fa-check"></i><b>3.6</b> Evaluating different models - single threshold LBA</a><ul>
@@ -739,7 +739,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">save</span>(sampled, <span class="dt">file =</span> <span class="st">&quot;forst3b_sampled.RData&quot;</span>)</code></pre></div>
 </div>
 </div>
-<div id="simulating-posterior-predictive-data" class="section level2">
+<div id="genppdatafunc" class="section level2">
 <h2><span class="header-section-number">3.5</span> Simulating Posterior Predictive Data</h2>
 <p>We can generate posterior predictive data by setting <code>sample = TRUE</code> in our log-likelihood function to generate response times and responses <i>given</i> the posterior parameter estimates for each subject. To do this, we use the <code>gen_pp_data</code> function below, which calls our log-likelihood function embedded in our <code>sampled</code> object. The <code>gen_pp_data</code> function takes four arguments:</p>
 <ul>
@@ -785,10 +785,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <span class="kw">return</span>(pp_data)
     }
 }</code></pre></div>
-<p>We generate 20 posterior predictive data samples for each model.</p>
+<p>We generate 20 posterior predictive data samples.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pp_data_3b &lt;-<span class="st"> </span><span class="kw">gen_pp_data</span>(sampled, <span class="dt">n =</span> <span class="dv">20</span>)</code></pre></div>
 <p>The returned data is a matrix with the same dimensions and names as <code>forstmann</code> – with the addition of <code>pp_iter</code> column. <code>pp_iter</code> is the iteration of posterior sample (in this example <code>i = 1:20</code>) for the corresponding subject. We now have two matrices based on samples from either model. The response (<code>resp</code>) and response time (<code>rt</code>) columns now contain posterior predictive data.</p>
-<p>In the next section, we will use this to assess descriptive adequacy.</p>
+<p>In the next section, we will use the posterior predictive data to assess descriptive adequacy.</p>
 <div id="assessing-descriptive-adequacy-goodness-of-fit" class="section level3">
 <h3><span class="header-section-number">3.5.1</span> Assessing Descriptive Adequacy (goodness of fit)</h3>
 <p>Now we will plot the posterior predictive data against the real data. This may only be useful for some users, as what you do with your data is domain specific.</p>
@@ -804,7 +804,7 @@ pq &lt;-<span class="st"> </span>forstmann <span class="op">%&gt;%</span><span c
 
 <span class="co"># Subject x condition Q1, median and Q3 respone time for posterior predictive data</span>
 pp_pq &lt;-<span class="st"> </span>pp_data_3b <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">group_by</span>(condition, pp_subj, subject) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">group_by</span>(condition, pp_iter, subject) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">summarise</span>(<span class="dt">Q1 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.25</span>),
             <span class="dt">median =</span> <span class="kw">median</span>(rt), 
             <span class="dt">Q3 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.75</span>),
@@ -825,7 +825,7 @@ av_pq &lt;-<span class="st"> </span>pq <span class="op">%&gt;%</span>
 <span class="co"># Variances of posterior samples</span>
 pp_var &lt;-<span class="st"> </span>pq <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">filter</span>(src <span class="op">!=</span><span class="st"> &quot;data&quot;</span>) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">group_by</span>(condition, pp_subj, src) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">group_by</span>(condition, pp_iter, src) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(Q1<span class="op">:</span>acc), mean)
 
 <span class="co"># Convert source column to a factor and add labels</span>
@@ -852,7 +852,7 @@ pp_var[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span
 </div>
 <div id="evaluating-different-models---single-threshold-lba" class="section level2">
 <h2><span class="header-section-number">3.6</span> Evaluating different models - single threshold LBA</h2>
-<p>Now let’s run through an example where we change our model slightly and assume that participants’s level of caution does not change with emphasis instructions i.e. their threshold is identical in the <code>Accuracy</code>, <code>Neutral</code>, and <code>Speed</code> conditions. We will call this our “single threshold LBA model”. The single threhold LBA model’s log-likelihood has one <code>b</code> parameter, instead of three (see line 18, 31 and 64 below).</p>
+<p>Now let’s run through an example where the model differs and we assume that participants’s level of caution does not change with emphasis instructions i.e. the threshold for <code>Accuracy</code>, <code>Neutral</code>, and <code>Speed</code> conditions is the same. We will call this our “single threshold LBA model”. The single threhold LBA model’s log-likelihood has one <code>b</code> parameter, instead of three (see line 18, 31 and 64 below).</p>
 <p>For brevity, we specify only the ‘<i>fast</i>’ log-likelihood function for the single threshold model.</p>
 <div class="sourceCode"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
 2
@@ -1064,8 +1064,8 @@ sampled &lt;-<span class="st"> </span><span class="kw">run_stage</span>(adapted,
 <h2><span class="header-section-number">3.7</span> Checking Descriptive Adequacy of 1b model.</h2>
 <p>The checking procedure below is the same as the three threshold LBA model, but we’ll use the single threshold LBA model’s <code>sampled</code> object/data.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">load</span>(<span class="st">&quot;forstmann1b_sampled.RData&quot;</span>)</code></pre></div>
-<p>As for the t generate 20 posterior predictive data samples for each model.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pp.data.1b &lt;-<span class="st"> </span><span class="kw">generate.ppdata</span>(sampled, <span class="dt">n =</span> <span class="dv">20</span>)</code></pre></div>
+<p>As we did for the the three threshold LBA model, we generate 20 posterior predictive data samples. Note: this function is taken from <a href="pmwg-sampler-and-sequential-sampling-models.html#genppdatafunc">3.5</a></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pp.data.1b &lt;-<span class="st"> </span><span class="kw">gen_pp_data</span>(sampled, <span class="dt">n =</span> <span class="dv">20</span>)</code></pre></div>
 
 </div>
 </div>

@@ -466,7 +466,7 @@ You should save your sampled object at this point.
 save(sampled, file = "forst3b_sampled.RData")
 ```
 
-## Simulating Posterior Predictive Data
+## Simulating Posterior Predictive Data {#genppdatafunc}
 
 We can generate posterior predictive data by setting `sample = TRUE` in our log-likelihood function to generate response times and responses <i>given</i> the posterior parameter estimates for each subject. To do this, we use the `gen_pp_data` function below, which calls our log-likelihood function embedded in our `sampled` object. The `gen_pp_data` function takes four arguments:
 
@@ -520,14 +520,14 @@ load("forst3b_sampled.RData")
 load("ppdata3b.RData")
 ```
 
-We generate 20 posterior predictive data samples for each model. 
+We generate 20 posterior predictive data samples. 
 ```{r genppdata, eval=FALSE}
 pp_data_3b <- gen_pp_data(sampled, n = 20)
 ```
 
 The returned data is a matrix with the same dimensions and names as `forstmann` -- with the addition of `pp_iter` column. `pp_iter` is the iteration of posterior sample (in this example `i = 1:20`) for the corresponding subject. We now have two matrices based on samples from either model. The response (`resp`) and response time (`rt`) columns now contain posterior predictive data.
 
-In the next section, we will use this to assess descriptive adequacy.
+In the next section, we will use the posterior predictive data to assess descriptive adequacy.
 
 ### Assessing Descriptive Adequacy (goodness of fit)
 
@@ -546,7 +546,7 @@ pq <- forstmann %>%
 
 # Subject x condition Q1, median and Q3 respone time for posterior predictive data
 pp_pq <- pp_data_3b %>%
-  group_by(condition, pp_subj, subject) %>%
+  group_by(condition, pp_iter, subject) %>%
   summarise(Q1 = quantile(rt, prob = 0.25),
             median = median(rt), 
             Q3 = quantile(rt, prob = 0.75),
@@ -567,7 +567,7 @@ av_pq <- pq %>%
 # Variances of posterior samples
 pp_var <- pq %>%
   filter(src != "data") %>%
-  group_by(condition, pp_subj, src) %>%
+  group_by(condition, pp_iter, src) %>%
   summarise_at(vars(Q1:acc), mean)
 
 # Convert source column to a factor and add labels
@@ -591,7 +591,7 @@ av_pq[, c("Q1", "median", "Q3")] <- 1000 * av_pq[, c("Q1", "median", "Q3")]
 pp_var[, c("Q1", "median", "Q3")] <- 1000 * pp_var[, c("Q1", "median", "Q3")]
 ```
 
-```{r hideppdataplots, include=FALSE}
+```{r hideppdataplots, echo=FALSE}
 # Plot response times for data and posterior predictive data
 rtplot <- ggplot(data = av_pq,
                  mapping = aes(x = condition,
@@ -689,7 +689,7 @@ bothplot <- grid.arrange(gA, gB, ncol = 1)
 
 ##Evaluating different models - single threshold LBA 
 
-Now let's run through an example where we change our model slightly and assume that participants's level of caution does not change with emphasis instructions i.e. their threshold is identical in the `Accuracy`, `Neutral`, and `Speed` conditions. We will call this our "single threshold LBA model". The single threhold LBA model's log-likelihood has one `b` parameter, instead of three (see line 18, 31 and 64 below).
+Now let's run through an example where the model differs and we assume that participants's level of caution does not change with emphasis instructions i.e. the threshold for `Accuracy`, `Neutral`, and `Speed` conditions is the same. We will call this our "single threshold LBA model". The single threhold LBA model's log-likelihood has one `b` parameter, instead of three (see line 18, 31 and 64 below).
 
 For brevity, we specify only the '<i>fast</i>' log-likelihood function for the single threshold model. 
 ```{r 1bfastll, attr.source = '.numberLines', include=TRUE}
@@ -832,9 +832,10 @@ The checking procedure below is the same as the three threshold LBA model, but w
 load("forstmann1b_sampled.RData")
 ```
 
-As for the t generate 20 posterior predictive data samples for each model. 
+As we did for the the three threshold LBA model, we generate 20 posterior predictive data samples. 
+Note: this function is taken from \@ref(genppdatafunc)
 ```{r part10.5.3, eval=FALSE}
-pp.data.1b <- generate.ppdata(sampled, n = 20)
+pp.data.1b <- gen_pp_data(sampled, n = 20)
 ```
 
 ```{r part10.5.4, include=FALSE}
