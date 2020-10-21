@@ -533,9 +533,9 @@ In the next section, we will use the posterior predictive data to assess descrip
 
 Now we will plot the posterior predictive data against the real data. This may only be useful for some users, as what you do with your data is domain specific.
 
-```{r plotppdata, include=TRUE}
+```{r plotppdata3b, include=TRUE}
 # Subject x condition Q1, median and Q3 respone time + mean accuracy for Forstmann dataset
-pq <- forstmann %>% 
+pq3b <- forstmann %>% 
   group_by(condition, subject) %>% 
   summarise(Q1 = quantile(rt, prob = 0.25),
             median = median(rt), 
@@ -545,7 +545,7 @@ pq <- forstmann %>%
             )
 
 # Subject x condition Q1, median and Q3 respone time for posterior predictive data
-pp_pq <- pp_data_3b %>%
+pp_pq3b <- pp_data_3b %>%
   group_by(condition, pp_iter, subject) %>%
   summarise(Q1 = quantile(rt, prob = 0.25),
             median = median(rt), 
@@ -555,136 +555,128 @@ pp_pq <- pp_data_3b %>%
             )
 
 # Combine data with posterior predictive data and add data source
-pq <- bind_rows(cbind(src = rep("data", nrow(pq)), pq),
-                cbind(src = rep("model", nrow(pp_pq)), pp_pq)
+pq3b <- bind_rows(cbind(src = rep("data", nrow(pq3b)), pq3b),
+                cbind(src = rep("model", nrow(pp_pq3b)), pp_pq3b)
                 )
 
 # Mean Q1, median, Q4 and accuracy for data and posterior predictive data
-av_pq <- pq %>%
+av_pq3b <- pq3b %>%
   group_by(src, condition) %>%
   summarise_at(vars(Q1:acc), mean)
 
 # Variances of posterior samples
-pp_var <- pq %>%
+pp_var3b <- pq3b %>%
   filter(src != "data") %>%
   group_by(condition, pp_iter, src) %>%
   summarise_at(vars(Q1:acc), mean)
 
 # Convert source column to a factor and add labels
-av_pq$src <- factor(av_pq$src,
+av_pq3b$src <- factor(av_pq3b$src,
                     levels = c("model", "data"),
-                    labels = c("model", "(Data)")
+                    labels = c("model", "data")
                     )
 
-pp_varsrc <- factor(pp_var$src,
+pp_varsrc3b <- factor(pp_var3b$src,
                     levels = c("model", "data"),
-                    labels = c("model", "(Data)")
+                    labels = c("model", "data")
                     )
 # Rename conditions
-levels(av_pq$condition) <-
-  levels(pp_var$condition) <- c("Accuracy", "Neutral", "Speed")
+levels(av_pq3b$condition) <-
+  levels(pp_var3b$condition) <- c("Accuracy", "Neutral", "Speed")
 
 # Convert rt to milliseconds and acc to percentage
-av_pq$acc = 100 * av_pq$acc
-pp_var$acc = 100 * pp_var$acc
-av_pq[, c("Q1", "median", "Q3")] <- 1000 * av_pq[, c("Q1", "median", "Q3")]
-pp_var[, c("Q1", "median", "Q3")] <- 1000 * pp_var[, c("Q1", "median", "Q3")]
+av_pq3b$acc <- 100 * av_pq3b$acc
+pp_var3b$acc <- 100 * pp_var3b$acc
+av_pq3b[, c("Q1", "median", "Q3")] <- 1000 * av_pq3b[, c("Q1", "median", "Q3")]
+pp_var3b[, c("Q1", "median", "Q3")] <- 1000 * pp_var3b[, c("Q1", "median", "Q3")]
 ```
 
 ```{r hideppdataplots, echo=FALSE}
 # Plot response times for data and posterior predictive data
-rtplot <- ggplot(data = av_pq,
+rtplot3b <- ggplot(data = av_pq3b,
                  mapping = aes(x = condition,
                                y = Q1,
                                group = src,
                                 colour = src
                                )
                  ) +
-  geom_point(size = 4) +
+  geom_point(size = 2) +
   geom_point(mapping = aes(x = condition,
                            y = median,
                            color = src,
                            group = src
                            ),
-             size = 2) +
+             size = 4) +
   geom_point(mapping = aes(x = condition,
                            y = Q3,
                            color = src,
                            group = src
                            ),
              size = 2) +
-  geom_point(data = pp_var,
+  geom_point(data = pp_var3b,
              mapping = aes(x = condition,
                            y = Q1,
                            group = src),
              size = 1,
              color = "black",
-             alpha = 0.2
-             ) +
-  geom_point(data = pp_var,
+             alpha = 0.05) +
+  geom_point(data = pp_var3b,
              mapping = aes(x = condition,
                            y = median,
                            group = src),
-             size = 1,
+             size = 2,
              color = "black",
-             alpha = 0.2
-             ) +
-  geom_point(data = pp_var,
+             alpha = 0.05) +
+  geom_point(data = pp_var3b,
              mapping = aes(x = condition,
                            y = Q3,
                            group = src),
-             size = 2,
+             size = 1,
              color = "black",
-             alpha = 0.2
-             ) +
+             alpha = 0.05) +
   labs(x = "Condition",
        y = "RT Percentiles (ms)",
-       colour = "Model") +
-  guides(colour = FALSE) +
+       colour = "Data source") +
   theme(axis.title.y = element_text(size = 14, face = 'bold'),
         axis.text.y = element_text(size = 14),
         axis.title.x = element_blank(),
         axis.text.x = element_blank(),
-        axis.ticks.x = element_blank()) +
+        axis.ticks.x = element_blank(),
+        legend.text = element_text(size = 12),
+        legend.key.size = unit(0.75, 'cm'),
+        legend.title = element_text(size = 14, face = 'bold'),
+        legend.title.align = 0.5,
+        legend.position = "top") +
    ylim(275, 650)
 
 # Plot accuracy for data and posterior predictive data
-accplot <- ggplot(data = av_pq,
+accplot3b <- ggplot(data = av_pq3b,
                   mapping = aes(x = condition,
                                 y = acc,
                                 color = src,
                                 group = src
                                 )) +
   geom_point(size = 4) +
-  geom_point(data = pp_var,
+  geom_point(data = pp_var3b,
              mapping = aes(x = condition,
                            y = acc,
                            group = src),
              color = "black",
-             alpha = .2
-             ) +
+             alpha = .2,
+             size = 2) +
   labs(x = "Condition",
-       y = "Mean Accuracy (%)",
-       colour = "Model") +
-  guides(colour = FALSE) +
+       y = "Mean Accuracy (%)") +
   theme(axis.title.y = element_text(size = 14, face = 'bold'),
         axis.text.y = element_text(size=14),
         axis.title.x = element_text(size = 14, face = 'bold'),
         axis.text.x = element_text(size=14),
-        legend.text = element_text(size = 12),
-        legend.key.size = unit(0.75, 'cm'),
-        legend.title = element_text(size = 14, face = 'bold'),
-        legend.title.align = 0.5) +
+        legend.position = "none") +
   ylim(75, 90)
 ```  
 
-```{r ppdataplotarrangment, fig.align='center', fig.height=10, echo=FALSE}
-gA <- ggplotGrob(rtplot)
-gB <- ggplotGrob(accplot)
-maxWidth <- unit.pmax(gA$widths[2:5], gB$widths[2:5])
-gA$widths[2:5] <- as.list(maxWidth)
-gB$widths[2:5] <- as.list(maxWidth)
-bothplot <- grid.arrange(gA, gB, ncol = 1)
+```{r ppdataplotarrg3b, fig.align='center', fig.height=10, echo=FALSE, warning=FALSE}
+plots3b <- rtplot3b/accplot3b
+plots3b
 ```
 
 ##Evaluating different models - single threshold LBA 
@@ -826,21 +818,346 @@ sampled <- run_stage(adapted,
 
 ## Checking Descriptive Adequacy of 1b model.
 
-The checking procedure below is the same as the three threshold LBA model, but we'll use the single threshold LBA model's `sampled` object/data. 
+The checking procedure below is the same as the three threshold LBA model, except we use the single threshold LBA model's `sampled` object/data. 
 
 ```{r part10.5.1, eval=FALSE}
 load("forstmann1b_sampled.RData")
 ```
 
-As we did for the the three threshold LBA model, we generate 20 posterior predictive data samples. 
-Note: this function is taken from \@ref(genppdatafunc)
+As we did for the three threshold LBA model, we generate 20 posterior predictive data samples. 
+Note: this function is from section \@ref(genppdatafunc)
 ```{r part10.5.3, eval=FALSE}
-pp.data.1b <- gen_pp_data(sampled, n = 20)
+pp_data_1b <- gen_pp_data(sampled, n = 20)
 ```
 
 ```{r part10.5.4, include=FALSE}
 load("ppdata1b.RData")
 ```
 
+```{r plotppdata1b, include=TRUE}
+# Subject x condition Q1, median and Q3 respone time + mean accuracy for Forstmann dataset
+pq1b <- forstmann %>%
+  group_by(condition, subject) %>%
+  summarise(Q1 = quantile(rt, prob = 0.25),
+            median = median(rt),
+            Q3 = quantile(rt, prob = 0.75),
+            acc =  mean(ifelse(stim == resp, 1, 0)),
+            .groups = "keep"
+            )
+
+# Subject x condition Q1, median and Q3 respone time for posterior predictive data
+pp_pq1b <- pp_data_1b %>%
+  group_by(condition, pp_iter, subject) %>%
+  summarise(Q1 = quantile(rt, prob = 0.25),
+            median = median(rt),
+            Q3 = quantile(rt, prob = 0.75),
+            acc = mean(ifelse(stim == resp, 1, 0)),
+            .groups = "keep"
+            )
+
+# Combine data with posterior predictive data and add data source
+pq1b <- bind_rows(cbind(src = rep("data", nrow(pq1b)), pq1b),
+                cbind(src = rep("model", nrow(pp_pq1b)), pp_pq1b)
+                )
+
+# Mean Q1, median, Q4 and accuracy for data and posterior predictive data
+av_pq1b <- pq1b %>%
+  group_by(src, condition) %>%
+  summarise_at(vars(Q1:acc), mean)
+
+# Variances of posterior samples
+pp_var1b <- pq1b %>%
+  filter(src != "data") %>%
+  group_by(condition, pp_iter, src) %>%
+  summarise_at(vars(Q1:acc), mean)
+
+# Convert source column to a factor and add labels
+av_pq1b$src <- factor(av_pq1b$src,
+                    levels = c("model", "data"),
+                    labels = c("model", "data")
+                    )
+
+pp_varsrc1b <- factor(pp_var1b$src,
+                    levels = c("model", "data"),
+                    labels = c("model", "data")
+                    )
+# Rename conditions
+levels(av_pq1b$condition) <-
+  levels(pp_var1b$condition) <- c("Accuracy", "Neutral", "Speed")
+
+# Convert rt to milliseconds and acc to percentage
+av_pq1b$acc <- 100 * av_pq1b$acc
+pp_var1b$acc <- 100 * pp_var1b$acc
+av_pq1b[, c("Q1", "median", "Q3")] <- 1000 * av_pq1b[, c("Q1", "median", "Q3")]
+pp_var1b[, c("Q1", "median", "Q3")] <- 1000 * pp_var1b[, c("Q1", "median", "Q3")]
+```
+
+```{r hideppdataplots1b, echo=FALSE}
+# Plot response times for data and posterior predictive data
+rtplot1b <- ggplot(data = av_pq1b,
+                 mapping = aes(x = condition,
+                               y = Q1,
+                               group = src,
+                                colour = src
+                               )
+                 ) +
+  geom_point(size = 4) +
+  geom_point(mapping = aes(x = condition,
+                           y = median,
+                           color = src,
+                           group = src
+                           ),
+             size = 2) +
+  geom_point(mapping = aes(x = condition,
+                           y = Q3,
+                           color = src,
+                           group = src
+                           ),
+             size = 2) +
+  geom_point(data = pp_var1b,
+             mapping = aes(x = condition,
+                           y = Q1,
+                           group = src),
+             size = 1,
+             color = "black",
+             alpha = 0.05) +
+  geom_point(data = pp_var1b,
+             mapping = aes(x = condition,
+                           y = median,
+                           group = src),
+             size = 1,
+             color = "black",
+             alpha = 0.05) +
+  geom_point(data = pp_var1b,
+             mapping = aes(x = condition,
+                           y = Q3,
+                           group = src),
+             size = 2,
+             color = "black",
+             alpha = 0.05) +
+  labs(x = "Condition",
+       y = "RT Percentiles (ms)",
+       colour = "Data source") +
+  theme(axis.title.y = element_text(size = 14, face = 'bold'),
+        axis.text.y = element_text(size = 14),
+        axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        legend.text = element_text(size = 12),
+        legend.key.size = unit(0.75, 'cm'),
+        legend.title = element_text(size = 14, face = 'bold'),
+        legend.title.align = 0.5,
+        legend.position = "top") +
+   ylim(275, 650)
+
+# Plot accuracy for data and posterior predictive data
+accplot1b <- ggplot(data = av_pq1b,
+                  mapping = aes(x = condition,
+                                y = acc,
+                                color = src,
+                                group = src
+                                )) +
+  geom_point(size = 4) +
+  geom_point(data = pp_var1b,
+             mapping = aes(x = condition,
+                           y = acc,
+                           group = src),
+             color = "black",
+             alpha = .2
+             ) +
+  labs(x = "Condition",
+       y = "Mean Accuracy (%)") +
+  theme(axis.title.y = element_text(size = 14, face = 'bold'),
+        axis.text.y = element_text(size=14),
+        axis.title.x = element_text(size = 14, face = 'bold'),
+        axis.text.x = element_text(size=14),
+        legend.position = "none"
+        ) +
+  ylim(75, 90)
+```
+
+```{r ppdataplot1b, fig.align='center', fig.height=10, echo=FALSE, warning=FALSE}
+plots1b <- rtplot1b/accplot1b
+plots1b
+```
+
+## Model Comparison
+
+In this section, we are going to compare the three threshold model and the single threshold model for the forstmann (2008) data to evaluate which model is the most representative of the data. We begin by using a graphical method and compare plots.
+ 
+### Assessing Descriptive Adequacy Graphically
+
+We can <i>"assess descriptive adequacy"</i> graphically by taking a look at the plots above to see which of our models best fits the data. For ease we've plotted them both side by side here. 
+
+```{r ppdataModelComp, include=TRUE}
+# Subject x condition Q1, median and Q3 respone time + mean accuracy for Forstmann dataset
+pq <- forstmann %>%
+  group_by(condition, subject) %>%
+  summarise(Q1 = quantile(rt, prob = 0.25),
+            median = median(rt),
+            Q3 = quantile(rt, prob = 0.75),
+            acc =  mean(ifelse(stim == resp, 1, 0)),
+            .groups = "keep"
+            )
+
+# Subject x condition Q1, median and Q3 respone time for posterior predictive data - 3b model
+pp_pq3b <- pp_data_3b %>%
+  group_by(condition, pp_iter, subject) %>%
+  summarise(Q1 = quantile(rt, prob = 0.25),
+            median = median(rt), 
+            Q3 = quantile(rt, prob = 0.75),
+            acc = mean(ifelse(stim == resp, 1, 0)),
+            .groups = "keep"
+            )
+# Subject x condition Q1, median and Q3 respone time for posterior predictive data - 1b model
+pp_pq1b <- pp_data_1b %>%
+  group_by(condition, pp_iter, subject) %>%
+  summarise(Q1 = quantile(rt, prob = 0.25),
+            median = median(rt),
+            Q3 = quantile(rt, prob = 0.75),
+            acc = mean(ifelse(stim == resp, 1, 0)),
+            .groups = "keep"
+            )
+
+# Combine data with posterior predictive data for 1b and 3b models and add data source
+pqall <- bind_rows(cbind(src = rep("data", nrow(pq)), pq),
+                cbind(src = rep("3b", nrow(pp_pq3b)), pp_pq3b),
+                cbind(src = rep("1b", nrow(pp_pq1b)), pp_pq1b)
+                )
+
+# Mean Q1, median, Q4 and accuracy for data and posterior predictive data
+av_pq <- pqall %>%
+  group_by(src, condition) %>%
+  summarise_at(vars(Q1:acc), mean)
+
+# Variances of posterior samples
+pp_var <- pqall %>%
+  filter(src != "data") %>%
+  group_by(condition, pp_iter, src) %>%
+  summarise_at(vars(Q1:acc), mean)
+
+# Convert source column to a factor and add labels
+av_pq$src <- factor(av_pq$src,
+                    levels = c("3b", "data", "1b"),
+                    labels = c("3b", "data", "1b")
+                    )
+
+pp_varsrc <- factor(pp_var$src,
+                    levels = c("3b", "data", "1b"),
+                    labels = c("3b", "data", "1b")
+                    )
+# Rename conditions
+levels(av_pq$condition) <-
+  levels(pp_var$condition) <- c("Accuracy", "Neutral", "Speed")
+
+# Convert rt to milliseconds and acc to percentage
+av_pq$acc <- 100 * av_pq$acc
+pp_var$acc <- 100 * pp_var$acc
+av_pq[, c("Q1", "median", "Q3")] <- 1000 * av_pq[, c("Q1", "median", "Q3")]
+pp_var[, c("Q1", "median", "Q3")] <- 1000 * pp_var[, c("Q1", "median", "Q3")]
+```
 
 
+
+```{r hideppdataplotsModelComp, echo=FALSE}
+# Plot response times for data and posterior predictive data
+rtplot <- ggplot(data = av_pq,
+                 mapping = aes(x = condition,
+                               y = Q1,
+                               group = src,
+                                colour = src
+                               )
+                 ) +
+  geom_point(size = 2,
+             position = position_dodge(width = .5)
+             ) +
+  geom_point(mapping = aes(x = condition,
+                           y = median,
+                           color = src,
+                           group = src
+                           ),
+             size = 4, 
+             position = position_dodge(width = .5)
+             ) +
+  geom_point(mapping = aes(x = condition,
+                           y = Q3,
+                           color = src,
+                           group = src
+                           ),
+             size = 2,
+             position = position_dodge(width = .5)
+             ) +
+  geom_point(data = pp_var,
+             mapping = aes(x = condition,
+                           y = Q1,
+                           group = src),
+             size = 2,
+             color = "black",
+             alpha = 0.05,
+             position = position_dodge(width = -.5)
+             ) +
+  geom_point(data = pp_var,
+             mapping = aes(x = condition,
+                           y = median,
+                           group = src),
+             size = 4,
+             color = "black",
+             alpha = 0.05, 
+             position = position_dodge(width = -.5)
+             ) +
+  geom_point(data = pp_var,
+             mapping = aes(x = condition,
+                           y = Q3,
+                           group = src),
+             size = 2,
+             color = "black",
+             alpha = 0.05,
+             position = position_dodge(width = -.5)
+             ) +
+  labs(x = "Condition",
+       y = "RT Percentiles (ms)",
+       colour = "Data source") +
+  theme(axis.title.y = element_text(size = 14, face = 'bold'),
+        axis.text.y = element_text(size = 14),
+        axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        legend.text = element_text(size = 12),
+        legend.key.size = unit(0.75, 'cm'),
+        legend.title = element_text(size = 14, face = 'bold'),
+        legend.title.align = 0.5,
+        legend.position = "top") +
+   ylim(275, 650)
+
+# Plot accuracy for data and posterior predictive data
+accplot <- ggplot(data = av_pq,
+                  mapping = aes(x = condition,
+                                y = acc,
+                                color = src,
+                                group = src
+                                )
+                  ) +
+  geom_point(size = 4,
+             position = position_dodge(width = .5)) +
+  geom_point(data = pp_var,
+             mapping = aes(x = condition,
+                           y = acc,
+                           group = src),
+             color = "black",
+             alpha = 0.2,
+             position = position_dodge(width = -.5)) +
+  labs(x = "Condition",
+       y = "Mean Accuracy (%)") +
+  theme(axis.title.y = element_text(size = 14, face = 'bold'),
+        axis.text.y = element_text(size=14),
+        axis.title.x = element_text(size = 14, face = 'bold'),
+        axis.text.x = element_text(size=14),
+        legend.position = "none"
+        ) +
+  ylim(75, 90)
+```
+
+```{r ppdataplotModelComp, fig.align='center', fig.height=10, echo=FALSE, warning=FALSE}
+ModelCompPlots <- rtplot/accplot
+ModelCompPlots
+```

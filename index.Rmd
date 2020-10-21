@@ -14,7 +14,7 @@ description: " Particle Based Sampler for MCMC "
 
 ```{r, required packages, include=FALSE}
 pkgs <- c("tidyverse", "devtools", "ggplot2",
-          "knitr", "rtdists", "pmwg", "gridExtra","grid")
+          "knitr", "rtdists", "pmwg", "patchwork")
 
 for (pkg in pkgs){
   if (!require(pkg, character.only = T)){

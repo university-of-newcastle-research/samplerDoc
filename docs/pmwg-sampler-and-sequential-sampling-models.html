@@ -146,6 +146,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="3.6.1" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#pmwg-framework-for-a-single-threshold-model"><i class="fa fa-check"></i><b>3.6.1</b> PmWG framework for a single threshold model</a></li>
 </ul></li>
 <li class="chapter" data-level="3.7" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#checking-descriptive-adequacy-of-1b-model."><i class="fa fa-check"></i><b>3.7</b> Checking Descriptive Adequacy of 1b model.</a></li>
+<li class="chapter" data-level="3.8" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#model-comparison"><i class="fa fa-check"></i><b>3.8</b> Model Comparison</a><ul>
+<li class="chapter" data-level="3.8.1" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#assessing-descriptive-adequacy-graphically"><i class="fa fa-check"></i><b>3.8.1</b> Assessing Descriptive Adequacy Graphically</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="example-2-single-threshold-parameter.html"><a href="example-2-single-threshold-parameter.html"><i class="fa fa-check"></i><b>4</b> Example 2 - Single threshold parameter</a></li>
 <li class="chapter" data-level="5" data-path="example-3-wagenmakers-2008-experiment-2.html"><a href="example-3-wagenmakers-2008-experiment-2.html"><i class="fa fa-check"></i><b>5</b> Example 3 - Wagenmakers (2008) Experiment 2</a></li>
@@ -793,7 +796,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h3><span class="header-section-number">3.5.1</span> Assessing Descriptive Adequacy (goodness of fit)</h3>
 <p>Now we will plot the posterior predictive data against the real data. This may only be useful for some users, as what you do with your data is domain specific.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Subject x condition Q1, median and Q3 respone time + mean accuracy for Forstmann dataset</span>
-pq &lt;-<span class="st"> </span>forstmann <span class="op">%&gt;%</span><span class="st"> </span>
+pq3b &lt;-<span class="st"> </span>forstmann <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">group_by</span>(condition, subject) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">summarise</span>(<span class="dt">Q1 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.25</span>),
             <span class="dt">median =</span> <span class="kw">median</span>(rt), 
@@ -803,7 +806,7 @@ pq &lt;-<span class="st"> </span>forstmann <span class="op">%&gt;%</span><span c
             )
 
 <span class="co"># Subject x condition Q1, median and Q3 respone time for posterior predictive data</span>
-pp_pq &lt;-<span class="st"> </span>pp_data_3b <span class="op">%&gt;%</span>
+pp_pq3b &lt;-<span class="st"> </span>pp_data_3b <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">group_by</span>(condition, pp_iter, subject) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">summarise</span>(<span class="dt">Q1 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.25</span>),
             <span class="dt">median =</span> <span class="kw">median</span>(rt), 
@@ -813,41 +816,41 @@ pp_pq &lt;-<span class="st"> </span>pp_data_3b <span class="op">%&gt;%</span>
             )
 
 <span class="co"># Combine data with posterior predictive data and add data source</span>
-pq &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(<span class="kw">cbind</span>(<span class="dt">src =</span> <span class="kw">rep</span>(<span class="st">&quot;data&quot;</span>, <span class="kw">nrow</span>(pq)), pq),
-                <span class="kw">cbind</span>(<span class="dt">src =</span> <span class="kw">rep</span>(<span class="st">&quot;model&quot;</span>, <span class="kw">nrow</span>(pp_pq)), pp_pq)
+pq3b &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(<span class="kw">cbind</span>(<span class="dt">src =</span> <span class="kw">rep</span>(<span class="st">&quot;data&quot;</span>, <span class="kw">nrow</span>(pq3b)), pq3b),
+                <span class="kw">cbind</span>(<span class="dt">src =</span> <span class="kw">rep</span>(<span class="st">&quot;model&quot;</span>, <span class="kw">nrow</span>(pp_pq3b)), pp_pq3b)
                 )
 
 <span class="co"># Mean Q1, median, Q4 and accuracy for data and posterior predictive data</span>
-av_pq &lt;-<span class="st"> </span>pq <span class="op">%&gt;%</span>
+av_pq3b &lt;-<span class="st"> </span>pq3b <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">group_by</span>(src, condition) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(Q1<span class="op">:</span>acc), mean)
 
 <span class="co"># Variances of posterior samples</span>
-pp_var &lt;-<span class="st"> </span>pq <span class="op">%&gt;%</span>
+pp_var3b &lt;-<span class="st"> </span>pq3b <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">filter</span>(src <span class="op">!=</span><span class="st"> &quot;data&quot;</span>) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">group_by</span>(condition, pp_iter, src) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(Q1<span class="op">:</span>acc), mean)
 
 <span class="co"># Convert source column to a factor and add labels</span>
-av_pq<span class="op">$</span>src &lt;-<span class="st"> </span><span class="kw">factor</span>(av_pq<span class="op">$</span>src,
+av_pq3b<span class="op">$</span>src &lt;-<span class="st"> </span><span class="kw">factor</span>(av_pq3b<span class="op">$</span>src,
                     <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;model&quot;</span>, <span class="st">&quot;data&quot;</span>),
-                    <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;model&quot;</span>, <span class="st">&quot;(Data)&quot;</span>)
+                    <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;model&quot;</span>, <span class="st">&quot;data&quot;</span>)
                     )
 
-pp_varsrc &lt;-<span class="st"> </span><span class="kw">factor</span>(pp_var<span class="op">$</span>src,
+pp_varsrc3b &lt;-<span class="st"> </span><span class="kw">factor</span>(pp_var3b<span class="op">$</span>src,
                     <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;model&quot;</span>, <span class="st">&quot;data&quot;</span>),
-                    <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;model&quot;</span>, <span class="st">&quot;(Data)&quot;</span>)
+                    <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;model&quot;</span>, <span class="st">&quot;data&quot;</span>)
                     )
 <span class="co"># Rename conditions</span>
-<span class="kw">levels</span>(av_pq<span class="op">$</span>condition) &lt;-
-<span class="st">  </span><span class="kw">levels</span>(pp_var<span class="op">$</span>condition) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Accuracy&quot;</span>, <span class="st">&quot;Neutral&quot;</span>, <span class="st">&quot;Speed&quot;</span>)
+<span class="kw">levels</span>(av_pq3b<span class="op">$</span>condition) &lt;-
+<span class="st">  </span><span class="kw">levels</span>(pp_var3b<span class="op">$</span>condition) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Accuracy&quot;</span>, <span class="st">&quot;Neutral&quot;</span>, <span class="st">&quot;Speed&quot;</span>)
 
 <span class="co"># Convert rt to milliseconds and acc to percentage</span>
-av_pq<span class="op">$</span>acc =<span class="st"> </span><span class="dv">100</span> <span class="op">*</span><span class="st"> </span>av_pq<span class="op">$</span>acc
-pp_var<span class="op">$</span>acc =<span class="st"> </span><span class="dv">100</span> <span class="op">*</span><span class="st"> </span>pp_var<span class="op">$</span>acc
-av_pq[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)] &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="op">*</span><span class="st"> </span>av_pq[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)]
-pp_var[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)] &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="op">*</span><span class="st"> </span>pp_var[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)]</code></pre></div>
-<p><img src="bookdown-demo_files/figure-html/ppdataplotarrangment-1.png" width="672" style="display: block; margin: auto;" /></p>
+av_pq3b<span class="op">$</span>acc &lt;-<span class="st"> </span><span class="dv">100</span> <span class="op">*</span><span class="st"> </span>av_pq3b<span class="op">$</span>acc
+pp_var3b<span class="op">$</span>acc &lt;-<span class="st"> </span><span class="dv">100</span> <span class="op">*</span><span class="st"> </span>pp_var3b<span class="op">$</span>acc
+av_pq3b[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)] &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="op">*</span><span class="st"> </span>av_pq3b[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)]
+pp_var3b[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)] &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="op">*</span><span class="st"> </span>pp_var3b[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)]</code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/ppdataplotarrg3b-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 <div id="evaluating-different-models---single-threshold-lba" class="section level2">
@@ -1062,11 +1065,141 @@ sampled &lt;-<span class="st"> </span><span class="kw">run_stage</span>(adapted,
 </div>
 <div id="checking-descriptive-adequacy-of-1b-model." class="section level2">
 <h2><span class="header-section-number">3.7</span> Checking Descriptive Adequacy of 1b model.</h2>
-<p>The checking procedure below is the same as the three threshold LBA model, but we’ll use the single threshold LBA model’s <code>sampled</code> object/data.</p>
+<p>The checking procedure below is the same as the three threshold LBA model, except we use the single threshold LBA model’s <code>sampled</code> object/data.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">load</span>(<span class="st">&quot;forstmann1b_sampled.RData&quot;</span>)</code></pre></div>
-<p>As we did for the the three threshold LBA model, we generate 20 posterior predictive data samples. Note: this function is taken from <a href="pmwg-sampler-and-sequential-sampling-models.html#genppdatafunc">3.5</a></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pp.data.1b &lt;-<span class="st"> </span><span class="kw">gen_pp_data</span>(sampled, <span class="dt">n =</span> <span class="dv">20</span>)</code></pre></div>
+<p>As we did for the three threshold LBA model, we generate 20 posterior predictive data samples. Note: this function is from section <a href="pmwg-sampler-and-sequential-sampling-models.html#genppdatafunc">3.5</a></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pp_data_1b &lt;-<span class="st"> </span><span class="kw">gen_pp_data</span>(sampled, <span class="dt">n =</span> <span class="dv">20</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Subject x condition Q1, median and Q3 respone time + mean accuracy for Forstmann dataset</span>
+pq1b &lt;-<span class="st"> </span>forstmann <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">group_by</span>(condition, subject) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">Q1 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.25</span>),
+            <span class="dt">median =</span> <span class="kw">median</span>(rt),
+            <span class="dt">Q3 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.75</span>),
+            <span class="dt">acc =</span>  <span class="kw">mean</span>(<span class="kw">ifelse</span>(stim <span class="op">==</span><span class="st"> </span>resp, <span class="dv">1</span>, <span class="dv">0</span>)),
+            <span class="dt">.groups =</span> <span class="st">&quot;keep&quot;</span>
+            )
 
+<span class="co"># Subject x condition Q1, median and Q3 respone time for posterior predictive data</span>
+pp_pq1b &lt;-<span class="st"> </span>pp_data_1b <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">group_by</span>(condition, pp_iter, subject) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">Q1 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.25</span>),
+            <span class="dt">median =</span> <span class="kw">median</span>(rt),
+            <span class="dt">Q3 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.75</span>),
+            <span class="dt">acc =</span> <span class="kw">mean</span>(<span class="kw">ifelse</span>(stim <span class="op">==</span><span class="st"> </span>resp, <span class="dv">1</span>, <span class="dv">0</span>)),
+            <span class="dt">.groups =</span> <span class="st">&quot;keep&quot;</span>
+            )
+
+<span class="co"># Combine data with posterior predictive data and add data source</span>
+pq1b &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(<span class="kw">cbind</span>(<span class="dt">src =</span> <span class="kw">rep</span>(<span class="st">&quot;data&quot;</span>, <span class="kw">nrow</span>(pq1b)), pq1b),
+                <span class="kw">cbind</span>(<span class="dt">src =</span> <span class="kw">rep</span>(<span class="st">&quot;model&quot;</span>, <span class="kw">nrow</span>(pp_pq1b)), pp_pq1b)
+                )
+
+<span class="co"># Mean Q1, median, Q4 and accuracy for data and posterior predictive data</span>
+av_pq1b &lt;-<span class="st"> </span>pq1b <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">group_by</span>(src, condition) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(Q1<span class="op">:</span>acc), mean)
+
+<span class="co"># Variances of posterior samples</span>
+pp_var1b &lt;-<span class="st"> </span>pq1b <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">filter</span>(src <span class="op">!=</span><span class="st"> &quot;data&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">group_by</span>(condition, pp_iter, src) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(Q1<span class="op">:</span>acc), mean)
+
+<span class="co"># Convert source column to a factor and add labels</span>
+av_pq1b<span class="op">$</span>src &lt;-<span class="st"> </span><span class="kw">factor</span>(av_pq1b<span class="op">$</span>src,
+                    <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;model&quot;</span>, <span class="st">&quot;data&quot;</span>),
+                    <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;model&quot;</span>, <span class="st">&quot;data&quot;</span>)
+                    )
+
+pp_varsrc1b &lt;-<span class="st"> </span><span class="kw">factor</span>(pp_var1b<span class="op">$</span>src,
+                    <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;model&quot;</span>, <span class="st">&quot;data&quot;</span>),
+                    <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;model&quot;</span>, <span class="st">&quot;data&quot;</span>)
+                    )
+<span class="co"># Rename conditions</span>
+<span class="kw">levels</span>(av_pq1b<span class="op">$</span>condition) &lt;-
+<span class="st">  </span><span class="kw">levels</span>(pp_var1b<span class="op">$</span>condition) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Accuracy&quot;</span>, <span class="st">&quot;Neutral&quot;</span>, <span class="st">&quot;Speed&quot;</span>)
+
+<span class="co"># Convert rt to milliseconds and acc to percentage</span>
+av_pq1b<span class="op">$</span>acc &lt;-<span class="st"> </span><span class="dv">100</span> <span class="op">*</span><span class="st"> </span>av_pq1b<span class="op">$</span>acc
+pp_var1b<span class="op">$</span>acc &lt;-<span class="st"> </span><span class="dv">100</span> <span class="op">*</span><span class="st"> </span>pp_var1b<span class="op">$</span>acc
+av_pq1b[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)] &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="op">*</span><span class="st"> </span>av_pq1b[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)]
+pp_var1b[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)] &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="op">*</span><span class="st"> </span>pp_var1b[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)]</code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/ppdataplot1b-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="model-comparison" class="section level2">
+<h2><span class="header-section-number">3.8</span> Model Comparison</h2>
+<p>In this section, we are going to compare the three threshold model and the single threshold model for the forstmann (2008) data to evaluate which model is the most representative of the data. We begin by using a graphical method and compare plots.</p>
+<div id="assessing-descriptive-adequacy-graphically" class="section level3">
+<h3><span class="header-section-number">3.8.1</span> Assessing Descriptive Adequacy Graphically</h3>
+<p>We can <i>“assess descriptive adequacy”</i> graphically by taking a look at the plots above to see which of our models best fits the data. For ease we’ve plotted them both side by side here.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Subject x condition Q1, median and Q3 respone time + mean accuracy for Forstmann dataset</span>
+pq &lt;-<span class="st"> </span>forstmann <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">group_by</span>(condition, subject) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">Q1 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.25</span>),
+            <span class="dt">median =</span> <span class="kw">median</span>(rt),
+            <span class="dt">Q3 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.75</span>),
+            <span class="dt">acc =</span>  <span class="kw">mean</span>(<span class="kw">ifelse</span>(stim <span class="op">==</span><span class="st"> </span>resp, <span class="dv">1</span>, <span class="dv">0</span>)),
+            <span class="dt">.groups =</span> <span class="st">&quot;keep&quot;</span>
+            )
+
+<span class="co"># Subject x condition Q1, median and Q3 respone time for posterior predictive data - 3b model</span>
+pp_pq3b &lt;-<span class="st"> </span>pp_data_3b <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">group_by</span>(condition, pp_iter, subject) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">Q1 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.25</span>),
+            <span class="dt">median =</span> <span class="kw">median</span>(rt), 
+            <span class="dt">Q3 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.75</span>),
+            <span class="dt">acc =</span> <span class="kw">mean</span>(<span class="kw">ifelse</span>(stim <span class="op">==</span><span class="st"> </span>resp, <span class="dv">1</span>, <span class="dv">0</span>)),
+            <span class="dt">.groups =</span> <span class="st">&quot;keep&quot;</span>
+            )
+<span class="co"># Subject x condition Q1, median and Q3 respone time for posterior predictive data - 1b model</span>
+pp_pq1b &lt;-<span class="st"> </span>pp_data_1b <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">group_by</span>(condition, pp_iter, subject) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">Q1 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.25</span>),
+            <span class="dt">median =</span> <span class="kw">median</span>(rt),
+            <span class="dt">Q3 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.75</span>),
+            <span class="dt">acc =</span> <span class="kw">mean</span>(<span class="kw">ifelse</span>(stim <span class="op">==</span><span class="st"> </span>resp, <span class="dv">1</span>, <span class="dv">0</span>)),
+            <span class="dt">.groups =</span> <span class="st">&quot;keep&quot;</span>
+            )
+
+<span class="co"># Combine data with posterior predictive data for 1b and 3b models and add data source</span>
+pqall &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(<span class="kw">cbind</span>(<span class="dt">src =</span> <span class="kw">rep</span>(<span class="st">&quot;data&quot;</span>, <span class="kw">nrow</span>(pq)), pq),
+                <span class="kw">cbind</span>(<span class="dt">src =</span> <span class="kw">rep</span>(<span class="st">&quot;3b&quot;</span>, <span class="kw">nrow</span>(pp_pq3b)), pp_pq3b),
+                <span class="kw">cbind</span>(<span class="dt">src =</span> <span class="kw">rep</span>(<span class="st">&quot;1b&quot;</span>, <span class="kw">nrow</span>(pp_pq1b)), pp_pq1b)
+                )
+
+<span class="co"># Mean Q1, median, Q4 and accuracy for data and posterior predictive data</span>
+av_pq &lt;-<span class="st"> </span>pqall <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">group_by</span>(src, condition) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(Q1<span class="op">:</span>acc), mean)
+
+<span class="co"># Variances of posterior samples</span>
+pp_var &lt;-<span class="st"> </span>pqall <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">filter</span>(src <span class="op">!=</span><span class="st"> &quot;data&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">group_by</span>(condition, pp_iter, src) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(Q1<span class="op">:</span>acc), mean)
+
+<span class="co"># Convert source column to a factor and add labels</span>
+av_pq<span class="op">$</span>src &lt;-<span class="st"> </span><span class="kw">factor</span>(av_pq<span class="op">$</span>src,
+                    <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;3b&quot;</span>, <span class="st">&quot;data&quot;</span>, <span class="st">&quot;1b&quot;</span>),
+                    <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;3b&quot;</span>, <span class="st">&quot;data&quot;</span>, <span class="st">&quot;1b&quot;</span>)
+                    )
+
+pp_varsrc &lt;-<span class="st"> </span><span class="kw">factor</span>(pp_var<span class="op">$</span>src,
+                    <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;3b&quot;</span>, <span class="st">&quot;data&quot;</span>, <span class="st">&quot;1b&quot;</span>),
+                    <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;3b&quot;</span>, <span class="st">&quot;data&quot;</span>, <span class="st">&quot;1b&quot;</span>)
+                    )
+<span class="co"># Rename conditions</span>
+<span class="kw">levels</span>(av_pq<span class="op">$</span>condition) &lt;-
+<span class="st">  </span><span class="kw">levels</span>(pp_var<span class="op">$</span>condition) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Accuracy&quot;</span>, <span class="st">&quot;Neutral&quot;</span>, <span class="st">&quot;Speed&quot;</span>)
+
+<span class="co"># Convert rt to milliseconds and acc to percentage</span>
+av_pq<span class="op">$</span>acc &lt;-<span class="st"> </span><span class="dv">100</span> <span class="op">*</span><span class="st"> </span>av_pq<span class="op">$</span>acc
+pp_var<span class="op">$</span>acc &lt;-<span class="st"> </span><span class="dv">100</span> <span class="op">*</span><span class="st"> </span>pp_var<span class="op">$</span>acc
+av_pq[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)] &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="op">*</span><span class="st"> </span>av_pq[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)]
+pp_var[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)] &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="op">*</span><span class="st"> </span>pp_var[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)]</code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/ppdataplotModelComp-1.png" width="672" style="display: block; margin: auto;" /></p>
+
+</div>
 </div>
 </div>
 <h3>References</h3>
