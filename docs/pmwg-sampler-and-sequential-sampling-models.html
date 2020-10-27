@@ -1131,7 +1131,7 @@ pp_var1b[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <sp
 <p>In this section, we are going to compare the three threshold model and the single threshold model for the forstmann (2008) data to evaluate which model is the most representative of the data. We begin by using a graphical method and compare plots.</p>
 <div id="assessing-descriptive-adequacy-graphically" class="section level3">
 <h3><span class="header-section-number">3.8.1</span> Assessing Descriptive Adequacy Graphically</h3>
-<p>We can <i>“assess descriptive adequacy”</i> graphically by taking a look at the plots above to see which of our models best fits the data. For ease we’ve plotted them both side by side here.</p>
+<p>We can <i>“assess descriptive adequacy”</i> graphically by taking a look at the plots above to see which of our models best fits the data. For ease we’ve plotted them on the same plot below.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Subject x condition Q1, median and Q3 respone time + mean accuracy for Forstmann dataset</span>
 pq &lt;-<span class="st"> </span>forstmann <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">group_by</span>(condition, subject) <span class="op">%&gt;%</span>
@@ -1197,7 +1197,7 @@ av_pq<span class="op">$</span>acc &lt;-<span class="st"> </span><span class="dv"
 pp_var<span class="op">$</span>acc &lt;-<span class="st"> </span><span class="dv">100</span> <span class="op">*</span><span class="st"> </span>pp_var<span class="op">$</span>acc
 av_pq[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)] &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="op">*</span><span class="st"> </span>av_pq[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)]
 pp_var[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)] &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="op">*</span><span class="st"> </span>pp_var[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)]</code></pre></div>
-<p><img src="bookdown-demo_files/figure-html/ppdataplotModelComp-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="bookdown-demo_files/figure-html/ppdataplotModelComp-1.png" width="672" style="display: block; margin: auto;" /> The graphs show that values in the three threshold model (red circles) are more descriptively accurate than the single threshold model (blue circles).</p>
 
 </div>
 </div>

@@ -901,13 +901,13 @@ rtplot1b <- ggplot(data = av_pq1b,
                                 colour = src
                                )
                  ) +
-  geom_point(size = 4) +
+  geom_point(size = 2) +
   geom_point(mapping = aes(x = condition,
                            y = median,
                            color = src,
                            group = src
                            ),
-             size = 2) +
+             size = 4) +
   geom_point(mapping = aes(x = condition,
                            y = Q3,
                            color = src,
@@ -925,14 +925,14 @@ rtplot1b <- ggplot(data = av_pq1b,
              mapping = aes(x = condition,
                            y = median,
                            group = src),
-             size = 1,
+             size = 2,
              color = "black",
              alpha = 0.05) +
   geom_point(data = pp_var1b,
              mapping = aes(x = condition,
                            y = Q3,
                            group = src),
-             size = 2,
+             size = 1,
              color = "black",
              alpha = 0.05) +
   labs(x = "Condition",
@@ -987,7 +987,7 @@ In this section, we are going to compare the three threshold model and the singl
  
 ### Assessing Descriptive Adequacy Graphically
 
-We can <i>"assess descriptive adequacy"</i> graphically by taking a look at the plots above to see which of our models best fits the data. For ease we've plotted them both side by side here. 
+We can <i>"assess descriptive adequacy"</i> graphically by taking a look at the plots above to see which of our models best fits the data. For ease we've plotted them on the same plot below. 
 
 ```{r ppdataModelComp, include=TRUE}
 # Subject x condition Q1, median and Q3 respone time + mean accuracy for Forstmann dataset
@@ -1161,3 +1161,4 @@ accplot <- ggplot(data = av_pq,
 ModelCompPlots <- rtplot/accplot
 ModelCompPlots
 ```
+The graphs show that values in the three threshold model (red circles) are more descriptively accurate than the single threshold model (blue circles).
