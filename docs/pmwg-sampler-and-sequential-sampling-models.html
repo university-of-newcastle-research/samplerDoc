@@ -148,6 +148,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="3.7" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#checking-descriptive-adequacy-of-1b-model."><i class="fa fa-check"></i><b>3.7</b> Checking Descriptive Adequacy of 1b model.</a></li>
 <li class="chapter" data-level="3.8" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#model-comparison"><i class="fa fa-check"></i><b>3.8</b> Model Comparison</a><ul>
 <li class="chapter" data-level="3.8.1" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#assessing-descriptive-adequacy-graphically"><i class="fa fa-check"></i><b>3.8.1</b> Assessing Descriptive Adequacy Graphically</a></li>
+<li class="chapter" data-level="3.8.2" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#model-comparison-via-dic"><i class="fa fa-check"></i><b>3.8.2</b> Model comparison via DIC</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="example-2-single-threshold-parameter.html"><a href="example-2-single-threshold-parameter.html"><i class="fa fa-check"></i><b>4</b> Example 2 - Single threshold parameter</a></li>
@@ -190,7 +191,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>Forstmann et al looked at neural correlates of decision making under time pressure, with an aim to identify areas of the brain associated with speed-accuracy tradeoff. Imaging (fMRI) and behavioural data was collected; however, we will analyse behavioural data from the decision-making task only. In terms of modelling the data, Forstmann expected to find differences in thresholds (direction?) for each of the three speed-emphasis conditions. We have included the Forstmann et als data in the <code>PMwG</code> package as a data frame named <code>forstmann</code>. The sampler requires a data frame with a <b><code>subject</code></b> column. The subject column data type can be a factor or numeric.</p>
 <p>Table <a href="pmwg-sampler-and-sequential-sampling-models.html#tab:forsthead10">3.1</a> shows the first ten trials from the Forstmann dataset. Participants <code>(n = 19)</code> were asked to indicate whether a cloud of dots in a random-dot kinematogram (RDK) moved to the left or the right of the screen. The IV was a within-subject, speed-accuracy manipulation where, before each trial began, pariticipants were instructed to make their choice <i>accurately</i> <code>(condition = 1)</code>, with <i>urgency</i><code>(condition = 3)</code>or were presented with a <i>neutral</i> message <code>(condition = 2)</code>. Stimuli moved either <i>left</i> <code>(stim = 1)</code> or <i>right</i> <code>(stim = 2)</code> and responses were <i>left</i> <code>(resp = 1)</code> or <i>right</i> <code>(resp = 2)</code>. Response times <code>(rt)</code> were recorded in seconds. For more information about the design of the experiment please see <a href="https://www.pnas.org/content/105/45/17538.short">the original paper</a>.</p>
 <table>
-<caption><span id="tab:forsthead10">Table 3.1: </span>First 10 trials in Forstmann dataset. The <code>forstmann</code> dataset is an object/data frame</caption>
+<caption><span id="tab:forsthead10">Table 3.1: </span>First 10 trials in Forstmann dataset. The <code>forstmann</code> dataset is an data frame</caption>
 <thead>
 <tr class="header">
 <th align="center">subject</th>
@@ -739,7 +740,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><code>last_theta_sig_inv</code>: the inverse of the last sample for theta_sig (the variance-covariance matrix).</li>
 </ul>
 <p>You should save your sampled object at this point.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">save</span>(sampled, <span class="dt">file =</span> <span class="st">&quot;forst3b_sampled.RData&quot;</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">save</span>(sampled, <span class="dt">file =</span> <span class="st">&quot;forst3bSamp.RData&quot;</span>)</code></pre></div>
 </div>
 </div>
 <div id="genppdatafunc" class="section level2">
@@ -1128,10 +1129,10 @@ pp_var1b[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <sp
 </div>
 <div id="model-comparison" class="section level2">
 <h2><span class="header-section-number">3.8</span> Model Comparison</h2>
-<p>In this section, we are going to compare the three threshold model and the single threshold model for the forstmann (2008) data to evaluate which model is the most representative of the data. We begin by using a graphical method and compare plots.</p>
+<p>In this section, we are going to compare the three threshold model and the single threshold model for the forstmann (2008) data to determine which model best represents the data. We begin by using a graphical method i.e. plotting the modelled data against the observed data.</p>
 <div id="assessing-descriptive-adequacy-graphically" class="section level3">
 <h3><span class="header-section-number">3.8.1</span> Assessing Descriptive Adequacy Graphically</h3>
-<p>We can <i>“assess descriptive adequacy”</i> graphically by taking a look at the plots above to see which of our models best fits the data. For ease we’ve plotted them on the same plot below.</p>
+<p>We can <i>“assess descriptive adequacy”</i> graphically by plotting the observed data, three threshold and single threshold data on a single plot.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Subject x condition Q1, median and Q3 respone time + mean accuracy for Forstmann dataset</span>
 pq &lt;-<span class="st"> </span>forstmann <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">group_by</span>(condition, subject) <span class="op">%&gt;%</span>
@@ -1197,7 +1198,62 @@ av_pq<span class="op">$</span>acc &lt;-<span class="st"> </span><span class="dv"
 pp_var<span class="op">$</span>acc &lt;-<span class="st"> </span><span class="dv">100</span> <span class="op">*</span><span class="st"> </span>pp_var<span class="op">$</span>acc
 av_pq[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)] &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="op">*</span><span class="st"> </span>av_pq[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)]
 pp_var[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)] &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="op">*</span><span class="st"> </span>pp_var[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)]</code></pre></div>
-<p><img src="bookdown-demo_files/figure-html/ppdataplotModelComp-1.png" width="672" style="display: block; margin: auto;" /> The graphs show that values in the three threshold model (red circles) are more descriptively accurate than the single threshold model (blue circles).</p>
+<p><img src="bookdown-demo_files/figure-html/ppdataplotModelComp-1.png" width="672" style="display: block; margin: auto;" /> The plots show that values in the three threshold model (red circles) better describe the data than the single threshold model (blue circles).</p>
+</div>
+<div id="model-comparison-via-dic" class="section level3">
+<h3><span class="header-section-number">3.8.2</span> Model comparison via DIC</h3>
+<p>Another method of model comparison is using information criterions. Here we provide a function for calculating deviance information criterion (DIC).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pmwg_DIC &lt;-<span class="st"> </span><span class="cf">function</span>(sampled, <span class="dt">pD =</span> <span class="ot">FALSE</span>){
+  <span class="co"># Identify number of subjects</span>
+  nsubj &lt;-<span class="st"> </span><span class="kw">length</span>(<span class="kw">unique</span>(sampled<span class="op">$</span>data<span class="op">$</span>subject))
+ 
+  <span class="co"># Mean log-likelihood of the overall (sampled-stage) model, for each subject</span>
+  mean_ll &lt;-<span class="st"> </span><span class="kw">apply</span>(sampled<span class="op">$</span>samples<span class="op">$</span>subj_ll[, sampled<span class="op">$</span>samples<span class="op">$</span>stage <span class="op">==</span><span class="st"> &quot;sample&quot;</span>], <span class="dv">1</span>, mean)
+ 
+  <span class="co"># Mean of each parameter across iterations. </span>
+  <span class="co"># Keep dimensions for parameters and subjects</span>
+  mean_pars &lt;-<span class="st"> </span><span class="kw">t</span>(<span class="kw">apply</span>(sampled<span class="op">$</span>samples<span class="op">$</span>alpha, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, mean))
+ 
+  <span class="co"># Name &#39;mean_pars&#39; so it can be used by the log_like function</span>
+  <span class="kw">colnames</span>(mean_pars) &lt;-<span class="st"> </span>sampled<span class="op">$</span>par_names
+ 
+  <span class="co"># log-likelihood for each subject using their mean parameter vector</span>
+  mean_pars_ll &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">ncol</span>(mean_pars))
+  
+  data &lt;-<span class="st"> </span><span class="kw">transform</span>(sampled<span class="op">$</span>data, 
+                    <span class="dt">subject =</span> <span class="kw">match</span>(subject, <span class="kw">unique</span>(subject)))
+  
+  <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>nsubj) {
+    mean_pars_ll[j] &lt;-<span class="st"> </span>sampled<span class="op">$</span><span class="kw">ll_func</span>(mean_pars[j, ],
+                                       <span class="dt">data =</span> data[data<span class="op">$</span>subject <span class="op">==</span><span class="st"> </span>j,],
+                                       <span class="dt">sample =</span> <span class="ot">FALSE</span>)
+  }
+ 
+  <span class="co"># Effective number of parameters</span>
+  pD &lt;-<span class="st"> </span><span class="kw">sum</span>(<span class="op">-</span><span class="dv">2</span> <span class="op">*</span><span class="st"> </span>mean_ll <span class="op">+</span><span class="st"> </span><span class="dv">2</span> <span class="op">*</span><span class="st"> </span>mean_pars_ll)
+ 
+  <span class="co"># Deviance Information Criterion</span>
+  DIC &lt;-<span class="st"> </span><span class="kw">sum</span>(<span class="op">-</span><span class="dv">4</span> <span class="op">*</span><span class="st"> </span>mean_ll <span class="op">+</span><span class="st"> </span><span class="dv">2</span> <span class="op">*</span><span class="st"> </span>mean_pars_ll)
+ 
+  <span class="cf">if</span> (pD){
+    <span class="kw">return</span>(<span class="kw">c</span>(<span class="st">&quot;DIC &quot;</span> =<span class="st"> </span>DIC, <span class="st">&quot; Effective parameters&quot;</span> =<span class="st"> </span>pD))
+  }<span class="cf">else</span>{
+    <span class="kw">return</span>(DIC)
+  }
+   
+}</code></pre></div>
+<p>We calculate the DIC value for each model by passing the <code>sampled</code> object into the <code>pmwgDIC</code> function.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">load</span>(<span class="st">&quot;forstmann3b_sampled.RData&quot;</span>)
+sampled3b &lt;-<span class="st"> </span>sampled
+<span class="kw">pmwg_DIC</span>(<span class="dt">sampled =</span> sampled3b)</code></pre></div>
+<pre><code>             DIC   Effective parameters 
+     -15431.90924              41.38816 </code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">load</span>(<span class="st">&quot;forstmann1b_sampled.RData&quot;</span>)
+sampled1b &lt;-<span class="st"> </span>sampled
+<span class="kw">pmwg_DIC</span>(<span class="dt">sampled =</span> sampled1b)</code></pre></div>
+<pre><code>             DIC   Effective parameters 
+    -10818.301739              5.489469 </code></pre>
+<p>The three threshold model has a lower DIC value than the single threshold model, indicating a better explanation of the data. Based on the graphical evidence and the DIC, we can be confident that the three threshold model (i.e the model where threshold is varied with speed and accuracy instructions) is a better fit to our data than the single threshold model.</p>
 
 </div>
 </div>
