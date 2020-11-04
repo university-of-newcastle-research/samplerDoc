@@ -132,7 +132,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="3" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html"><i class="fa fa-check"></i><b>3</b> PMwG sampler and sequential sampling models</a><ul>
 <li class="chapter" data-level="3.1" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#description-of-forstmann-experiment"><i class="fa fa-check"></i><b>3.1</b> Description of Forstmann experiment</a></li>
 <li class="chapter" data-level="3.2" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#linear-ballistic-accumulator-parameters"><i class="fa fa-check"></i><b>3.2</b> Linear Ballistic Accumulator Parameters</a></li>
-<li class="chapter" data-level="3.3" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#writing-the-log-likelihood-function"><i class="fa fa-check"></i><b>3.3</b> Writing the log-likelihood function</a><ul>
+<li class="chapter" data-level="3.3" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#writellFunc"><i class="fa fa-check"></i><b>3.3</b> Writing the log-likelihood function</a><ul>
 <li class="chapter" data-level="3.3.1" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#fstLBALL"><i class="fa fa-check"></i><b>3.3.1</b> Fast LBA Log-likelihood Function</a></li>
 </ul></li>
 <li class="chapter" data-level="3.4" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#pmwg-framework"><i class="fa fa-check"></i><b>3.4</b> PMwG Framework</a><ul>
@@ -149,6 +149,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="3.8" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#model-comparison"><i class="fa fa-check"></i><b>3.8</b> Model Comparison</a><ul>
 <li class="chapter" data-level="3.8.1" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#assessing-descriptive-adequacy-graphically"><i class="fa fa-check"></i><b>3.8.1</b> Assessing Descriptive Adequacy Graphically</a></li>
 <li class="chapter" data-level="3.8.2" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#model-comparison-via-dic"><i class="fa fa-check"></i><b>3.8.2</b> Model comparison via DIC</a></li>
+</ul></li>
+<li class="chapter" data-level="3.9" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#troubleshooting-the-lba-log-likelihood-function"><i class="fa fa-check"></i><b>3.9</b> Troubleshooting the LBA log-likelihood function</a><ul>
+<li class="chapter" data-level="3.9.1" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#test-one-do-changes-in-parameter-values-result-in-changes-in-the-returned-log-likelihood"><i class="fa fa-check"></i><b>3.9.1</b> Test one: Do changes in parameter values result in changes in the returned log-likelihood?</a></li>
+<li class="chapter" data-level="3.9.2" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#testing-whether-true-x-values-have-the-highest-likelihood"><i class="fa fa-check"></i><b>3.9.2</b> Testing whether true-x values have the highest likelihood</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="example-2-single-threshold-parameter.html"><a href="example-2-single-threshold-parameter.html"><i class="fa fa-check"></i><b>4</b> Example 2 - Single threshold parameter</a></li>
@@ -286,7 +290,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><code>sv</code> is the standard deviation of drift rate</li>
 </ul>
 </div>
-<div id="writing-the-log-likelihood-function" class="section level2">
+<div id="writellFunc" class="section level2">
 <h2><span class="header-section-number">3.3</span> Writing the log-likelihood function</h2>
 <p>Just as we did with the SDT example, we’ll write a slow and a fast log-likelihood function. The runtime difference is caused by calling the <code>dLBA</code> function line-by-line for the slow log-likelihood and calling the <code>dLBA</code> function once for all the data in the fast log-likelihood function. When writing a new log-likelihood function, we suggest starting with a slow, line-by-line function for easier debugging.</p>
 <p>The LBA log-likelihood function takes three arguments:</p>
@@ -1254,6 +1258,109 @@ sampled1b &lt;-<span class="st"> </span>sampled
 <pre><code>             DIC   Effective parameters 
     -10818.301739              5.489469 </code></pre>
 <p>The three threshold model has a lower DIC value than the single threshold model, indicating a better explanation of the data. Based on the graphical evidence and the DIC, we can be confident that the three threshold model (i.e the model where threshold is varied with speed and accuracy instructions) is a better fit to our data than the single threshold model.</p>
+</div>
+</div>
+<div id="troubleshooting-the-lba-log-likelihood-function" class="section level2">
+<h2><span class="header-section-number">3.9</span> Troubleshooting the LBA log-likelihood function</h2>
+<p>Here we show two ways to test your log-likelihood function. This method is not fail-safe, however, it allows you to establish whether your function operates as intended.</p>
+<p>We will use log-likelihood functions for the three threshold LBA model</p>
+<div id="test-one-do-changes-in-parameter-values-result-in-changes-in-the-returned-log-likelihood" class="section level3">
+<h3><span class="header-section-number">3.9.1</span> Test one: Do changes in parameter values result in changes in the returned log-likelihood?</h3>
+<p>We will test our log-likelihood functions by passing a parameter vector (<code>x</code>) with plausible, arbitrary values, and then passing a second parameter vector with different plausible arbitrary values. We should see the log-likelihood value change with the change in parameter values. We may also wish to check that unrealistic parameter values are effectively dealt with (for example, t0 should not be able to be greater than any RTs).</p>
+<p>Let’s compare the output from the trialwise log-likelihood function in section <a href="pmwg-sampler-and-sequential-sampling-models.html#writellFunc">3.3</a> and the fast log-likelihood function in section <a href="pmwg-sampler-and-sequential-sampling-models.html#fstLBALL">3.3.1</a> :</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">c</span>(<span class="dt">A =</span> <span class="dv">2</span>,
+           <span class="dt">b.1 =</span> <span class="dv">2</span>, 
+           <span class="dt">b.2 =</span> <span class="dv">1</span>, 
+           <span class="dt">b.3 =</span> .<span class="dv">5</span>,
+           <span class="dt">vc =</span> <span class="dv">4</span>,
+           <span class="dt">ve =</span> <span class="dv">2</span>,
+           <span class="dt">t0 =</span> .<span class="dv">18</span>
+           )
+         )</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tw_lba_ll</span>(x, forstmann, <span class="dt">sample =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<pre><code>## [1] -44505.89</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">fast_lba_ll3b</span>(x, forstmann, <span class="dt">sample =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<pre><code>## [1] -44505.89</code></pre>
+<p>Great! The log-likelihoods are the same. Now let’s change the parameter values, in particular, the three threshold values, and see if the log-likelihood changes.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">c</span>(<span class="dt">A =</span> <span class="dv">2</span>,
+           <span class="dt">b.1 =</span> <span class="dv">1</span>,
+           <span class="dt">b.2 =</span> <span class="dv">3</span>,
+           <span class="dt">b.3 =</span> <span class="dv">3</span>,
+           <span class="dt">vc =</span> <span class="dv">4</span>,
+           <span class="dt">ve =</span> <span class="dv">2</span>,
+           <span class="dt">t0 =</span> .<span class="dv">18</span>
+           )
+         )</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tw_lba_ll</span>(x, forstmann, <span class="dt">sample =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<pre><code>## [1] -202667.3</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">fast_lba_ll3b</span>(x, forstmann, <span class="dt">sample =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<pre><code>## [1] -202667.3</code></pre>
+<p>These log-likelihoods are lower than the previous two, so the parameter (<code>x</code>) values are less accurate given the data. Notice how we can also use this process to check the fast, efficient log-likelihood function against the trialwise function. Given the same data and parameter values - they should give the same output, as we see above.</p>
+<p>NOTE: We only changed some named (<code>x</code>) parameter values. You could thoroughly check these functions by changing one parameter value at a time and see if there is a change in the log-likelihood.</p>
+<p>This is a good first check to see if our log-likelihood is behaviing as it should; changing log-likelihood value with changing parameter values. However, our log-likelihood functions may contain inconsistencies within, which leads us onto check 2.</p>
+</div>
+<div id="testing-whether-true-x-values-have-the-highest-likelihood" class="section level3">
+<h3><span class="header-section-number">3.9.2</span> Testing whether true-x values have the highest likelihood</h3>
+<p>A more comprehensive way to test your log-likelihood function is to generate ‘synthetic’ data for which you know the true data generating values. This is a form of ‘parameter recovery’, where you run the sampler on generated data and plot the log-likelihood change as x values move away from your ‘true’ x-value. If the true-x has the highest log-likelihood, then it is likely that your function is working as intended.</p>
+<p>There are several steps to this method:</p>
+<ol style="list-style-type: decimal">
+<li>Assign values to parameters of the model - these are known as the generating values. <b>NOTE</b>: ensure these are sensible values - for example in the LBA, we want the drift for the mismatch/error accumulator (<code>ve</code>) to be smaller than the match/correct accumulator (<code>vc</code>), and <code>t0</code> should not be too large etc.</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">true.x &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">c</span>(<span class="dt">A =</span> <span class="dv">2</span>,
+                <span class="dt">b.1 =</span> <span class="dv">2</span>,
+                <span class="dt">b.2 =</span> <span class="dv">1</span>,
+                <span class="dt">b.3 =</span> .<span class="dv">5</span>,
+                <span class="dt">vc =</span> <span class="dv">4</span>,
+                <span class="dt">ve =</span> <span class="dv">2</span>,
+                <span class="dt">t0 =</span> .<span class="dv">18</span>
+                )
+              )</code></pre></div>
+<ol start="2" style="list-style-type: decimal">
+<li>Generate data using your log-likelihood function, where <code>sample = TRUE</code>, giving the model the generating parameter values.</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">test.data &lt;-<span class="st"> </span><span class="kw">tw_lba_ll</span>(<span class="dt">x =</span> true.x,
+                       <span class="dt">data =</span> data,
+                       <span class="dt">sample =</span> <span class="ot">TRUE</span>
+                       )</code></pre></div>
+<pre><code>## Warning in rnorm(length(ind.no)): &#39;.Random.seed[1]&#39; is not a valid integer, so
+## ignored</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>Generate profile plots to compare the log-likelihood of the true.x values against nearby values for your ‘synethetic’ data. You can write your own function for this, or use the function below.</li>
+</ol>
+<p>The plotting function we use here takes five arguments:</p>
+<ul>
+<li><code>x</code> is a vector of named parameter values.</li>
+<li><code>num.values</code> specifies how many parameter x-values we will assess to compare to compare to the true data-generating parameter value. Default is 9.</li>
+<li><code>data</code> is the synthetic data</li>
+<li><code>dimensions</code> specifies the layout for the plots we will generate. In this example, we have 7 parameters, so I will set my dimensions to be 4 rows with 2 columns.</li>
+<li><code>ll_func</code> specifies the name of the log-likelihood function you have created. *<code>server</code> should only be set to true if running on a device with multiple cores. This argument speeds up computational efficiency.</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(parallel)
+
+test.likelihood &lt;-<span class="st"> </span><span class="cf">function</span>(x,<span class="dt">num.values=</span><span class="dv">9</span>,fake.data,dimensions,ll_func,<span class="dt">server=</span><span class="ot">FALSE</span>,...) {
+  pars =<span class="st"> </span><span class="kw">names</span>(x)
+  x.tmp =<span class="st"> </span>x
+  sequence &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dt">from =</span><span class="op">-</span>.<span class="dv">22</span>, <span class="dt">to =</span> .<span class="dv">22</span>, <span class="dt">length.out =</span> num.values)
+  op &lt;-<span class="st"> </span><span class="kw">par</span>(<span class="dt">mfrow =</span> dimensions)
+  par_likelihoods =<span class="st"> </span><span class="kw">lapply</span>(<span class="kw">setNames</span>(pars,pars),<span class="cf">function</span>(p){
+    testvalues =<span class="st"> </span>sequence<span class="op">+</span>true.x[[p]]
+    tmp &lt;-<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">lapply</span>(testvalues,<span class="cf">function</span> (i){ <span class="co">#for each test vlaue, it will apply the function where i = testvalue.</span>
+    x.tmp[[p]] =<span class="st"> </span>i
+    <span class="kw">ll_func</span>(<span class="dt">x=</span>x.tmp,<span class="dt">data=</span>fake.data)
+    }))
+    
+    <span class="kw">plot</span>(<span class="dt">x=</span>testvalues,
+         <span class="dt">y=</span>tmp,
+         <span class="dt">type=</span><span class="st">&quot;b&quot;</span>,
+         <span class="dt">main=</span> p,
+         <span class="dt">xlab =</span> <span class="st">&quot;log par values&quot;</span>,
+         <span class="dt">ylab =</span> <span class="st">&quot;loglikelihood&quot;</span>,
+         ...)
+    <span class="kw">abline</span>(<span class="dt">v =</span> true.x[[p]], <span class="dt">col =</span> <span class="st">&quot;red&quot;</span>)
+    <span class="kw">return</span>(tmp)})
+  <span class="kw">par</span>(op)
+  <span class="kw">return</span>(par_likelihoods)
+}</code></pre></div>
 
 </div>
 </div>
