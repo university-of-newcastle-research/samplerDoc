@@ -534,7 +534,8 @@ In the next section, we will use the posterior predictive data to assess descrip
 Now we will plot the posterior predictive data against the real data. This may only be useful for some users, as what you do with your data is domain specific.
 
 ```{r plotppdata3b, include=TRUE}
-# Subject x condition Q1, median and Q3 respone time + mean accuracy for Forstmann dataset
+# Subject x condition Q1, median and Q3 respone time + mean accuracy 
+# Forstmann dataset
 pq3b <- forstmann %>% 
   group_by(condition, subject) %>% 
   summarise(Q1 = quantile(rt, prob = 0.25),
@@ -835,7 +836,8 @@ load("ppdata1b.RData")
 ```
 
 ```{r plotppdata1b, include=TRUE}
-# Subject x condition Q1, median and Q3 respone time + mean accuracy for Forstmann dataset
+# Subject x condition Q1, median and Q3 respone time + mean accuracy
+# Forstmann dataset
 pq1b <- forstmann %>%
   group_by(condition, subject) %>%
   summarise(Q1 = quantile(rt, prob = 0.25),
@@ -990,7 +992,8 @@ In this section, we are going to compare the three threshold model and the singl
 We can <i>"assess descriptive adequacy"</i> graphically by plotting the observed data, three threshold and single threshold data on a single plot. 
 
 ```{r ppdataModelComp, include=TRUE}
-# Subject x condition Q1, median and Q3 respone time + mean accuracy for Forstmann dataset
+# Subject x condition Q1, median and Q3 respone time + mean accuracy 
+# Forstmann data
 pq <- forstmann %>%
   group_by(condition, subject) %>%
   summarise(Q1 = quantile(rt, prob = 0.25),
@@ -1000,7 +1003,8 @@ pq <- forstmann %>%
             .groups = "keep"
             )
 
-# Subject x condition Q1, median and Q3 respone time for posterior predictive data - 3b model
+# Subject x condition Q1, median and Q3 respone time for posterior predictive data
+#3b model
 pp_pq3b <- pp_data_3b %>%
   group_by(condition, pp_iter, subject) %>%
   summarise(Q1 = quantile(rt, prob = 0.25),
@@ -1009,7 +1013,8 @@ pp_pq3b <- pp_data_3b %>%
             acc = mean(ifelse(stim == resp, 1, 0)),
             .groups = "keep"
             )
-# Subject x condition Q1, median and Q3 respone time for posterior predictive data - 1b model
+# Subject x condition Q1, median and Q3 respone time for posterior predictive data 
+#1b model
 pp_pq1b <- pp_data_1b %>%
   group_by(condition, pp_iter, subject) %>%
   summarise(Q1 = quantile(rt, prob = 0.25),
@@ -1019,7 +1024,7 @@ pp_pq1b <- pp_data_1b %>%
             .groups = "keep"
             )
 
-# Combine data with posterior predictive data for 1b and 3b models and add data source
+# Combine data with posterior predictive data for 1b and 3b models + add data source
 pqall <- bind_rows(cbind(src = rep("data", nrow(pq)), pq),
                 cbind(src = rep("3b", nrow(pp_pq3b)), pp_pq3b),
                 cbind(src = rep("1b", nrow(pp_pq1b)), pp_pq1b)
@@ -1174,7 +1179,9 @@ pmwg_DIC <- function(sampled, pD = FALSE){
   nsubj <- length(unique(sampled$data$subject))
  
   # Mean log-likelihood of the overall (sampled-stage) model, for each subject
-  mean_ll <- apply(sampled$samples$subj_ll[, sampled$samples$stage == "sample"], 1, mean)
+  mean_ll <- apply(sampled$samples$subj_ll[, sampled$samples$stage == "sample"],
+                   1,
+                   mean)
  
   # Mean of each parameter across iterations. 
   # Keep dimensions for parameters and subjects
@@ -1244,16 +1251,16 @@ pmwg_DIC(sampled = sampled1b)
 
 The three threshold model has a lower DIC value than the single threshold model, indicating a better explanation of the data. Based on the graphical evidence and the DIC, we can be confident that the three threshold model (i.e the model where threshold is varied with speed and accuracy instructions) is a better fit to our data than the single threshold model. 
 
-## Troubleshooting the LBA log-likelihood function
+## Checking the LBA log-likelihood function
 
 Here we show two ways to test your log-likelihood function. This method is not fail-safe, however, it allows you to establish whether your function operates as intended. 
 
-We will use log-likelihood functions for the three threshold LBA model
+We will use the three threshold LBA model log-likelihood function in the following examples. 
 
 
-### Test one: Do changes in parameter values result in changes in the returned log-likelihood? 
+### Test one: Do changes in parameter values cause changes in the returned log-likelihood? 
 
-We will test our log-likelihood functions by passing a parameter vector (`x`) with plausible, arbitrary values, and then passing a second parameter vector with different plausible arbitrary values. We should see the log-likelihood value change with the change in parameter values. We may also wish to check that unrealistic parameter values are effectively dealt with (for example, t0 should not be able to be greater than any RTs). 
+We will test our log-likelihood functions by passing a parameter vector (`x`) of plausible, arbitrary values, followed by a second parameter vector with different, plausible, arbitrary values. If the log-likehood functions are functioning correctly, we should see the log-likelihood value change with the change in parameter values. We may also wish to check that unrealistic parameter values are effectively dealt with (for example, `t0` should not be able to be greater than any RTs). 
 
 Let's compare the output from the trialwise log-likelihood function in section \@ref(writellFunc) and the fast log-likelihood function in section \@ref(fstLBALL) :
 ```{r llTest, include=TRUE}
@@ -1276,8 +1283,8 @@ tw_lba_ll(x, forstmann, sample = FALSE)
 fast_lba_ll3b(x, forstmann, sample = FALSE)
 ```
 
-Great! The log-likelihoods are the same.
-Now let's change the parameter values, in particular, the three threshold values, and see if the log-likelihood changes. 
+Great -- the log-likelihoods are the same.
+Now let's change the parameter values, in particular, the three threshold parameters, and see if the log-likelihood changes. 
 
 ```{r llTestChange, include=TRUE}
 x <- log(c(A = 2,
@@ -1299,11 +1306,11 @@ tw_lba_ll(x, forstmann, sample = FALSE)
 fast_lba_ll3b(x, forstmann, sample = FALSE)
 ```
 
-These log-likelihoods are lower than the previous two, so the parameter (`x`) values are less accurate given the data. Notice how we can also use this process to check the fast, efficient log-likelihood function against the trialwise function. Given the same data and parameter values - they should give the same output, as we see above.
+These log-likelihoods are lower than the previous two, so the parameter (`x`) values are less accurate given the data. Notice how we can also use this process to check the fast, efficient log-likelihood function (`fast_lba_ll3b`) against the trialwise function (`tw_lba_ll`. Given the same data and parameter values - they should give the same output, as we see above.
 
-NOTE: We only changed some named (`x`) parameter values. You could thoroughly check these functions by changing one parameter value at a time and see if there is a change in the log-likelihood. 
+<b>Not</b>: We only changed some named (`x`) parameter values. You could perform a thorough check by changing one parameter value at a time and see if there is a change in the log-likelihood. 
 
-This is a good first check to see if our log-likelihood is behaviing as it should; changing log-likelihood value with changing parameter values. However, our log-likelihood functions may contain inconsistencies within, which leads us onto check 2.
+This is a good first check to see if our log-likelihood is behaving as it should; changing log-likelihood value with changing parameter values. However, our log-likelihood functions may contain inconsistencies, which leads us onto our second check.
 
 ### Testing whether true-x values have the highest likelihood
 
@@ -1311,7 +1318,7 @@ A more comprehensive way to test your log-likelihood function is to generate 'sy
 
 There are several steps to this method:
 
- 1. Assign values to parameters of the model - these are known as the generating values. <b>NOTE</b>: ensure these are sensible values - for example in the LBA, we want the drift for the mismatch/error accumulator (`ve`) to be smaller than the match/correct accumulator (`vc`), and `t0` should not be too large etc. 
+ 1. Assign values to parameters of the model - these are known as the generating values. <br><b>Note</b>: ensure these are sensible values - for example in the LBA, we want the drift rate for the mismatch/error accumulator (`ve`) to be smaller than the match/correct accumulator (`vc`) and the non-decision time parameter `t0` should not be too large. 
 
 ```{r check2Par,include=TRUE}
 true.x <- log(c(A = 2,
@@ -1325,7 +1332,7 @@ true.x <- log(c(A = 2,
               )
 ```
 
- 2. Generate data using your log-likelihood function, where `sample = TRUE`, giving the model the generating parameter values.
+ 2.  Pass the generating parameter values (`true.x`) into the log-likelihood and generate data using your log-likelihood function, where `sample = TRUE`.
 ```{r testdatacheck2, include=TRUE}
 test.data <- tw_lba_ll(x = true.x,
                        data = data,
@@ -1333,45 +1340,177 @@ test.data <- tw_lba_ll(x = true.x,
                        )
 ```
 
- 3. Generate profile plots to compare the log-likelihood of the true.x values against nearby values for your 'synethetic' data. You can write your own function for this, or use the function below. 
+ 3. Generate profile plots to compare the log-likelihood of the `true.x` parameter values against nearby values in the 'synethetic' data. You can write your own function for this, or use the function below. 
 
-The plotting function we use here takes five arguments: 
+Our plotting function takes five arguments: 
 
 * `x` is a vector of named parameter values.
-* `num.values` specifies how many parameter x-values we will assess to compare to compare to the true data-generating parameter value. Default is 9.
-* `data` is the synthetic data
-* `dimensions` specifies the layout for the plots we will generate. In this example, we have 7 parameters, so I will set my dimensions to be 4 rows with 2 columns.
+* `n.values` specifies how many parameter x-values we will assess to compare to compare to the true data-generating parameter value. Default is 9.
+* `synth.data` is the synthetic data
+* `dims` specifies the layout for the plots we will generate. In this example, we have 7 parameters, so I will set my dimensions to be 4 rows with 2 columns.
 * `ll_func` specifies the name of the log-likelihood function you have created.
-*`server` should only be set to true if running on a device with multiple cores. This argument speeds up computational efficiency.
+* `server` should only be set to true if running on a device with multiple cores. This argument speeds up computational efficiency.
  
 
 ```{r testllfun,include=TRUE}
 
 library(parallel)
 
-test.likelihood <- function(x,num.values=9,fake.data,dimensions,ll_func,server=FALSE,...) {
-  pars = names(x)
-  x.tmp = x
-  sequence <- seq(from =-.22, to = .22, length.out = num.values)
-  op <- par(mfrow = dimensions)
-  par_likelihoods = lapply(setNames(pars,pars),function(p){
-    testvalues = sequence+true.x[[p]]
-    tmp <- unlist(lapply(testvalues,function (i){ #for each test vlaue, it will apply the function where i = testvalue.
-    x.tmp[[p]] = i
-    ll_func(x=x.tmp,data=fake.data)
+test.likelihood <- function(x, 
+                            n.values = 9,
+                            synth.data,
+                            dims,
+                            ll_func,
+                            server = FALSE,...) {
+  pars <- names(x)
+  x.tmp <- x
+  sequence <- seq(from = -.22, to = .22,
+                  length.out = n.values)
+  op <- par(mfrow = dims)
+  par_likelihoods <- lapply(setNames(pars, pars), function(p){
+    testvalues <- sequence + true.x[[p]]
+    tmp <- unlist(lapply(testvalues, function (i){ 
+      #for each test vlaue, it will apply the function where i = testvalue.
+    x.tmp[[p]] <- i
+    ll_func(x = x.tmp, data = synth.data)
     }))
     
-    plot(x=testvalues,
-         y=tmp,
-         type="b",
-         main= p,
+    plot(x = testvalues,
+         y = tmp,
+         type = "b",
+         main = p,
          xlab = "log par values",
-         ylab = "loglikelihood",
+         ylab = "log-likelihood",
          ...)
     abline(v = true.x[[p]], col = "red")
     return(tmp)})
   par(op)
   return(par_likelihoods)
 }
+```
+
+Whilst we used the trialwise log-likelihood function to generate data, we will use the fast log-likelihood function in this "parameter recovery" simulation for computational efficiency. 
+
+```{r llPlots, include=TRUE}
+ll_plots <- test.likelihood(x = true.x,
+                                    n.values = 9,
+                                    synth.data = test.data,
+                                    dims = c(2, 2),
+                                    ll_func = fast_lba_ll3b
+                                    ) 
+```
+
+The red line indicates the true generating parameter value. <b> What is correct about these plots???</b>
+
+Note: The plots above do not tell you if your log-likelihood is correct in the sense that you have written a log-likelihood for the model you actually want to test. The plots allow you to determine if your function is functioning as intended.
+
+<b> Explanation needs to be improved - more detail required. the second sentence seems tacked on.</b>
+Below is an example output from a function where there is a potential error. Another potential error is where the lines are flat. 
+
+```{r dodgyll, include=FALSE}
+
+incorrect_lba_ll <- function(x, data, sample = FALSE) {
+  x <- exp(x)
+  if (any(data$rt < x["t0"])) {
+    return(-1e10)
+  }
+  
+  if (sample) {
+    data$rt <- rep(NA, nrow(data))
+    data$resp <- rep(NA, nrow(data))
+  } else {
+    out <- numeric(nrow(data))
+  }
+  
+  if (sample) { 
+  for (i in 1:nrow(data)) {
+    A = x["A"]
+    b = x[paste0("b.", data$condition[i])] + A
+    vc = x["vc"]
+    ve = x["ve"]
+    t0 = x["t0"]
+    s = c(1, 1)
+    if (data$stim[i] == 1) {
+      vs = c(vc, ve)
+    } else {
+      vs = c(ve, vc)
+    }
+  
+      tmp <-
+        rLBA(
+          n = 1,
+          A = A,
+          b = b,
+          mean_v = vs,
+          sd_v = s,
+          t0 = t0,
+          dist = "norm",
+          silent = TRUE
+        )
+      data$rt[i] <- tmp$rt
+      data$resp[i] <- tmp$resp
+    } 
+  } else {
+    
+  all_b = numeric(nrow(data))
+  vlist = list("v.1" = numeric(nrow(data)), "v.2" = numeric(nrow(data)))
+  
+  
+  stim = levels(data$stim)
+  con = levels(data$condition)
+  
+  for (c in con) {
+    for (s in stim) {
+      use <- data$condition == c &
+        data$stim == s
+      if (any(use)) {
+        bs = x[paste0("b.", c)] + x["A"]
+        all_b[use] = bs
+        vc = x["vc"]
+        ve = x["ve"]
+        if (s == 1) {
+          vlist$v.1[use] = ve
+          vlist$v.2[use] = vc
+        } else {
+          vlist$v.1[use] = vc
+          vlist$v.2[use] = ve
+        }
+      }
+    }
+  }
+    
+   out <- dLBA(
+      rt = data$rt,
+      response = data$resp,
+      A = x["A"],
+      b =  all_b,
+      mean_v = vlist,
+      sd_v = c(1, 1),
+      t0 = x["t0"],
+      distribution = "norm",
+      silent = TRUE
+    )
+  
+  }
+  
+  if (sample) {
+    return(data)
+  } else {
+    bad <- (out < 1e-10) | (!is.finite(out))
+    out[bad] <- 1e-10
+    out <- sum(log(out))
+    return(out)
+  }
+}
 
 ```
+
+```{r dodgellplots, echo=FALSE}
+incorrect.ll.plots <- test.likelihood(x = true.x,
+                                      n.values = 9,
+                                      synth.data = test.data,
+                                      dims = c(2,2),
+                                      ll_func = incorrect_lba_ll
+                                      ) 
+```
+
