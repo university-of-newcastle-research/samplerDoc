@@ -1,13 +1,96 @@
-# Linear Ballistic Accumulator, a more complicated design example {.tabset .tabset-fade}
+# PMwG sampler with the Linear Ballistic Accumulator and a complex experiment design {.tabset .tabset-fade}
 
-Previously, we demonstrated how the PMwG sampler can be used for a lexical decision task (LINK) in a signal detection framework to detect if there are ....???<!-- Question for Reilly, what was the purpose of this SDT example--> However, the signal detection framework fails to consider response time, and the join distribution in response time and accuracy. If you wanted to consider RT, you could instead use LBA model, instead of an SDT model. 
+In [chapter 1](#sdtOutline) we demonstrated how the PMwG sampler can be used to model a lexical decision task in a signal detection framework. However, the SDT framework does not allow us to consider response time (RT) and the join distribution of RT and accuracy. In this example we will expand on what was covered in chapter 1, by fitting the LBA - a more complex model - to the Wagenmakers 2008 data. <!-- see IS square paper experiment 2-->
 
-In this example, we will expand on what was covered in chapter 1, by fitting the LBA - a more complex model - to the wagenmakers 2008 data. <!-- see IS square paper experiment 2-->
-
-A description of this experiment and data is covered in chapter 1 (LINK to chapter 1 description). This experiment has a more complex design than the Forstman (2008) example from the previous chapter, and the LBA is a more complex model than SDT. As a result, the loglikelihood function will be more complex, however, you'll notice that every step we take, is the same steps we followed in previous chapters with simpler data sets, or simpler model fits. 
-
-First, we will make a log-likelihood function, perform some checks on the likelihood function and run the PMwG sampler. Following this we will generate posterior predictive data to look at goodness of fit, as well as use DIC as a model comparison method. Finally, we will look at chain convergence.
-
+A description of the Wagenmakers experiment and data is covered in [chapter 1](#sdtOutline). This experiment is more complicated than the Forstmann example in [chapter 3](#forstmannChapter), and the LBA is also more complicated than the SDT model. As a result, the log-likelihood function for this exampl will be more complex, however, you'll notice that every step we take closely follows those taken in previous chapters with simpler data sets and simpler models. 
 
 <!--
 - These are data reilly fit in chap 1 with sig detection theory. When fit with signal detection, it was just prob. My fit with lba has to do a worse job of fitting probabilities, because it has to manage tnesion between fitting probs and rts. Adding rts has to give worse fit, but the tradeoff is that it allows us to look at the...-->
+
+
+```{r chpt4data, include = FALSE}
+load("wagenmakers_2008.RData")
+```
+
+## Writing the LBA log-likelihood function for the Wagenmakers data set 
+
+Here we've written a slow, but easy to follow log-likelihood function. The log-likelihood function steps through the data line by line (i.e. trial by trial) and gives a likelihood value for each line under `x` parameters. As mentioned in previous chapters, we encourage those who have experience writing log-likelihood functions to write a computationally efficient function or use our '<b><i>fast</i></b>function "HERE". For those new to modelling, the trialwise function directly below is easier to follow, debug and is less likely to result in errors. 
+
+The structure of our log-likelihood function follows those in the preceding chapters, so we will only step through the parts that differ e.g. the different experimental design and the different hypothesis we have about which parameters are being influenced by the experimental manipulations.
+
+
+Let's begin by installing `rtdists` package...
+
+```{r loadrtdists}
+library(rtdists)
+```
+
+and now a complete trialwise (slow) log-likelihood function.
+```{r wagtwll, attr.source = '.numberLines', include=TRUE }
+tw_lba_ll <- function(x, data, sample = FALSE) {
+  x <- exp(x)
+  if (any(data$rt < x["t0"])) {
+    return(-1e10)
+  }
+  
+  if (sample) {
+    data$rt <- rep(NA, nrow(data))
+    data$resp <- rep(NA, nrow(data))
+  } else {
+    out <- numeric(nrow(data))
+  }
+  
+  for (i in 1:nrow(data)) {
+    A = x["A"]
+    b.w = x[paste0("b.", data$prop[i], ".W")] + A
+    b.nw = x[paste0("b.", data$prop[i], ".NW")] + A
+    bs = list(b.nw, b.w)
+    v.w = x[paste0("v.", data$freq[i], ".W")]
+    v.nw = x[paste0("v.", data$freq[i], ".NW")]
+    vs = c(v.nw, v.w)
+    t0 = x["t0"]
+    s = c(1, 1)
+    
+    if (sample) {
+      tmp <- rLBA(n = 1,
+                  A = A,
+                  b = bs,
+                  mean_v = vs,
+                  sd_v = s,
+                  t0 = t0,
+                  dist = "norm",
+                  silent = TRUE
+      )
+      data$rt[i] <- tmp$rt
+      data$resp[i] <- tmp$resp
+    } else {
+      out[i] <-
+        dLBA(rt = data$rt[i],
+             response = data$resp[i],
+             A = A,
+             b = bs,
+             mean_v = vs,
+             sd_v = s,
+             t0 = t0,
+             dist = "norm",
+             silent = TRUE
+        )
+    }
+  }
+  if (sample) {
+    return(data)
+  } else {
+    bad <- (out < 1e-10) | (!is.finite(out))
+    out[bad] <- 1e-10
+    out <- sum(log(out))
+    return(out)
+  }
+}
+```
+
+We begin from the `for` loop on line 14. In this `for` loop, we assign the values (`x`) of each parameter in our model, for each row in the dataset, so that any conditional parameters (for example `b` in our model) are correctly assigned.
+
+For the Wagenmakers data set, we want to calculate the density function for a model that has two threshold (`b`) parameters for each condition in the `proportion factor` (`W`: 75% stimuli words, `NW`: 75% stimuli nonwords), but also allows threshold to vary with `response` (i.e., the accumulator for a `word` response, and the accumulator for the `non-word` response), we include lines 14 - 23. These lines take into account the two conditions in the `proportion` factor by pasting `"b."`, the `condition` (`W`, `NW`) that is on line [i], and whether it is a threshold for the <i>word accumulator</i> `".W"` or <i>nonword accumulator</i> `".NW"`. Again, we add the sart point parameter `A` value to each threshold parameter so that threshold is greater than the start point value. 
+
+We also hypothesised that <i> drift rate</i>  would vary with `word frequency` (`hf`,`lf`,`vlf`,`nw`), so on lines 19 and 20 we allow drift rate for response `word` (`v.w`) to vary with the levels of word frequency, by pasting the `"v."` with the word frequency on line [i], and with the accumulator (`".W"` or `".NW"`). You'll notice that in this example, we no longer have a drift rate for the correct response (vc) or incorrect response (ve), instead, we have a drift rate for responding `word` (`v.w`) and `non-word` (`v.nw`). This is just a different way of coding drift rate, and is our preferred way.
+On line x we have coded the vs vector to have v.nw first and v.w second. 

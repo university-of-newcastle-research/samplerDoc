@@ -10,7 +10,7 @@ pre[class] {
 }
 ```
 
-Here we demonstrate how to use the PMwG sampler package to run a simple signal detection theory (SDT) analysis on a lexical decision task.  We recognise that it is unnecessary to use the sampler package for a simple analysis such as this; however, we hope this example demonstrates the usefulness of the PMwG sampler package.  
+Here we demonstrate how to use the PMwG sampler package to run a simple signal detection theory (SDT) analysis on data from a lexical decision task.  We recognise that it is unnecessary to use the sampler package for a simple analysis such as this; however, we hope this SDT example demonstrates the practicality of the PMwG sampler package.  
 
 ### Signal Detection Theory analysis of lexical decision task {#sdtOutline}
 
@@ -129,13 +129,13 @@ sum(out)
 
 ## Testing the SDT log-likelihood function
 
-Before we run the log-likelihood function, we must create a parameter vector `pars` containing the same parameter names used in our log-likelihood function above i.e. we name the criterion `C` and d-prime parameter `d`. While we're testing the log-likelihood we assign arbitrary values to each parameter. 
+Before we run the log-likelihood function, we must create a parameter vector `pars` containing the same parameter names used in our log-likelihood function above i.e. we name the criterion `C` and d-prime parameter `d`. While we're testing the log-likelihood, we assign arbitrary values to each parameter. 
 
 ```{r, setupPars}
 pars <- c(C = 0.8, d = 2)
 ```
 
-We can test run our log-likelihood function by passing in the parameter vector `pars` and the fabricated dataset we created above `fab_data`. 
+We can test run our log-likelihood function by passing the parameter vector `pars` and the fabricated dataset we created above `fab_data`. 
 
 ```{r simple-SDT, include=FALSE}
 SDT_ll <- function(x, data, sample = FALSE){

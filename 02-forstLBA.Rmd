@@ -1,4 +1,4 @@
-# PMwG sampler and sequential sampling models
+# PMwG sampler and sequential sampling models {#forstmannChapter}
 
 
 In this chapter we'll demonstrate how to use the PMwG sampler with a sequential sampling model; the Linear Ballistic Accumulator (LBA).
