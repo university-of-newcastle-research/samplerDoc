@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 5 Troubleshooting PMwG errors | Particle Based Samplers for MCMC</title>
+  <title>Chapter 4 Linear Ballistic Accumulator, a more complicated design example | Particle Based Samplers for MCMC</title>
   <meta name="description" content="Particle Based Sampler for MCMC" />
   <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 5 Troubleshooting PMwG errors | Particle Based Samplers for MCMC" />
+  <meta property="og:title" content="Chapter 4 Linear Ballistic Accumulator, a more complicated design example | Particle Based Samplers for MCMC" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="rstudio/bookdown-demo" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 5 Troubleshooting PMwG errors | Particle Based Samplers for MCMC" />
+  <meta name="twitter:title" content="Chapter 4 Linear Ballistic Accumulator, a more complicated design example | Particle Based Samplers for MCMC" />
   
   <meta name="twitter:description" content="Particle Based Sampler for MCMC" />
   
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="linear-ballistic-accumulator-a-more-complicated-design-example.html"/>
-<link rel="next" href="references.html"/>
+<link rel="prev" href="pmwg-sampler-and-sequential-sampling-models.html"/>
+<link rel="next" href="troubleshoot.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -182,54 +182,23 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="troubleshoot" class="section level1">
-<h1><span class="header-section-number">Chapter 5</span> Troubleshooting PMwG errors</h1>
-<div id="how-to-write-a-log-likelihood-function" class="section level2">
-<h2><span class="header-section-number">5.1</span> How to write a log likelihood function</h2>
-<ul>
-<li>What key elements are required in a log likelihood function to be used in the sampler</li>
-<li>Show comparison times for slow LL and fast LL</li>
-<li>Check list for commmon errors - brief list check this, check that etc.</li>
-</ul>
-<div id="writing-your-log-likelihood-function-tips-errors-and-check-list" class="section level3">
-<h3><span class="header-section-number">5.1.1</span> Writing your log likelihood function: Tips, errors and check list</h3>
-<p><b>1. The parameter specified does not exist</b></p>
-<p>The parameter name is not specified to be estimated i.e. it is not in the parameter names argument or it is misspelled. Make sure <code>pars</code> vector contains the same parameter names you have included in your log likelihood function and it is the same length. Do not rely on the log likelihood function to throw an error in this case. (e.g.<code>x[‘b’]</code>)</p>
-<p><b>2. All non-continuous data frame variables must be a</b> <code>factor</code>.</p>
-<p>Data frame variables should be <a href="https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/factor"><code>factors</code></a> unless the variable is a continuous variable e.g. response time. If you pass <a href="https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/character"><code>character</code></a> variables to <code>if</code> statements and/or <code>for</code> loops in your log likelihood function, errors will not occur, however, your log likelihood estimate will be incorrect. For example, avoid using character strings like <code>data$condition == “easy”</code>. If you must use a character string, be sure to convert the string to a factor with <code>as.factor</code>.</p>
-<p><b>3. Spelling errors or mismatched column name references</b></p>
-<p>Correctly reference data frame column names in your log likelihood function e.g. <code>data$RT</code> != <code>data$rt</code>.</p>
-<p><b>4. When initialising a vector of parameter values - values are not filling in properly</b></p>
-<p>E.g. When a vector for b for all the values across the data set to be used, but there are NAs filling it somewhere.</p>
-<p><b>5. Make sure operations are done on the right scale.</b></p>
-<p><b>6. Data frame variables are scaled appropriately for the model</b></p>
-<p>Check your variables are correctly scaled and in the correct units. For example, with the LBA, response times must be in seconds rather than milliseconds.</p>
-<p><b>7. The log likelihood is printed/outputted at the end of function</b></p>
-<p>Make sure your log likelihood function prints an estimate at the end of the function and the estimate is correctly obtained e.g. sum the log likelihood estimates for all trials/rows.</p>
-<p><b>8. Sampling error occurs</b></p>
-<p>When sampling, the generated columns are not outputted</p>
-<p><b>9. When executing functions row by row (i.e. trial-wise), index MUST be included</b></p>
-<p>If writing a trial-wise/row-wise function (e.g. <code>if</code> statement, <code>for</code> loop), index <code>i</code> must be specified.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="cf">if</span> (data<span class="op">$</span>condition <span class="op">==</span><span class="st"> </span>“easy”)     <span class="co"># Incorrect reference when iterating over variable</span>
-<span class="cf">if</span> (data<span class="op">$</span>condition[i] <span class="op">==</span><span class="st"> </span>“easy”)  <span class="co"># Include i index</span></code></pre></div>
-<p><b>10. Changing parameter values changes the log likelihood estimate</b></p>
-<p>A simple check to run on your log likelihood function is to modify your parameter values and observe the change to log likelihood estimate. Then check if changing parameter values which rely on conditions actually change the log likelihood estimate.</p>
-<p><b>11. Make sure you have the latest version of the PMwG Samplers package</b></p>
-<p>checkVersion(“pmwg”)</p>
-<p><b>12. Number of iterations for ’burn-in` stage of sampler.</b></p>
-<p>We suggest running <code>burn-in</code> for few iterations and particles first. This will give you a sense of a) whether the sampler is working as intended (see troubleshooting/checks for what parameter chains should look like), b) the number of iterations &amp; particles needed to achieve the target acceptance rate, as well as the appropriate epsilon value. The acceptance rate is generally very high for the first few iterations ( &gt; 100) and then declines. After the initial short run, you can check and optimise the number of particles to be used (and balance with epsilon), so the acceptance rate is close to 30% on a longer, full run. We recommend you start with epsilon = .5 to increase efficiency, then adjust as needed.</p>
-<p><b>NOTE:</b> Overall, we aim for ~30% acceptance rate of particles. High acceptance rates may be inaccurate if burn-in runs for few iterations. Low acceptance rates are inefficient and may fail to create an efficient distribution for the sampling stage.</p>
+<div id="linear-ballistic-accumulator-a-more-complicated-design-example" class="section level1 tabset tabset-fade">
+<h1><span class="header-section-number">Chapter 4</span> Linear Ballistic Accumulator, a more complicated design example</h1>
+<p>Previously, we demonstrated how the PMwG sampler can be used for a lexical decision task (LINK) in a signal detection framework to detect if there are ….???<!-- Question for Reilly, what was the purpose of this SDT example--> However, the signal detection framework fails to consider response time, and the join distribution in response time and accuracy. If you wanted to consider RT, you could instead use LBA model, instead of an SDT model.</p>
+<p>In this example, we will expand on what was covered in chapter 1, by fitting the LBA - a more complex model - to the wagenmakers 2008 data. <!-- see IS square paper experiment 2--></p>
+<p>A description of this experiment and data is covered in chapter 1 (LINK to chapter 1 description). This experiment has a more complex design than the Forstman (2008) example from the previous chapter, and the LBA is a more complex model than SDT. As a result, the loglikelihood function will be more complex, however, you’ll notice that every step we take, is the same steps we followed in previous chapters with simpler data sets, or simpler model fits.</p>
+<p>First, we will make a log-likelihood function, perform some checks on the likelihood function and run the PMwG sampler. Following this we will generate posterior predictive data to look at goodness of fit, as well as use DIC as a model comparison method. Finally, we will look at chain convergence.</p>
+<!--
+- These are data reilly fit in chap 1 with sig detection theory. When fit with signal detection, it was just prob. My fit with lba has to do a worse job of fitting probabilities, because it has to manage tnesion between fitting probs and rts. Adding rts has to give worse fit, but the tradeoff is that it allows us to look at the...-->
 
-</div>
-</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="linear-ballistic-accumulator-a-more-complicated-design-example.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="references.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="pmwg-sampler-and-sequential-sampling-models.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="troubleshoot.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -260,7 +229,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/rstudio/bookdown-demo/edit/master/04-troubleshoot.Rmd",
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/03-wagLBA.Rmd",
 "text": "Edit"
 },
 "history": {

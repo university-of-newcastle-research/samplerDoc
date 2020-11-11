@@ -1,4 +1,4 @@
-# Common Problems (Better name required) Troubleshooting page {#troubleshoot}
+# Troubleshooting PMwG errors {#troubleshoot}
 
 ## How to write a log likelihood function
 

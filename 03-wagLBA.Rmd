@@ -1,0 +1,13 @@
+# Linear Ballistic Accumulator, a more complicated design example {.tabset .tabset-fade}
+
+Previously, we demonstrated how the PMwG sampler can be used for a lexical decision task (LINK) in a signal detection framework to detect if there are ....???<!-- Question for Reilly, what was the purpose of this SDT example--> However, the signal detection framework fails to consider response time, and the join distribution in response time and accuracy. If you wanted to consider RT, you could instead use LBA model, instead of an SDT model. 
+
+In this example, we will expand on what was covered in chapter 1, by fitting the LBA - a more complex model - to the wagenmakers 2008 data. <!-- see IS square paper experiment 2-->
+
+A description of this experiment and data is covered in chapter 1 (LINK to chapter 1 description). This experiment has a more complex design than the Forstman (2008) example from the previous chapter, and the LBA is a more complex model than SDT. As a result, the loglikelihood function will be more complex, however, you'll notice that every step we take, is the same steps we followed in previous chapters with simpler data sets, or simpler model fits. 
+
+First, we will make a log-likelihood function, perform some checks on the likelihood function and run the PMwG sampler. Following this we will generate posterior predictive data to look at goodness of fit, as well as use DIC as a model comparison method. Finally, we will look at chain convergence.
+
+
+<!--
+- These are data reilly fit in chap 1 with sig detection theory. When fit with signal detection, it was just prob. My fit with lba has to do a worse job of fitting probabilities, because it has to manage tnesion between fitting probs and rts. Adding rts has to give worse fit, but the tradeoff is that it allows us to look at the...-->

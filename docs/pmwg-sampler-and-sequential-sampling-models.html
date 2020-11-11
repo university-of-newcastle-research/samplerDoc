@@ -31,7 +31,7 @@
   
   
 <link rel="prev" href="pmwg-sampler-and-signal-detection-theory.html"/>
-<link rel="next" href="example-2-single-threshold-parameter.html"/>
+<link rel="next" href="linear-ballistic-accumulator-a-more-complicated-design-example.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -155,14 +155,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="3.9.2" data-path="pmwg-sampler-and-sequential-sampling-models.html"><a href="pmwg-sampler-and-sequential-sampling-models.html#testing-whether-true-x-values-have-the-highest-likelihood"><i class="fa fa-check"></i><b>3.9.2</b> Testing whether true-x values have the highest likelihood</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="example-2-single-threshold-parameter.html"><a href="example-2-single-threshold-parameter.html"><i class="fa fa-check"></i><b>4</b> Example 2 - Single threshold parameter</a></li>
-<li class="chapter" data-level="5" data-path="example-3-wagenmakers-2008-experiment-2.html"><a href="example-3-wagenmakers-2008-experiment-2.html"><i class="fa fa-check"></i><b>5</b> Example 3 - Wagenmakers (2008) Experiment 2</a></li>
-<li class="chapter" data-level="6" data-path="troubleshoot.html"><a href="troubleshoot.html"><i class="fa fa-check"></i><b>6</b> Common Problems (Better name required) Troubleshooting page</a><ul>
-<li class="chapter" data-level="6.1" data-path="troubleshoot.html"><a href="troubleshoot.html#how-to-write-a-log-likelihood-function"><i class="fa fa-check"></i><b>6.1</b> How to write a log likelihood function</a><ul>
-<li class="chapter" data-level="6.1.1" data-path="troubleshoot.html"><a href="troubleshoot.html#writing-your-log-likelihood-function-tips-errors-and-check-list"><i class="fa fa-check"></i><b>6.1.1</b> Writing your log likelihood function: Tips, errors and check list</a></li>
+<li class="chapter" data-level="4" data-path="linear-ballistic-accumulator-a-more-complicated-design-example.html"><a href="linear-ballistic-accumulator-a-more-complicated-design-example.html"><i class="fa fa-check"></i><b>4</b> Linear Ballistic Accumulator, a more complicated design example</a></li>
+<li class="chapter" data-level="5" data-path="troubleshoot.html"><a href="troubleshoot.html"><i class="fa fa-check"></i><b>5</b> Troubleshooting PMwG errors</a><ul>
+<li class="chapter" data-level="5.1" data-path="troubleshoot.html"><a href="troubleshoot.html#how-to-write-a-log-likelihood-function"><i class="fa fa-check"></i><b>5.1</b> How to write a log likelihood function</a><ul>
+<li class="chapter" data-level="5.1.1" data-path="troubleshoot.html"><a href="troubleshoot.html#writing-your-log-likelihood-function-tips-errors-and-check-list"><i class="fa fa-check"></i><b>5.1.1</b> Writing your log likelihood function: Tips, errors and check list</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="non-rtchoice-example.html"><a href="non-rtchoice-example.html"><i class="fa fa-check"></i><b>7</b> Non RT/Choice example</a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
 <li><a href="https://newcastlecl.org/" target="blank">Published by Newcastle Cognition Lab</a></li>
@@ -1302,7 +1300,7 @@ sampled1b &lt;-<span class="st"> </span>sampled
 <pre><code>## [1] -202667.3</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">fast_lba_ll3b</span>(x, forstmann, <span class="dt">sample =</span> <span class="ot">FALSE</span>)</code></pre></div>
 <pre><code>## [1] -202667.3</code></pre>
-<p>These log-likelihoods are lower than the previous two, so the parameter (<code>x</code>) values are less accurate given the data. Notice how we can also use this process to check the fast, efficient log-likelihood function (<code>fast_lba_ll3b</code>) against the trialwise function (<code>tw_lba_ll</code>. Given the same data and parameter values - they should give the same output, as we see above.</p>
+<p>These log-likelihoods are lower than the previous two, so the parameter (<code>x</code>) values are less accurate given the data. Notice how we can also use this process to check the fast, efficient log-likelihood function (<code>fast_lba_ll3b</code>) against the trialwise function (<code>tw_lba_ll</code>). Given the same data and parameter values - they should give the same output, as we see above.</p>
 <p><b>Not</b>: We only changed some named (<code>x</code>) parameter values. You could perform a thorough check by changing one parameter value at a time and see if there is a change in the log-likelihood.</p>
 <p>This is a good first check to see if our log-likelihood is behaving as it should; changing log-likelihood value with changing parameter values. However, our log-likelihood functions may contain inconsistencies, which leads us onto our second check.</p>
 </div>
@@ -1410,7 +1408,7 @@ test.likelihood &lt;-<span class="st"> </span><span class="cf">function</span>(x
         </div>
       </div>
 <a href="pmwg-sampler-and-signal-detection-theory.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="example-2-single-threshold-parameter.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="linear-ballistic-accumulator-a-more-complicated-design-example.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -1441,7 +1439,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/rstudio/bookdown-demo/edit/master/02-intro.Rmd",
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/02-forstLBA.Rmd",
 "text": "Edit"
 },
 "history": {
