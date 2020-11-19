@@ -2,18 +2,15 @@
 
 
 In this chapter we'll demonstrate how to use the PMwG sampler with a sequential sampling model; the Linear Ballistic Accumulator (LBA).
-Please ensure the `PMwG` and `rtdists` packages are installed. We currently recommended installing `PMwG` via devtools.
-```{r getpkg, eval=FALSE}
-# The pmwg package will be on CRAN - this step will be removed.
-install_github('newcastlecl\pmwg')
-```
+Please ensure the `PMwG` and `rtdists` packages are installed.
 ```{r loadpkg}
 library(pmwg)
+library(rtdists)
 ```
 
-## Description of Forstmann experiment
+## The speed-accuracy tradeoff in perceptual decisions
 
-Forstmann et al looked at neural correlates of decision making under time pressure, with an aim to identify areas of the brain associated with speed-accuracy tradeoff. Imaging (fMRI) and behavioural data was collected; however, we will analyse behavioural data from the decision-making task only. In terms of modelling the data, Forstmann expected to find differences in thresholds (direction?) for each of the three speed-emphasis conditions. We have included the Forstmann et als data in the `PMwG` package as a data frame named `forstmann`. The sampler requires a data frame with a <b>`subject`</b> column. The subject column data type can be a factor or numeric.
+We demonstrate the application of the LBA with the PMwG sampler to a study of perceptual decision making (Forstmann et al., 2008). Forstmann et al looked at neural correlates of decision making under time pressure, with an aim to identify areas of the brain associated with speed-accuracy tradeoff. Imaging (fMRI) and behavioural data was collected; however, we will analyse behavioural data from the decision-making task only. In terms of modelling the data, Forstmann expected to find differences in thresholds for each of the three speed-emphasis conditions. We have included the Forstmann et als data in the `PMwG` package as a data frame named `forstmann`. The sampler requires a data frame with a <b>`subject`</b> column. The subject column data type can be a factor or numeric.
 
 Table \@ref(tab:forsthead10) shows the first ten trials from the Forstmann dataset. Participants `(n = 19)` were asked to indicate whether a cloud of dots in a random-dot kinematogram (RDK) moved to the left or the right of the screen. The IV was a within-subject, speed-accuracy manipulation where, before each trial began, pariticipants were instructed to make their choice <i>accurately</i> `(condition = 1)`, with <i>urgency</i>`(condition = 3)`or were presented with a <i>neutral</i> message `(condition = 2)`. Stimuli moved either <i>left</i> `(stim = 1)` or <i>right</i> `(stim = 2)` and responses were <i>left</i> `(resp = 1)` or <i>right</i> `(resp = 2)`. Response times `(rt)` were recorded in seconds. For more information about the design of the experiment please see [the original paper](https://www.pnas.org/content/105/45/17538.short).
 
@@ -26,10 +23,10 @@ kable(head(forstmann, 10), row.names = F,  align = "ccccc", caption = 'First 10 
 There are preliminary steps we need to complete before running the sampler. Let's begin by defining the Linear Ballistic Accumulator (LBA) [@brown2008simplest] model parameters.
 
 * `b` threshold parameter (the evidence required to trigger a response)
-* `v` is drift rate or average speed of evidence accumulation
-* `A` is the model's start point 
+* `v` is the mean drift rate or average speed of evidence accumulation
+* `A` is the range of start points for accumulators 
 * `t0` is non-decision time 
-* `sv` is the standard deviation of drift rate
+* `sv` is the standard deviation of the across-trial distribution of drift rates
 
 ## Writing the log-likelihood function {#writellFunc}
 
@@ -40,14 +37,14 @@ The LBA log-likelihood function takes three arguments:
 
 * `x` is a named parameter vector (e.g. `pars`)
 * `data` is your dataset (e.g.`forstmann`). Your dataset must include a `"subject"` column
-* `sample = FALSE` calculates a density function or `TRUE` generates a posterior, predictive sample that matches the shape of data.
+* `sample = FALSE` calculates a density function or `TRUE` generates a posterior predictive sample that matches the shape of data.
 
 
 The log-likelihood function shown below includes functions from the `rtdists` package for generating data and estimating density. If you'd like to run through this example, it is best to copy the `tw_lba_ll` function from the code block below rather than copying from the separate code chunks where curly braces have been removed.
 
 NOTE: The trialwise log-likelihood is very slow and inneficient because `rLBA` and `dLBA` will be called on each line of the data. This will result in very slow sampling times and is a consequence of the `rtdists` package, not an issue with the PMwG sampling speed. If you have experience writing log-likelihoods, we recommend writing a faster version than our trialwise function, or use the fast log-likelihood we have written in section \@ref(fstLBALL). If you are new to modelling, we recommend trying the trialwise (slow) log-likelihood function as it is easier to follow, troubleshoot and is less likely to result in errors. 
 
-Let's begin by installing `rtdists` package...
+Let's begin by loading the `rtdists` package...
 
 ```{r instrtdist}
 library(rtdists)
@@ -122,7 +119,7 @@ if (sample) {
 ```
 
 
-The first line in the `tw_lba_ll` function (Line 2 below) takes the exponent of the parameter values. We do this as the LBA expects values on the real number line. Line 3 and 4 then checks RTs are faster than the non-decision time parameter `t0`, and return a low value, indicating that the given value of `t0` is not likely. 
+The first line in the `tw_lba_ll` function (Line 2 below) takes the exponent of the parameter values. We do this as the LBA requires positive parameter values that are on the real line. Line 3 and 4 then checks RTs are faster than the non-decision time parameter `t0`, and returns a low value if `t0` is larger than RT, indicating that the given value of `t0` is unlikely. 
 
 ```{r twLBAll1, attr.source = '.numberLines startFrom="2"', echo=TRUE, eval=FALSE}
   x <- exp(x)
@@ -131,7 +128,7 @@ The first line in the `tw_lba_ll` function (Line 2 below) takes the exponent of 
 ```
 
 
-Now we create a vector with values sampled from the posterior distribution OR estimating the density. If `sample = TRUE`, we remove all responses `(resp)` and rts.  This means when we return `data`, we are returning the posterior predictive data which matches with the associated `subject` and `condition`.
+Now we create a vector with values sampled from the posterior distribution OR estimating the density. If `sample = TRUE`, we remove all responses `(resp)` and rts.  This means when we return `data`, we are returning the posterior predictive data which matches with the associated `subject` and `condition` and then generate them from the random function of the model.
 
 If `sample = FALSE` (the `else` statement from line 11) we create an `out` vector, with a length equal to the number of rows in the dataset, and store the likelihood value for each subject and condition.
 
@@ -165,7 +162,7 @@ On line 22 we set the order of our drift rate parameters. Recall that `stim = 1`
     }
 ```
 
-The following section calls the relevant `rtdists` function depending on whether we are sampling from the posterior `(rLBA)` or estimating the density `(dLBA)`. We then input the parameters from above (using the names set above) into the relevant function. When generating data from the posterior (Line 30-37), `rLBA` is called for each line of the data, storing the generated `rt` and `response` given the posterior parameter estimates in the `tmp` vector (which we then reassign to the empty `data$rt` and `data$resp` columns). We set `n = 1`, since we are calling `rLBA` on 1 row of the data. When estimating the density (Line 42 to 50), dLBA is called for each line of the data, storing the probability of the `rt` and `response` under the proposed parameters `(x)` in the `out` vector. 
+The following section calls the relevant `rtdists` function depending on whether we are sampling from the posterior predictive distribution `(rLBA)` or estimating the density `(dLBA)`. We then input the parameters from above (using the names set above) into the relevant function. When generating data from the posterior predictive distribution (Line 30-37), `rLBA` is called for each line of the data, storing the generated `rt` and `response` given the posterior parameter estimates in the `tmp` vector (which we then reassign to the empty `data$rt` and `data$resp` columns). We set `n = 1`, since we are calling `rLBA` on 1 row of the data. When estimating the density (Line 42 to 50), dLBA is called for each line of the data, storing the probability of the `rt` and `response` under the proposed parameters `(x)` in the `out` vector. 
 
 
 ```{r lbaLL3, attr.source='.numberLines startFrom="29"', echo=TRUE, eval=FALSE}
@@ -195,7 +192,7 @@ The following section calls the relevant `rtdists` function depending on whether
       }
 ```
 
-This final section tells the function what to return; `data` - when sampling posterior predictive (Line 56) - or the sum of the likelihoods - when estimating density (Line x - y). On line 58 we take all implausible likelihood values, assign them to the `bad` object and then (line 59) set them to zero. The final two lines within the `else` statement take the log of all likelihood values, sums them, assigns the model’s log-likelihood value to the `out` variable and returns that value.
+This final section tells the function what to return; `data` - when sampling posterior predictive data (Line 56) - or the sum of the likelihoods - when estimating density (Line 57 - 61). On line 58 we take all implausible likelihood values, assign them to the `bad` object and then (line 59) set them to an extremely unlikely value, to prevent numerical errors. The final two lines within the `else` statement take the log of all likelihood values, sums them, assigns the model’s log-likelihood value to the `out` variable and returns that value.
 
 ```{r lbaLL43, attr.source='.numberLines startFrom="55"', echo=TRUE, eval=FALSE}
 if (sample) {
@@ -305,19 +302,19 @@ fast_lba_ll3b <- function(x, data, sample = FALSE) {
 }
 ```
 
-You should improve your log-likelihood's performance as you see fit.  When you're confident that your log-likelihood code functions correctly, we suggest saving it as a separate script so it can be sourced and loaded when running the sampler. If you're learning how to write log-likelihood functions, take a look at our [troubleshooting section](#troubleshoot) for tips. 
+You should improve your log-likelihood's performance as you see fit.  When you're confident that your log-likelihood code functions correctly, we suggest saving it as a separate script so it can be sourced and loaded when running the sampler. If you're learning how to write log-likelihood functions, take a look at our [troubleshooting section](#troubleshoot) for tips. In our experience, a very large proportion of problems with sampling and inference are caused by inadequate checking and care in the likelihood function.
 
 ## PMwG Framework
 
 Now that we have a log-likelihood function, we can set up the `PMwG` sampler. Running the sampler follows the same procedure outlined in the [SDT chapter](#sdtPMwG); we need to set up a vector of model parameter names, create a `priors` object, source our LBA log-likelihood script and then create our `sampler` object.
 
 
-Let's begin by creating a vector of model parameter names, which we'll use in our log-likelihood function. You can name this object as you wish; however, in our example, we name it `pars`. ^[The parameters you list in the `pars` vector <b>must</b> match those included in your log-likelihood function i.e. they must have the same names and the same number of parameters. Refer to the [troubleshooting section](#troubleshoot) for more detail.] For the `forstmann` dataset, we use three threshold parameters (one `b` for each condition) because we assume that the condition has an effect on level of caution, we include two drift rate parameters: `v1` for the incorrect accumulator and `v2` for the correct accumulator, a start point parameter `A` and a non-decision time `t0` parameter. 
+Let's begin by creating a vector of model parameter names, which we'll use in our log-likelihood function. You can name this object as you wish; however, in our example, we name it `pars`. ^[The parameters you list in the `pars` vector <b>must</b> match those included in your log-likelihood function i.e. they must have the same names and the same number of parameters. Refer to the [troubleshooting section](#troubleshoot) for more detail.] For the `forstmann` dataset, we use three threshold parameters (one `b` for each condition) because we assume that the condition has an effect on level of caution, we include two drift rate parameters: `ve` for the incorrect accumulator and `vc` for the correct accumulator, a start point parameter `A` and a non-decision time `t0` parameter. 
 
 We've made a decision to set the `sv` to 1 to satisfy the scaling properties of the model. As such, we haven't included the `sv` parameter in the `pars` vector - it is found in the LBA's log-likelihood function (see above).
 
 ```{r pars}
-pars <- c("b1", "b2", "b3", "A", "v1", "v2", "t0")
+pars <- c("b1", "b2", "b3", "A", "ve", "vc", "t0")
 ```
 
 
@@ -368,9 +365,10 @@ The `start_points` object contains two vectors:
 <b>Note:</b> <i>Start points must be on the real line. Our log-likelihood function immediately takes the exponent of the start points and only returns positive values, so we use the log of sensible start points here.</i> 
 
 ```{r lbaStartPts, echo=TRUE, eval=FALSE}
-start_points <- list(mu = c(log(1.2), log(1.2), log(1.2),
-                            log(1.4), log(1.3), log(3.5),
-                            log(0.13)),
+start_points <- list(mu = log(c(1.2, 1.2, 1.2,
+                                1.4, 1.3, 3.5, 
+                                0.13)
+                              ),
                      sig2 = diag(rep(.01, length(pars)))
                      )
 ```
@@ -397,16 +395,15 @@ To run the sampler, we use the `run_stage` function. To execute the `run_stage` 
 The following arguments listed below are optional:
 
 
-* `iter =` is the number of iterations for the sampling stage. This is similar to running deMCMC, where it takes many iterations to reach the posterior space. Default = 1000.
-* `particles =` is the number of particles generated on each iteration. Default = 1000.
+* `iter =` is the number of iterations for the sampling stage. For burn-in, it is important to have enough iterations that the chains converge on the posterior distribution. Default = 1000.
+* `particles =` is the number of proposals (particles) generated for each random effect, on each iteration. Default = 1000, but set smaller or larger in order to target a reasonable acceptance rate (i.e. 10-60%).
 * `display_progress =` display a progress bar during sampling
-* `epsilon =` is a value between 0 and 1 which reduces the size of the sampling space. We use lower values of epsilon when there are more parameters to estimate. Default = 1.
+* `epsilon =` is a value greater than 0 which scales the variance of the proposal distribution. Smaller values (i.e. narrower proposal distributions) can lead to higher acceptance rates, but slower coverage of the posterior. Smaller values are especially useful when the number of random effects is large (e.g. >10). Default = 1.
 * `n_cores =` the number of cores on a machine you wish to use to run the sampler. This allows sampling to be run across cores (parallelising for subjects). Default = 1. <b> Note:</b> Setting `n_cores` greater than 1 is only permitted on Linux and Mac OS X machines.
 
 
 <br>
 The first sampling stage is burn-in `"burn"`. The burn-in stage allows time for the sampler to move from the (arbitrary) start points that were provided by the user to the mode of the posterior distribution. This can be checked by examining the chains for stationarity. We take the `sampler` object created in the `init` function above, set the stage argument to `"burn"` and assign the outcome to an object called `burned`. 
-<br><b> What about iter, particles and epsilon?</b>
 
 ```{r forstlbaburn, echo=TRUE, eval=FALSE}
 burned <- run_stage(sampler, 
@@ -473,7 +470,7 @@ We can generate posterior predictive data by setting `sample = TRUE` in our log-
 * `sampled`: is the object/output from the PMwG sampler
 * `n`: the number of posterior samples
 * `ll_func =`: the log-likelihood function embedded in the `sampled` object
-* `rbind.data = `: bind the rows of each predictive sample to <b>SOMETHING</b>
+* `rbind.data = `: bind the rows of each predictive sample into a rectangular array, or leave as a list.
 
 ```{r genPPDataFunc, Include=TRUE}
 gen_pp_data <- function (sampled, n, ll_func = sampled$ll_func, rbind.data = TRUE) {
@@ -531,26 +528,26 @@ In the next section, we will use the posterior predictive data to assess descrip
 
 ### Assessing Descriptive Adequacy (goodness of fit)
 
-Now we will plot the posterior predictive data against the real data. This may only be useful for some users, as what you do with your data is domain specific.
+Now we will plot the posterior predictive data against the real data. In the section below we compare observed RTs against predicted RTs, which is common for RT modelling; however, the code could also be modified for different types of data.
 
 ```{r plotppdata3b, include=TRUE}
-# Subject x condition Q1, median and Q3 respone time + mean accuracy 
+# Subject x condition Q25, median and Q75 respone time + mean accuracy 
 # Forstmann dataset
 pq3b <- forstmann %>% 
   group_by(condition, subject) %>% 
-  summarise(Q1 = quantile(rt, prob = 0.25),
+  summarise(Q25 = quantile(rt, prob = 0.25),
             median = median(rt), 
-            Q3 = quantile(rt, prob = 0.75),
+            Q75 = quantile(rt, prob = 0.75),
             acc =  mean(ifelse(stim == resp, 1, 0)),
             .groups = "keep"
             )
 
-# Subject x condition Q1, median and Q3 respone time for posterior predictive data
+# Subject x condition Q25, median and Q75 respone time for posterior predictive data
 pp_pq3b <- pp_data_3b %>%
   group_by(condition, pp_iter, subject) %>%
-  summarise(Q1 = quantile(rt, prob = 0.25),
+  summarise(Q25 = quantile(rt, prob = 0.25),
             median = median(rt), 
-            Q3 = quantile(rt, prob = 0.75),
+            Q75 = quantile(rt, prob = 0.75),
             acc = mean(ifelse(stim == resp, 1, 0)),
             .groups = "keep"
             )
@@ -560,16 +557,16 @@ pq3b <- bind_rows(cbind(src = rep("data", nrow(pq3b)), pq3b),
                 cbind(src = rep("model", nrow(pp_pq3b)), pp_pq3b)
                 )
 
-# Mean Q1, median, Q4 and accuracy for data and posterior predictive data
+# Mean Q25, median, Q4 and accuracy for data and posterior predictive data
 av_pq3b <- pq3b %>%
   group_by(src, condition) %>%
-  summarise_at(vars(Q1:acc), mean)
+  summarise_at(vars(Q25:acc), mean)
 
 # Variances of posterior samples
 pp_var3b <- pq3b %>%
   filter(src != "data") %>%
   group_by(condition, pp_iter, src) %>%
-  summarise_at(vars(Q1:acc), mean)
+  summarise_at(vars(Q25:acc), mean)
 
 # Convert source column to a factor and add labels
 av_pq3b$src <- factor(av_pq3b$src,
@@ -588,15 +585,15 @@ levels(av_pq3b$condition) <-
 # Convert rt to milliseconds and acc to percentage
 av_pq3b$acc <- 100 * av_pq3b$acc
 pp_var3b$acc <- 100 * pp_var3b$acc
-av_pq3b[, c("Q1", "median", "Q3")] <- 1000 * av_pq3b[, c("Q1", "median", "Q3")]
-pp_var3b[, c("Q1", "median", "Q3")] <- 1000 * pp_var3b[, c("Q1", "median", "Q3")]
+av_pq3b[, c("Q25", "median", "Q75")] <- 1000 * av_pq3b[, c("Q25", "median", "Q75")]
+pp_var3b[, c("Q25", "median", "Q75")] <- 1000 * pp_var3b[, c("Q25", "median", "Q75")]
 ```
 
 ```{r hideppdataplots, echo=FALSE}
 # Plot response times for data and posterior predictive data
 rtplot3b <- ggplot(data = av_pq3b,
                  mapping = aes(x = condition,
-                               y = Q1,
+                               y = Q25,
                                group = src,
                                 colour = src
                                )
@@ -609,14 +606,14 @@ rtplot3b <- ggplot(data = av_pq3b,
                            ),
              size = 4) +
   geom_point(mapping = aes(x = condition,
-                           y = Q3,
+                           y = Q75,
                            color = src,
                            group = src
                            ),
              size = 2) +
   geom_point(data = pp_var3b,
              mapping = aes(x = condition,
-                           y = Q1,
+                           y = Q25,
                            group = src),
              size = 1,
              color = "black",
@@ -630,7 +627,7 @@ rtplot3b <- ggplot(data = av_pq3b,
              alpha = 0.05) +
   geom_point(data = pp_var3b,
              mapping = aes(x = condition,
-                           y = Q3,
+                           y = Q75,
                            group = src),
              size = 1,
              color = "black",
@@ -766,8 +763,8 @@ fast_lba_ll1b <- function(x, data, sample = FALSE) {
 }
 ```
 
-### PmWG framework for a single threshold model
-The PmWG sampler procedure remains the same for all models. For our three threshold LBA model, we need the updated log-likelihood function from above, an updated parameter vector, start points and priors.
+### PMwG framework for a single threshold model
+The PMwG sampler procedure remains the same for all models. For our three threshold LBA model, we need the updated log-likelihood function from above, an updated parameter vector, start points and priors.
 
 ```{r part9.8,eval = FALSE}
 # Load the log-likelihood script
@@ -836,23 +833,23 @@ load("ppdata1b.RData")
 ```
 
 ```{r plotppdata1b, include=TRUE}
-# Subject x condition Q1, median and Q3 respone time + mean accuracy
+# Subject x condition Q25, median and Q75 respone time + mean accuracy
 # Forstmann dataset
 pq1b <- forstmann %>%
   group_by(condition, subject) %>%
-  summarise(Q1 = quantile(rt, prob = 0.25),
+  summarise(Q25 = quantile(rt, prob = 0.25),
             median = median(rt),
-            Q3 = quantile(rt, prob = 0.75),
+            Q75 = quantile(rt, prob = 0.75),
             acc =  mean(ifelse(stim == resp, 1, 0)),
             .groups = "keep"
             )
 
-# Subject x condition Q1, median and Q3 respone time for posterior predictive data
+# Subject x condition Q25, median and Q75 respone time for posterior predictive data
 pp_pq1b <- pp_data_1b %>%
   group_by(condition, pp_iter, subject) %>%
-  summarise(Q1 = quantile(rt, prob = 0.25),
+  summarise(Q25 = quantile(rt, prob = 0.25),
             median = median(rt),
-            Q3 = quantile(rt, prob = 0.75),
+            Q75 = quantile(rt, prob = 0.75),
             acc = mean(ifelse(stim == resp, 1, 0)),
             .groups = "keep"
             )
@@ -862,16 +859,16 @@ pq1b <- bind_rows(cbind(src = rep("data", nrow(pq1b)), pq1b),
                 cbind(src = rep("model", nrow(pp_pq1b)), pp_pq1b)
                 )
 
-# Mean Q1, median, Q4 and accuracy for data and posterior predictive data
+# Mean Q25, median, Q4 and accuracy for data and posterior predictive data
 av_pq1b <- pq1b %>%
   group_by(src, condition) %>%
-  summarise_at(vars(Q1:acc), mean)
+  summarise_at(vars(Q25:acc), mean)
 
 # Variances of posterior samples
 pp_var1b <- pq1b %>%
   filter(src != "data") %>%
   group_by(condition, pp_iter, src) %>%
-  summarise_at(vars(Q1:acc), mean)
+  summarise_at(vars(Q25:acc), mean)
 
 # Convert source column to a factor and add labels
 av_pq1b$src <- factor(av_pq1b$src,
@@ -890,15 +887,15 @@ levels(av_pq1b$condition) <-
 # Convert rt to milliseconds and acc to percentage
 av_pq1b$acc <- 100 * av_pq1b$acc
 pp_var1b$acc <- 100 * pp_var1b$acc
-av_pq1b[, c("Q1", "median", "Q3")] <- 1000 * av_pq1b[, c("Q1", "median", "Q3")]
-pp_var1b[, c("Q1", "median", "Q3")] <- 1000 * pp_var1b[, c("Q1", "median", "Q3")]
+av_pq1b[, c("Q25", "median", "Q75")] <- 1000 * av_pq1b[, c("Q25", "median", "Q75")]
+pp_var1b[, c("Q25", "median", "Q75")] <- 1000 * pp_var1b[, c("Q25", "median", "Q75")]
 ```
 
 ```{r hideppdataplots1b, echo=FALSE}
 # Plot response times for data and posterior predictive data
 rtplot1b <- ggplot(data = av_pq1b,
                  mapping = aes(x = condition,
-                               y = Q1,
+                               y = Q25,
                                group = src,
                                 colour = src
                                )
@@ -911,14 +908,14 @@ rtplot1b <- ggplot(data = av_pq1b,
                            ),
              size = 4) +
   geom_point(mapping = aes(x = condition,
-                           y = Q3,
+                           y = Q75,
                            color = src,
                            group = src
                            ),
              size = 2) +
   geom_point(data = pp_var1b,
              mapping = aes(x = condition,
-                           y = Q1,
+                           y = Q25,
                            group = src),
              size = 1,
              color = "black",
@@ -932,7 +929,7 @@ rtplot1b <- ggplot(data = av_pq1b,
              alpha = 0.05) +
   geom_point(data = pp_var1b,
              mapping = aes(x = condition,
-                           y = Q3,
+                           y = Q75,
                            group = src),
              size = 1,
              color = "black",
@@ -989,37 +986,37 @@ In this section, we are going to compare the three threshold model and the singl
  
 ### Assessing Descriptive Adequacy Graphically
 
-We can <i>"assess descriptive adequacy"</i> graphically by plotting the observed data, three threshold and single threshold data on a single plot. 
+We can assess descriptive adequacy graphically by plotting the observed data, three threshold and single threshold data on a single plot. 
 
 ```{r ppdataModelComp, include=TRUE}
-# Subject x condition Q1, median and Q3 respone time + mean accuracy 
+# Subject x condition Q25, median and Q75 respone time + mean accuracy 
 # Forstmann data
 pq <- forstmann %>%
   group_by(condition, subject) %>%
-  summarise(Q1 = quantile(rt, prob = 0.25),
+  summarise(Q25 = quantile(rt, prob = 0.25),
             median = median(rt),
-            Q3 = quantile(rt, prob = 0.75),
+            Q75 = quantile(rt, prob = 0.75),
             acc =  mean(ifelse(stim == resp, 1, 0)),
             .groups = "keep"
             )
 
-# Subject x condition Q1, median and Q3 respone time for posterior predictive data
+# Subject x condition Q25, median and Q75 respone time for posterior predictive data
 #3b model
 pp_pq3b <- pp_data_3b %>%
   group_by(condition, pp_iter, subject) %>%
-  summarise(Q1 = quantile(rt, prob = 0.25),
+  summarise(Q25 = quantile(rt, prob = 0.25),
             median = median(rt), 
-            Q3 = quantile(rt, prob = 0.75),
+            Q75 = quantile(rt, prob = 0.75),
             acc = mean(ifelse(stim == resp, 1, 0)),
             .groups = "keep"
             )
-# Subject x condition Q1, median and Q3 respone time for posterior predictive data 
+# Subject x condition Q25, median and Q75 respone time for posterior predictive data 
 #1b model
 pp_pq1b <- pp_data_1b %>%
   group_by(condition, pp_iter, subject) %>%
-  summarise(Q1 = quantile(rt, prob = 0.25),
+  summarise(Q25 = quantile(rt, prob = 0.25),
             median = median(rt),
-            Q3 = quantile(rt, prob = 0.75),
+            Q75 = quantile(rt, prob = 0.75),
             acc = mean(ifelse(stim == resp, 1, 0)),
             .groups = "keep"
             )
@@ -1030,16 +1027,16 @@ pqall <- bind_rows(cbind(src = rep("data", nrow(pq)), pq),
                 cbind(src = rep("1b", nrow(pp_pq1b)), pp_pq1b)
                 )
 
-# Mean Q1, median, Q4 and accuracy for data and posterior predictive data
+# Mean Q25, median, Q4 and accuracy for data and posterior predictive data
 av_pq <- pqall %>%
   group_by(src, condition) %>%
-  summarise_at(vars(Q1:acc), mean)
+  summarise_at(vars(Q25:acc), mean)
 
 # Variances of posterior samples
 pp_var <- pqall %>%
   filter(src != "data") %>%
   group_by(condition, pp_iter, src) %>%
-  summarise_at(vars(Q1:acc), mean)
+  summarise_at(vars(Q25:acc), mean)
 
 # Convert source column to a factor and add labels
 av_pq$src <- factor(av_pq$src,
@@ -1058,8 +1055,8 @@ levels(av_pq$condition) <-
 # Convert rt to milliseconds and acc to percentage
 av_pq$acc <- 100 * av_pq$acc
 pp_var$acc <- 100 * pp_var$acc
-av_pq[, c("Q1", "median", "Q3")] <- 1000 * av_pq[, c("Q1", "median", "Q3")]
-pp_var[, c("Q1", "median", "Q3")] <- 1000 * pp_var[, c("Q1", "median", "Q3")]
+av_pq[, c("Q25", "median", "Q75")] <- 1000 * av_pq[, c("Q25", "median", "Q75")]
+pp_var[, c("Q25", "median", "Q75")] <- 1000 * pp_var[, c("Q25", "median", "Q75")]
 ```
 
 
@@ -1068,7 +1065,7 @@ pp_var[, c("Q1", "median", "Q3")] <- 1000 * pp_var[, c("Q1", "median", "Q3")]
 # Plot response times for data and posterior predictive data
 rtplot <- ggplot(data = av_pq,
                  mapping = aes(x = condition,
-                               y = Q1,
+                               y = Q25,
                                group = src,
                                 colour = src
                                )
@@ -1085,7 +1082,7 @@ rtplot <- ggplot(data = av_pq,
              position = position_dodge(width = .5)
              ) +
   geom_point(mapping = aes(x = condition,
-                           y = Q3,
+                           y = Q75,
                            color = src,
                            group = src
                            ),
@@ -1094,7 +1091,7 @@ rtplot <- ggplot(data = av_pq,
              ) +
   geom_point(data = pp_var,
              mapping = aes(x = condition,
-                           y = Q1,
+                           y = Q25,
                            group = src),
              size = 2,
              color = "black",
@@ -1112,7 +1109,7 @@ rtplot <- ggplot(data = av_pq,
              ) +
   geom_point(data = pp_var,
              mapping = aes(x = condition,
-                           y = Q3,
+                           y = Q75,
                            group = src),
              size = 2,
              color = "black",
@@ -1171,7 +1168,7 @@ The plots show that values in the three threshold model (red circles) better des
 
 ### Model comparison via DIC
 
-Another method of model comparison is using information criterions. Here we provide a function for calculating deviance information criterion (DIC). 
+Another method of model comparison is using information criterions. Here we provide a function for calculating deviance information criterion (DIC). <b>Note:</b> we recommend using marginal likelihood (Bayes factors) instead of DIC for model selection. For more information, see this paper on [estimating the Marginal Likelihood via importance sampling](https://link.springer.com/article/10.3758/s13428-020-01348-w).
 
 ```{r DICcode, include = TRUE}
 pmwg_DIC <- function(sampled, pD = FALSE){
@@ -1400,7 +1397,7 @@ ll_plots <- test.likelihood(x = true.x,
                                     ) 
 ```
 
-The red line indicates the true generating parameter value. <b> What is correct about these plots???</b>
+The red line indicates the true generating parameter value (i.e. the data generating values for the parameters) have the best (highest) likelihoods.
 
 Note: The plots above do not tell you if your log-likelihood is correct in the sense that you have written a log-likelihood for the model you actually want to test. The plots allow you to determine if your function is functioning as intended.
 
