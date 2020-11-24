@@ -1165,7 +1165,6 @@ ModelCompPlots
 ```
 The plots show that values in the three threshold model (red circles) better describe the data than the single threshold model (blue circles).
 
-
 ### Model comparison via DIC
 
 Another method of model comparison is using information criterions. Here we provide a function for calculating deviance information criterion (DIC). <b>Note:</b> we recommend using marginal likelihood (Bayes factors) instead of DIC for model selection. For more information, see this paper on [estimating the Marginal Likelihood via importance sampling](https://link.springer.com/article/10.3758/s13428-020-01348-w).
