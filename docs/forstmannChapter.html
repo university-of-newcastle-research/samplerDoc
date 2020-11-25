@@ -130,7 +130,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="2.5" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#simulating-posterior-data"><i class="fa fa-check"></i><b>2.5</b> Simulating posterior data</a></li>
 </ul></li>
 <li class="chapter" data-level="3" data-path="forstmannChapter.html"><a href="forstmannChapter.html"><i class="fa fa-check"></i><b>3</b> PMwG sampler and sequential sampling models</a><ul>
-<li class="chapter" data-level="3.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#description-of-forstmann-experiment"><i class="fa fa-check"></i><b>3.1</b> Description of Forstmann experiment</a></li>
+<li class="chapter" data-level="3.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#the-speed-accuracy-tradeoff-in-perceptual-decisions"><i class="fa fa-check"></i><b>3.1</b> The speed-accuracy tradeoff in perceptual decisions</a></li>
 <li class="chapter" data-level="3.2" data-path="forstmannChapter.html"><a href="forstmannChapter.html#linear-ballistic-accumulator-parameters"><i class="fa fa-check"></i><b>3.2</b> Linear Ballistic Accumulator Parameters</a></li>
 <li class="chapter" data-level="3.3" data-path="forstmannChapter.html"><a href="forstmannChapter.html#writellFunc"><i class="fa fa-check"></i><b>3.3</b> Writing the log-likelihood function</a><ul>
 <li class="chapter" data-level="3.3.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#fstLBALL"><i class="fa fa-check"></i><b>3.3.1</b> Fast LBA Log-likelihood Function</a></li>
@@ -143,7 +143,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="3.5.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#assessing-descriptive-adequacy-goodness-of-fit"><i class="fa fa-check"></i><b>3.5.1</b> Assessing Descriptive Adequacy (goodness of fit)</a></li>
 </ul></li>
 <li class="chapter" data-level="3.6" data-path="forstmannChapter.html"><a href="forstmannChapter.html#evaluating-different-models---single-threshold-lba"><i class="fa fa-check"></i><b>3.6</b> Evaluating different models - single threshold LBA</a><ul>
-<li class="chapter" data-level="3.6.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#pmwg-framework-for-a-single-threshold-model"><i class="fa fa-check"></i><b>3.6.1</b> PmWG framework for a single threshold model</a></li>
+<li class="chapter" data-level="3.6.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#pmwg-framework-for-a-single-threshold-model"><i class="fa fa-check"></i><b>3.6.1</b> PMwG framework for a single threshold model</a></li>
 </ul></li>
 <li class="chapter" data-level="3.7" data-path="forstmannChapter.html"><a href="forstmannChapter.html#checking-descriptive-adequacy-of-1b-model."><i class="fa fa-check"></i><b>3.7</b> Checking Descriptive Adequacy of 1b model.</a></li>
 <li class="chapter" data-level="3.8" data-path="forstmannChapter.html"><a href="forstmannChapter.html#model-comparison"><i class="fa fa-check"></i><b>3.8</b> Model Comparison</a><ul>
@@ -186,13 +186,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="forstmannChapter" class="section level1">
 <h1><span class="header-section-number">Chapter 3</span> PMwG sampler and sequential sampling models</h1>
-<p>In this chapter we’ll demonstrate how to use the PMwG sampler with a sequential sampling model; the Linear Ballistic Accumulator (LBA). Please ensure the <code>PMwG</code> and <code>rtdists</code> packages are installed. We currently recommended installing <code>PMwG</code> via devtools.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># The pmwg package will be on CRAN - this step will be removed.</span>
-<span class="kw">install_github</span>(<span class="st">&#39;newcastlecl\pmwg&#39;</span>)</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(pmwg)</code></pre></div>
-<div id="description-of-forstmann-experiment" class="section level2">
-<h2><span class="header-section-number">3.1</span> Description of Forstmann experiment</h2>
-<p>Forstmann et al looked at neural correlates of decision making under time pressure, with an aim to identify areas of the brain associated with speed-accuracy tradeoff. Imaging (fMRI) and behavioural data was collected; however, we will analyse behavioural data from the decision-making task only. In terms of modelling the data, Forstmann expected to find differences in thresholds (direction?) for each of the three speed-emphasis conditions. We have included the Forstmann et als data in the <code>PMwG</code> package as a data frame named <code>forstmann</code>. The sampler requires a data frame with a <b><code>subject</code></b> column. The subject column data type can be a factor or numeric.</p>
+<p>In this chapter we’ll demonstrate how to use the PMwG sampler with a sequential sampling model; the Linear Ballistic Accumulator (LBA). Please ensure the <code>PMwG</code> and <code>rtdists</code> packages are installed.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(pmwg)
+<span class="kw">library</span>(rtdists)</code></pre></div>
+<div id="the-speed-accuracy-tradeoff-in-perceptual-decisions" class="section level2">
+<h2><span class="header-section-number">3.1</span> The speed-accuracy tradeoff in perceptual decisions</h2>
+<p>We demonstrate the application of the LBA with the PMwG sampler to a study of perceptual decision making (Forstmann et al., 2008). Forstmann et al looked at neural correlates of decision making under time pressure, with an aim to identify areas of the brain associated with speed-accuracy tradeoff. Imaging (fMRI) and behavioural data was collected; however, we will analyse behavioural data from the decision-making task only. In terms of modelling the data, Forstmann expected to find differences in thresholds for each of the three speed-emphasis conditions. We have included the Forstmann et als data in the <code>PMwG</code> package as a data frame named <code>forstmann</code>. The sampler requires a data frame with a <b><code>subject</code></b> column. The subject column data type can be a factor or numeric.</p>
 <p>Table <a href="forstmannChapter.html#tab:forsthead10">3.1</a> shows the first ten trials from the Forstmann dataset. Participants <code>(n = 19)</code> were asked to indicate whether a cloud of dots in a random-dot kinematogram (RDK) moved to the left or the right of the screen. The IV was a within-subject, speed-accuracy manipulation where, before each trial began, pariticipants were instructed to make their choice <i>accurately</i> <code>(condition = 1)</code>, with <i>urgency</i><code>(condition = 3)</code>or were presented with a <i>neutral</i> message <code>(condition = 2)</code>. Stimuli moved either <i>left</i> <code>(stim = 1)</code> or <i>right</i> <code>(stim = 2)</code> and responses were <i>left</i> <code>(resp = 1)</code> or <i>right</i> <code>(resp = 2)</code>. Response times <code>(rt)</code> were recorded in seconds. For more information about the design of the experiment please see <a href="https://www.pnas.org/content/105/45/17538.short">the original paper</a>.</p>
 <table>
 <caption><span id="tab:forsthead10">Table 3.1: </span>First 10 trials in Forstmann dataset. The <code>forstmann</code> dataset is an data frame</caption>
@@ -284,10 +283,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>There are preliminary steps we need to complete before running the sampler. Let’s begin by defining the Linear Ballistic Accumulator (LBA) <span class="citation">(Brown and Heathcote <a href="#ref-brown2008simplest">2008</a>)</span> model parameters.</p>
 <ul>
 <li><code>b</code> threshold parameter (the evidence required to trigger a response)</li>
-<li><code>v</code> is drift rate or average speed of evidence accumulation</li>
-<li><code>A</code> is the model’s start point</li>
+<li><code>v</code> is the mean drift rate or average speed of evidence accumulation</li>
+<li><code>A</code> is the range of start points for accumulators</li>
 <li><code>t0</code> is non-decision time</li>
-<li><code>sv</code> is the standard deviation of drift rate</li>
+<li><code>sv</code> is the standard deviation of the across-trial distribution of drift rates</li>
 </ul>
 </div>
 <div id="writellFunc" class="section level2">
@@ -297,11 +296,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <ul>
 <li><code>x</code> is a named parameter vector (e.g. <code>pars</code>)</li>
 <li><code>data</code> is your dataset (e.g.<code>forstmann</code>). Your dataset must include a <code>&quot;subject&quot;</code> column</li>
-<li><code>sample = FALSE</code> calculates a density function or <code>TRUE</code> generates a posterior, predictive sample that matches the shape of data.</li>
+<li><code>sample = FALSE</code> calculates a density function or <code>TRUE</code> generates a posterior predictive sample that matches the shape of data.</li>
 </ul>
 <p>The log-likelihood function shown below includes functions from the <code>rtdists</code> package for generating data and estimating density. If you’d like to run through this example, it is best to copy the <code>tw_lba_ll</code> function from the code block below rather than copying from the separate code chunks where curly braces have been removed.</p>
 <p>NOTE: The trialwise log-likelihood is very slow and inneficient because <code>rLBA</code> and <code>dLBA</code> will be called on each line of the data. This will result in very slow sampling times and is a consequence of the <code>rtdists</code> package, not an issue with the PMwG sampling speed. If you have experience writing log-likelihoods, we recommend writing a faster version than our trialwise function, or use the fast log-likelihood we have written in section <a href="forstmannChapter.html#fstLBALL">3.3.1</a>. If you are new to modelling, we recommend trying the trialwise (slow) log-likelihood function as it is easier to follow, troubleshoot and is less likely to result in errors.</p>
-<p>Let’s begin by installing <code>rtdists</code> package…</p>
+<p>Let’s begin by loading the <code>rtdists</code> package…</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rtdists)</code></pre></div>
 <p>and now our complete trialwise (slow) log-likelihood function.</p>
 <div class="sourceCode"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
@@ -430,14 +429,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
     <span class="kw">return</span>(out)
   }
 }</code></pre></td></tr></table></div>
-<p>The first line in the <code>tw_lba_ll</code> function (Line 2 below) takes the exponent of the parameter values. We do this as the LBA expects values on the real number line. Line 3 and 4 then checks RTs are faster than the non-decision time parameter <code>t0</code>, and return a low value, indicating that the given value of <code>t0</code> is not likely.</p>
+<p>The first line in the <code>tw_lba_ll</code> function (Line 2 below) takes the exponent of the parameter values. We do this as the LBA requires positive parameter values that are on the real line. Line 3 and 4 then checks RTs are faster than the non-decision time parameter <code>t0</code>, and returns a low value if <code>t0</code> is larger than RT, indicating that the given value of <code>t0</code> is unlikely.</p>
 <div class="sourceCode" startFrom="2"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>2
 3
 4
 </pre></td><td class="sourceCode"><pre><code class="sourceCode r">  x &lt;-<span class="st"> </span><span class="kw">exp</span>(x)
   <span class="cf">if</span> (<span class="kw">any</span>(data<span class="op">$</span>rt <span class="op">&lt;</span><span class="st"> </span>x[<span class="st">&quot;t0&quot;</span>])) {
     <span class="kw">return</span>(<span class="op">-</span><span class="fl">1e10</span>)</code></pre></td></tr></table></div>
-<p>Now we create a vector with values sampled from the posterior distribution OR estimating the density. If <code>sample = TRUE</code>, we remove all responses <code>(resp)</code> and rts. This means when we return <code>data</code>, we are returning the posterior predictive data which matches with the associated <code>subject</code> and <code>condition</code>.</p>
+<p>Now we create a vector with values sampled from the posterior distribution OR estimating the density. If <code>sample = TRUE</code>, we remove all responses <code>(resp)</code> and rts. This means when we return <code>data</code>, we are returning the posterior predictive data which matches with the associated <code>subject</code> and <code>condition</code> and then generate them from the random function of the model.</p>
 <p>If <code>sample = FALSE</code> (the <code>else</code> statement from line 11) we create an <code>out</code> vector, with a length equal to the number of rows in the dataset, and store the likelihood value for each subject and condition.</p>
 <div class="sourceCode" startFrom="7"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>7
 8
@@ -479,7 +478,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
     } <span class="cf">else</span> {
       vs =<span class="st"> </span><span class="kw">c</span>(ve, vc)
     }</code></pre></td></tr></table></div>
-<p>The following section calls the relevant <code>rtdists</code> function depending on whether we are sampling from the posterior <code>(rLBA)</code> or estimating the density <code>(dLBA)</code>. We then input the parameters from above (using the names set above) into the relevant function. When generating data from the posterior (Line 30-37), <code>rLBA</code> is called for each line of the data, storing the generated <code>rt</code> and <code>response</code> given the posterior parameter estimates in the <code>tmp</code> vector (which we then reassign to the empty <code>data$rt</code> and <code>data$resp</code> columns). We set <code>n = 1</code>, since we are calling <code>rLBA</code> on 1 row of the data. When estimating the density (Line 42 to 50), dLBA is called for each line of the data, storing the probability of the <code>rt</code> and <code>response</code> under the proposed parameters <code>(x)</code> in the <code>out</code> vector.</p>
+<p>The following section calls the relevant <code>rtdists</code> function depending on whether we are sampling from the posterior predictive distribution <code>(rLBA)</code> or estimating the density <code>(dLBA)</code>. We then input the parameters from above (using the names set above) into the relevant function. When generating data from the posterior predictive distribution (Line 30-37), <code>rLBA</code> is called for each line of the data, storing the generated <code>rt</code> and <code>response</code> given the posterior parameter estimates in the <code>tmp</code> vector (which we then reassign to the empty <code>data$rt</code> and <code>data$resp</code> columns). We set <code>n = 1</code>, since we are calling <code>rLBA</code> on 1 row of the data. When estimating the density (Line 42 to 50), dLBA is called for each line of the data, storing the probability of the <code>rt</code> and <code>response</code> under the proposed parameters <code>(x)</code> in the <code>out</code> vector.</p>
 <div class="sourceCode" startFrom="29"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>29
 30
 31
@@ -528,7 +527,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
                      <span class="dt">silent =</span> <span class="ot">TRUE</span>
       )
       }</code></pre></td></tr></table></div>
-<p>This final section tells the function what to return; <code>data</code> - when sampling posterior predictive (Line 56) - or the sum of the likelihoods - when estimating density (Line x - y). On line 58 we take all implausible likelihood values, assign them to the <code>bad</code> object and then (line 59) set them to zero. The final two lines within the <code>else</code> statement take the log of all likelihood values, sums them, assigns the model’s log-likelihood value to the <code>out</code> variable and returns that value.</p>
+<p>This final section tells the function what to return; <code>data</code> - when sampling posterior predictive data (Line 56) - or the sum of the likelihoods - when estimating density (Line 57 - 61). On line 58 we take all implausible likelihood values, assign them to the <code>bad</code> object and then (line 59) set them to an extremely unlikely value, to prevent numerical errors. The final two lines within the <code>else</code> statement take the log of all likelihood values, sums them, assigns the model’s log-likelihood value to the <code>out</code> variable and returns that value.</p>
 <div class="sourceCode" startFrom="55"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>55
 56
 57
@@ -636,15 +635,15 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
     <span class="kw">return</span>(out)
   }
 }</code></pre></div>
-<p>You should improve your log-likelihood’s performance as you see fit. When you’re confident that your log-likelihood code functions correctly, we suggest saving it as a separate script so it can be sourced and loaded when running the sampler. If you’re learning how to write log-likelihood functions, take a look at our <a href="troubleshoot.html#troubleshoot">troubleshooting section</a> for tips.</p>
+<p>You should improve your log-likelihood’s performance as you see fit. When you’re confident that your log-likelihood code functions correctly, we suggest saving it as a separate script so it can be sourced and loaded when running the sampler. If you’re learning how to write log-likelihood functions, take a look at our <a href="troubleshoot.html#troubleshoot">troubleshooting section</a> for tips. In our experience, a very large proportion of problems with sampling and inference are caused by inadequate checking and care in the likelihood function.</p>
 </div>
 </div>
 <div id="pmwg-framework" class="section level2">
 <h2><span class="header-section-number">3.4</span> PMwG Framework</h2>
 <p>Now that we have a log-likelihood function, we can set up the <code>PMwG</code> sampler. Running the sampler follows the same procedure outlined in the <a href="pmwg-sampler-and-signal-detection-theory.html#sdtPMwG">SDT chapter</a>; we need to set up a vector of model parameter names, create a <code>priors</code> object, source our LBA log-likelihood script and then create our <code>sampler</code> object.</p>
-<p>Let’s begin by creating a vector of model parameter names, which we’ll use in our log-likelihood function. You can name this object as you wish; however, in our example, we name it <code>pars</code>.<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> For the <code>forstmann</code> dataset, we use three threshold parameters (one <code>b</code> for each condition) because we assume that the condition has an effect on level of caution, we include two drift rate parameters: <code>v1</code> for the incorrect accumulator and <code>v2</code> for the correct accumulator, a start point parameter <code>A</code> and a non-decision time <code>t0</code> parameter.</p>
+<p>Let’s begin by creating a vector of model parameter names, which we’ll use in our log-likelihood function. You can name this object as you wish; however, in our example, we name it <code>pars</code>.<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> For the <code>forstmann</code> dataset, we use three threshold parameters (one <code>b</code> for each condition) because we assume that the condition has an effect on level of caution, we include two drift rate parameters: <code>ve</code> for the incorrect accumulator and <code>vc</code> for the correct accumulator, a start point parameter <code>A</code> and a non-decision time <code>t0</code> parameter.</p>
 <p>We’ve made a decision to set the <code>sv</code> to 1 to satisfy the scaling properties of the model. As such, we haven’t included the <code>sv</code> parameter in the <code>pars</code> vector - it is found in the LBA’s log-likelihood function (see above).</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pars &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;b1&quot;</span>, <span class="st">&quot;b2&quot;</span>, <span class="st">&quot;b3&quot;</span>, <span class="st">&quot;A&quot;</span>, <span class="st">&quot;v1&quot;</span>, <span class="st">&quot;v2&quot;</span>, <span class="st">&quot;t0&quot;</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pars &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;b1&quot;</span>, <span class="st">&quot;b2&quot;</span>, <span class="st">&quot;b3&quot;</span>, <span class="st">&quot;A&quot;</span>, <span class="st">&quot;ve&quot;</span>, <span class="st">&quot;vc&quot;</span>, <span class="st">&quot;t0&quot;</span>)</code></pre></div>
 <p>For the mean of the distribution for random effects (theta_mu), we assume a multivariate normal prior. The user can specify the mean and variance of this prior distribution using the object <code>priors</code>, which has elements <code>theta_mu_mean</code> and <code>theta_mu_var</code>. A typical setting for LBA models is to set <code>theta_mu_mean</code> to be a zero vector and to set <code>theta_mu_var</code> to be a multiple of the identity matrix, e.g. with 9 on the diagonal (representing a standard deviation of 3 for the subject-level means in the prior).</p>
 <p>We create our <code>priors</code> object; a list that contains two components:</p>
 <ul>
@@ -677,9 +676,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><code>sig2</code> vector containing the start points of the covariance matrix of covariance between model parameters.</li>
 </ul>
 <p><b>Note:</b> <i>Start points must be on the real line. Our log-likelihood function immediately takes the exponent of the start points and only returns positive values, so we use the log of sensible start points here.</i></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">start_points &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">mu =</span> <span class="kw">c</span>(<span class="kw">log</span>(<span class="fl">1.2</span>), <span class="kw">log</span>(<span class="fl">1.2</span>), <span class="kw">log</span>(<span class="fl">1.2</span>),
-                            <span class="kw">log</span>(<span class="fl">1.4</span>), <span class="kw">log</span>(<span class="fl">1.3</span>), <span class="kw">log</span>(<span class="fl">3.5</span>),
-                            <span class="kw">log</span>(<span class="fl">0.13</span>)),
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">start_points &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">mu =</span> <span class="kw">log</span>(<span class="kw">c</span>(<span class="fl">1.2</span>, <span class="fl">1.2</span>, <span class="fl">1.2</span>,
+                                <span class="fl">1.4</span>, <span class="fl">1.3</span>, <span class="fl">3.5</span>, 
+                                <span class="fl">0.13</span>)
+                              ),
                      <span class="dt">sig2 =</span> <span class="kw">diag</span>(<span class="kw">rep</span>(.<span class="dv">01</span>, <span class="kw">length</span>(pars)))
                      )</code></pre></div>
 </div>
@@ -697,13 +697,13 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul>
 <p>The following arguments listed below are optional:</p>
 <ul>
-<li><code>iter =</code> is the number of iterations for the sampling stage. This is similar to running deMCMC, where it takes many iterations to reach the posterior space. Default = 1000.</li>
-<li><code>particles =</code> is the number of particles generated on each iteration. Default = 1000.</li>
+<li><code>iter =</code> is the number of iterations for the sampling stage. For burn-in, it is important to have enough iterations that the chains converge on the posterior distribution. Default = 1000.</li>
+<li><code>particles =</code> is the number of proposals (particles) generated for each random effect, on each iteration. Default = 1000, but set smaller or larger in order to target a reasonable acceptance rate (i.e. 10-60%).</li>
 <li><code>display_progress =</code> display a progress bar during sampling</li>
-<li><code>epsilon =</code> is a value between 0 and 1 which reduces the size of the sampling space. We use lower values of epsilon when there are more parameters to estimate. Default = 1.</li>
+<li><code>epsilon =</code> is a value greater than 0 which scales the variance of the proposal distribution. Smaller values (i.e. narrower proposal distributions) can lead to higher acceptance rates, but slower coverage of the posterior. Smaller values are especially useful when the number of random effects is large (e.g. &gt;10). Default = 1.</li>
 <li><code>n_cores =</code> the number of cores on a machine you wish to use to run the sampler. This allows sampling to be run across cores (parallelising for subjects). Default = 1. <b> Note:</b> Setting <code>n_cores</code> greater than 1 is only permitted on Linux and Mac OS X machines.</li>
 </ul>
-<p><br> The first sampling stage is burn-in <code>&quot;burn&quot;</code>. The burn-in stage allows time for the sampler to move from the (arbitrary) start points that were provided by the user to the mode of the posterior distribution. This can be checked by examining the chains for stationarity. We take the <code>sampler</code> object created in the <code>init</code> function above, set the stage argument to <code>&quot;burn&quot;</code> and assign the outcome to an object called <code>burned</code>. <br><b> What about iter, particles and epsilon?</b></p>
+<p><br> The first sampling stage is burn-in <code>&quot;burn&quot;</code>. The burn-in stage allows time for the sampler to move from the (arbitrary) start points that were provided by the user to the mode of the posterior distribution. This can be checked by examining the chains for stationarity. We take the <code>sampler</code> object created in the <code>init</code> function above, set the stage argument to <code>&quot;burn&quot;</code> and assign the outcome to an object called <code>burned</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">burned &lt;-<span class="st"> </span><span class="kw">run_stage</span>(sampler, 
                     <span class="dt">stage =</span> <span class="st">&quot;burn&quot;</span>,
                     <span class="dt">iter =</span> <span class="dv">500</span>,
@@ -754,7 +754,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><code>sampled</code>: is the object/output from the PMwG sampler</li>
 <li><code>n</code>: the number of posterior samples</li>
 <li><code>ll_func =</code>: the log-likelihood function embedded in the <code>sampled</code> object</li>
-<li><code>rbind.data =</code>: bind the rows of each predictive sample to <b>SOMETHING</b></li>
+<li><code>rbind.data =</code>: bind the rows of each predictive sample into a rectangular array, or leave as a list.</li>
 </ul>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gen_pp_data &lt;-<span class="st"> </span><span class="cf">function</span> (sampled, n, <span class="dt">ll_func =</span> sampled<span class="op">$</span>ll_func, <span class="dt">rbind.data =</span> <span class="ot">TRUE</span>) {
   sampled_stage &lt;-<span class="st"> </span><span class="kw">length</span>(sampled<span class="op">$</span>samples<span class="op">$</span>stage[sampled<span class="op">$</span>samples<span class="op">$</span>stage <span class="op">==</span><span class="st"> &quot;sample&quot;</span>])
@@ -799,24 +799,24 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>In the next section, we will use the posterior predictive data to assess descriptive adequacy.</p>
 <div id="assessing-descriptive-adequacy-goodness-of-fit" class="section level3">
 <h3><span class="header-section-number">3.5.1</span> Assessing Descriptive Adequacy (goodness of fit)</h3>
-<p>Now we will plot the posterior predictive data against the real data. This may only be useful for some users, as what you do with your data is domain specific.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Subject x condition Q1, median and Q3 respone time + mean accuracy </span>
+<p>Now we will plot the posterior predictive data against the real data. In the section below we compare observed RTs against predicted RTs, which is common for RT modelling; however, the code could also be modified for different types of data.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Subject x condition Q25, median and Q75 respone time + mean accuracy </span>
 <span class="co"># Forstmann dataset</span>
 pq3b &lt;-<span class="st"> </span>forstmann <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">group_by</span>(condition, subject) <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">Q1 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.25</span>),
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">Q25 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.25</span>),
             <span class="dt">median =</span> <span class="kw">median</span>(rt), 
-            <span class="dt">Q3 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.75</span>),
+            <span class="dt">Q75 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.75</span>),
             <span class="dt">acc =</span>  <span class="kw">mean</span>(<span class="kw">ifelse</span>(stim <span class="op">==</span><span class="st"> </span>resp, <span class="dv">1</span>, <span class="dv">0</span>)),
             <span class="dt">.groups =</span> <span class="st">&quot;keep&quot;</span>
             )
 
-<span class="co"># Subject x condition Q1, median and Q3 respone time for posterior predictive data</span>
+<span class="co"># Subject x condition Q25, median and Q75 respone time for posterior predictive data</span>
 pp_pq3b &lt;-<span class="st"> </span>pp_data_3b <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">group_by</span>(condition, pp_iter, subject) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">Q1 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.25</span>),
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">Q25 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.25</span>),
             <span class="dt">median =</span> <span class="kw">median</span>(rt), 
-            <span class="dt">Q3 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.75</span>),
+            <span class="dt">Q75 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.75</span>),
             <span class="dt">acc =</span> <span class="kw">mean</span>(<span class="kw">ifelse</span>(stim <span class="op">==</span><span class="st"> </span>resp, <span class="dv">1</span>, <span class="dv">0</span>)),
             <span class="dt">.groups =</span> <span class="st">&quot;keep&quot;</span>
             )
@@ -826,16 +826,16 @@ pq3b &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(<span class
                 <span class="kw">cbind</span>(<span class="dt">src =</span> <span class="kw">rep</span>(<span class="st">&quot;model&quot;</span>, <span class="kw">nrow</span>(pp_pq3b)), pp_pq3b)
                 )
 
-<span class="co"># Mean Q1, median, Q4 and accuracy for data and posterior predictive data</span>
+<span class="co"># Mean Q25, median, Q4 and accuracy for data and posterior predictive data</span>
 av_pq3b &lt;-<span class="st"> </span>pq3b <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">group_by</span>(src, condition) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(Q1<span class="op">:</span>acc), mean)
+<span class="st">  </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(Q25<span class="op">:</span>acc), mean)
 
 <span class="co"># Variances of posterior samples</span>
 pp_var3b &lt;-<span class="st"> </span>pq3b <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">filter</span>(src <span class="op">!=</span><span class="st"> &quot;data&quot;</span>) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">group_by</span>(condition, pp_iter, src) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(Q1<span class="op">:</span>acc), mean)
+<span class="st">  </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(Q25<span class="op">:</span>acc), mean)
 
 <span class="co"># Convert source column to a factor and add labels</span>
 av_pq3b<span class="op">$</span>src &lt;-<span class="st"> </span><span class="kw">factor</span>(av_pq3b<span class="op">$</span>src,
@@ -854,8 +854,8 @@ pp_varsrc3b &lt;-<span class="st"> </span><span class="kw">factor</span>(pp_var3
 <span class="co"># Convert rt to milliseconds and acc to percentage</span>
 av_pq3b<span class="op">$</span>acc &lt;-<span class="st"> </span><span class="dv">100</span> <span class="op">*</span><span class="st"> </span>av_pq3b<span class="op">$</span>acc
 pp_var3b<span class="op">$</span>acc &lt;-<span class="st"> </span><span class="dv">100</span> <span class="op">*</span><span class="st"> </span>pp_var3b<span class="op">$</span>acc
-av_pq3b[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)] &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="op">*</span><span class="st"> </span>av_pq3b[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)]
-pp_var3b[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)] &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="op">*</span><span class="st"> </span>pp_var3b[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)]</code></pre></div>
+av_pq3b[, <span class="kw">c</span>(<span class="st">&quot;Q25&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q75&quot;</span>)] &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="op">*</span><span class="st"> </span>av_pq3b[, <span class="kw">c</span>(<span class="st">&quot;Q25&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q75&quot;</span>)]
+pp_var3b[, <span class="kw">c</span>(<span class="st">&quot;Q25&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q75&quot;</span>)] &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="op">*</span><span class="st"> </span>pp_var3b[, <span class="kw">c</span>(<span class="st">&quot;Q25&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q75&quot;</span>)]</code></pre></div>
 <p><img src="bookdown-demo_files/figure-html/ppdataplotarrg3b-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 </div>
@@ -1020,8 +1020,8 @@ pp_var3b[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <sp
   }
 }</code></pre></td></tr></table></div>
 <div id="pmwg-framework-for-a-single-threshold-model" class="section level3">
-<h3><span class="header-section-number">3.6.1</span> PmWG framework for a single threshold model</h3>
-<p>The PmWG sampler procedure remains the same for all models. For our three threshold LBA model, we need the updated log-likelihood function from above, an updated parameter vector, start points and priors.</p>
+<h3><span class="header-section-number">3.6.1</span> PMwG framework for a single threshold model</h3>
+<p>The PMwG sampler procedure remains the same for all models. For our three threshold LBA model, we need the updated log-likelihood function from above, an updated parameter vector, start points and priors.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Load the log-likelihood script</span>
 <span class="kw">source</span>(<span class="dt">file =</span> <span class="st">&quot;fast_lba_ll1b.R&quot;</span>)
 
@@ -1075,23 +1075,23 @@ sampled &lt;-<span class="st"> </span><span class="kw">run_stage</span>(adapted,
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">load</span>(<span class="st">&quot;forstmann1b_sampled.RData&quot;</span>)</code></pre></div>
 <p>As we did for the three threshold LBA model, we generate 20 posterior predictive data samples. Note: this function is from section <a href="forstmannChapter.html#genppdatafunc">3.5</a></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pp_data_1b &lt;-<span class="st"> </span><span class="kw">gen_pp_data</span>(sampled, <span class="dt">n =</span> <span class="dv">20</span>)</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Subject x condition Q1, median and Q3 respone time + mean accuracy</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Subject x condition Q25, median and Q75 respone time + mean accuracy</span>
 <span class="co"># Forstmann dataset</span>
 pq1b &lt;-<span class="st"> </span>forstmann <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">group_by</span>(condition, subject) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">Q1 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.25</span>),
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">Q25 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.25</span>),
             <span class="dt">median =</span> <span class="kw">median</span>(rt),
-            <span class="dt">Q3 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.75</span>),
+            <span class="dt">Q75 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.75</span>),
             <span class="dt">acc =</span>  <span class="kw">mean</span>(<span class="kw">ifelse</span>(stim <span class="op">==</span><span class="st"> </span>resp, <span class="dv">1</span>, <span class="dv">0</span>)),
             <span class="dt">.groups =</span> <span class="st">&quot;keep&quot;</span>
             )
 
-<span class="co"># Subject x condition Q1, median and Q3 respone time for posterior predictive data</span>
+<span class="co"># Subject x condition Q25, median and Q75 respone time for posterior predictive data</span>
 pp_pq1b &lt;-<span class="st"> </span>pp_data_1b <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">group_by</span>(condition, pp_iter, subject) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">Q1 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.25</span>),
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">Q25 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.25</span>),
             <span class="dt">median =</span> <span class="kw">median</span>(rt),
-            <span class="dt">Q3 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.75</span>),
+            <span class="dt">Q75 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.75</span>),
             <span class="dt">acc =</span> <span class="kw">mean</span>(<span class="kw">ifelse</span>(stim <span class="op">==</span><span class="st"> </span>resp, <span class="dv">1</span>, <span class="dv">0</span>)),
             <span class="dt">.groups =</span> <span class="st">&quot;keep&quot;</span>
             )
@@ -1101,16 +1101,16 @@ pq1b &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(<span class
                 <span class="kw">cbind</span>(<span class="dt">src =</span> <span class="kw">rep</span>(<span class="st">&quot;model&quot;</span>, <span class="kw">nrow</span>(pp_pq1b)), pp_pq1b)
                 )
 
-<span class="co"># Mean Q1, median, Q4 and accuracy for data and posterior predictive data</span>
+<span class="co"># Mean Q25, median, Q4 and accuracy for data and posterior predictive data</span>
 av_pq1b &lt;-<span class="st"> </span>pq1b <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">group_by</span>(src, condition) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(Q1<span class="op">:</span>acc), mean)
+<span class="st">  </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(Q25<span class="op">:</span>acc), mean)
 
 <span class="co"># Variances of posterior samples</span>
 pp_var1b &lt;-<span class="st"> </span>pq1b <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">filter</span>(src <span class="op">!=</span><span class="st"> &quot;data&quot;</span>) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">group_by</span>(condition, pp_iter, src) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(Q1<span class="op">:</span>acc), mean)
+<span class="st">  </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(Q25<span class="op">:</span>acc), mean)
 
 <span class="co"># Convert source column to a factor and add labels</span>
 av_pq1b<span class="op">$</span>src &lt;-<span class="st"> </span><span class="kw">factor</span>(av_pq1b<span class="op">$</span>src,
@@ -1129,8 +1129,8 @@ pp_varsrc1b &lt;-<span class="st"> </span><span class="kw">factor</span>(pp_var1
 <span class="co"># Convert rt to milliseconds and acc to percentage</span>
 av_pq1b<span class="op">$</span>acc &lt;-<span class="st"> </span><span class="dv">100</span> <span class="op">*</span><span class="st"> </span>av_pq1b<span class="op">$</span>acc
 pp_var1b<span class="op">$</span>acc &lt;-<span class="st"> </span><span class="dv">100</span> <span class="op">*</span><span class="st"> </span>pp_var1b<span class="op">$</span>acc
-av_pq1b[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)] &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="op">*</span><span class="st"> </span>av_pq1b[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)]
-pp_var1b[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)] &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="op">*</span><span class="st"> </span>pp_var1b[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)]</code></pre></div>
+av_pq1b[, <span class="kw">c</span>(<span class="st">&quot;Q25&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q75&quot;</span>)] &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="op">*</span><span class="st"> </span>av_pq1b[, <span class="kw">c</span>(<span class="st">&quot;Q25&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q75&quot;</span>)]
+pp_var1b[, <span class="kw">c</span>(<span class="st">&quot;Q25&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q75&quot;</span>)] &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="op">*</span><span class="st"> </span>pp_var1b[, <span class="kw">c</span>(<span class="st">&quot;Q25&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q75&quot;</span>)]</code></pre></div>
 <p><img src="bookdown-demo_files/figure-html/ppdataplot1b-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="model-comparison" class="section level2">
@@ -1138,35 +1138,35 @@ pp_var1b[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <sp
 <p>In this section, we are going to compare the three threshold model and the single threshold model for the forstmann (2008) data to determine which model best represents the data. We begin by using a graphical method i.e. plotting the modelled data against the observed data.</p>
 <div id="assessing-descriptive-adequacy-graphically" class="section level3">
 <h3><span class="header-section-number">3.8.1</span> Assessing Descriptive Adequacy Graphically</h3>
-<p>We can <i>“assess descriptive adequacy”</i> graphically by plotting the observed data, three threshold and single threshold data on a single plot.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Subject x condition Q1, median and Q3 respone time + mean accuracy </span>
+<p>We can assess descriptive adequacy graphically by plotting the observed data, three threshold and single threshold data on a single plot.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Subject x condition Q25, median and Q75 respone time + mean accuracy </span>
 <span class="co"># Forstmann data</span>
 pq &lt;-<span class="st"> </span>forstmann <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">group_by</span>(condition, subject) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">Q1 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.25</span>),
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">Q25 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.25</span>),
             <span class="dt">median =</span> <span class="kw">median</span>(rt),
-            <span class="dt">Q3 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.75</span>),
+            <span class="dt">Q75 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.75</span>),
             <span class="dt">acc =</span>  <span class="kw">mean</span>(<span class="kw">ifelse</span>(stim <span class="op">==</span><span class="st"> </span>resp, <span class="dv">1</span>, <span class="dv">0</span>)),
             <span class="dt">.groups =</span> <span class="st">&quot;keep&quot;</span>
             )
 
-<span class="co"># Subject x condition Q1, median and Q3 respone time for posterior predictive data</span>
+<span class="co"># Subject x condition Q25, median and Q75 respone time for posterior predictive data</span>
 <span class="co">#3b model</span>
 pp_pq3b &lt;-<span class="st"> </span>pp_data_3b <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">group_by</span>(condition, pp_iter, subject) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">Q1 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.25</span>),
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">Q25 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.25</span>),
             <span class="dt">median =</span> <span class="kw">median</span>(rt), 
-            <span class="dt">Q3 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.75</span>),
+            <span class="dt">Q75 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.75</span>),
             <span class="dt">acc =</span> <span class="kw">mean</span>(<span class="kw">ifelse</span>(stim <span class="op">==</span><span class="st"> </span>resp, <span class="dv">1</span>, <span class="dv">0</span>)),
             <span class="dt">.groups =</span> <span class="st">&quot;keep&quot;</span>
             )
-<span class="co"># Subject x condition Q1, median and Q3 respone time for posterior predictive data </span>
+<span class="co"># Subject x condition Q25, median and Q75 respone time for posterior predictive data </span>
 <span class="co">#1b model</span>
 pp_pq1b &lt;-<span class="st"> </span>pp_data_1b <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">group_by</span>(condition, pp_iter, subject) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">Q1 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.25</span>),
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">Q25 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.25</span>),
             <span class="dt">median =</span> <span class="kw">median</span>(rt),
-            <span class="dt">Q3 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.75</span>),
+            <span class="dt">Q75 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.75</span>),
             <span class="dt">acc =</span> <span class="kw">mean</span>(<span class="kw">ifelse</span>(stim <span class="op">==</span><span class="st"> </span>resp, <span class="dv">1</span>, <span class="dv">0</span>)),
             <span class="dt">.groups =</span> <span class="st">&quot;keep&quot;</span>
             )
@@ -1177,16 +1177,16 @@ pqall &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(<span clas
                 <span class="kw">cbind</span>(<span class="dt">src =</span> <span class="kw">rep</span>(<span class="st">&quot;1b&quot;</span>, <span class="kw">nrow</span>(pp_pq1b)), pp_pq1b)
                 )
 
-<span class="co"># Mean Q1, median, Q4 and accuracy for data and posterior predictive data</span>
+<span class="co"># Mean Q25, median, Q4 and accuracy for data and posterior predictive data</span>
 av_pq &lt;-<span class="st"> </span>pqall <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">group_by</span>(src, condition) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(Q1<span class="op">:</span>acc), mean)
+<span class="st">  </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(Q25<span class="op">:</span>acc), mean)
 
 <span class="co"># Variances of posterior samples</span>
 pp_var &lt;-<span class="st"> </span>pqall <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">filter</span>(src <span class="op">!=</span><span class="st"> &quot;data&quot;</span>) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">group_by</span>(condition, pp_iter, src) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(Q1<span class="op">:</span>acc), mean)
+<span class="st">  </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(Q25<span class="op">:</span>acc), mean)
 
 <span class="co"># Convert source column to a factor and add labels</span>
 av_pq<span class="op">$</span>src &lt;-<span class="st"> </span><span class="kw">factor</span>(av_pq<span class="op">$</span>src,
@@ -1205,13 +1205,13 @@ pp_varsrc &lt;-<span class="st"> </span><span class="kw">factor</span>(pp_var<sp
 <span class="co"># Convert rt to milliseconds and acc to percentage</span>
 av_pq<span class="op">$</span>acc &lt;-<span class="st"> </span><span class="dv">100</span> <span class="op">*</span><span class="st"> </span>av_pq<span class="op">$</span>acc
 pp_var<span class="op">$</span>acc &lt;-<span class="st"> </span><span class="dv">100</span> <span class="op">*</span><span class="st"> </span>pp_var<span class="op">$</span>acc
-av_pq[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)] &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="op">*</span><span class="st"> </span>av_pq[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)]
-pp_var[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)] &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="op">*</span><span class="st"> </span>pp_var[, <span class="kw">c</span>(<span class="st">&quot;Q1&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q3&quot;</span>)]</code></pre></div>
+av_pq[, <span class="kw">c</span>(<span class="st">&quot;Q25&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q75&quot;</span>)] &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="op">*</span><span class="st"> </span>av_pq[, <span class="kw">c</span>(<span class="st">&quot;Q25&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q75&quot;</span>)]
+pp_var[, <span class="kw">c</span>(<span class="st">&quot;Q25&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q75&quot;</span>)] &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="op">*</span><span class="st"> </span>pp_var[, <span class="kw">c</span>(<span class="st">&quot;Q25&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q75&quot;</span>)]</code></pre></div>
 <p><img src="bookdown-demo_files/figure-html/ppdataplotModelComp-1.png" width="672" style="display: block; margin: auto;" /> The plots show that values in the three threshold model (red circles) better describe the data than the single threshold model (blue circles).</p>
 </div>
 <div id="model-comparison-via-dic" class="section level3">
 <h3><span class="header-section-number">3.8.2</span> Model comparison via DIC</h3>
-<p>Another method of model comparison is using information criterions. Here we provide a function for calculating deviance information criterion (DIC).</p>
+<p>Another method of model comparison is using information criterions. Here we provide a function for calculating deviance information criterion (DIC). <b>Note:</b> we recommend using marginal likelihood (Bayes factors) instead of DIC for model selection. For more information, see this paper on <a href="https://link.springer.com/article/10.3758/s13428-020-01348-w">estimating the Marginal Likelihood via importance sampling</a>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pmwg_DIC &lt;-<span class="st"> </span><span class="cf">function</span>(sampled, <span class="dt">pD =</span> <span class="ot">FALSE</span>){
   <span class="co"># Identify number of subjects</span>
   nsubj &lt;-<span class="st"> </span><span class="kw">length</span>(<span class="kw">unique</span>(sampled<span class="op">$</span>data<span class="op">$</span>subject))
@@ -1313,7 +1313,7 @@ sampled1b &lt;-<span class="st"> </span>sampled
 <ol style="list-style-type: decimal">
 <li>Assign values to parameters of the model - these are known as the generating values. <br><b>Note</b>: ensure these are sensible values - for example in the LBA, we want the drift rate for the mismatch/error accumulator (<code>ve</code>) to be smaller than the match/correct accumulator (<code>vc</code>) and the non-decision time parameter <code>t0</code> should not be too large.</li>
 </ol>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">true.x &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">c</span>(<span class="dt">A =</span> <span class="dv">2</span>,
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">true_x &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">c</span>(<span class="dt">A =</span> <span class="dv">2</span>,
                 <span class="dt">b.1 =</span> <span class="dv">2</span>,
                 <span class="dt">b.2 =</span> <span class="dv">1</span>,
                 <span class="dt">b.3 =</span> .<span class="dv">5</span>,
@@ -1323,45 +1323,46 @@ sampled1b &lt;-<span class="st"> </span>sampled
                 )
               )</code></pre></div>
 <ol start="2" style="list-style-type: decimal">
-<li>Pass the generating parameter values (<code>true.x</code>) into the log-likelihood and generate data using your log-likelihood function, where <code>sample = TRUE</code>.</li>
+<li>Pass the generating parameter values (<code>true_x</code>) into the log-likelihood and generate data using your log-likelihood function, where <code>sample = TRUE</code>.</li>
 </ol>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">test.data &lt;-<span class="st"> </span><span class="kw">tw_lba_ll</span>(<span class="dt">x =</span> true.x,
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">test_data &lt;-<span class="st"> </span><span class="kw">tw_lba_ll</span>(<span class="dt">x =</span> true_x,
                        <span class="dt">data =</span> data,
                        <span class="dt">sample =</span> <span class="ot">TRUE</span>
                        )</code></pre></div>
 <pre><code>## Warning in rnorm(length(ind.no)): &#39;.Random.seed[1]&#39; is not a valid integer, so
 ## ignored</code></pre>
 <ol start="3" style="list-style-type: decimal">
-<li>Generate profile plots to compare the log-likelihood of the <code>true.x</code> parameter values against nearby values in the ‘synethetic’ data. You can write your own function for this, or use the function below.</li>
+<li>Generate profile plots to compare the log-likelihood of the <code>true_x</code> parameter values against nearby values in the ‘synethetic’ data. You can write your own function for this, or use the function below.</li>
 </ol>
 <p>Our plotting function takes five arguments:</p>
 <ul>
 <li><code>x</code> is a vector of named parameter values.</li>
-<li><code>n.values</code> specifies how many parameter x-values we will assess to compare to compare to the true data-generating parameter value. Default is 9.</li>
-<li><code>synth.data</code> is the synthetic data</li>
+<li><code>n_values</code> specifies how many parameter x-values we will assess to compare to compare to the true data-generating parameter value. Default is 9.</li>
+<li><code>synth_data</code> is the synthetic data</li>
 <li><code>dims</code> specifies the layout for the plots we will generate. In this example, we have 7 parameters, so I will set my dimensions to be 4 rows with 2 columns.</li>
 <li><code>ll_func</code> specifies the name of the log-likelihood function you have created.</li>
 <li><code>server</code> should only be set to true if running on a device with multiple cores. This argument speeds up computational efficiency.</li>
 </ul>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(parallel)
 
-test.likelihood &lt;-<span class="st"> </span><span class="cf">function</span>(x, 
-                            <span class="dt">n.values =</span> <span class="dv">9</span>,
-                            synth.data,
-                            dims,
-                            ll_func,
-                            <span class="dt">server =</span> <span class="ot">FALSE</span>,...) {
+test_ll &lt;-<span class="st"> </span><span class="cf">function</span>(x, 
+                    <span class="dt">n_values =</span> <span class="dv">9</span>,
+                    synth_data,
+                    dims,
+                    ll_func,
+                    <span class="dt">server =</span> <span class="ot">FALSE</span>,...) {
   pars &lt;-<span class="st"> </span><span class="kw">names</span>(x)
-  x.tmp &lt;-<span class="st"> </span>x
-  sequence &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dt">from =</span> <span class="op">-</span>.<span class="dv">22</span>, <span class="dt">to =</span> .<span class="dv">22</span>,
-                  <span class="dt">length.out =</span> n.values)
+  xtmp &lt;-<span class="st"> </span>x
+  sequence &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dt">from =</span> <span class="op">-</span>.<span class="dv">22</span>,
+                  <span class="dt">to =</span> .<span class="dv">22</span>,
+                  <span class="dt">length.out =</span> n_values)
   op &lt;-<span class="st"> </span><span class="kw">par</span>(<span class="dt">mfrow =</span> dims)
   par_likelihoods &lt;-<span class="st"> </span><span class="kw">lapply</span>(<span class="kw">setNames</span>(pars, pars), <span class="cf">function</span>(p){
-    testvalues &lt;-<span class="st"> </span>sequence <span class="op">+</span><span class="st"> </span>true.x[[p]]
+    testvalues &lt;-<span class="st"> </span>sequence <span class="op">+</span><span class="st"> </span>true_x[[p]]
     tmp &lt;-<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">lapply</span>(testvalues, <span class="cf">function</span> (i){ 
       <span class="co">#for each test vlaue, it will apply the function where i = testvalue.</span>
-    x.tmp[[p]] &lt;-<span class="st"> </span>i
-    <span class="kw">ll_func</span>(<span class="dt">x =</span> x.tmp, <span class="dt">data =</span> synth.data)
+    xtmp[[p]] &lt;-<span class="st"> </span>i
+    <span class="kw">ll_func</span>(<span class="dt">x =</span> xtmp, <span class="dt">data =</span> synth_data)
     }))
     
     <span class="kw">plot</span>(<span class="dt">x =</span> testvalues,
@@ -1371,22 +1372,22 @@ test.likelihood &lt;-<span class="st"> </span><span class="cf">function</span>(x
          <span class="dt">xlab =</span> <span class="st">&quot;log par values&quot;</span>,
          <span class="dt">ylab =</span> <span class="st">&quot;log-likelihood&quot;</span>,
          ...)
-    <span class="kw">abline</span>(<span class="dt">v =</span> true.x[[p]], <span class="dt">col =</span> <span class="st">&quot;red&quot;</span>)
+    <span class="kw">abline</span>(<span class="dt">v =</span> true_x[[p]], <span class="dt">col =</span> <span class="st">&quot;red&quot;</span>)
     <span class="kw">return</span>(tmp)})
   <span class="kw">par</span>(op)
   <span class="kw">return</span>(par_likelihoods)
 }</code></pre></div>
 <p>Whilst we used the trialwise log-likelihood function to generate data, we will use the fast log-likelihood function in this “parameter recovery” simulation for computational efficiency.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ll_plots &lt;-<span class="st"> </span><span class="kw">test.likelihood</span>(<span class="dt">x =</span> true.x,
-                                    <span class="dt">n.values =</span> <span class="dv">9</span>,
-                                    <span class="dt">synth.data =</span> test.data,
-                                    <span class="dt">dims =</span> <span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">2</span>),
-                                    <span class="dt">ll_func =</span> fast_lba_ll3b
-                                    ) </code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ll_plots &lt;-<span class="st"> </span><span class="kw">test_ll</span>(<span class="dt">x =</span> true_x,
+                    <span class="dt">n_values =</span> <span class="dv">9</span>,
+                    <span class="dt">synth_data =</span> test_data,
+                    <span class="dt">dims =</span> <span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">2</span>),
+                    <span class="dt">ll_func =</span> fast_lba_ll3b
+                    ) </code></pre></div>
 <p><img src="bookdown-demo_files/figure-html/llPlots-1.png" width="672" /><img src="bookdown-demo_files/figure-html/llPlots-2.png" width="672" /></p>
-<p>The red line indicates the true generating parameter value. <b> What is correct about these plots???</b></p>
+<p>The red line indicates the true generating parameter value (i.e. the data generating values for the parameters) have the best (highest) likelihoods.</p>
 <p>Note: The plots above do not tell you if your log-likelihood is correct in the sense that you have written a log-likelihood for the model you actually want to test. The plots allow you to determine if your function is functioning as intended.</p>
-<p><b> Explanation needs to be improved - more detail required. the second sentence seems tacked on.</b> Below is an example output from a function where there is a potential error. Another potential error is where the lines are flat.</p>
+<p>Below is output from a function with a potential error. We can see that the red lines indicating the generating parameter values (i.e. the data generating values for the parameters) does not have the best (highest) likelihoods. Plots with flat lines for parameter values would also be indicative of an error somewhere within your log-likelihood code.</p>
 <p><img src="bookdown-demo_files/figure-html/dodgellplots-1.png" width="672" /><img src="bookdown-demo_files/figure-html/dodgellplots-2.png" width="672" /></p>
 
 </div>

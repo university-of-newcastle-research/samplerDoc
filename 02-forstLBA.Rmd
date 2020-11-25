@@ -1317,7 +1317,7 @@ There are several steps to this method:
  1. Assign values to parameters of the model - these are known as the generating values. <br><b>Note</b>: ensure these are sensible values - for example in the LBA, we want the drift rate for the mismatch/error accumulator (`ve`) to be smaller than the match/correct accumulator (`vc`) and the non-decision time parameter `t0` should not be too large. 
 
 ```{r check2Par,include=TRUE}
-true.x <- log(c(A = 2,
+true_x <- log(c(A = 2,
                 b.1 = 2,
                 b.2 = 1,
                 b.3 = .5,
@@ -1328,21 +1328,21 @@ true.x <- log(c(A = 2,
               )
 ```
 
- 2.  Pass the generating parameter values (`true.x`) into the log-likelihood and generate data using your log-likelihood function, where `sample = TRUE`.
+ 2.  Pass the generating parameter values (`true_x`) into the log-likelihood and generate data using your log-likelihood function, where `sample = TRUE`.
 ```{r testdatacheck2, include=TRUE}
-test.data <- tw_lba_ll(x = true.x,
+test_data <- tw_lba_ll(x = true_x,
                        data = data,
                        sample = TRUE
                        )
 ```
 
- 3. Generate profile plots to compare the log-likelihood of the `true.x` parameter values against nearby values in the 'synethetic' data. You can write your own function for this, or use the function below. 
+ 3. Generate profile plots to compare the log-likelihood of the `true_x` parameter values against nearby values in the 'synethetic' data. You can write your own function for this, or use the function below. 
 
 Our plotting function takes five arguments: 
 
 * `x` is a vector of named parameter values.
-* `n.values` specifies how many parameter x-values we will assess to compare to compare to the true data-generating parameter value. Default is 9.
-* `synth.data` is the synthetic data
+* `n_values` specifies how many parameter x-values we will assess to compare to compare to the true data-generating parameter value. Default is 9.
+* `synth_data` is the synthetic data
 * `dims` specifies the layout for the plots we will generate. In this example, we have 7 parameters, so I will set my dimensions to be 4 rows with 2 columns.
 * `ll_func` specifies the name of the log-likelihood function you have created.
 * `server` should only be set to true if running on a device with multiple cores. This argument speeds up computational efficiency.
@@ -1352,23 +1352,24 @@ Our plotting function takes five arguments:
 
 library(parallel)
 
-test.likelihood <- function(x, 
-                            n.values = 9,
-                            synth.data,
-                            dims,
-                            ll_func,
-                            server = FALSE,...) {
+test_ll <- function(x, 
+                    n_values = 9,
+                    synth_data,
+                    dims,
+                    ll_func,
+                    server = FALSE,...) {
   pars <- names(x)
-  x.tmp <- x
-  sequence <- seq(from = -.22, to = .22,
-                  length.out = n.values)
+  xtmp <- x
+  sequence <- seq(from = -.22,
+                  to = .22,
+                  length.out = n_values)
   op <- par(mfrow = dims)
   par_likelihoods <- lapply(setNames(pars, pars), function(p){
-    testvalues <- sequence + true.x[[p]]
+    testvalues <- sequence + true_x[[p]]
     tmp <- unlist(lapply(testvalues, function (i){ 
       #for each test vlaue, it will apply the function where i = testvalue.
-    x.tmp[[p]] <- i
-    ll_func(x = x.tmp, data = synth.data)
+    xtmp[[p]] <- i
+    ll_func(x = xtmp, data = synth_data)
     }))
     
     plot(x = testvalues,
@@ -1378,7 +1379,7 @@ test.likelihood <- function(x,
          xlab = "log par values",
          ylab = "log-likelihood",
          ...)
-    abline(v = true.x[[p]], col = "red")
+    abline(v = true_x[[p]], col = "red")
     return(tmp)})
   par(op)
   return(par_likelihoods)
@@ -1388,23 +1389,23 @@ test.likelihood <- function(x,
 Whilst we used the trialwise log-likelihood function to generate data, we will use the fast log-likelihood function in this "parameter recovery" simulation for computational efficiency. 
 
 ```{r llPlots, include=TRUE}
-ll_plots <- test.likelihood(x = true.x,
-                                    n.values = 9,
-                                    synth.data = test.data,
-                                    dims = c(2, 2),
-                                    ll_func = fast_lba_ll3b
-                                    ) 
+ll_plots <- test_ll(x = true_x,
+                    n_values = 9,
+                    synth_data = test_data,
+                    dims = c(2, 2),
+                    ll_func = fast_lba_ll3b
+                    ) 
 ```
 
 The red line indicates the true generating parameter value (i.e. the data generating values for the parameters) have the best (highest) likelihoods.
 
 Note: The plots above do not tell you if your log-likelihood is correct in the sense that you have written a log-likelihood for the model you actually want to test. The plots allow you to determine if your function is functioning as intended.
 
-<b> Explanation needs to be improved - more detail required. the second sentence seems tacked on.</b>
-Below is an example output from a function where there is a potential error. Another potential error is where the lines are flat. 
+
+Below is output from a function with a potential error. We can see that the red lines indicating the generating parameter values (i.e. the data generating values for the parameters) does not have the best (highest) likelihoods. 
+Plots with flat lines for parameter values would also be indicative of an error somewhere within your log-likelihood code. 
 
 ```{r dodgyll, include=FALSE}
-
 incorrect_lba_ll <- function(x, data, sample = FALSE) {
   x <- exp(x)
   if (any(data$rt < x["t0"])) {
@@ -1502,11 +1503,11 @@ incorrect_lba_ll <- function(x, data, sample = FALSE) {
 ```
 
 ```{r dodgellplots, echo=FALSE}
-incorrect.ll.plots <- test.likelihood(x = true.x,
-                                      n.values = 9,
-                                      synth.data = test.data,
-                                      dims = c(2,2),
-                                      ll_func = incorrect_lba_ll
-                                      ) 
+incorrect_ll_plots <- test_ll(x = true_x,
+                              n_values = 9,
+                              synth_data = test_data,
+                              dims = c(2,2),
+                              ll_func = incorrect_lba_ll
+                              ) 
 ```
 
