@@ -1402,7 +1402,7 @@ The red line indicates the true generating parameter value (i.e. the data genera
 Note: The plots above do not tell you if your log-likelihood is correct in the sense that you have written a log-likelihood for the model you actually want to test. The plots allow you to determine if your function is functioning as intended.
 
 
-Below is output from a function with a potential error. We can see that the red lines indicating the generating parameter values (i.e. the data generating values for the parameters) does not have the best (highest) likelihoods. 
+Below is output from a function with a potential error. We can see that the red lines indicating the generating parameter values (i.e. the data generating values for the parameters) do not have the best (highest) likelihoods. 
 Plots with flat lines for parameter values would also be indicative of an error somewhere within your log-likelihood code. 
 
 ```{r dodgyll, include=FALSE}
