@@ -2,7 +2,7 @@
 
 
 In this chapter we'll demonstrate how to use the PMwG sampler with a sequential sampling model; the Linear Ballistic Accumulator (LBA).
-Please ensure the `PMwG` and `rtdists` packages are installed.
+Please ensure the `PMwG` and `rtdists` packages are loaded.
 ```{r loadpkg}
 library(pmwg)
 library(rtdists)

@@ -73,7 +73,7 @@ We suggest running `burn-in` for few iterations and particles first. This will g
 <b>NOTE:</b> Overall, we aim for ~30% acceptance rate of particles. High acceptance rates may be inaccurate if burn-in runs for few iterations. Low acceptance rates are inefficient and may fail to create an efficient distribution for the sampling stage.  
 
 
-## Appendices
+## Appendix
 
 ### Wagenmakers SDT script {#wagSDTscript}
 

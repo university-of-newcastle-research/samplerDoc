@@ -162,7 +162,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="5.1" data-path="troubleshoot.html"><a href="troubleshoot.html#how-to-write-a-log-likelihood-function"><i class="fa fa-check"></i><b>5.1</b> How to write a log-likelihood function</a><ul>
 <li class="chapter" data-level="5.1.1" data-path="troubleshoot.html"><a href="troubleshoot.html#writing-your-log-likelihood-function-tips-errors-and-check-list"><i class="fa fa-check"></i><b>5.1.1</b> Writing your log-likelihood function: Tips, errors and check list</a></li>
 </ul></li>
-<li class="chapter" data-level="5.2" data-path="troubleshoot.html"><a href="troubleshoot.html#appendices"><i class="fa fa-check"></i><b>5.2</b> Appendices</a><ul>
+<li class="chapter" data-level="5.2" data-path="troubleshoot.html"><a href="troubleshoot.html#appendix"><i class="fa fa-check"></i><b>5.2</b> Appendix</a><ul>
 <li class="chapter" data-level="5.2.1" data-path="troubleshoot.html"><a href="troubleshoot.html#wagSDTscript"><i class="fa fa-check"></i><b>5.2.1</b> Wagenmakers SDT script</a></li>
 </ul></li>
 </ul></li>
@@ -864,9 +864,7 @@ Figure 2.3: Signal detection theory example of lexical decision task
 <div id="sdtPMwG" class="section level2">
 <h2><span class="header-section-number">2.3</span> PMwG Framework</h2>
 <p>Now that we have written a log-likelihood function, we’re ready to use the PMwG sampler package.</p>
-<p>Let’s begin by installing the PMwG package. <b>We currently recommended installing pmwg via devtools.</b></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># The pmwg package will be on CRAN - this step will be removed.</span>
-devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&#39;newcastlecl/pmwg&#39;</span>, <span class="dt">ref=</span><span class="st">&quot;release&quot;</span>)</code></pre></div>
+<p>Let’s begin by loading the PMwG package.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(pmwg)</code></pre></div>
 <p>Now we require the parameter vector <code>pars</code> we specified above and a priors object called <code>priors</code>. The <code>priors</code> object is a list that contains two components:</p>
 <ul>
@@ -878,10 +876,10 @@ priors &lt;-<span class="st"> </span><span class="kw">list</span>(
   <span class="dt">theta_mu_mean =</span> <span class="kw">rep</span>(<span class="dv">0</span>, <span class="kw">length</span>(pars)),
   <span class="dt">theta_mu_var =</span> <span class="kw">diag</span>(<span class="kw">rep</span>(<span class="dv">1</span>, <span class="kw">length</span>(pars)))
 )</code></pre></div>
-<p>The <code>priors</code> object in our example is initiated with zeros. An important thing to note is that to facilitate Gibbs sampling from the multivariate normal distribution for the group parameters, the random effects must be estimated on the real line. In our SDT example, the parameters are free to vary along the real line so no transformation of the random effects is required. We expand on this point in more detail in later examples where parameters are bounded and require transformation. The prior on the covariance matrix is hard-coded as the marginally non-informative prior of Huang and Wand, as discussed in the PMwG paper <b>[add link to Gunawan et al. (2020) paper]) </b></p>
+<p>The <code>priors</code> object in our example is initiated with zeros. An important thing to note is that to facilitate Gibbs sampling from the multivariate normal distribution for the group parameters, the random effects must be estimated on the real line. In our SDT example, the parameters are free to vary along the real line so no transformation of the random effects is required. We expand on this point in more detail in later examples where parameters are bounded and require transformation. The prior on the covariance matrix is hard-coded as the marginally non-informative prior of Huang and Wand, as discussed in the <a href="https://www.sciencedirect.com/science/article/pii/S0022249620300389?casa_token=HPY1lTmXIRgAAAAA:aep1U95EwyrlrZ0kCuKQkbftCxgD5V9Hk_mkMBt4uTwVi177hBtLYGNjNcdLVeYj_-uTH0P8TwU">PMwG paper</a></p>
 <p>The next step is to load your log-likelihood function/script.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">source</span>(<span class="dt">file =</span> <span class="st">&quot;yourLogLikelihoodFile.R&quot;</span>)</code></pre></div>
-<p>Once you’ve setup your parameters, priors and written a log-likelihood function, the next step is to initialise the <code>sampler</code> object.</p>
+<p>Once you have setup your parameters, priors and written a log-likelihood function, the next step is to initialise the <code>sampler</code> object.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sampler &lt;-<span class="st"> </span><span class="kw">pmwgs</span>(<span class="dt">data =</span> wgnmks2008Fast,
                  <span class="dt">pars =</span> pars,
                  <span class="dt">prior =</span> priors,
@@ -901,7 +899,7 @@ priors &lt;-<span class="st"> </span><span class="kw">list</span>(
                  )</code></pre></div>
 <div id="start-points" class="section level3">
 <h3><span class="header-section-number">2.3.1</span> Model start points</h3>
-<p>You have the option to set model start points. We use 0 for the mean (mu) and a variance of 0.01. If you chose not to specify start points, the sampler will randomly sample points from the prior distribution.</p>
+<p>You have the option to set model start points. We use 0 for the mean (<code>mu</code>) and a variance (<code>sig2</code>) of 0.01. If you chose not to specify start points, the sampler will randomly sample points from the prior distribution.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">start_points &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">mu =</span> <span class="kw">rep</span>(<span class="dv">0</span>, <span class="dt">length.out =</span> <span class="kw">length</span>(pars)),
                      <span class="dt">sig2 =</span> <span class="kw">diag</span>(<span class="kw">rep</span>(.<span class="dv">01</span>, <span class="kw">length</span>(pars)))
 )</code></pre></div>
@@ -914,7 +912,8 @@ priors &lt;-<span class="st"> </span><span class="kw">list</span>(
 <div id="run-sdtsampler" class="section level3">
 <h3><span class="header-section-number">2.3.2</span> Running the sampler</h3>
 <p>Okay - now we are ready to run the sampler.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sampler &lt;-<span class="st"> </span><span class="kw">init</span>(sampler, <span class="dt">start_mu =</span> start_points<span class="op">$</span>mu,
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sampler &lt;-<span class="st"> </span><span class="kw">init</span>(sampler, 
+                <span class="dt">start_mu =</span> start_points<span class="op">$</span>mu,
                 <span class="dt">start_sig =</span> start_points<span class="op">$</span>sig2)</code></pre></div>
 <p>Here we are using the <code>init</code> function to generate initial start points for the random effects and storing them in the <code>sampler</code> object. First we pass the <code>sampler</code> object from above that includes our data, parameters, priors and log-likelihood function. If we decided to specify our own start points (as above), we would include the <code>start_mu</code> and <code>start_sig</code> arguments.</p>
 <p>Now we can run the sampler using the <code>run_stage</code> function. The <code>run_stage</code> function takes four arguments:</p>
@@ -929,11 +928,24 @@ priors &lt;-<span class="st"> </span><span class="kw">list</span>(
 </ul>
 <p>It is optional to include the <code>iter =</code> and <code>particles =</code> arguments. If these are not included, <code>iter</code> and <code>particles</code> default to 1000. The number of iterations you choose for your burn in stage is similar to choices made when running deMCMC, however, this varies depending on the time the model takes to reach the ‘real’ posterior space.</p>
 <p>First we run our burn-in stage by setting <code>stage =</code> to <code>&quot;burn&quot;</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">burned &lt;-<span class="st"> </span><span class="kw">run_stage</span>(sampler, <span class="dt">stage =</span> <span class="st">&quot;burn&quot;</span>, <span class="dt">iter =</span> <span class="dv">1000</span>, <span class="dt">particles =</span> <span class="dv">20</span>, <span class="dt">display_progress =</span> <span class="ot">TRUE</span>, <span class="dt">n_cores =</span> <span class="dv">8</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">burned &lt;-<span class="st"> </span><span class="kw">run_stage</span>(sampler, 
+                    <span class="dt">stage =</span> <span class="st">&quot;burn&quot;</span>,
+                    <span class="dt">iter =</span> <span class="dv">1000</span>,
+                    <span class="dt">particles =</span> <span class="dv">20</span>,
+                    <span class="dt">display_progress =</span> <span class="ot">TRUE</span>,
+                    <span class="dt">n_cores =</span> <span class="dv">8</span>)</code></pre></div>
 <p>Now we run our adaptation stage by setting <code>stage = &quot;adapt&quot;</code>. This function creates an efficient proposal distribution. The sampler will attempt to create the proposal distribution after 20 unique particles have been accepted for each subject. The sampler will then test whether the distribution was able to be created and if it was created, the sampler will move to the next stage otherwise the sampler will continue to sample. The number of iterations needs to be great enough to generate enough unique samples. The sampler will automatically exit the adapt stage when it has enough unique samples to create a multivariate normal ‘proposal’ distribution for each subject’s random effects. Thus we set iterations to a high number, as it should exit before reaching this point.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">adapted &lt;-<span class="st"> </span><span class="kw">run_stage</span>(burned, <span class="dt">stage =</span> <span class="st">&quot;adapt&quot;</span>, <span class="dt">iter =</span> <span class="dv">1000</span>, <span class="dt">particles =</span> <span class="dv">20</span>, <span class="dt">n_cores =</span> <span class="dv">8</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">adapted &lt;-<span class="st"> </span><span class="kw">run_stage</span>(burned,
+                     <span class="dt">stage =</span> <span class="st">&quot;adapt&quot;</span>,
+                     <span class="dt">iter =</span> <span class="dv">1000</span>,
+                     <span class="dt">particles =</span> <span class="dv">20</span>,
+                     <span class="dt">n_cores =</span> <span class="dv">8</span>)</code></pre></div>
 <p>At the start of the <code>sampled</code> stage, the sampler object will create a ‘proposal’ distribution for each subject’s random effects using a conditional multi-variate normal. This proposal distribution is then used to efficiently generate new particles for each subject which means we can reduce the number of particles on each iteration whilst still achieving acceptance rates.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sampled &lt;-<span class="st"> </span><span class="kw">run_stage</span>(adapted, <span class="dt">stage =</span> <span class="st">&quot;sample&quot;</span>, <span class="dt">iter =</span> <span class="dv">1000</span>, <span class="dt">particles =</span> <span class="dv">20</span>, <span class="dt">n_cores =</span> <span class="dv">8</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sampled &lt;-<span class="st"> </span><span class="kw">run_stage</span>(adapted,
+                     <span class="dt">stage =</span> <span class="st">&quot;sample&quot;</span>,
+                     <span class="dt">iter =</span> <span class="dv">1000</span>,
+                     <span class="dt">particles =</span> <span class="dv">20</span>,
+                     <span class="dt">n_cores =</span> <span class="dv">8</span>)</code></pre></div>
 </div>
 </div>
 <div id="check-sampling-process" class="section level2">

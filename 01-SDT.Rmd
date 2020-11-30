@@ -632,11 +632,7 @@ We recommend "speeding up" your code however you wish.  When you're confident th
 
 Now that we have written a log-likelihood function, we're ready to use the PMwG sampler package. 
 
-Let's begin by installing the PMwG package. <b>We currently recommended installing pmwg via devtools.</b>
-```{r instlPMwGpkg, eval=FALSE}
-# The pmwg package will be on CRAN - this step will be removed.
-devtools::install_github('newcastlecl/pmwg', ref="release")
-```
+Let's begin by loading the PMwG package.
 ```{r loadPMwGpkg}
 library(pmwg)
 ```
@@ -659,7 +655,7 @@ priors <- list(
 
 ```
 
-The `priors` object in our example is initiated with zeros. An important thing to note is that to facilitate Gibbs sampling from the multivariate normal distribution for the group parameters, the random effects must be estimated on the real line. In our SDT example, the parameters are free to vary along the real line so no transformation of the random effects is required. We expand on this point in more detail in later examples where parameters are bounded and require transformation. The prior on the covariance matrix is hard-coded as the marginally non-informative prior of Huang and  Wand, as discussed in the PMwG paper <b>[add link to Gunawan et al. (2020) paper]) </b>
+The `priors` object in our example is initiated with zeros. An important thing to note is that to facilitate Gibbs sampling from the multivariate normal distribution for the group parameters, the random effects must be estimated on the real line. In our SDT example, the parameters are free to vary along the real line so no transformation of the random effects is required. We expand on this point in more detail in later examples where parameters are bounded and require transformation. The prior on the covariance matrix is hard-coded as the marginally non-informative prior of Huang and  Wand, as discussed in the [PMwG paper](https://www.sciencedirect.com/science/article/pii/S0022249620300389?casa_token=HPY1lTmXIRgAAAAA:aep1U95EwyrlrZ0kCuKQkbftCxgD5V9Hk_mkMBt4uTwVi177hBtLYGNjNcdLVeYj_-uTH0P8TwU) 
 
 
 The next step is to load your log-likelihood function/script.
@@ -668,7 +664,7 @@ The next step is to load your log-likelihood function/script.
 source(file = "yourLogLikelihoodFile.R")
 ```
 
-Once you've setup your parameters, priors and written a log-likelihood function, the next step is to initialise the `sampler` object. 
+Once you have setup your parameters, priors and written a log-likelihood function, the next step is to initialise the `sampler` object. 
 ```{r SDTsamplerObject, echo=TRUE, eval=FALSE}
 sampler <- pmwgs(data = wgnmks2008Fast,
                  pars = pars,
@@ -695,7 +691,7 @@ sampler <- pmwgs(data = wgnmks2008Fast,
 
 
 ### Model start points {#start-points}
-You have the option to set model start points. We use 0 for the mean (mu) and a variance of 0.01. If you chose not to specify start points, the sampler will randomly sample points from the prior distribution.
+You have the option to set model start points. We use 0 for the mean (`mu`) and a variance (`sig2`) of 0.01. If you chose not to specify start points, the sampler will randomly sample points from the prior distribution.
 ```{r part9.5, include=TRUE}
 start_points <- list(mu = rep(0, length.out = length(pars)),
                      sig2 = diag(rep(.01, length(pars)))
@@ -711,7 +707,8 @@ The `start_points` object contains two vectors:
 ### Running the sampler {#run-sdtsampler}
 Okay - now we are ready to run the sampler.  
 ```{r SDTrunSampler, echo=TRUE, eval=FALSE}
-sampler <- init(sampler, start_mu = start_points$mu,
+sampler <- init(sampler, 
+                start_mu = start_points$mu,
                 start_sig = start_points$sig2)
 ```
 Here we are using the `init` function to generate initial start points for the random effects and storing them in the `sampler` object.  First we pass the `sampler` object from above that includes our data, parameters, priors and log-likelihood function.  If we decided to specify our own start points (as above), we would include the `start_mu` and `start_sig` arguments.
@@ -732,17 +729,30 @@ It is optional to include the `iter =` and `particles =` arguments. If these are
 
 First we run our burn-in stage by setting `stage =` to `"burn"`. 
 ```{r SDTburn, echo=TRUE, eval=FALSE}
-burned <- run_stage(sampler, stage = "burn", iter = 1000, particles = 20, display_progress = TRUE, n_cores = 8)
+burned <- run_stage(sampler, 
+                    stage = "burn",
+                    iter = 1000,
+                    particles = 20,
+                    display_progress = TRUE,
+                    n_cores = 8)
 ```
 
 Now we run our adaptation stage by setting `stage = "adapt"`. This function creates an efficient proposal distribution. The sampler will attempt to create the proposal distribution after 20 unique particles have been accepted for each subject. The sampler will then test whether the distribution was able to be created and if it was created, the sampler will move to the next stage otherwise the sampler will continue to sample. The number of iterations needs to be great enough to generate enough unique samples. The sampler will automatically exit the adapt stage when it has enough unique samples to create a multivariate normal ‘proposal’ distribution for each subject’s random effects. Thus we set iterations to a high number, as it should exit before reaching this point.
 ```{r SDTadaptation, echo=TRUE, eval=FALSE}
-adapted <- run_stage(burned, stage = "adapt", iter = 1000, particles = 20, n_cores = 8)
+adapted <- run_stage(burned,
+                     stage = "adapt",
+                     iter = 1000,
+                     particles = 20,
+                     n_cores = 8)
 ```
 
 At the start of the `sampled` stage, the sampler object will create a 'proposal' distribution for each subject's random effects using a conditional multi-variate normal. This proposal distribution is then used to efficiently generate new particles for each subject which means we can reduce the number of particles on each iteration whilst still achieving acceptance rates.
 ```{r SDTsampled, echo=TRUE, eval=FALSE}
-sampled <- run_stage(adapted, stage = "sample", iter = 1000, particles = 20, n_cores = 8)
+sampled <- run_stage(adapted,
+                     stage = "sample",
+                     iter = 1000,
+                     particles = 20,
+                     n_cores = 8)
 ```
 
 
