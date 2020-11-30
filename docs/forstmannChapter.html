@@ -162,6 +162,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="5.1" data-path="troubleshoot.html"><a href="troubleshoot.html#how-to-write-a-log-likelihood-function"><i class="fa fa-check"></i><b>5.1</b> How to write a log-likelihood function</a><ul>
 <li class="chapter" data-level="5.1.1" data-path="troubleshoot.html"><a href="troubleshoot.html#writing-your-log-likelihood-function-tips-errors-and-check-list"><i class="fa fa-check"></i><b>5.1.1</b> Writing your log-likelihood function: Tips, errors and check list</a></li>
 </ul></li>
+<li class="chapter" data-level="5.2" data-path="troubleshoot.html"><a href="troubleshoot.html#appendices"><i class="fa fa-check"></i><b>5.2</b> Appendices</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="troubleshoot.html"><a href="troubleshoot.html#wagSDTscript"><i class="fa fa-check"></i><b>5.2.1</b> Wagenmakers SDT script</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
@@ -1387,7 +1390,7 @@ test_ll &lt;-<span class="st"> </span><span class="cf">function</span>(x,
 <p><img src="bookdown-demo_files/figure-html/llPlots-1.png" width="672" /><img src="bookdown-demo_files/figure-html/llPlots-2.png" width="672" /></p>
 <p>The red line indicates the true generating parameter value (i.e. the data generating values for the parameters) have the best (highest) likelihoods.</p>
 <p>Note: The plots above do not tell you if your log-likelihood is correct in the sense that you have written a log-likelihood for the model you actually want to test. The plots allow you to determine if your function is functioning as intended.</p>
-<p>Below is output from a function with a potential error. We can see that the red lines indicating the generating parameter values (i.e. the data generating values for the parameters) does not have the best (highest) likelihoods. Plots with flat lines for parameter values would also be indicative of an error somewhere within your log-likelihood code.</p>
+<p>Below is output from a function with a potential error. We can see that the red lines indicating the generating parameter values (i.e. the data generating values for the parameters) do not have the best (highest) likelihoods. Plots with flat lines for parameter values would also be indicative of an error somewhere within your log-likelihood code.</p>
 <p><img src="bookdown-demo_files/figure-html/dodgellplots-1.png" width="672" /><img src="bookdown-demo_files/figure-html/dodgellplots-2.png" width="672" /></p>
 
 </div>

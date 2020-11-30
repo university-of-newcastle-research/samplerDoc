@@ -162,6 +162,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="5.1" data-path="troubleshoot.html"><a href="troubleshoot.html#how-to-write-a-log-likelihood-function"><i class="fa fa-check"></i><b>5.1</b> How to write a log-likelihood function</a><ul>
 <li class="chapter" data-level="5.1.1" data-path="troubleshoot.html"><a href="troubleshoot.html#writing-your-log-likelihood-function-tips-errors-and-check-list"><i class="fa fa-check"></i><b>5.1.1</b> Writing your log-likelihood function: Tips, errors and check list</a></li>
 </ul></li>
+<li class="chapter" data-level="5.2" data-path="troubleshoot.html"><a href="troubleshoot.html#appendices"><i class="fa fa-check"></i><b>5.2</b> Appendices</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="troubleshoot.html"><a href="troubleshoot.html#wagSDTscript"><i class="fa fa-check"></i><b>5.2.1</b> Wagenmakers SDT script</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
@@ -187,14 +190,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design" class="section level1 tabset tabset-fade">
 <h1><span class="header-section-number">Chapter 4</span> PMwG sampler with the Linear Ballistic Accumulator and a complex experiment design</h1>
 <p>In <a href="pmwg-sampler-and-signal-detection-theory.html#sdtOutline">chapter 1</a> we demonstrated how the PMwG sampler can be used to model a lexical decision task in a signal detection framework. However, the SDT framework does not allow us to consider response time (RT) and the join distribution of RT and accuracy. In this example we will expand on what was covered in chapter 1, by fitting the LBA - a more complex model - to the Wagenmakers 2008 data. <!-- see IS square paper experiment 2--></p>
-<p>A description of the Wagenmakers experiment and data is covered in <a href="pmwg-sampler-and-signal-detection-theory.html#sdtOutline">chapter 1</a>. This experiment is more complicated than the Forstmann example in <a href="forstmannChapter.html#forstmannChapter">chapter 3</a>, and the LBA is also more complicated than the SDT model. As a result, the log-likelihood function for this exampl will be more complex, however, you’ll notice that every step we take closely follows those taken in previous chapters with simpler data sets and simpler models.</p>
+<p>A description of the Wagenmakers experiment and data is covered in <a href="pmwg-sampler-and-signal-detection-theory.html#sdtOutline">chapter 1</a>. This experiment is more complicated than the Forstmann example in <a href="forstmannChapter.html#forstmannChapter">chapter 3</a>, and the LBA is also more complicated than the SDT model. As a result, the log-likelihood function for this example will be more complex, however, you’ll notice that every step we take closely follows those taken in previous chapters with simpler data sets and simpler models.</p>
 <!--
 - These are data reilly fit in chap 1 with sig detection theory. When fit with signal detection, it was just prob. My fit with lba has to do a worse job of fitting probabilities, because it has to manage tnesion between fitting probs and rts. Adding rts has to give worse fit, but the tradeoff is that it allows us to look at the...-->
 <div id="writing-the-lba-log-likelihood-function-for-the-wagenmakers-data-set" class="section level2">
 <h2><span class="header-section-number">4.1</span> Writing the LBA log-likelihood function for the Wagenmakers data set</h2>
 <p>Here we’ve written a slow, but easy to follow log-likelihood function. The log-likelihood function steps through the data line by line (i.e. trial by trial) and gives a likelihood value for each line under <code>x</code> parameters. As mentioned in previous chapters, we encourage those who have experience writing log-likelihood functions to write a computationally efficient function or use our ’<b><i>fast</i></b>function “HERE”. For those new to modelling, the trialwise function directly below is easier to follow, debug and is less likely to result in errors.</p>
-<p>The structure of our log-likelihood function follows those in the preceding chapters, so we will only step through the parts that differ e.g. the different experimental design and the different hypothesis we have about which parameters are being influenced by the experimental manipulations.</p>
-<p>Let’s begin by installing <code>rtdists</code> package…</p>
+<p>The structure of our log-likelihood function follows those in the preceding chapters, so we will only step through the parts that differ i.e. the experiment design and hypothesis about which parameters are being influenced by the experimental manipulations.</p>
+<p>Let’s begin by loading <code>rtdists</code> package…</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rtdists)</code></pre></div>
 <p>and now a complete trialwise (slow) log-likelihood function.</p>
 <div class="sourceCode"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
@@ -255,7 +258,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 56
 57
 58
-59
 </pre></td><td class="sourceCode"><pre><code class="sourceCode r">tw_lba_ll &lt;-<span class="st"> </span><span class="cf">function</span>(x, data, <span class="dt">sample =</span> <span class="ot">FALSE</span>) {
   x &lt;-<span class="st"> </span><span class="kw">exp</span>(x)
   <span class="cf">if</span> (<span class="kw">any</span>(data<span class="op">$</span>rt <span class="op">&lt;</span><span class="st"> </span>x[<span class="st">&quot;t0&quot;</span>])) {
@@ -271,11 +273,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
   
   <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(data)) {
     A =<span class="st"> </span>x[<span class="st">&quot;A&quot;</span>]
-    b.w =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, data<span class="op">$</span>prop[i], <span class="st">&quot;.W&quot;</span>)] <span class="op">+</span><span class="st"> </span>A
-    b.nw =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, data<span class="op">$</span>prop[i], <span class="st">&quot;.NW&quot;</span>)] <span class="op">+</span><span class="st"> </span>A
+    b.w =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, data<span class="op">$</span>cond[i], <span class="st">&quot;.W&quot;</span>)] <span class="op">+</span><span class="st"> </span>A
+    b.nw =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, data<span class="op">$</span>cond[i], <span class="st">&quot;.NW&quot;</span>)] <span class="op">+</span><span class="st"> </span>A
     bs =<span class="st"> </span><span class="kw">list</span>(b.nw, b.w)
-    v.w =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;v.&quot;</span>, data<span class="op">$</span>freq[i], <span class="st">&quot;.W&quot;</span>)]
-    v.nw =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;v.&quot;</span>, data<span class="op">$</span>freq[i], <span class="st">&quot;.NW&quot;</span>)]
+    v.w =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;v.&quot;</span>, data<span class="op">$</span>stim[i], <span class="st">&quot;.W&quot;</span>)]
+    v.nw =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;v.&quot;</span>, data<span class="op">$</span>stim[i], <span class="st">&quot;.NW&quot;</span>)]
     vs =<span class="st"> </span><span class="kw">c</span>(v.nw, v.w)
     t0 =<span class="st"> </span>x[<span class="st">&quot;t0&quot;</span>]
     s =<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>)
@@ -293,12 +295,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       data<span class="op">$</span>rt[i] &lt;-<span class="st"> </span>tmp<span class="op">$</span>rt
       data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span>tmp<span class="op">$</span>resp
     } <span class="cf">else</span> {
-      out[i] &lt;-
-<span class="st">        </span><span class="kw">dLBA</span>(<span class="dt">rt =</span> data<span class="op">$</span>rt[i],
-             <span class="dt">response =</span> data<span class="op">$</span>resp[i],
-             <span class="dt">A =</span> A,
-             <span class="dt">b =</span> bs,
-             <span class="dt">mean_v =</span> vs,
+      out[i] &lt;-<span class="st"> </span><span class="kw">dLBA</span>(<span class="dt">rt =</span> data<span class="op">$</span>rt[i],
+                     <span class="dt">response =</span> data<span class="op">$</span>resp[i],
+                     <span class="dt">A =</span> A,
+                     <span class="dt">b =</span> bs,
+                     <span class="dt">mean_v =</span> vs,
              <span class="dt">sd_v =</span> s,
              <span class="dt">t0 =</span> t0,
              <span class="dt">dist =</span> <span class="st">&quot;norm&quot;</span>,
@@ -316,7 +317,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
   }
 }</code></pre></td></tr></table></div>
 <p>We begin from the <code>for</code> loop on line 14. In this <code>for</code> loop, we assign the values (<code>x</code>) of each parameter in our model, for each row in the dataset, so that any conditional parameters (for example <code>b</code> in our model) are correctly assigned.</p>
-<p>For the Wagenmakers data set, we want to calculate the density function for a model that has two threshold (<code>b</code>) parameters for each condition in the <code>proportion factor</code> (<code>W</code>: 75% stimuli words, <code>NW</code>: 75% stimuli nonwords), but also allows threshold to vary with <code>response</code> (i.e., the accumulator for a <code>word</code> response, and the accumulator for the <code>non-word</code> response), we include lines 14 - 23. These lines take into account the two conditions in the <code>proportion</code> factor by pasting <code>&quot;b.&quot;</code>, the <code>condition</code> (<code>W</code>, <code>NW</code>) that is on line [i], and whether it is a threshold for the <i>word accumulator</i> <code>&quot;.W&quot;</code> or <i>nonword accumulator</i> <code>&quot;.NW&quot;</code>. Again, we add the sart point parameter <code>A</code> value to each threshold parameter so that threshold is greater than the start point value.</p>
+<p>For the Wagenmakers data set, we want to calculate the density function for a model that has a threshold (<code>b</code>) parameter for each of the conditions (<code>W</code>: 75% stimuli words, <code>NW</code>: 75% stimuli nonwords), but also allows threshold to vary with <code>response</code> (i.e., the accumulator for a <code>word</code> response, and the accumulator for the <code>non-word</code> response), we include lines 14 - 23. These lines take into account the two conditions in the <code>proportion</code> factor by pasting <code>&quot;b.&quot;</code>, the <code>condition</code> (<code>W</code>, <code>NW</code>) that is on line [i], and whether it is a threshold for the <i>word accumulator</i> <code>&quot;.W&quot;</code> or <i>nonword accumulator</i> <code>&quot;.NW&quot;</code>. Again, we add the sart point parameter <code>A</code> value to each threshold parameter so that threshold is greater than the start point value.</p>
 <p>We also hypothesised that <i> drift rate</i> would vary with <code>word frequency</code> (<code>hf</code>,<code>lf</code>,<code>vlf</code>,<code>nw</code>), so on lines 19 and 20 we allow drift rate for response <code>word</code> (<code>v.w</code>) to vary with the levels of word frequency, by pasting the <code>&quot;v.&quot;</code> with the word frequency on line [i], and with the accumulator (<code>&quot;.W&quot;</code> or <code>&quot;.NW&quot;</code>). You’ll notice that in this example, we no longer have a drift rate for the correct response (vc) or incorrect response (ve), instead, we have a drift rate for responding <code>word</code> (<code>v.w</code>) and <code>non-word</code> (<code>v.nw</code>). This is just a different way of coding drift rate, and is our preferred way. On line x we have coded the vs vector to have v.nw first and v.w second.</p>
 
 </div>
