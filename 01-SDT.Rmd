@@ -647,15 +647,16 @@ Now we require the parameter vector `pars` we specified above and a priors objec
 
 
 ```{r part9.3, include=TRUE}
-pars <- c("C.w", "C.nw", "HF.d", "LF.d", "VLF.d") # This is the same as the `pars` vector specified above
+pars <- c("C.w", "C.nw", "HF.d", "LF.d", "VLF.d") 
+# This is the same as the `pars` vector specified above
+
 priors <- list(
   theta_mu_mean = rep(0, length(pars)),
   theta_mu_var = diag(rep(1, length(pars)))
 )
-
 ```
 
-The `priors` object in our example is initiated with zeros. An important thing to note is that to facilitate Gibbs sampling from the multivariate normal distribution for the group parameters, the random effects must be estimated on the real line. In our SDT example, the parameters are free to vary along the real line so no transformation of the random effects is required. We expand on this point in more detail in later examples where parameters are bounded and require transformation. The prior on the covariance matrix is hard-coded as the marginally non-informative prior of Huang and  Wand, as discussed in the [PMwG paper](https://www.sciencedirect.com/science/article/pii/S0022249620300389?casa_token=HPY1lTmXIRgAAAAA:aep1U95EwyrlrZ0kCuKQkbftCxgD5V9Hk_mkMBt4uTwVi177hBtLYGNjNcdLVeYj_-uTH0P8TwU) 
+The `priors` object in our example is initiated with zeros. An important thing to note is that to facilitate Gibbs sampling from the multivariate normal distribution for the group parameters, the random effects must be estimated on the real line. In our SDT example, the parameters are free to vary along the real line so no transformation of the random effects is required. We expand on this point in more detail in later examples where parameters are bounded and require transformation. The prior on the covariance matrix is hard-coded as the marginally non-informative prior of Huang and  Wand, as discussed in the [PMwG paper](https://www.sciencedirect.com/science/article/pii/S0022249620300389?casa_token=HPY1lTmXIRgAAAAA:aep1U95EwyrlrZ0kCuKQkbftCxgD5V9Hk_mkMBt4uTwVi177hBtLYGNjNcdLVeYj_-uTH0P8TwU).
 
 
 The next step is to load your log-likelihood function/script.
@@ -782,7 +783,7 @@ matplot(t(sampled$samples$subj_ll),type="l")
 
 ## Simulating posterior data
 
-Now we'll cover the sample operation within the fast log-likelihood function. We will use this on the full data set. The sample operation can be carried out in several ways (using rbinom etc). Please note that we do NOT recommend using this approach below and this should serve as an example only.
+Now we'll cover the sample operation within the fast log-likelihood function. We will use this on the full data set. The sample operation can be carried out in several ways (using rbinom etc). Please note that we do <b>NOT</b> recommend using this approach below and this should serve as an example only.
 
 The `sample` process is similar to what we've covered above. We begin by assigning `NA`s to the response column to prepare it for simulated response data. We then consider a subset of the data, beginning with <i>word</i> condition and high-frequency `hf` word stimuli trials.
 
@@ -804,27 +805,34 @@ data$resp[i] <- ifelse(test = (rnorm(1, mean = x["HF.d"],
 We repeat this process for each condition and stimulus combination as shown in the code block below.
 ```{r part8.5, eval=FALSE}
 { else if (data$stim[i] == "lf") {
-  data$resp[i] <- ifelse(test = (rnorm(1, mean = x["LF.d"], 
+  data$resp[i] <- ifelse(test = (rnorm(1, 
+                                       mean = x["LF.d"], 
                                        sd = 1)) > x["C.w"], "word", "non-word")
   } else if (data$stim[i] == "vlf") {
-    data$resp[i] <- ifelse(test = (rnorm(1, mean = x["VLF.d"], 
+    data$resp[i] <- ifelse(test = (rnorm(1, 
+                                         mean = x["VLF.d"], 
                                          sd = 1)) > x["C.w"], "word", "non-word")
     } else {
-      data$resp[i] <- ifelse(test = (rnorm(1, mean = 0, 
+      data$resp[i] <- ifelse(test = (rnorm(1, 
+                                           mean = 0, 
                                            sd = 1)) > x["C.w"], "word", "non-word")
       }
 } else {
   if (data$stim[i] == "hf") {
-    data$resp[i] <- ifelse(test = (rnorm(1, mean = x["HF.d"], 
+    data$resp[i] <- ifelse(test = (rnorm(1, 
+                                         mean = x["HF.d"], 
                                          sd = 1)) > x["C.nw"], "word", "non-word")
     } else if (data$stim[i] == "lf") {
-          data$resp[i] <- ifelse(test = (rnorm(1, mean = x["LF.d"], 
+          data$resp[i] <- ifelse(test = (rnorm(1,
+                                               mean = x["LF.d"], 
                                                sd = 1)) > x["C.nw"], "word", "non-word")
         } else if (data$stim[i] == "vlf") {
-          data$resp[i] <- ifelse(test = (rnorm(1, mean = x["VLF.d"], 
+          data$resp[i] <- ifelse(test = (rnorm(1, 
+                                               mean = x["VLF.d"], 
                                                sd = 1)) > x["C.nw"], "word", "non-word")
         } else {
-          data$resp[i] <- ifelse(test = (rnorm(1, mean = 0, 
+          data$resp[i] <- ifelse(test = (rnorm(1, 
+                                               mean = 0, 
                                                sd = 1)) > x["C.nw"], "word", "non-word")
           }
         }
@@ -837,14 +845,19 @@ Now we can run our simulation. Below is some code to achieve this.
 n.posterior <- 20 # Number of samples from posterior distribution for each parameter.
 pp.data <- list()
 S <- unique(wgnmks2008$subject)
-data <- split(x = wgnmks2008, f = wgnmks2008$subject)
+data <- split(x = wgnmks2008, 
+              f = wgnmks2008$subject)
 for (s in S) {
   cat(s," ")
-  iterations = round(seq(from = 1051, to = sampled$samples$idx, length.out = n.posterior))
+  iterations = round(seq(from = 1051,
+                         to = sampled$samples$idx,
+                         length.out = n.posterior))
   for (i in 1:length(iterations)) {
     x <- sampled$samples$alpha[, s, iterations[i]]
     names(x) <- pars
-    tmp <- SDT_ll_fast(x = x, data = wgnmks2008[wgnmks2008$subject == s,], sample = TRUE)
+    tmp <- SDT_ll_fast(x = x, 
+                       data = wgnmks2008[wgnmks2008$subject == s,],
+                       sample = TRUE)
     if (i == 1) {
       pp.data[[s]] <- cbind(i,tmp)
     } else {
@@ -856,9 +869,20 @@ for (s in S) {
 
 
 And now we can plot samples against the data.
-```{r part12graph, echo=FALSE, out.width='100%', fig.show='hold', fig.cap='Appropriate figure caption HERE'}
-ggplot(data = av.tmp, aes(x = cond, y = word_prop)) + geom_col(alpha = 0.3) +
-  geom_point(data = av.pp, aes(x = cond, y = word_prop)) + theme_classic()
+```{r part12graph, echo=FALSE, out.width='100%', fig.show='hold', fig.cap = "The proportion of 'word' responses within each cell of the design."}
+ggplot(data = av.tmp,
+       aes(x = cond, y = word_prop)) + 
+  geom_col(alpha = 0.3) +
+  geom_point(data = av.pp, aes(x = cond, y = word_prop)) + 
+  theme_classic() + 
+   labs(x = "Condition x stimulus",
+       y = "Proportion of 'word'/n responses") +
+  theme(axis.title.y = element_text(size = 12, face = 'bold'),
+        axis.text.y = element_text(size=12),
+        axis.title.x = element_text(size = 12, face = 'bold'),
+        axis.text.x = element_text(size=12),
+        legend.position = "none")
+  
 ```
 
-Figure \@ref(fig:part12graph) shows 20 posterior draws (dots) plotted against the data (bars). The posterior draws are for each individual subject - shown here is the average proportion of word responses. Evidently, the model appears to fit the data well.
+Figure \@ref(fig:part12graph) shows 20 posterior draws (dots) plotted against the data (bars). The posterior draws are for each individual subject - shown here is the average proportion of word responses. We can see that the model fits the data well.
