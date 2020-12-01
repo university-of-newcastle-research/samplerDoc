@@ -105,14 +105,13 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="./">PMwG Samplers Package</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction to Particle Based Sampler for MCMC</a><ul>
-<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#computational-requirements"><i class="fa fa-check"></i><b>1.1</b> Computational Requirements</a></li>
-<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#assumed-knowledge"><i class="fa fa-check"></i><b>1.2</b> Assumed knowledge</a></li>
-<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#why-would-you-use-particle-metropolis-within-gibbs-sampling"><i class="fa fa-check"></i><b>1.3</b> Why would you use Particle Metropolis within Gibbs Sampling</a></li>
-<li class="chapter" data-level="1.4" data-path="index.html"><a href="index.html#the-hierarchical-structure-assumed"><i class="fa fa-check"></i><b>1.4</b> The Hierarchical Structure Assumed</a></li>
-<li class="chapter" data-level="1.5" data-path="index.html"><a href="index.html#what-particle-metropolis-within-gibbs-sampling-provides"><i class="fa fa-check"></i><b>1.5</b> What Particle Metropolis within Gibbs Sampling provides</a></li>
-<li class="chapter" data-level="1.6" data-path="index.html"><a href="index.html#what-is-particle-metropolis-within-gibbs-sampling"><i class="fa fa-check"></i><b>1.6</b> What is Particle Metropolis within Gibbs Sampling?</a></li>
-<li class="chapter" data-level="1.7" data-path="index.html"><a href="index.html#how-do-we-generate-proposals-in-pmwg-sampling-using-particle-metropolis"><i class="fa fa-check"></i><b>1.7</b> How do we generate proposals in PMwG sampling using Particle Metropolis</a></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction to particle based sampler for MCMC</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#assumed-knowledge"><i class="fa fa-check"></i><b>1.1</b> Assumed knowledge</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#why-would-you-use-particle-metropolis-within-gibbs-sampling"><i class="fa fa-check"></i><b>1.2</b> Why would you use Particle Metropolis within Gibbs sampling?</a></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#the-assumed-hierarchical-structure"><i class="fa fa-check"></i><b>1.3</b> The assumed hierarchical structure</a></li>
+<li class="chapter" data-level="1.4" data-path="index.html"><a href="index.html#what-particle-metropolis-within-gibbs-sampling-provides"><i class="fa fa-check"></i><b>1.4</b> What Particle Metropolis within Gibbs sampling provides</a></li>
+<li class="chapter" data-level="1.5" data-path="index.html"><a href="index.html#what-is-particle-metropolis-within-gibbs-sampling"><i class="fa fa-check"></i><b>1.5</b> What is Particle Metropolis within Gibbs sampling?</a></li>
+<li class="chapter" data-level="1.6" data-path="index.html"><a href="index.html#generating-proposals-in-pmwg-sampling-using-particle-metropolis"><i class="fa fa-check"></i><b>1.6</b> Generating proposals in PMwG sampling using Particle Metropolis</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html"><i class="fa fa-check"></i><b>2</b> PMwG sampler and Signal Detection Theory</a><ul>
 <li class="chapter" data-level="2.0.1" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#sdtOutline"><i class="fa fa-check"></i><b>2.0.1</b> Signal Detection Theory analysis of lexical decision task</a></li>
@@ -190,31 +189,18 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="header">
 <h1 class="title">Particle Based Samplers for MCMC</h1>
 <p class="author"><em>Jon-Paul Cavallaro</em></p>
-<p class="date"><em>Monday 30 November 2020</em></p>
+<p class="date"><em>Tuesday 01 December 2020</em></p>
 </div>
 <div id="introduction-to-particle-based-sampler-for-mcmc" class="section level1">
-<h1><span class="header-section-number">Chapter 1</span> Introduction to Particle Based Sampler for MCMC</h1>
+<h1><span class="header-section-number">Chapter 1</span> Introduction to particle based sampler for MCMC</h1>
 <p>Contains implementations of particle based sampling methods for model parameter estimation. Primarily an implementation of the Particle Metropolis within Gibbs sampler outlined in the paper available <a href="https://www.sciencedirect.com/science/article/abs/pii/S0022249620300389">here</a>, it also contains code for covariance estimation and time varying models.</p>
-<div id="computational-requirements" class="section level2">
-<h2><span class="header-section-number">1.1</span> Computational Requirements</h2>
-<ul>
-<li>R Version</li>
-<li>Packages</li>
-<li>Memory</li>
-<li>Document computational requirements - memory 200mb</li>
-<li>Minutes</li>
-<li>Size of samples</li>
-<li>Memory required</li>
-<li>Can it be done on a grid or laptop</li>
-</ul>
-</div>
 <div id="assumed-knowledge" class="section level2">
-<h2><span class="header-section-number">1.2</span> Assumed knowledge</h2>
-<p>This tutorial and introduction assumes you are familiar hierarchical Bayesian estimation and MCMC sampling. If you would like to read more on this, please see Shiffrin, Lee, Kim, and Wagenmakers (2008) <a href="https://onlinelibrary.wiley.com/doi/full/10.1080/03640210802414826">tutorial on Hierachical Bayesian Methods</a> and van Ravenzwaaij, Cassey, and Brown’s (2018) <a href="https://link.springer.com/article/10.3758/s13423-016-1015-8?wt_mc=Other.Other.8.CON1172.PSBR%20VSI%20Art09">introduction to Markov Chain Monte-Carlo Sampling</a>.</p>
+<h2><span class="header-section-number">1.1</span> Assumed knowledge</h2>
+<p>To get the most out of this tutorial for the PMwG sampler, we assume you are familiar with hierarchical Bayesian estimation and MCMC sampling. If you would like to read more on these topics, please see <span class="citation">Shiffrin et al. (<a href="#ref-shiffrin2008survey">2008</a>)</span> <a href="https://onlinelibrary.wiley.com/doi/full/10.1080/03640210802414826">tutorial on Hierachical Bayesian Methods</a> and <span class="citation">Van Ravenzwaaij, Cassey, and Brown (<a href="#ref-van2018simple">2018</a>)</span> <a href="https://link.springer.com/article/10.3758/s13423-016-1015-8?wt_mc=Other.Other.8.CON1172.PSBR%20VSI%20Art09">introduction to Markov Chain Monte-Carlo Sampling</a>.</p>
 </div>
 <div id="why-would-you-use-particle-metropolis-within-gibbs-sampling" class="section level2">
-<h2><span class="header-section-number">1.3</span> Why would you use Particle Metropolis within Gibbs Sampling</h2>
-<p>This software is intended to help estimate models in a hierarchical structure with random effects for subjects. You will need to be able to write a function that evaluates the density of one subject’s data, given values for that subject’s parameters (i.e. their random effects). Everything else is taken care of by the sampler functions. The model that defines the density for of an individual subject’s data could be a linear regression for example, or simple cognitive models like Signal Detection models (which is one of the examples we provide in this tutorial), or models that can be very challenging to estimate, such as the Linear Ballistic Accumulator (LBA) or Diffusion model. As long as you have a model for which you can provide a likelihood, this software will help estimate the model in a hierarchical Bayesian way.</p>
+<h2><span class="header-section-number">1.2</span> Why would you use Particle Metropolis within Gibbs sampling?</h2>
+<p>This software is intended to help estimate models in a hierarchical structure with random effects for subjects. You will need to be able to write a function that evaluates the density of one subject’s data, given values for that subject’s parameters (i.e. their random effects). Everything else is taken care of by the sampler functions. The model that defines the density for an individual subject’s data could be a linear regression for example, or simple cognitive models like signal detection models (which is one of the examples we provide in this tutorial), or models that can be very challenging to estimate, such as the Linear Ballistic Accumulator (LBA) or Diffusion model. As long as you have a model for which you can provide a likelihood, this software will help estimate the model in a hierarchical Bayesian way.</p>
 <p>Benefits of the Particle Metropolis within Gibbs sampling algorithm include:</p>
 <ul>
 <li><p>It allows you to efficiently get posterior samples from difficult-to-estimate models with highly correlated parameters, such as the LBA or diffusion model, and these samples have nice properties (e.g., lower autocorrelation than other MCMC samplers).</p></li>
@@ -222,13 +208,13 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><p>It allows you to estimate the covariance structure between parameters in a principled manner.</p></li>
 </ul>
 </div>
-<div id="the-hierarchical-structure-assumed" class="section level2">
-<h2><span class="header-section-number">1.4</span> The Hierarchical Structure Assumed</h2>
-<p>The PMwG package is very flexible in that it is agnostic about the data-level model; it allows the user to specify the model that defines the density of each subject’s data. However, the package makes fixed assumptions about the hierarchical structure across participants. The package assumes a multivariate normal random effects structure. For example, when estimating an LBA model, each participant will have several parameters, such as a start point (A), threshold (b), drift rate (v), and non-decision time (t0). The PMwG package assumes that the vector of each subject’s parameter value follows a group-level distribution which is multivariate normal. The algorithm will estimate the group-level mean for each parameter, as well as its variance, and also the correlations between parameters in the sample.</p>
+<div id="the-assumed-hierarchical-structure" class="section level2">
+<h2><span class="header-section-number">1.3</span> The assumed hierarchical structure</h2>
+<p>The PMwG package is very flexible in that it is agnostic about the data-level model; it allows the user to specify the model that defines the density of each subject’s data. However, the package makes fixed assumptions about the hierarchical structure across participants. The package assumes a multivariate normal random effects structure. For example, when estimating an LBA model, each participant will have several parameters, such as a start point (<code>A</code>), threshold (<code>b</code>), drift rate (<code>v</code>), and non-decision time (<code>t0</code>). The PMwG package assumes that the vector of each subject’s parameter value follows a group-level distribution which is multivariate normal. The algorithm will estimate the group-level mean for each parameter, as well as its variance, and also the correlations between parameters in the sample.</p>
 <p>One consequence of the multivariate normal assumption is that all parameters are assumed to be unbounded (i.e. able to take values anywhere on the real line). Cognitive models often have bounded parameters (e.g. in the LBA model, the non-decision time parameter cannot be negative, as it represents a length of time). The user should deal with bounded parameters by transforming them to be unbounded. We give examples of that, in the likelihood functions.</p>
 </div>
 <div id="what-particle-metropolis-within-gibbs-sampling-provides" class="section level2">
-<h2><span class="header-section-number">1.5</span> What Particle Metropolis within Gibbs Sampling provides</h2>
+<h2><span class="header-section-number">1.4</span> What Particle Metropolis within Gibbs sampling provides</h2>
 <p>The sampler will provide samples from the posterior distribution of the model in three categories:</p>
 <ul>
 <li><p>The means for the group level parameters (<code>theta</code>).</p></li>
@@ -237,21 +223,35 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul>
 </div>
 <div id="what-is-particle-metropolis-within-gibbs-sampling" class="section level2">
-<h2><span class="header-section-number">1.6</span> What is Particle Metropolis within Gibbs Sampling?</h2>
+<h2><span class="header-section-number">1.5</span> What is Particle Metropolis within Gibbs sampling?</h2>
 <p>There are two sampling approaches incorporated into PMwG. One is the well-established and easy to apply Gibbs sampling on the group-level parameters. Gibbs sampling is very powerful and efficient, and it can work for the group-level parameters because the package assumes a multivariate normal distribution, which is easy to work with.</p>
-<p>However, for the subject-level parameters (random effects), Gibbs sampling is not possible; at least for most cognitive models. For this reason, the PMwG package uses particle methods to sample random effects. Particle sampling works like other Markov chain samplers, such as Metropolis-Hastings. At each step, the sample (the vector of random effects) from the previous step is compared to a large number of proposals (“particles”). The new sample is chosen from amongst the particles (including the previous sample), according to how well they match the data and the prior.</p>
-<p>The key to making the algorithm efficient is to propose particles carefully. Our algorithm uses adaptive proposal distributions, individually tuned for each participant, to make sure that good proposal particles are generated without requiring a prohibitively large number of particles in total. How often the sampler accepts a new particle (as opposed the previous sample) is referred to as the acceptance rate. Acceptance rate can be adjusted for maximum efficiency (somewhere around 30-50% acceptance is great) by changing the total number of particles and by changing the variance of the proposal distribution (parameter “epsilon”). The particles are evaluated in a parallel way, which helps speed computation.</p>
+<p>However, for the subject-level parameters (random effects), Gibbs sampling is not possible; at least not for most cognitive models. For this reason, the PMwG package uses particle methods to sample random effects. Particle sampling works like other Markov chain samplers, such as Metropolis-Hastings. At each step, the sample (the vector of random effects) from the previous step is compared to a large number of proposals (“particles”). The new sample is chosen from amongst the particles (including the previous sample), according to how well they match the data and the prior.</p>
+<p>The key to making the algorithm efficient is to propose particles carefully. Our algorithm uses adaptive proposal distributions, individually tuned for each participant, to make sure that good proposal particles are generated without requiring a prohibitively large number of particles in total. How often the sampler accepts a new particle (as opposed the previous sample) is referred to as the acceptance rate. Acceptance rate can be adjusted for maximum efficiency (somewhere around 30-50% acceptance is great) by changing the total number of particles and by changing the variance of the proposal distribution (parameter “epsilon”). The particles are evaluated in parallel, which increases computation speed.</p>
 </div>
-<div id="how-do-we-generate-proposals-in-pmwg-sampling-using-particle-metropolis" class="section level2">
-<h2><span class="header-section-number">1.7</span> How do we generate proposals in PMwG sampling using Particle Metropolis</h2>
-<p>PMwG has three sampling stages. The first stage is called <code>burn-in</code>, the second is <code>adaptation</code>, and the third is the <code>sampled</code> stage. The stages emploiy different numbers of particles, and different proposal distributions. This makes the algorithm most efficient.</p>
-<p><b>(include trace plot with ab lines separating these stages) </b></p>
+<div id="generating-proposals-in-pmwg-sampling-using-particle-metropolis" class="section level2">
+<h2><span class="header-section-number">1.6</span> Generating proposals in PMwG sampling using Particle Metropolis</h2>
+<p>PMwG has three sampling stages. The first stage is called <code>burn-in</code>, the second is <code>adaptation</code>, and the third is the <code>sampled</code> stage. The stages employ different numbers of particles, and different proposal distributions. This makes the algorithm most efficient.</p>
+<div class="figure"><span id="fig:tracePlteg"></span>
+<img src="tracePl.png" alt="Trace plot with vertical lines demarcating the PMwG sampler's three sampling stages" width="100%" />
+<p class="caption">
+Figure 1.1: Trace plot with vertical lines demarcating the PMwG sampler’s three sampling stages
+</p>
+</div>
 <p>In the <code>burn-in</code> and <code>adaptation stages</code>, the proposals (or random effects vectors) for each subject are sampled from a mixture of two sources. One source is the group-level distribution and the second source is a multivariate normal distribution centred on the current best guess for the subject’s random effects vector (alpha), with a variance that is smaller than the group level distribution. We generate proposals from both sources, because proposals generated from the group level distribution act as a safety net in situations where proposals generated from the subject’s current alpha are unusual or unlikely. If this occurs instead of the sampler taking a long way to return a sensible vector of random effects, a group level proposal will instead be chosen, leading to a faster sampling time.</p>
 <p>One thing we want to know is the posterior distribution for each subject’s random effects (<code>alpha</code>). For this reason, we throw away samples from the <code>burn-in</code> stage, because this is a period in which the sampler is trying to work its way away from an initial guess, and stabilise on samples which are from the true posterior distribution for each subjects random effects.</p>
 <p>In the <code>adaptation stage</code>, we continue the algorithm used in the burn-in stage until we collect a minimum of 20 unique samples from each subject’s posterior. These samples are used to give a good idea of what the posterior distribution looks like for each subject’s random effects vector. That allows us to build an adaptive proposal distribution that makes very efficient proposals, in the next stage.</p>
 <p>In the final <code>sampling</code> stage, we calculate generate a multivariate normal distribution (referred to as the adaptive proposal distribution), that summarises the unique samples in the adaptation stage, and uses this to generate future proposals. An important feature of this distribution is that, for each subject, it summarises not only the posterior distribution of their random effects but also the way these random effects relate to the group-level parameter. This allows us to draw conditional proposals: proposals which are both consistent with that subject’s random effects and with the current proposal for the group-level distribution. Because of this, the proposals generated are frequently accepted, meaning we can lower the number of particles needed in this stage (for example, 20 instead of 200), and still maintain an adequate acceptance rate. Further, we continue to update this proposal distribution throughout the sampling stage so we have a more accurate proposal distribution.</p>
 <p>As a safety precaution during the sampling stage, we also include a few proposal particles from the same algorithm as used in the burn-in stage. This protects against very poor conditional proposal distributions.</p>
 
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-shiffrin2008survey">
+<p>Shiffrin, Richard M, Michael D Lee, Woojae Kim, and Eric-Jan Wagenmakers. 2008. “A Survey of Model Evaluation Approaches with a Tutorial on Hierarchical Bayesian Methods.” <em>Cognitive Science</em> 32 (8). Wiley Online Library: 1248–84.</p>
+</div>
+<div id="ref-van2018simple">
+<p>Van Ravenzwaaij, Don, Pete Cassey, and Scott D Brown. 2018. “A Simple Introduction to Markov Chain Monte–Carlo Sampling.” <em>Psychonomic Bulletin &amp; Review</em> 25 (1). Springer: 143–54.</p>
 </div>
 </div>
             </section>

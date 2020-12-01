@@ -25,27 +25,16 @@ for (pkg in pkgs){
 ```
 
 
-# Introduction to Particle Based Sampler for MCMC
+# Introduction to particle based sampler for MCMC
 
 Contains implementations of particle based sampling methods for model parameter estimation. Primarily an implementation of the Particle Metropolis within Gibbs sampler outlined in the paper available [here](https://www.sciencedirect.com/science/article/abs/pii/S0022249620300389), it also contains code for covariance estimation and time varying models.
 
-
-## Computational Requirements
-* R Version
-* Packages
-* Memory
-* Document computational requirements - memory 200mb
-* Minutes
-* Size of samples
-* Memory required
-* Can it be done on a grid or laptop
-
 ## Assumed knowledge
-This tutorial and introduction assumes you are familiar hierarchical Bayesian estimation and MCMC sampling. If you would like to read more on this, please see Shiffrin, Lee, Kim, and Wagenmakers (2008) [tutorial on Hierachical Bayesian Methods](https://onlinelibrary.wiley.com/doi/full/10.1080/03640210802414826) and van Ravenzwaaij, Cassey, and Brown's (2018) [introduction to Markov Chain Monte-Carlo Sampling](https://link.springer.com/article/10.3758/s13423-016-1015-8?wt_mc=Other.Other.8.CON1172.PSBR%20VSI%20Art09).
+To get the most out of this tutorial for the PMwG sampler, we assume you are familiar with hierarchical Bayesian estimation and MCMC sampling. If you would like to read more on these topics, please see @shiffrin2008survey [tutorial on Hierachical Bayesian Methods](https://onlinelibrary.wiley.com/doi/full/10.1080/03640210802414826) and @van2018simple [introduction to Markov Chain Monte-Carlo Sampling](https://link.springer.com/article/10.3758/s13423-016-1015-8?wt_mc=Other.Other.8.CON1172.PSBR%20VSI%20Art09).
 
-## Why would you use Particle Metropolis within Gibbs Sampling 
+## Why would you use Particle Metropolis within Gibbs sampling?
 
-This software is intended to help estimate models in a hierarchical structure with random effects for subjects. You will need to be able to write a function that evaluates the density of one subject’s data, given values for that subject’s parameters (i.e. their random effects). Everything else is taken care of by the sampler functions. The model that defines the density for of an individual subject’s data could be a linear regression for example, or simple cognitive models like Signal Detection models (which is one of the examples we provide in this tutorial), or models that can be very challenging to estimate, such as the Linear Ballistic Accumulator (LBA) or Diffusion model. As long as you have a model for which you can provide a likelihood, this software will help estimate the model in a hierarchical Bayesian way.  
+This software is intended to help estimate models in a hierarchical structure with random effects for subjects. You will need to be able to write a function that evaluates the density of one subject’s data, given values for that subject’s parameters (i.e. their random effects). Everything else is taken care of by the sampler functions. The model that defines the density for an individual subject’s data could be a linear regression for example, or simple cognitive models like signal detection models (which is one of the examples we provide in this tutorial), or models that can be very challenging to estimate, such as the Linear Ballistic Accumulator (LBA) or Diffusion model. As long as you have a model for which you can provide a likelihood, this software will help estimate the model in a hierarchical Bayesian way.  
 
 Benefits of the Particle Metropolis within Gibbs sampling algorithm include: 
 
@@ -55,16 +44,14 @@ Benefits of the Particle Metropolis within Gibbs sampling algorithm include:
 
 * It allows you to estimate the covariance structure between parameters in a principled manner. 
 
- 
+## The assumed hierarchical structure  
 
-## The Hierarchical Structure Assumed  
-
-The PMwG package is very flexible in that it is agnostic about the data-level model; it allows the user to specify the model that defines the density of each subject’s data. However, the package makes fixed assumptions about the hierarchical structure across participants. The package assumes a multivariate normal random effects structure. For example, when estimating an LBA model, each participant will have several parameters, such as a start point (A), threshold (b), drift rate (v), and non-decision time (t0). The  PMwG package assumes that the vector of each subject’s parameter value follows a group-level distribution which is multivariate normal. The algorithm will estimate the group-level mean for each parameter, as well as its variance, and also the correlations between parameters in the sample.  
+The PMwG package is very flexible in that it is agnostic about the data-level model; it allows the user to specify the model that defines the density of each subject’s data. However, the package makes fixed assumptions about the hierarchical structure across participants. The package assumes a multivariate normal random effects structure. For example, when estimating an LBA model, each participant will have several parameters, such as a start point (`A`), threshold (`b`), drift rate (`v`), and non-decision time (`t0`). The  PMwG package assumes that the vector of each subject’s parameter value follows a group-level distribution which is multivariate normal. The algorithm will estimate the group-level mean for each parameter, as well as its variance, and also the correlations between parameters in the sample.  
 
 One consequence of the multivariate normal assumption is that all parameters are assumed to be unbounded (i.e. able to take values anywhere on the real line). Cognitive models often have bounded parameters (e.g. in the LBA model, the non-decision time parameter cannot be negative, as it represents a length of time). The user should deal with bounded parameters by transforming them to be unbounded. We give examples of that, in the likelihood functions. 
 
 
-## What Particle Metropolis within Gibbs Sampling provides 
+## What Particle Metropolis within Gibbs sampling provides 
 
 The sampler will provide samples from the posterior distribution of the model in three categories: 
 
@@ -76,19 +63,21 @@ The sampler will provide samples from the posterior distribution of the model in
 
  
 
-## What is Particle Metropolis within Gibbs Sampling? 
+## What is Particle Metropolis within Gibbs sampling? 
 
 There are two sampling approaches incorporated into PMwG. One is the well-established and easy to apply Gibbs sampling on the group-level parameters. Gibbs sampling is very powerful and efficient, and it can work for the group-level parameters because the package assumes a multivariate normal distribution, which is easy to work with.  
 
-However, for the subject-level parameters (random effects), Gibbs sampling is not possible; at least for most cognitive models. For this reason, the PMwG package uses particle methods to sample random effects. Particle sampling works like other Markov chain samplers, such as Metropolis-Hastings. At each step, the sample (the vector of random effects) from the previous step is compared to a large number of proposals (“particles”). The new sample is chosen from amongst the particles (including the previous sample), according to how well they match the data and the prior.  
+However, for the subject-level parameters (random effects), Gibbs sampling is not possible; at least not for most cognitive models. For this reason, the PMwG package uses particle methods to sample random effects. Particle sampling works like other Markov chain samplers, such as Metropolis-Hastings. At each step, the sample (the vector of random effects) from the previous step is compared to a large number of proposals (“particles”). The new sample is chosen from amongst the particles (including the previous sample), according to how well they match the data and the prior.  
 
-The key to making the algorithm efficient is to propose particles carefully. Our algorithm uses adaptive proposal distributions, individually tuned for each participant, to make sure that good proposal particles are generated without requiring a prohibitively large number of particles in total. How often the sampler accepts a new particle (as opposed the previous sample) is referred to as the acceptance rate. Acceptance rate can be adjusted for maximum efficiency (somewhere around 30-50% acceptance is great) by changing the total number of particles and by changing the variance of the proposal distribution (parameter “epsilon”). The particles are evaluated in a parallel way, which helps speed computation. 
+The key to making the algorithm efficient is to propose particles carefully. Our algorithm uses adaptive proposal distributions, individually tuned for each participant, to make sure that good proposal particles are generated without requiring a prohibitively large number of particles in total. How often the sampler accepts a new particle (as opposed the previous sample) is referred to as the acceptance rate. Acceptance rate can be adjusted for maximum efficiency (somewhere around 30-50% acceptance is great) by changing the total number of particles and by changing the variance of the proposal distribution (parameter “epsilon”). The particles are evaluated in parallel, which increases computation speed. 
 
-## How do we generate proposals in PMwG sampling using Particle Metropolis 
+## Generating proposals in PMwG sampling using Particle Metropolis
 
-PMwG has three sampling stages. The first stage is called `burn-in`, the second is `adaptation`, and the third is the `sampled` stage. The stages emploiy different numbers of particles, and different proposal distributions. This makes the algorithm most efficient. 
+PMwG has three sampling stages. The first stage is called `burn-in`, the second is `adaptation`, and the third is the `sampled` stage. The stages employ different numbers of particles, and different proposal distributions. This makes the algorithm most efficient. 
 
-<b>(include trace plot with ab lines separating these stages) </b>
+```{r tracePlteg, echo=FALSE, out.width='100%', fig.show='hold', fig.cap="Trace plot with vertical lines demarcating the PMwG sampler's three sampling stages"}
+knitr::include_graphics('tracePl.png')
+```
 
 In the `burn-in` and `adaptation stages`, the proposals (or random effects vectors) for each subject are sampled from a mixture of two sources. One source is the group-level distribution and the second source is a multivariate normal distribution centred on the current best guess for the subject’s random effects vector (alpha), with a variance that is smaller than the group level distribution. We generate proposals from both sources, because proposals generated from the group level distribution act as a safety net in situations where proposals generated from the subject’s current alpha are unusual or unlikely. If this occurs instead of the sampler taking a long way to return a sensible vector of random effects, a group level proposal will instead be chosen, leading to a faster sampling time.  
 
