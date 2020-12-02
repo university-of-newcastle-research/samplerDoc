@@ -31,7 +31,7 @@
   
   
 <link rel="prev" href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"/>
-<link rel="next" href="references.html"/>
+<link rel="next" href="appendix.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -117,7 +117,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="2.0.1" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#sdtOutline"><i class="fa fa-check"></i><b>2.0.1</b> Signal Detection Theory analysis of lexical decision task</a></li>
 <li class="chapter" data-level="2.0.2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#writing-a-log-likelihood-function"><i class="fa fa-check"></i><b>2.0.2</b> Writing a log-likelihood function</a></li>
 <li class="chapter" data-level="2.1" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#testing-the-sdt-log-likelihood-function"><i class="fa fa-check"></i><b>2.1</b> Testing the SDT log-likelihood function</a></li>
-<li class="chapter" data-level="2.2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#sdt-log-likelihood-function-for-wagenmakers-experiment"><i class="fa fa-check"></i><b>2.2</b> SDT log-likelihood function for Wagenmakers experiment</a><ul>
+<li class="chapter" data-level="2.2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#sdtWag"><i class="fa fa-check"></i><b>2.2</b> SDT log-likelihood function for Wagenmakers experiment</a><ul>
 <li class="chapter" data-level="2.2.1" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#description-of-wagenmakers-experiment"><i class="fa fa-check"></i><b>2.2.1</b> Description of Wagenmakers experiment</a></li>
 <li class="chapter" data-level="2.2.2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#computation-time-of-log-likelihood-function"><i class="fa fa-check"></i><b>2.2.2</b> Computation time of log-likelihood function</a></li>
 </ul></li>
@@ -161,9 +161,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="5.1" data-path="troubleshoot.html"><a href="troubleshoot.html#how-to-write-a-log-likelihood-function"><i class="fa fa-check"></i><b>5.1</b> How to write a log-likelihood function</a><ul>
 <li class="chapter" data-level="5.1.1" data-path="troubleshoot.html"><a href="troubleshoot.html#writing-your-log-likelihood-function-tips-errors-and-check-list"><i class="fa fa-check"></i><b>5.1.1</b> Writing your log-likelihood function: Tips, errors and check list</a></li>
 </ul></li>
-<li class="chapter" data-level="5.2" data-path="troubleshoot.html"><a href="troubleshoot.html#appendix"><i class="fa fa-check"></i><b>5.2</b> Appendix</a><ul>
-<li class="chapter" data-level="5.2.1" data-path="troubleshoot.html"><a href="troubleshoot.html#wagSDTscript"><i class="fa fa-check"></i><b>5.2.1</b> Wagenmakers SDT script</a></li>
 </ul></li>
+<li class="chapter" data-level="6" data-path="appendix.html"><a href="appendix.html"><i class="fa fa-check"></i><b>6</b> Appendix</a><ul>
+<li class="chapter" data-level="6.1" data-path="appendix.html"><a href="appendix.html#wagSDTscript"><i class="fa fa-check"></i><b>6.1</b> Wagenmakers SDT script</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
@@ -223,81 +223,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p><b>12. Number of iterations for ’burn-in` stage of sampler.</b></p>
 <p>We suggest running <code>burn-in</code> for few iterations and particles first. This will give you a sense of a) whether the sampler is working as intended (see troubleshooting/checks for what parameter chains should look like), b) the number of iterations &amp; particles needed to achieve the target acceptance rate, as well as the appropriate epsilon value. The acceptance rate is generally very high for the first few iterations ( &gt; 100) and then declines. After the initial short run, you can check and optimise the number of particles to be used (and balance with epsilon), so the acceptance rate is close to 30% on a longer, full run. We recommend you start with epsilon = .5 to increase efficiency, then adjust as needed.</p>
 <p><b>NOTE:</b> Overall, we aim for ~30% acceptance rate of particles. High acceptance rates may be inaccurate if burn-in runs for few iterations. Low acceptance rates are inefficient and may fail to create an efficient distribution for the sampling stage.</p>
-</div>
-</div>
-<div id="appendix" class="section level2">
-<h2><span class="header-section-number">5.2</span> Appendix</h2>
-<div id="wagSDTscript" class="section level3">
-<h3><span class="header-section-number">5.2.1</span> Wagenmakers SDT script</h3>
-<p>A zipped folder containing the dataset from <span class="citation">Wagenmakers et al. (<a href="#ref-wagenmakers2008diffusion">2008</a>)</span> can be found at this <a href="https://www.ejwagenmakers.com/Code/2008/LexDecData.zip">link</a>. As shown in our script below, the data is stored in the <code>&quot;PropData.txt&quot;</code> file.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#~~~~~~~~~~~~~~~~~~~~ Wagenmakers 2008 Lexical decision task ~~~~~~~~~~~~~~~~~~~~~~~~~~~#</span>
-
-<span class="co"># 1) subject = participant number</span>
-<span class="co"># 2) block = block number</span>
-<span class="co"># 3) practice = 1 if practice block, otherwise 0</span>
-<span class="co"># 4) cond = condition either &quot;2&quot; for 75% words or &quot;1&quot; for 75% nonwords)</span>
-<span class="co"># 5) stimulus = unique identifier of stimulus, stimuli are nested in frequency conditions</span>
-<span class="co"># 6) freq = Code &quot;1&quot; means &quot;high frequency word&quot;, code &quot;2&quot; means &quot;low frequency word&quot;,</span>
-<span class="co">#    and code &quot;3&quot; means &quot;very low frequency word&quot;. Codes 4, 5, and 6 = &quot;nonword&quot;.</span>
-<span class="co"># 7) resp =  0 is nonword, 1 is word, -1 is not interpretable response (i.e., pushed a button,</span>
-<span class="co">#         but not the right one and also not the one next to the right button)</span>
-<span class="co"># 8) rt = response time in seconds</span>
-<span class="co"># 9) censor = 1 if value is eliminated from further analysis;</span>
-<span class="co">#       practice block, uninterpretable response, too fast response (&lt;180 ms), too slow response (&gt;3 sec)</span>
-
-<span class="kw">rm</span>(<span class="dt">list=</span><span class="kw">ls</span>())
-<span class="kw">require</span>(tidyverse)
-
-wagenmakers2008 &lt;-<span class="st"> </span><span class="kw">read.delim</span>(<span class="st">&quot;PropData.txt&quot;</span>,
-                              <span class="dt">header =</span> <span class="ot">FALSE</span>)
-
-<span class="kw">names</span>(wagenmakers2008) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;subject&quot;</span>,<span class="st">&quot;block&quot;</span>,<span class="st">&quot;practice&quot;</span>,<span class="st">&quot;cond&quot;</span>,<span class="st">&quot;stimulus&quot;</span>,<span class="st">&quot;freq&quot;</span>,<span class="st">&quot;resp&quot;</span>,<span class="st">&quot;rt&quot;</span>,<span class="st">&quot;censor&quot;</span>)
-
-wagenmakers2008 &lt;-<span class="st"> </span>wagenmakers2008[wagenmakers2008<span class="op">$</span>censor<span class="op">!=</span><span class="dv">1</span>,<span class="op">-</span><span class="kw">c</span>(<span class="dv">3</span>,<span class="dv">9</span>)]
-
-wagenmakers2008<span class="op">$</span>subject &lt;-<span class="st"> </span><span class="kw">factor</span>(wagenmakers2008<span class="op">$</span>subject)
-
-wagenmakers2008<span class="op">$</span>cond &lt;-<span class="st"> </span><span class="kw">factor</span>(wagenmakers2008<span class="op">$</span>cond,
-                     <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;nw&quot;</span>,<span class="st">&quot;w&quot;</span>))
-
-wagenmakers2008<span class="op">$</span>stimulus &lt;-<span class="st"> </span>wagenmakers2008<span class="op">$</span>freq <span class="op">&lt;</span><span class="st"> </span><span class="dv">4</span>
-
-wagenmakers2008<span class="op">$</span>stimulus &lt;-<span class="st"> </span><span class="kw">factor</span>(wagenmakers2008<span class="op">$</span>stimulus,
-                     <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;nw&quot;</span>, <span class="st">&quot;w&quot;</span>))
-
-wagenmakers2008<span class="op">$</span>resp &lt;-<span class="st"> </span><span class="kw">factor</span>(wagenmakers2008<span class="op">$</span>resp,
-                     <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;NW&quot;</span>,<span class="st">&quot;W&quot;</span>))
-
-wagenmakers2008<span class="op">$</span>freq &lt;-<span class="st"> </span>((wagenmakers2008<span class="op">$</span>freq<span class="op">-</span><span class="dv">1</span>) <span class="op">%%</span><span class="st"> </span><span class="dv">3</span>)<span class="op">+</span><span class="dv">1</span>
-
-wagenmakers2008<span class="op">$</span>freq &lt;-<span class="st"> </span><span class="kw">factor</span>(wagenmakers2008<span class="op">$</span>freq,
-                  <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;hf&quot;</span>,<span class="st">&quot;lf&quot;</span>,<span class="st">&quot;vlf&quot;</span>))
-
-wagenmakers2008<span class="op">$</span>correct &lt;-<span class="st"> </span><span class="kw">toupper</span>(wagenmakers2008<span class="op">$</span>stimulus) <span class="op">==</span><span class="st"> </span><span class="kw">toupper</span>(wagenmakers2008<span class="op">$</span>resp)
-
-wagenmakers2008<span class="op">$</span>W &lt;-<span class="st"> </span><span class="kw">as.character</span>(wagenmakers2008<span class="op">$</span>freq)
-
-wagenmakers2008<span class="op">$</span>W[wagenmakers2008<span class="op">$</span>stimulus <span class="op">==</span><span class="st">&quot;nw&quot;</span>] &lt;-<span class="st"> &quot;nw&quot;</span>
-
-wagenmakers2008<span class="op">$</span>W &lt;-<span class="st"> </span><span class="kw">factor</span>(wagenmakers2008<span class="op">$</span>W,
-                  <span class="kw">c</span>(<span class="st">&quot;hf&quot;</span>,<span class="st">&quot;lf&quot;</span>,<span class="st">&quot;vlf&quot;</span>,<span class="st">&quot;nw&quot;</span>))
-
-wagenmakers2008 &lt;-<span class="st"> </span><span class="kw">select</span>(<span class="dt">.data =</span> wagenmakers2008, subject, cond, W, resp, rt, correct) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">rename</span>(<span class="dt">stimulus =</span> W)
-
-wagenmakers2008<span class="op">$</span>correct &lt;-<span class="st"> </span><span class="kw">if_else</span>(wagenmakers2008<span class="op">$</span>correct,
-                                   <span class="dt">true =</span> <span class="st">&quot;2&quot;</span>,
-                                   <span class="dt">false =</span> <span class="st">&quot;1&quot;</span>)
-<span class="kw">save</span>(wagenmakers2008,
-     <span class="dt">file =</span> <span class="st">&quot;wagenmakers2008.RData&quot;</span>)</code></pre></div>
 
 </div>
-</div>
-</div>
-<h3>References</h3>
-<div id="refs" class="references">
-<div id="ref-wagenmakers2008diffusion">
-<p>Wagenmakers, Eric-Jan, Roger Ratcliff, Pablo Gomez, and Gail McKoon. 2008. “A Diffusion Model Account of Criterion Shifts in the Lexical Decision Task.” <em>Journal of Memory and Language</em> 58 (1). Elsevier: 140–59.</p>
 </div>
 </div>
             </section>
@@ -306,7 +233,7 @@ wagenmakers2008<span class="op">$</span>correct &lt;-<span class="st"> </span><s
         </div>
       </div>
 <a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="references.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="appendix.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

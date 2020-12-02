@@ -117,7 +117,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="2.0.1" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#sdtOutline"><i class="fa fa-check"></i><b>2.0.1</b> Signal Detection Theory analysis of lexical decision task</a></li>
 <li class="chapter" data-level="2.0.2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#writing-a-log-likelihood-function"><i class="fa fa-check"></i><b>2.0.2</b> Writing a log-likelihood function</a></li>
 <li class="chapter" data-level="2.1" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#testing-the-sdt-log-likelihood-function"><i class="fa fa-check"></i><b>2.1</b> Testing the SDT log-likelihood function</a></li>
-<li class="chapter" data-level="2.2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#sdt-log-likelihood-function-for-wagenmakers-experiment"><i class="fa fa-check"></i><b>2.2</b> SDT log-likelihood function for Wagenmakers experiment</a><ul>
+<li class="chapter" data-level="2.2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#sdtWag"><i class="fa fa-check"></i><b>2.2</b> SDT log-likelihood function for Wagenmakers experiment</a><ul>
 <li class="chapter" data-level="2.2.1" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#description-of-wagenmakers-experiment"><i class="fa fa-check"></i><b>2.2.1</b> Description of Wagenmakers experiment</a></li>
 <li class="chapter" data-level="2.2.2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#computation-time-of-log-likelihood-function"><i class="fa fa-check"></i><b>2.2.2</b> Computation time of log-likelihood function</a></li>
 </ul></li>
@@ -161,9 +161,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="5.1" data-path="troubleshoot.html"><a href="troubleshoot.html#how-to-write-a-log-likelihood-function"><i class="fa fa-check"></i><b>5.1</b> How to write a log-likelihood function</a><ul>
 <li class="chapter" data-level="5.1.1" data-path="troubleshoot.html"><a href="troubleshoot.html#writing-your-log-likelihood-function-tips-errors-and-check-list"><i class="fa fa-check"></i><b>5.1.1</b> Writing your log-likelihood function: Tips, errors and check list</a></li>
 </ul></li>
-<li class="chapter" data-level="5.2" data-path="troubleshoot.html"><a href="troubleshoot.html#appendix"><i class="fa fa-check"></i><b>5.2</b> Appendix</a><ul>
-<li class="chapter" data-level="5.2.1" data-path="troubleshoot.html"><a href="troubleshoot.html#wagSDTscript"><i class="fa fa-check"></i><b>5.2.1</b> Wagenmakers SDT script</a></li>
 </ul></li>
+<li class="chapter" data-level="6" data-path="appendix.html"><a href="appendix.html"><i class="fa fa-check"></i><b>6</b> Appendix</a><ul>
+<li class="chapter" data-level="6.1" data-path="appendix.html"><a href="appendix.html#wagSDTscript"><i class="fa fa-check"></i><b>6.1</b> Wagenmakers SDT script</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
@@ -189,11 +189,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="header">
 <h1 class="title">Particle Based Samplers for MCMC</h1>
 <p class="author"><em>Jon-Paul Cavallaro</em></p>
-<p class="date"><em>Tuesday 01 December 2020</em></p>
+<p class="date"><em>Wednesday 02 December 2020</em></p>
 </div>
 <div id="introduction-to-particle-based-sampler-for-mcmc" class="section level1">
 <h1><span class="header-section-number">Chapter 1</span> Introduction to particle based sampler for MCMC</h1>
-<p>Contains implementations of particle based sampling methods for model parameter estimation. Primarily an implementation of the Particle Metropolis within Gibbs sampler outlined in the paper available <a href="https://www.sciencedirect.com/science/article/abs/pii/S0022249620300389">here</a>, it also contains code for covariance estimation and time varying models.</p>
+<p>Contains implementations of particle based sampling methods for model parameter estimation. Primarily an implementation of the Particle Metropolis within Gibbs sampler outlined in the paper available <a href="https://www.sciencedirect.com/science/article/abs/pii/S0022249620300389">here</a>, it also contains code for covariance estimation.</p>
 <div id="assumed-knowledge" class="section level2">
 <h2><span class="header-section-number">1.1</span> Assumed knowledge</h2>
 <p>To get the most out of this tutorial for the PMwG sampler, we assume you are familiar with hierarchical Bayesian estimation and MCMC sampling. If you would like to read more on these topics, please see <span class="citation">Shiffrin et al. (<a href="#ref-shiffrin2008survey">2008</a>)</span> <a href="https://onlinelibrary.wiley.com/doi/full/10.1080/03640210802414826">tutorial on Hierachical Bayesian Methods</a> and <span class="citation">Van Ravenzwaaij, Cassey, and Brown (<a href="#ref-van2018simple">2018</a>)</span> <a href="https://link.springer.com/article/10.3758/s13423-016-1015-8?wt_mc=Other.Other.8.CON1172.PSBR%20VSI%20Art09">introduction to Markov Chain Monte-Carlo Sampling</a>.</p>
@@ -232,7 +232,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h2><span class="header-section-number">1.6</span> Generating proposals in PMwG sampling using Particle Metropolis</h2>
 <p>PMwG has three sampling stages. The first stage is called <code>burn-in</code>, the second is <code>adaptation</code>, and the third is the <code>sampled</code> stage. The stages employ different numbers of particles, and different proposal distributions. This makes the algorithm most efficient.</p>
 <div class="figure"><span id="fig:tracePlteg"></span>
-<img src="tracePl.png" alt="Trace plot with vertical lines demarcating the PMwG sampler's three sampling stages" width="100%" />
+<img src="Traceplotintro.png" alt="Trace plot with vertical lines demarcating the PMwG sampler's three sampling stages" width="100%" />
 <p class="caption">
 Figure 1.1: Trace plot with vertical lines demarcating the PMwG sampler’s three sampling stages
 </p>

@@ -27,7 +27,7 @@ for (pkg in pkgs){
 
 # Introduction to particle based sampler for MCMC
 
-Contains implementations of particle based sampling methods for model parameter estimation. Primarily an implementation of the Particle Metropolis within Gibbs sampler outlined in the paper available [here](https://www.sciencedirect.com/science/article/abs/pii/S0022249620300389), it also contains code for covariance estimation and time varying models.
+Contains implementations of particle based sampling methods for model parameter estimation. Primarily an implementation of the Particle Metropolis within Gibbs sampler outlined in the paper available [here](https://www.sciencedirect.com/science/article/abs/pii/S0022249620300389), it also contains code for covariance estimation.
 
 ## Assumed knowledge
 To get the most out of this tutorial for the PMwG sampler, we assume you are familiar with hierarchical Bayesian estimation and MCMC sampling. If you would like to read more on these topics, please see @shiffrin2008survey [tutorial on Hierachical Bayesian Methods](https://onlinelibrary.wiley.com/doi/full/10.1080/03640210802414826) and @van2018simple [introduction to Markov Chain Monte-Carlo Sampling](https://link.springer.com/article/10.3758/s13423-016-1015-8?wt_mc=Other.Other.8.CON1172.PSBR%20VSI%20Art09).
@@ -76,7 +76,7 @@ The key to making the algorithm efficient is to propose particles carefully. Our
 PMwG has three sampling stages. The first stage is called `burn-in`, the second is `adaptation`, and the third is the `sampled` stage. The stages employ different numbers of particles, and different proposal distributions. This makes the algorithm most efficient. 
 
 ```{r tracePlteg, echo=FALSE, out.width='100%', fig.show='hold', fig.cap="Trace plot with vertical lines demarcating the PMwG sampler's three sampling stages"}
-knitr::include_graphics('tracePl.png')
+knitr::include_graphics('Traceplotintro.png')
 ```
 
 In the `burn-in` and `adaptation stages`, the proposals (or random effects vectors) for each subject are sampled from a mixture of two sources. One source is the group-level distribution and the second source is a multivariate normal distribution centred on the current best guess for the subject’s random effects vector (alpha), with a variance that is smaller than the group level distribution. We generate proposals from both sources, because proposals generated from the group level distribution act as a safety net in situations where proposals generated from the subject’s current alpha are unusual or unlikely. If this occurs instead of the sampler taking a long way to return a sensible vector of random effects, a group level proposal will instead be chosen, leading to a faster sampling time.  

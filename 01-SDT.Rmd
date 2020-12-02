@@ -1,14 +1,4 @@
 # PMwG sampler and Signal Detection Theory
-```{css, echo=FALSE}
-pre {
-  max-height: 600px;
-  overflow-y: auto;
-}
-
-pre[class] {
-  max-height: 300px;
-}
-```
 
 Here we demonstrate how to use the PMwG sampler package to run a simple signal detection theory (SDT) analysis on data from a lexical decision task.  We recognise that it is unnecessary to use the sampler package for a simple analysis such as this; however, we hope this SDT example demonstrates the practicality of the PMwG sampler package.  
 
@@ -179,7 +169,7 @@ SDT_ll(pars, fab_data)
 ```
 We can see the log-likelihood has changed. The second vector of parameter values are more likely than the first vector given the data.
 
-## SDT log-likelihood function for Wagenmakers experiment
+## SDT log-likelihood function for Wagenmakers experiment {#sdtWag}
 
 Now that we've covered a simple test example, let's create a log-likelihood function for the @wagenmakers2008diffusion dataset. 
 
@@ -759,25 +749,75 @@ sampled <- run_stage(adapted,
 
 ## Check sampling process
 
-It is a good idea to check your samples by producing some simple plots as shown below. The first plot gives an indication of the trace for the group level parameters. In this example, you will see the chains take only several iterations before arriving at the posterior, however, this may not always be the case. Each parameter trace (lines on plot \@ref(fig:parPlot)) should be stationary i.e. the trace should not trend up or down, and once the sampler reaches the posterior, the trace should remain relatively 'thin'. If the trace is wide or continually jump between large values (e.g. move between -3 and 3) then there is likely an error in your log-likelihood function. 
+It is a good idea to check your samples by producing some simple plots as shown below. The first plot gives an indication of the trace for the group level parameters. In this example, you will see the chains take only several iterations before arriving at the posterior, however, this may not always be the case. Each parameter trace (lines on plot \@ref(fig:parPlot)) should be stationary i.e. the trace should not trend up or down, and once the sampler reaches the posterior, the trace should remain relatively 'thin'. If the trace is wide and bounces between large values (e.g. between -3 and 3) then there may be an error in your log-likelihood function. 
 
 
-As you can see in \@ref(fig:parPlot), the traces are clearly stable.
+As you can see in \@ref(fig:parPlot), the traces are clearly stable. Note that the number of iterations for the adaptation stage here is quite short because it's easy to estimate and so gets lots of unique draws.
 
 ```{r load_data, include=FALSE}
 load("SDT_sampled.Rdata")
 ```
 
 
-```{r parPlot, echo=FALSE, out.width='100%', fig.show='hold', fig.cap='Posterior samples of parameters'}
-matplot(t(sampled$samples$theta_mu), type="l")
+```{r parPlot, echo=FALSE, out.width='100%', fig.show='hold', fig.cap='Posterior samples of parameters', warning=FALSE}
+samps <- sampled$samples
+
+stage.changes <- c(which(samps$stage == "adapt")[1], which(samps$stage == "sample")[1])
+
+# ggplot trace plots
+pltstrct <- as.data.frame(t(samps$theta_mu)) %>%
+  rownames_to_column(var = "iteration") %>%
+  pivot_longer(cols = !iteration)
+pltstrct$iteration <- as.numeric(pltstrct$iteration)
+
+trcPltSDT <- ggplot(pltstrct,
+       aes(x = iteration, y=value, colour = name)) +
+  geom_line() +
+  theme_bw() +
+  labs(y = "Parameter value",
+       x = "Iteration") +
+  theme(axis.title.y = element_text(size = 14,
+                                    face = 'bold'),
+        axis.text.y = element_text(size=14),
+        axis.title.x = element_text(size = 14,
+                                    face = 'bold'),
+        axis.text.x = element_text(size=14),
+        legend.position = "none") +
+  geom_vline(xintercept = stage.changes) +
+  xlim(c(0, 2000))
+trcPltSDT
 ```
 
 The second plot below (figure \@ref(fig:subjLLPlot)) shows the likelihoods across iterations for each subject. Again we see that the likelihood values jump up after only a few iterations and then remain stable, with only slight movement. 
 
 
-```{r subjLLPlot, echo=FALSE, out.width='100%', fig.show='hold', fig.cap='Posterior samples of subject log-likelihoods'}
-matplot(t(sampled$samples$subj_ll),type="l")
+```{r subjLLPlot, echo=FALSE, out.width='100%', fig.show='hold', fig.cap='Posterior samples of subject log-likelihoods', warning=FALSE}
+subjSamp <- sampled$samples
+
+stage.changes <- c(which(subjSamp$stage == "adapt")[1], which(subjSamp$stage == "sample")[1])
+
+# ggplot trace plots
+pltstrct <- as.data.frame(t(subjSamp$subj_ll)) %>%
+  rownames_to_column(var = "iteration") %>%
+  pivot_longer(cols = !iteration)
+pltstrct$iteration <- as.numeric(pltstrct$iteration)
+
+subjTrcPltSDT <- ggplot(pltstrct,
+       aes(x = iteration, y=value, colour = name)) +
+  geom_line() +
+  theme_bw() +
+  labs(y = "Parameter value",
+       x = "Iteration") +
+  theme(axis.title.y = element_text(size = 14,
+                                    face = 'bold'),
+        axis.text.y = element_text(size=14),
+        axis.title.x = element_text(size = 14,
+                                    face = 'bold'),
+        axis.text.x = element_text(size=14),
+        legend.position = "none") +
+  geom_vline(xintercept = stage.changes) +
+  xlim(c(0, 2000))
+subjTrcPltSDT
 ```
 
 

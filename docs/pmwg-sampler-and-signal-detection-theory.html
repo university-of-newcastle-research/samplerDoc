@@ -117,7 +117,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="2.0.1" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#sdtOutline"><i class="fa fa-check"></i><b>2.0.1</b> Signal Detection Theory analysis of lexical decision task</a></li>
 <li class="chapter" data-level="2.0.2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#writing-a-log-likelihood-function"><i class="fa fa-check"></i><b>2.0.2</b> Writing a log-likelihood function</a></li>
 <li class="chapter" data-level="2.1" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#testing-the-sdt-log-likelihood-function"><i class="fa fa-check"></i><b>2.1</b> Testing the SDT log-likelihood function</a></li>
-<li class="chapter" data-level="2.2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#sdt-log-likelihood-function-for-wagenmakers-experiment"><i class="fa fa-check"></i><b>2.2</b> SDT log-likelihood function for Wagenmakers experiment</a><ul>
+<li class="chapter" data-level="2.2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#sdtWag"><i class="fa fa-check"></i><b>2.2</b> SDT log-likelihood function for Wagenmakers experiment</a><ul>
 <li class="chapter" data-level="2.2.1" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#description-of-wagenmakers-experiment"><i class="fa fa-check"></i><b>2.2.1</b> Description of Wagenmakers experiment</a></li>
 <li class="chapter" data-level="2.2.2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#computation-time-of-log-likelihood-function"><i class="fa fa-check"></i><b>2.2.2</b> Computation time of log-likelihood function</a></li>
 </ul></li>
@@ -161,9 +161,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="5.1" data-path="troubleshoot.html"><a href="troubleshoot.html#how-to-write-a-log-likelihood-function"><i class="fa fa-check"></i><b>5.1</b> How to write a log-likelihood function</a><ul>
 <li class="chapter" data-level="5.1.1" data-path="troubleshoot.html"><a href="troubleshoot.html#writing-your-log-likelihood-function-tips-errors-and-check-list"><i class="fa fa-check"></i><b>5.1.1</b> Writing your log-likelihood function: Tips, errors and check list</a></li>
 </ul></li>
-<li class="chapter" data-level="5.2" data-path="troubleshoot.html"><a href="troubleshoot.html#appendix"><i class="fa fa-check"></i><b>5.2</b> Appendix</a><ul>
-<li class="chapter" data-level="5.2.1" data-path="troubleshoot.html"><a href="troubleshoot.html#wagSDTscript"><i class="fa fa-check"></i><b>5.2.1</b> Wagenmakers SDT script</a></li>
 </ul></li>
+<li class="chapter" data-level="6" data-path="appendix.html"><a href="appendix.html"><i class="fa fa-check"></i><b>6</b> Appendix</a><ul>
+<li class="chapter" data-level="6.1" data-path="appendix.html"><a href="appendix.html#wagSDTscript"><i class="fa fa-check"></i><b>6.1</b> Wagenmakers SDT script</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
@@ -188,16 +188,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="pmwg-sampler-and-signal-detection-theory" class="section level1">
 <h1><span class="header-section-number">Chapter 2</span> PMwG sampler and Signal Detection Theory</h1>
-<style type="text/css">
-pre {
-  max-height: 600px;
-  overflow-y: auto;
-}
-
-pre[class] {
-  max-height: 300px;
-}
-</style>
 <p>Here we demonstrate how to use the PMwG sampler package to run a simple signal detection theory (SDT) analysis on data from a lexical decision task. We recognise that it is unnecessary to use the sampler package for a simple analysis such as this; however, we hope this SDT example demonstrates the practicality of the PMwG sampler package.</p>
 <div id="sdtOutline" class="section level3">
 <h3><span class="header-section-number">2.0.1</span> Signal Detection Theory analysis of lexical decision task</h3>
@@ -394,12 +384,12 @@ fab_data &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<sp
 <pre><code>## [1] -4.532791</code></pre>
 <p>We can see the log-likelihood has changed. The second vector of parameter values are more likely than the first vector given the data.</p>
 </div>
-<div id="sdt-log-likelihood-function-for-wagenmakers-experiment" class="section level2">
+<div id="sdtWag" class="section level2">
 <h2><span class="header-section-number">2.2</span> SDT log-likelihood function for Wagenmakers experiment</h2>
 <p>Now that we’ve covered a simple test example, let’s create a log-likelihood function for the <span class="citation">Wagenmakers et al. (<a href="#ref-wagenmakers2008diffusion">2008</a>)</span> dataset.</p>
 <div id="description-of-wagenmakers-experiment" class="section level3">
 <h3><span class="header-section-number">2.2.1</span> Description of Wagenmakers experiment</h3>
-<p>If you’d like to follow our example, you will need to download the dataset from this <a href="https://www.ejwagenmakers.com/Code/2008/LexDecData.zip">link</a>.The structure of the dataset will need to be modified in order to meet the requirements of the PMwG sampler. To do this, you can copy our <a href="troubleshoot.html#wagSDTscript">script</a>. You may attempt to modify the dataset yourself, but you must recreate the structure illustrated in table <a href="pmwg-sampler-and-signal-detection-theory.html#tab:wagenmakers10">2.2</a>.</p>
+<p>If you’d like to follow our example, you will need to download the dataset from this <a href="https://www.ejwagenmakers.com/Code/2008/LexDecData.zip">link</a>.The structure of the dataset will need to be modified in order to meet the requirements of the PMwG sampler. To do this, you can copy our <a href="appendix.html#wagSDTscript">script</a>. You may attempt to modify the dataset yourself, but you must recreate the structure illustrated in table <a href="pmwg-sampler-and-signal-detection-theory.html#tab:wagenmakers10">2.2</a>.</p>
 <p>Participants were asked to indicate whether a letter string was a <i>word</i> or a <i>non-word</i>. A subset of Wagenmakers et al data are shown in table <a href="pmwg-sampler-and-signal-detection-theory.html#tab:wagenmakers10">2.2</a>, with each line representing a single trial. We have a <code>subject</code> column with a subject id (1-19), a condition column <code>cond</code> which indicates the proportion of <i>words</i> to <i>non-words</i> presented within a block of trials. In word blocks (<code>cond = w</code>) participants completed 75% word and 25% non-word trials and for non-word (<code>cond = nw</code>) blocks 75% non-word and 25% word trials. The <code>stim</code> column lists the word’s frequency i.e. is the stimulus a <i>very low frequency</i> word (<code>stim = vlf</code>), a <i>low frequency</i> word (<code>stim = lf</code>), a <i>high frequency</i> word (<code>stim = hf</code>) or a <i>non-word</i> (<code>stim = nw</code>). The third column <code>resp</code> refers to the participant’s response i.e. the participant responded <i>word</i> (<code>resp = W</code>) or <i>non-word</i> (<code>resp = NW</code>). The two remaining columns list the response time (<code>rt</code>) and whether the paricipant made a correct (<code>correct = 2</code>) or incorrect (<code>correct = 1</code>) choice. For more details about the experiment please see <a href="https://www.sciencedirect.com/science/article/pii/S0749596X07000496">the original paper</a>.</p>
 <table>
 <caption><span id="tab:wagenmakers10">Table 2.2: </span>Subset of 12 trials from the Wagenmakers (2008) dataset.</caption>
@@ -951,8 +941,8 @@ priors &lt;-<span class="st"> </span><span class="kw">list</span>(
 </div>
 <div id="check-sampling-process" class="section level2">
 <h2><span class="header-section-number">2.4</span> Check sampling process</h2>
-<p>It is a good idea to check your samples by producing some simple plots as shown below. The first plot gives an indication of the trace for the group level parameters. In this example, you will see the chains take only several iterations before arriving at the posterior, however, this may not always be the case. Each parameter trace (lines on plot <a href="pmwg-sampler-and-signal-detection-theory.html#fig:parPlot">2.4</a>) should be stationary i.e. the trace should not trend up or down, and once the sampler reaches the posterior, the trace should remain relatively ‘thin’. If the trace is wide or continually jump between large values (e.g. move between -3 and 3) then there is likely an error in your log-likelihood function.</p>
-<p>As you can see in <a href="pmwg-sampler-and-signal-detection-theory.html#fig:parPlot">2.4</a>, the traces are clearly stable.</p>
+<p>It is a good idea to check your samples by producing some simple plots as shown below. The first plot gives an indication of the trace for the group level parameters. In this example, you will see the chains take only several iterations before arriving at the posterior, however, this may not always be the case. Each parameter trace (lines on plot <a href="pmwg-sampler-and-signal-detection-theory.html#fig:parPlot">2.4</a>) should be stationary i.e. the trace should not trend up or down, and once the sampler reaches the posterior, the trace should remain relatively ‘thin’. If the trace is wide and bounces between large values (e.g. between -3 and 3) then there may be an error in your log-likelihood function.</p>
+<p>As you can see in <a href="pmwg-sampler-and-signal-detection-theory.html#fig:parPlot">2.4</a>, the traces are clearly stable. Note that the number of iterations for the adaptation stage here is quite short because it’s easy to estimate and so gets lots of unique draws.</p>
 <div class="figure"><span id="fig:parPlot"></span>
 <img src="bookdown-demo_files/figure-html/parPlot-1.png" alt="Posterior samples of parameters" width="100%" />
 <p class="caption">

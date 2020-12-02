@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 4 PMwG sampler with the Linear Ballistic Accumulator and a complex experiment design | Particle Based Samplers for MCMC</title>
+  <title>Chapter 6 Appendix | Particle Based Samplers for MCMC</title>
   <meta name="description" content="Particle Based Sampler for MCMC" />
   <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 4 PMwG sampler with the Linear Ballistic Accumulator and a complex experiment design | Particle Based Samplers for MCMC" />
+  <meta property="og:title" content="Chapter 6 Appendix | Particle Based Samplers for MCMC" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="rstudio/bookdown-demo" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 4 PMwG sampler with the Linear Ballistic Accumulator and a complex experiment design | Particle Based Samplers for MCMC" />
+  <meta name="twitter:title" content="Chapter 6 Appendix | Particle Based Samplers for MCMC" />
   
   <meta name="twitter:description" content="Particle Based Sampler for MCMC" />
   
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="forstmannChapter.html"/>
-<link rel="next" href="troubleshoot.html"/>
+<link rel="prev" href="troubleshoot.html"/>
+<link rel="next" href="references.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -186,139 +186,87 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design" class="section level1 tabset tabset-fade">
-<h1><span class="header-section-number">Chapter 4</span> PMwG sampler with the Linear Ballistic Accumulator and a complex experiment design</h1>
-<p>In <a href="pmwg-sampler-and-signal-detection-theory.html#sdtOutline">chapter 1</a> we demonstrated how the PMwG sampler can be used to model a lexical decision task in a signal detection framework. However, the SDT framework does not allow us to consider response time (RT) and the join distribution of RT and accuracy. In this example we will expand on what was covered in chapter 1, by fitting the LBA - a more complex model - to the Wagenmakers 2008 data. <!-- see IS square paper experiment 2--></p>
-<p>A description of the Wagenmakers experiment and data is covered in <a href="pmwg-sampler-and-signal-detection-theory.html#sdtOutline">chapter 1</a>. This experiment is more complicated than the Forstmann example in <a href="forstmannChapter.html#forstmannChapter">chapter 3</a>, and the LBA is also more complicated than the SDT model. As a result, the log-likelihood function for this example will be more complex, however, you’ll notice that every step we take closely follows those taken in previous chapters with simpler data sets and simpler models.</p>
-<!--
-- These are data reilly fit in chap 1 with sig detection theory. When fit with signal detection, it was just prob. My fit with lba has to do a worse job of fitting probabilities, because it has to manage tnesion between fitting probs and rts. Adding rts has to give worse fit, but the tradeoff is that it allows us to look at the...-->
-<div id="writing-the-lba-log-likelihood-function-for-the-wagenmakers-data-set" class="section level2">
-<h2><span class="header-section-number">4.1</span> Writing the LBA log-likelihood function for the Wagenmakers data set</h2>
-<p>Here we’ve written a slow, but easy to follow log-likelihood function. The log-likelihood function steps through the data line by line (i.e. trial by trial) and gives a likelihood value for each line under <code>x</code> parameters. As mentioned in previous chapters, we encourage those who have experience writing log-likelihood functions to write a computationally efficient function or use our ’<b><i>fast</i></b>function “HERE”. For those new to modelling, the trialwise function directly below is easier to follow, debug and is less likely to result in errors.</p>
-<p>The structure of our log-likelihood function follows those in the preceding chapters, so we will only step through the parts that differ i.e. the experiment design and hypothesis about which parameters are being influenced by the experimental manipulations.</p>
-<p>Let’s begin by loading <code>rtdists</code> package…</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rtdists)</code></pre></div>
-<p>and now a complete trialwise (slow) log-likelihood function.</p>
-<div class="sourceCode"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57
-58
-</pre></td><td class="sourceCode"><pre><code class="sourceCode r">tw_lba_ll &lt;-<span class="st"> </span><span class="cf">function</span>(x, data, <span class="dt">sample =</span> <span class="ot">FALSE</span>) {
-  x &lt;-<span class="st"> </span><span class="kw">exp</span>(x)
-  <span class="cf">if</span> (<span class="kw">any</span>(data<span class="op">$</span>rt <span class="op">&lt;</span><span class="st"> </span>x[<span class="st">&quot;t0&quot;</span>])) {
-    <span class="kw">return</span>(<span class="op">-</span><span class="fl">1e10</span>)
-  }
-  
-  <span class="cf">if</span> (sample) {
-    data<span class="op">$</span>rt &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="ot">NA</span>, <span class="kw">nrow</span>(data))
-    data<span class="op">$</span>resp &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="ot">NA</span>, <span class="kw">nrow</span>(data))
-  } <span class="cf">else</span> {
-    out &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data))
-  }
-  
-  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(data)) {
-    A =<span class="st"> </span>x[<span class="st">&quot;A&quot;</span>]
-    b.w =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, data<span class="op">$</span>cond[i], <span class="st">&quot;.W&quot;</span>)] <span class="op">+</span><span class="st"> </span>A
-    b.nw =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, data<span class="op">$</span>cond[i], <span class="st">&quot;.NW&quot;</span>)] <span class="op">+</span><span class="st"> </span>A
-    bs =<span class="st"> </span><span class="kw">list</span>(b.nw, b.w)
-    v.w =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;v.&quot;</span>, data<span class="op">$</span>stim[i], <span class="st">&quot;.W&quot;</span>)]
-    v.nw =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;v.&quot;</span>, data<span class="op">$</span>stim[i], <span class="st">&quot;.NW&quot;</span>)]
-    vs =<span class="st"> </span><span class="kw">c</span>(v.nw, v.w)
-    t0 =<span class="st"> </span>x[<span class="st">&quot;t0&quot;</span>]
-    s =<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>)
-    
-    <span class="cf">if</span> (sample) {
-      tmp &lt;-<span class="st"> </span><span class="kw">rLBA</span>(<span class="dt">n =</span> <span class="dv">1</span>,
-                  <span class="dt">A =</span> A,
-                  <span class="dt">b =</span> bs,
-                  <span class="dt">mean_v =</span> vs,
-                  <span class="dt">sd_v =</span> s,
-                  <span class="dt">t0 =</span> t0,
-                  <span class="dt">dist =</span> <span class="st">&quot;norm&quot;</span>,
-                  <span class="dt">silent =</span> <span class="ot">TRUE</span>
-      )
-      data<span class="op">$</span>rt[i] &lt;-<span class="st"> </span>tmp<span class="op">$</span>rt
-      data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span>tmp<span class="op">$</span>resp
-    } <span class="cf">else</span> {
-      out[i] &lt;-<span class="st"> </span><span class="kw">dLBA</span>(<span class="dt">rt =</span> data<span class="op">$</span>rt[i],
-                     <span class="dt">response =</span> data<span class="op">$</span>resp[i],
-                     <span class="dt">A =</span> A,
-                     <span class="dt">b =</span> bs,
-                     <span class="dt">mean_v =</span> vs,
-             <span class="dt">sd_v =</span> s,
-             <span class="dt">t0 =</span> t0,
-             <span class="dt">dist =</span> <span class="st">&quot;norm&quot;</span>,
-             <span class="dt">silent =</span> <span class="ot">TRUE</span>
-        )
-    }
-  }
-  <span class="cf">if</span> (sample) {
-    <span class="kw">return</span>(data)
-  } <span class="cf">else</span> {
-    bad &lt;-<span class="st"> </span>(out <span class="op">&lt;</span><span class="st"> </span><span class="fl">1e-10</span>) <span class="op">|</span><span class="st"> </span>(<span class="op">!</span><span class="kw">is.finite</span>(out))
-    out[bad] &lt;-<span class="st"> </span><span class="fl">1e-10</span>
-    out &lt;-<span class="st"> </span><span class="kw">sum</span>(<span class="kw">log</span>(out))
-    <span class="kw">return</span>(out)
-  }
-}</code></pre></td></tr></table></div>
-<p>We begin from the <code>for</code> loop on line 14. In this <code>for</code> loop, we assign the values (<code>x</code>) of each parameter in our model, for each row in the dataset, so that any conditional parameters (for example <code>b</code> in our model) are correctly assigned.</p>
-<p>For the Wagenmakers data set, we want to calculate the density function for a model that has a threshold (<code>b</code>) parameter for each of the conditions (<code>W</code>: 75% stimuli words, <code>NW</code>: 75% stimuli nonwords), but also allows threshold to vary with <code>response</code> (i.e., the accumulator for a <code>word</code> response, and the accumulator for the <code>non-word</code> response), we include lines 14 - 23. These lines take into account the two conditions in the <code>proportion</code> factor by pasting <code>&quot;b.&quot;</code>, the <code>condition</code> (<code>W</code>, <code>NW</code>) that is on line [i], and whether it is a threshold for the <i>word accumulator</i> <code>&quot;.W&quot;</code> or <i>nonword accumulator</i> <code>&quot;.NW&quot;</code>. Again, we add the sart point parameter <code>A</code> value to each threshold parameter so that threshold is greater than the start point value.</p>
-<p>We also hypothesised that <i> drift rate</i> would vary with <code>word frequency</code> (<code>hf</code>,<code>lf</code>,<code>vlf</code>,<code>nw</code>), so on lines 19 and 20 we allow drift rate for response <code>word</code> (<code>v.w</code>) to vary with the levels of word frequency, by pasting the <code>&quot;v.&quot;</code> with the word frequency on line [i], and with the accumulator (<code>&quot;.W&quot;</code> or <code>&quot;.NW&quot;</code>). You’ll notice that in this example, we no longer have a drift rate for the correct response (vc) or incorrect response (ve), instead, we have a drift rate for responding <code>word</code> (<code>v.w</code>) and <code>non-word</code> (<code>v.nw</code>). This is just a different way of coding drift rate, and is our preferred way. On line x we have coded the vs vector to have v.nw first and v.w second.</p>
+<div id="appendix" class="section level1">
+<h1><span class="header-section-number">Chapter 6</span> Appendix</h1>
+<div id="wagSDTscript" class="section level2">
+<h2><span class="header-section-number">6.1</span> Wagenmakers SDT script</h2>
+<p>Use the script below to process the data file so that the dataset structure is the same as shown in our <a href="pmwg-sampler-and-signal-detection-theory.html#sdtWag">SDT example</a>. A zipped folder containing the dataset from <span class="citation">Wagenmakers et al. (<a href="#ref-wagenmakers2008diffusion">2008</a>)</span> can be found at this <a href="https://www.ejwagenmakers.com/Code/2008/LexDecData.zip">link</a>. As shown in our script below, the data is stored in the <code>&quot;PropData.txt&quot;</code> file.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#~~~~~~~~~~~~~~~~~~~~ Wagenmakers 2008 Lexical decision task ~~~~~~~~~~~~~~~~~~~~~~~~~~~#</span>
 
+<span class="co"># 1) subject = participant number</span>
+<span class="co"># 2) block = block number</span>
+<span class="co"># 3) practice = 1 if practice block, otherwise 0</span>
+<span class="co"># 4) cond = condition either &quot;2&quot; for 75% words or &quot;1&quot; for 75% nonwords)</span>
+<span class="co"># 5) stimulus = unique identifier of stimulus, stimuli are nested in frequency conditions</span>
+<span class="co"># 6) freq = Code &quot;1&quot; means &quot;high frequency word&quot;, code &quot;2&quot; means &quot;low frequency word&quot;,</span>
+<span class="co">#    and code &quot;3&quot; means &quot;very low frequency word&quot;. Codes 4, 5, and 6 = &quot;nonword&quot;.</span>
+<span class="co"># 7) resp =  0 is nonword, 1 is word, -1 is not interpretable response (i.e., pushed a button,</span>
+<span class="co">#         but not the right one and also not the one next to the right button)</span>
+<span class="co"># 8) rt = response time in seconds</span>
+<span class="co"># 9) censor = 1 if value is eliminated from further analysis;</span>
+<span class="co">#       practice block, uninterpretable response, too fast response (&lt;180 ms), too slow response (&gt;3 sec)</span>
+
+<span class="kw">rm</span>(<span class="dt">list=</span><span class="kw">ls</span>())
+<span class="kw">require</span>(tidyverse)
+
+wagenmakers2008 &lt;-<span class="st"> </span><span class="kw">read.delim</span>(<span class="st">&quot;PropData.txt&quot;</span>,
+                              <span class="dt">header =</span> <span class="ot">FALSE</span>)
+
+<span class="kw">names</span>(wagenmakers2008) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;subject&quot;</span>,<span class="st">&quot;block&quot;</span>,<span class="st">&quot;practice&quot;</span>,
+                            <span class="st">&quot;cond&quot;</span>,<span class="st">&quot;stimulus&quot;</span>,<span class="st">&quot;freq&quot;</span>,<span class="st">&quot;resp&quot;</span>,<span class="st">&quot;rt&quot;</span>,
+                            <span class="st">&quot;censor&quot;</span>)
+
+wagenmakers2008 &lt;-<span class="st"> </span>wagenmakers2008[wagenmakers2008<span class="op">$</span>censor<span class="op">!=</span><span class="dv">1</span>,<span class="op">-</span><span class="kw">c</span>(<span class="dv">3</span>,<span class="dv">9</span>)]
+
+wagenmakers2008<span class="op">$</span>subject &lt;-<span class="st"> </span><span class="kw">factor</span>(wagenmakers2008<span class="op">$</span>subject)
+
+wagenmakers2008<span class="op">$</span>cond &lt;-<span class="st"> </span><span class="kw">factor</span>(wagenmakers2008<span class="op">$</span>cond,
+                     <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;nw&quot;</span>,<span class="st">&quot;w&quot;</span>))
+
+wagenmakers2008<span class="op">$</span>stimulus &lt;-<span class="st"> </span>wagenmakers2008<span class="op">$</span>freq <span class="op">&lt;</span><span class="st"> </span><span class="dv">4</span>
+
+wagenmakers2008<span class="op">$</span>stimulus &lt;-<span class="st"> </span><span class="kw">factor</span>(wagenmakers2008<span class="op">$</span>stimulus,
+                     <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;nw&quot;</span>, <span class="st">&quot;w&quot;</span>))
+
+wagenmakers2008<span class="op">$</span>resp &lt;-<span class="st"> </span><span class="kw">factor</span>(wagenmakers2008<span class="op">$</span>resp,
+                     <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;NW&quot;</span>,<span class="st">&quot;W&quot;</span>))
+
+wagenmakers2008<span class="op">$</span>freq &lt;-<span class="st"> </span>((wagenmakers2008<span class="op">$</span>freq<span class="op">-</span><span class="dv">1</span>) <span class="op">%%</span><span class="st"> </span><span class="dv">3</span>)<span class="op">+</span><span class="dv">1</span>
+
+wagenmakers2008<span class="op">$</span>freq &lt;-<span class="st"> </span><span class="kw">factor</span>(wagenmakers2008<span class="op">$</span>freq,
+                  <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;hf&quot;</span>,<span class="st">&quot;lf&quot;</span>,<span class="st">&quot;vlf&quot;</span>))
+
+wagenmakers2008<span class="op">$</span>correct &lt;-<span class="st"> </span><span class="kw">toupper</span>(wagenmakers2008<span class="op">$</span>stimulus) <span class="op">==</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">toupper</span>(wagenmakers2008<span class="op">$</span>resp)
+
+wagenmakers2008<span class="op">$</span>W &lt;-<span class="st"> </span><span class="kw">as.character</span>(wagenmakers2008<span class="op">$</span>freq)
+
+wagenmakers2008<span class="op">$</span>W[wagenmakers2008<span class="op">$</span>stimulus <span class="op">==</span><span class="st"> &quot;nw&quot;</span>] &lt;-<span class="st"> &quot;nw&quot;</span>
+
+wagenmakers2008<span class="op">$</span>W &lt;-<span class="st"> </span><span class="kw">factor</span>(wagenmakers2008<span class="op">$</span>W,
+                  <span class="kw">c</span>(<span class="st">&quot;hf&quot;</span>,<span class="st">&quot;lf&quot;</span>,<span class="st">&quot;vlf&quot;</span>,<span class="st">&quot;nw&quot;</span>))
+
+wagenmakers2008 &lt;-<span class="st"> </span><span class="kw">select</span>(<span class="dt">.data =</span> wagenmakers2008,
+                          subject,
+                          cond,
+                          W,
+                          resp,
+                          rt,
+                          correct) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">rename</span>(<span class="dt">stimulus =</span> W)
+
+wagenmakers2008<span class="op">$</span>correct &lt;-<span class="st"> </span><span class="kw">if_else</span>(wagenmakers2008<span class="op">$</span>correct,
+                                   <span class="dt">true =</span> <span class="st">&quot;2&quot;</span>,
+                                   <span class="dt">false =</span> <span class="st">&quot;1&quot;</span>)
+<span class="kw">save</span>(wagenmakers2008,
+     <span class="dt">file =</span> <span class="st">&quot;wagenmakers2008.RData&quot;</span>)</code></pre></div>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-wagenmakers2008diffusion">
+<p>Wagenmakers, Eric-Jan, Roger Ratcliff, Pablo Gomez, and Gail McKoon. 2008. “A Diffusion Model Account of Criterion Shifts in the Lexical Decision Task.” <em>Journal of Memory and Language</em> 58 (1). Elsevier: 140–59.</p>
 </div>
 </div>
             </section>
@@ -326,8 +274,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           </div>
         </div>
       </div>
-<a href="forstmannChapter.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="troubleshoot.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="troubleshoot.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="references.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -358,7 +306,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/rstudio/bookdown-demo/edit/master/03-wagLBA.Rmd",
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/05-appendix.Rmd",
 "text": "Edit"
 },
 "history": {
