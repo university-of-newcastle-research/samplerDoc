@@ -486,15 +486,16 @@ SDT_ll_fast <- function(x, data, sample = FALSE) {
     }
     sum(out)
   }
+}
 ```
 
 Now we have a fast(er) SDT log-likelihood function and we can compare its output with the slow log-likelihood function's output to make sure it is functioning correctly.
 
 ```{r fast_sdt,include=FALSE}
-SDT_ll_fast = function(x,data,sample=FALSE){
+SDT_ll_fast <- function(x, data, sample = FALSE){
   #sets up a vector of outputs for when sample = false and erases the data$resp column when sample = true so that it can fill it in later
   if (sample){
-    data$resp=NA
+    data$resp = NA
   } else{
     out <- numeric(nrow(data))
   }
@@ -504,7 +505,7 @@ SDT_ll_fast = function(x,data,sample=FALSE){
     for (i in 1:nrow(data)){
       #in total, there are 16 calls to pnorm - which represent the 16 possible outcomes. Each will then only be called once per subject
       #for each line where the proportion was words do this
-      if (data$cond[i] =="w"){
+      if (data$cond[i] == "w"){
         #for each line where proportion was words and the stimulus was a hf word, do this
         if (data$stim[i] == "hf"){
           ##for each line where proportion was words the stimulus was a hf word and the response was "word", do this
@@ -615,7 +616,7 @@ SDT_ll(pars, wgnmks2008, sample = FALSE)
 SDT_ll_fast(pars, wgnmks2008Fast, sample = FALSE)
 ```
 
-We recommend "speeding up" your code however you wish.  When you're confident that your log-likelihood functions correctly, you should save it as a separate script so it can be sourced and loaded when running the sampler.
+We recommend speeding up your code however you wish.  When you're confident that your log-likelihood functions correctly, you should save it as a separate script so it can be sourced and loaded when running the sampler.
 
 
 ## PMwG Framework {#sdtPMwG}
