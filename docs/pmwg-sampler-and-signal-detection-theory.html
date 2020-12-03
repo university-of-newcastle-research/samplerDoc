@@ -834,7 +834,8 @@ Figure 2.3: Signal detection theory example of lexical decision task
       }
     }
     <span class="kw">sum</span>(out)
-  }</code></pre></div>
+  }
+}</code></pre></div>
 <p>Now we have a fast(er) SDT log-likelihood function and we can compare its output with the slow log-likelihood function’s output to make sure it is functioning correctly.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pars &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">c</span>(<span class="dt">C.w =</span> <span class="dv">1</span>, <span class="dt">C.nw =</span> <span class="fl">0.5</span>, <span class="dt">HF.d =</span> <span class="dv">3</span>, <span class="dt">LF.d =</span> <span class="fl">1.8</span>, <span class="dt">VLF.d =</span> <span class="fl">0.7</span>))
 <span class="kw">SDT_ll</span>(pars, wgnmks2008, <span class="dt">sample =</span> <span class="ot">FALSE</span>)</code></pre></div>
@@ -847,7 +848,7 @@ Figure 2.3: Signal detection theory example of lexical decision task
 <pre><code>## [1] -22168.95</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">SDT_ll_fast</span>(pars, wgnmks2008Fast, <span class="dt">sample =</span> <span class="ot">FALSE</span>)</code></pre></div>
 <pre><code>## [1] -22168.95</code></pre>
-<p>We recommend “speeding up” your code however you wish. When you’re confident that your log-likelihood functions correctly, you should save it as a separate script so it can be sourced and loaded when running the sampler.</p>
+<p>We recommend speeding up your code however you wish. When you’re confident that your log-likelihood functions correctly, you should save it as a separate script so it can be sourced and loaded when running the sampler.</p>
 </div>
 </div>
 <div id="sdtPMwG" class="section level2">
