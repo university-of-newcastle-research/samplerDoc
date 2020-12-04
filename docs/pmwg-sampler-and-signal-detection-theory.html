@@ -884,11 +884,6 @@ priors &lt;-<span class="st"> </span><span class="kw">list</span>(
 <li><code>prior =</code> the priors to be used (e.g.<code>priors</code>)</li>
 <li><code>ll_func =</code> name of log-likelihood function you’ve sourced above (e.g.<code>SDT_ll_fast</code>)</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sampler &lt;-<span class="st"> </span><span class="kw">pmwgs</span>(<span class="dt">data =</span> wgnmks2008Fast,
-                 <span class="dt">pars =</span> pars,
-                 <span class="dt">prior =</span> priors,
-                 <span class="dt">ll_func =</span> SDT_ll_fast
-                 )</code></pre></div>
 <div id="start-points" class="section level3">
 <h3><span class="header-section-number">2.3.1</span> Model start points</h3>
 <p>You have the option to set model start points. We use 0 for the mean (<code>mu</code>) and a variance (<code>sig2</code>) of 0.01. If you chose not to specify start points, the sampler will randomly sample points from the prior distribution.</p>

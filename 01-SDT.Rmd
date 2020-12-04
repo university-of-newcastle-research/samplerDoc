@@ -673,14 +673,6 @@ The `pmwgs` function takes a set of arguments (listed below) and returns a list 
 * `ll_func =` name of log-likelihood function you've sourced above (e.g.`SDT_ll_fast`)
 
 
-```{r part9.4, include=TRUE}
-sampler <- pmwgs(data = wgnmks2008Fast,
-                 pars = pars,
-                 prior = priors,
-                 ll_func = SDT_ll_fast
-                 )
-```
-
 
 ### Model start points {#start-points}
 You have the option to set model start points. We use 0 for the mean (`mu`) and a variance (`sig2`) of 0.01. If you chose not to specify start points, the sampler will randomly sample points from the prior distribution.
