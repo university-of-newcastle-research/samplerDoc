@@ -130,7 +130,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li class="chapter" data-level="3" data-path="forstmannChapter.html"><a href="forstmannChapter.html"><i class="fa fa-check"></i><b>3</b> PMwG sampler and sequential sampling models</a><ul>
 <li class="chapter" data-level="3.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#the-speed-accuracy-tradeoff-in-perceptual-decisions"><i class="fa fa-check"></i><b>3.1</b> The speed-accuracy tradeoff in perceptual decisions</a></li>
-<li class="chapter" data-level="3.2" data-path="forstmannChapter.html"><a href="forstmannChapter.html#linear-ballistic-accumulator-parameters"><i class="fa fa-check"></i><b>3.2</b> Linear Ballistic Accumulator Parameters</a></li>
+<li class="chapter" data-level="3.2" data-path="forstmannChapter.html"><a href="forstmannChapter.html#LBAParameters"><i class="fa fa-check"></i><b>3.2</b> Linear Ballistic Accumulator Parameters</a></li>
 <li class="chapter" data-level="3.3" data-path="forstmannChapter.html"><a href="forstmannChapter.html#writellFunc"><i class="fa fa-check"></i><b>3.3</b> Writing the log-likelihood function</a><ul>
 <li class="chapter" data-level="3.3.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#fstLBALL"><i class="fa fa-check"></i><b>3.3.1</b> Fast LBA Log-likelihood Function</a></li>
 </ul></li>
@@ -220,9 +220,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>A simple check to run on your log-likelihood function is to modify your parameter values and observe the change to log-likelihood estimate. Then check if changing parameter values which rely on conditions actually change the log-likelihood estimate.</p>
 <p><b>11. Make sure you have the latest version of the PMwG Samplers package</b></p>
 <p>checkVersion(“pmwg”)</p>
-<p><b>12. Number of iterations for ’burn-in` stage of sampler.</b></p>
+<p><b>12. Number of iterations for ’burn-in` stage of sampler</b></p>
 <p>We suggest running <code>burn-in</code> for few iterations and particles first. This will give you a sense of a) whether the sampler is working as intended (see troubleshooting/checks for what parameter chains should look like), b) the number of iterations &amp; particles needed to achieve the target acceptance rate, as well as the appropriate epsilon value. The acceptance rate is generally very high for the first few iterations ( &gt; 100) and then declines. After the initial short run, you can check and optimise the number of particles to be used (and balance with epsilon), so the acceptance rate is close to 30% on a longer, full run. We recommend you start with epsilon = .5 to increase efficiency, then adjust as needed.</p>
 <p><b>NOTE:</b> Overall, we aim for ~30% acceptance rate of particles. High acceptance rates may be inaccurate if burn-in runs for few iterations. Low acceptance rates are inefficient and may fail to create an efficient distribution for the sampling stage.</p>
+<p><b>13. My model is taking a lifetime to run</b> If you’re running your models on a laptop and the run time is unreasonable, if possible, run your models on a computing grid with multiple CPU cores.</p>
 
 </div>
 </div>

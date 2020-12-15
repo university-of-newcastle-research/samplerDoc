@@ -18,7 +18,7 @@ Table \@ref(tab:forsthead10) shows the first ten trials from the Forstmann datas
 kable(head(forstmann, 10), row.names = F,  align = "ccccc", caption = 'First 10 trials in Forstmann dataset. The `forstmann` dataset is an data frame ')
 ```
 
-## Linear Ballistic Accumulator Parameters
+## Linear Ballistic Accumulator Parameters{#LBAParameters}
 
 There are preliminary steps we need to complete before running the sampler. Let's begin by defining the Linear Ballistic Accumulator (LBA) [@brown2008simplest] model parameters.
 
@@ -398,7 +398,7 @@ The following arguments listed below are optional:
 * `iter =` is the number of iterations for the sampling stage. For burn-in, it is important to have enough iterations that the chains converge on the posterior distribution. Default = 1000.
 * `particles =` is the number of proposals (particles) generated for each random effect, on each iteration. Default = 1000, but set smaller or larger in order to target a reasonable acceptance rate (i.e. 10-60%).
 * `display_progress =` display a progress bar during sampling
-* `epsilon =` is a value greater than 0 which scales the variance of the proposal distribution. Smaller values (i.e. narrower proposal distributions) can lead to higher acceptance rates, but slower coverage of the posterior. Smaller values are especially useful when the number of random effects is large (e.g. >10). Default = 1.
+* `epsilon =` is a value greater than 0 which scales the variance of the proposal distribution. Smaller values (i.e. narrower proposal distributions) can lead to higher acceptance rates, but slower coverage of the posterior. Smaller values are especially useful when the number of random effects is large (e.g. >10). The default is adaptively chosen based on the number of parameters.
 * `n_cores =` the number of cores on a machine you wish to use to run the sampler. This allows sampling to be run across cores (parallelising for subjects). Default = 1. <b> Note:</b> Setting `n_cores` greater than 1 is only permitted on Linux and Mac OS X machines.
 
 

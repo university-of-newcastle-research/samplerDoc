@@ -130,7 +130,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li class="chapter" data-level="3" data-path="forstmannChapter.html"><a href="forstmannChapter.html"><i class="fa fa-check"></i><b>3</b> PMwG sampler and sequential sampling models</a><ul>
 <li class="chapter" data-level="3.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#the-speed-accuracy-tradeoff-in-perceptual-decisions"><i class="fa fa-check"></i><b>3.1</b> The speed-accuracy tradeoff in perceptual decisions</a></li>
-<li class="chapter" data-level="3.2" data-path="forstmannChapter.html"><a href="forstmannChapter.html#linear-ballistic-accumulator-parameters"><i class="fa fa-check"></i><b>3.2</b> Linear Ballistic Accumulator Parameters</a></li>
+<li class="chapter" data-level="3.2" data-path="forstmannChapter.html"><a href="forstmannChapter.html#LBAParameters"><i class="fa fa-check"></i><b>3.2</b> Linear Ballistic Accumulator Parameters</a></li>
 <li class="chapter" data-level="3.3" data-path="forstmannChapter.html"><a href="forstmannChapter.html#writellFunc"><i class="fa fa-check"></i><b>3.3</b> Writing the log-likelihood function</a><ul>
 <li class="chapter" data-level="3.3.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#fstLBALL"><i class="fa fa-check"></i><b>3.3.1</b> Fast LBA Log-likelihood Function</a></li>
 </ul></li>
@@ -280,7 +280,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </tbody>
 </table>
 </div>
-<div id="linear-ballistic-accumulator-parameters" class="section level2">
+<div id="LBAParameters" class="section level2">
 <h2><span class="header-section-number">3.2</span> Linear Ballistic Accumulator Parameters</h2>
 <p>There are preliminary steps we need to complete before running the sampler. Let’s begin by defining the Linear Ballistic Accumulator (LBA) <span class="citation">(S. Brown and Heathcote <a href="#ref-brown2008simplest">2008</a>)</span> model parameters.</p>
 <ul>
@@ -702,7 +702,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><code>iter =</code> is the number of iterations for the sampling stage. For burn-in, it is important to have enough iterations that the chains converge on the posterior distribution. Default = 1000.</li>
 <li><code>particles =</code> is the number of proposals (particles) generated for each random effect, on each iteration. Default = 1000, but set smaller or larger in order to target a reasonable acceptance rate (i.e. 10-60%).</li>
 <li><code>display_progress =</code> display a progress bar during sampling</li>
-<li><code>epsilon =</code> is a value greater than 0 which scales the variance of the proposal distribution. Smaller values (i.e. narrower proposal distributions) can lead to higher acceptance rates, but slower coverage of the posterior. Smaller values are especially useful when the number of random effects is large (e.g. &gt;10). Default = 1.</li>
+<li><code>epsilon =</code> is a value greater than 0 which scales the variance of the proposal distribution. Smaller values (i.e. narrower proposal distributions) can lead to higher acceptance rates, but slower coverage of the posterior. Smaller values are especially useful when the number of random effects is large (e.g. &gt;10). The default is adaptively chosen based on the number of parameters.</li>
 <li><code>n_cores =</code> the number of cores on a machine you wish to use to run the sampler. This allows sampling to be run across cores (parallelising for subjects). Default = 1. <b> Note:</b> Setting <code>n_cores</code> greater than 1 is only permitted on Linux and Mac OS X machines.</li>
 </ul>
 <p><br> The first sampling stage is burn-in <code>&quot;burn&quot;</code>. The burn-in stage allows time for the sampler to move from the (arbitrary) start points that were provided by the user to the mode of the posterior distribution. This can be checked by examining the chains for stationarity. We take the <code>sampler</code> object created in the <code>init</code> function above, set the stage argument to <code>&quot;burn&quot;</code> and assign the outcome to an object called <code>burned</code>.</p>
