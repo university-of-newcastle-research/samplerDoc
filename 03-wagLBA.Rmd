@@ -1,8 +1,8 @@
 # PMwG sampler with the Linear Ballistic Accumulator and a complex experiment design {.tabset .tabset-fade}
 
-In [chapter 1](#sdtOutline) we demonstrated how the PMwG sampler can be used to model a lexical decision task in a signal detection framework. However, the SDT framework does not allow us to consider response time (RT) and the join distribution of RT and accuracy. In this example we will expand on what was covered in chapter 1, by fitting the LBA - a more complex model - to the Wagenmakers 2008 data. <!-- see IS square paper experiment 2-->
+In [chapter 2](#sdtOutline) we demonstrated how the PMwG sampler can be used to model a lexical decision task in a signal detection framework. However, the SDT framework does not allow us to consider response time (RT) and the join distribution of RT and accuracy. In this example we will expand on what was covered in chapter 1, by fitting the LBA - a more complex model - to the Wagenmakers 2008 data.
 
-A description of the Wagenmakers experiment and data is covered in [chapter 1](#sdtOutline). This experiment is more complicated than the Forstmann example in [chapter 3](#forstmannChapter), and the LBA is also more complicated than the SDT model. As a result, the log-likelihood function for this example will be more complex, however, you'll notice that each step closely follows those taken in previous chapters with simpler data sets and simpler models. 
+A description of the Wagenmakers experiment and data is covered in [chapter 2](#sdtOutline). This experiment is more complicated than the Forstmann example in [chapter 3](#forstmannChapter), and the LBA is also more complicated than the SDT model. As a result, the log-likelihood function for this example will be more complex, however, you'll notice that each step closely follows those taken in previous chapters with simpler data sets and simpler models. 
 
 
 ```{r chpt4data, include = FALSE}
@@ -11,13 +11,12 @@ load("wagenmakers_2008.RData")
 
 ## Writing the LBA log-likelihood function for the Wagenmakers data set 
 
-Here we have written a computationally-slow and easy to follow log-likelihood function. The log-likelihood function steps through the data line by line (i.e. trial by trial) and gives a likelihood value for each line given `x` parameters. As mentioned in previous chapters, we encourage those who have experience writing likelihood functions to write a computationally efficient function or use our '<b><i>fast</i></b>function "HERE". For those new to modelling, the trialwise function directly below is easier to follow, debug and is less likely to result in errors. 
+Here we have written a computationally-slow and easy to follow log-likelihood function. The log-likelihood function steps through the data line by line (i.e. trial by trial) and gives a likelihood value for each line given `x` parameters. As mentioned in previous chapters, we encourage those who have experience writing likelihood functions to write a computationally efficient function or use our [fast LBA log-likelihood function](#wagFastll). For those new to modelling, the trialwise function directly below is easier to follow, debug and is less likely to result in errors. 
 
-The structure of our log-likelihood function follows those in the preceding chapters, so we will focus on the parts that differ i.e. the experiment design and hypothesis about which parameters are being influenced by the experimental manipulations. See [chapter 3](#LBAParameters) for a reminder of the LBA's parameters.
+The structure of our log-likelihood function follows those in the preceding chapters, so we will focus on the parts that differ i.e. the experiment design and hypothesis about which parameters are being influenced by the experimental manipulations. See [chapter 3](#LBAParameters) for an outline of the LBA parameters.
 
 
 Let's begin by loading `rtdists` package...
-
 ```{r loadrtdists}
 library(rtdists)
 ```
@@ -94,6 +93,46 @@ We hypothesised that drift rate `v` would vary with word frequency (`stim` = `hf
 ```{r llSec1, attr.source = '.numberLines startFrom="14"',eval=FALSE}
  for (i in 1:nrow(data)) {
     A = x["A"]
+    b.w = x[paste0("b.", data$cond[i], ".W")] + A
+    b.nw = x[paste0("b.", data$cond[i], ".NW")] + A
+    bs = list(b.nw, b.w)
+    v.w = x[paste0("v.", data$stim[i], ".W")]
+    v.nw = x[paste0("v.", data$stim[i], ".NW")]
+    vs = c(v.nw, v.w)
+    t0 = x["t0"]
+    s = c(1, 1)
+```
+
+It is important to check the order of your levels for the response factor to ensure you correctly order your `v.nw` and `v.w` accumulators in the `vs` vector.  
+
+```{r respLvls, include=TRUE }
+levels(data$resp)
+```
+
+If we look at our levels for response, we see the order is `NW` and `W` respectively. This means that `NW` is coded as `1` and `W` is coded as `2`. Therefore, on line 36, if `data$resp[i] = N.W` the level is 1, and the first accumulator in position 1 will be chosen. If `data$resp[i] = W` this tells the sampler that the accumulator in position 2 will be chosen. In other words, the parameters will map correctly because `v.nw` is in position 1 and `v.w` in position 2 in our `vs` vector. 
+
+The remaining lines of the log-likelihood function are identical to the function used in the Forstmann example in [chapter 3](#forstmannChapter), except the threshold parameter `bs` (line 29 and 44) is a list with two elements (`b = bs`)
+
+
+## Fast LBA Log-likelihood function {#wagFastll}
+
+Here is a faster log-likelihood function that only calls `dLBA` once when `sample = FALSE`.
+```{r fast_lba,include=TRUE}
+fast_lba_ll <- function(x, data, sample = FALSE) {
+  x <- exp(x)
+  if (any(data$rt < x["t0"])) {
+    return(-1e10)
+  }
+  
+  if (sample) {
+    data$rt <- rep(NA, nrow(data))
+    data$resp <- rep(NA, nrow(data))
+  } else {
+    out <- numeric(nrow(data))
+  }
+   if (sample) {
+    for (i in 1:nrow(data)) {
+    A = x["A"]
     b.w = x[paste0("b.", data$prop[i], ".W")] + A
     b.nw = x[paste0("b.", data$prop[i], ".NW")] + A
     bs = list(b.nw, b.w)
@@ -102,4 +141,91 @@ We hypothesised that drift rate `v` would vary with word frequency (`stim` = `hf
     vs = c(v.nw, v.w)
     t0 = x["t0"]
     s = c(1, 1)
+    
+    tmp <- rLBA(n = 1,
+                A = A,
+                b = bs,
+                mean_v = vs,
+                sd_v = s,
+                t0 = t0,
+                dist = "norm",
+                silent = TRUE
+                )
+      data$rt[i] <- tmp$rt
+      data$resp[i] <- tmp$resp
+    }
+  } else {
+    prop <- levels(data$prop)
+    freq <- levels(data$freq)
+
+    blist <- list("b.nw" = numeric(nrow(data)), "b.w" = numeric(nrow(data)))
+    vlist <- list("v.nw" = numeric(nrow(data)), "v.w" = numeric(nrow(data)))
+
+
+    for (p in prop) {
+      for (f in freq) {
+          use <- data$prop == p & data$freq == f 
+          if (any(use)) {
+            b.w = x[paste0("b.", p, ".W")] + x["A"]
+            b.nw = x[paste0("b.", p, ".NW")] + x["A"]
+            v.w = x[paste0("v.", f, ".W")]
+            v.nw = x[paste0("v.", f, ".NW")]
+            blist$b.nw[use] = b.nw
+            blist$b.w[use] = b.w
+            vlist$v.nw[use] = v.nw
+            vlist$v.w[use] = v.w
+          }
+      }
+    }
+    out <- dLBA(rt = data$rt,
+                resp = data$resp,
+                A = x["A"],
+                b =  blist,
+                t0 = x["t0"],
+                mean_v = vlist,
+                sd_v = c(1, 1),
+                distribution = "norm",
+                silent = TRUE
+    )
+    }
+ 
+  if (sample) {
+    return(data)
+  } else {
+    bad <- (out < 1e-10) | (!is.finite(out))
+    out[bad] <- 1e-10
+    out <- sum(log(out))
+    return(out)
+  }
+  }
+```
+
+## Testing the log-likelihood function
+
+Here we cover tests to see if there are any errors in internal consistency with our loglikelihood function. 
+
+I've assigned somewhat sensible x values, since I expect the threshold for the word accumulator to be lower than the threhold for the non-word accumulator, when 75% of the stimuli are words, and the opposite when 75% of the stimuli are non-words. I also expect people to have a much larger drift for the word accumulator when the stimului are high frequency words. These are just some of the assumptions ive made in my chosen values bellow. 
+
+Line (p) will give me a value for my log-likelihood from the function. 
+
+```{r llTests, include=TRUE}
+
+x <- log(c("A" = 2,
+           "b.nw.NW" = 1,
+           "b.nw.W" = 2,
+           "b.w.NW" = 2.5,
+           "b.w.W" = .5,
+           "v.hf.NW" = 1.5,
+           "v.hf.W" = 5,
+           "v.lf.NW" = 2.5,
+           "v.lf.W" = 3.5,
+           "v.vlf.NW" = 2,
+           "v.vlf.W" = 3,
+           "v.nw.NW" = 5,
+           "v.nw.W" = 2,
+           "t0" = .19)
+         )
+
+tw_lba_ll(x, data, sampl = FALSE)
+fast_lba_ll(x, data, sample = FALSE)
 ```

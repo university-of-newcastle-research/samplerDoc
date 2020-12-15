@@ -156,6 +156,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li class="chapter" data-level="4" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><i class="fa fa-check"></i><b>4</b> PMwG sampler with the Linear Ballistic Accumulator and a complex experiment design</a><ul>
 <li class="chapter" data-level="4.1" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#writing-the-lba-log-likelihood-function-for-the-wagenmakers-data-set"><i class="fa fa-check"></i><b>4.1</b> Writing the LBA log-likelihood function for the Wagenmakers data set</a></li>
+<li class="chapter" data-level="4.2" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#wagFastll"><i class="fa fa-check"></i><b>4.2</b> Fast LBA Log-likelihood function</a></li>
+<li class="chapter" data-level="4.3" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#testing-the-log-likelihood-function"><i class="fa fa-check"></i><b>4.3</b> Testing the log-likelihood function</a></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="troubleshoot.html"><a href="troubleshoot.html"><i class="fa fa-check"></i><b>5</b> Troubleshooting PMwG errors</a><ul>
 <li class="chapter" data-level="5.1" data-path="troubleshoot.html"><a href="troubleshoot.html#how-to-write-a-log-likelihood-function"><i class="fa fa-check"></i><b>5.1</b> How to write a log-likelihood function</a><ul>
@@ -188,12 +190,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design" class="section level1 tabset tabset-fade">
 <h1><span class="header-section-number">Chapter 4</span> PMwG sampler with the Linear Ballistic Accumulator and a complex experiment design</h1>
-<p>In <a href="pmwg-sampler-and-signal-detection-theory.html#sdtOutline">chapter 1</a> we demonstrated how the PMwG sampler can be used to model a lexical decision task in a signal detection framework. However, the SDT framework does not allow us to consider response time (RT) and the join distribution of RT and accuracy. In this example we will expand on what was covered in chapter 1, by fitting the LBA - a more complex model - to the Wagenmakers 2008 data. <!-- see IS square paper experiment 2--></p>
-<p>A description of the Wagenmakers experiment and data is covered in <a href="pmwg-sampler-and-signal-detection-theory.html#sdtOutline">chapter 1</a>. This experiment is more complicated than the Forstmann example in <a href="forstmannChapter.html#forstmannChapter">chapter 3</a>, and the LBA is also more complicated than the SDT model. As a result, the log-likelihood function for this example will be more complex, however, you’ll notice that each step closely follows those taken in previous chapters with simpler data sets and simpler models.</p>
+<p>In <a href="pmwg-sampler-and-signal-detection-theory.html#sdtOutline">chapter 2</a> we demonstrated how the PMwG sampler can be used to model a lexical decision task in a signal detection framework. However, the SDT framework does not allow us to consider response time (RT) and the join distribution of RT and accuracy. In this example we will expand on what was covered in chapter 1, by fitting the LBA - a more complex model - to the Wagenmakers 2008 data.</p>
+<p>A description of the Wagenmakers experiment and data is covered in <a href="pmwg-sampler-and-signal-detection-theory.html#sdtOutline">chapter 2</a>. This experiment is more complicated than the Forstmann example in <a href="forstmannChapter.html#forstmannChapter">chapter 3</a>, and the LBA is also more complicated than the SDT model. As a result, the log-likelihood function for this example will be more complex, however, you’ll notice that each step closely follows those taken in previous chapters with simpler data sets and simpler models.</p>
 <div id="writing-the-lba-log-likelihood-function-for-the-wagenmakers-data-set" class="section level2">
 <h2><span class="header-section-number">4.1</span> Writing the LBA log-likelihood function for the Wagenmakers data set</h2>
-<p>Here we have written a computationally-slow and easy to follow log-likelihood function. The log-likelihood function steps through the data line by line (i.e. trial by trial) and gives a likelihood value for each line given <code>x</code> parameters. As mentioned in previous chapters, we encourage those who have experience writing likelihood functions to write a computationally efficient function or use our ’<b><i>fast</i></b>function “HERE”. For those new to modelling, the trialwise function directly below is easier to follow, debug and is less likely to result in errors.</p>
-<p>The structure of our log-likelihood function follows those in the preceding chapters, so we will focus on the parts that differ i.e. the experiment design and hypothesis about which parameters are being influenced by the experimental manipulations. See <a href="forstmannChapter.html#LBAParameters">chapter 3</a> for a reminder of the LBA’s parameters.</p>
+<p>Here we have written a computationally-slow and easy to follow log-likelihood function. The log-likelihood function steps through the data line by line (i.e. trial by trial) and gives a likelihood value for each line given <code>x</code> parameters. As mentioned in previous chapters, we encourage those who have experience writing likelihood functions to write a computationally efficient function or use our <a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#wagFastll">fast LBA log-likelihood function</a>. For those new to modelling, the trialwise function directly below is easier to follow, debug and is less likely to result in errors.</p>
+<p>The structure of our log-likelihood function follows those in the preceding chapters, so we will focus on the parts that differ i.e. the experiment design and hypothesis about which parameters are being influenced by the experimental manipulations. See <a href="forstmannChapter.html#LBAParameters">chapter 3</a> for an outline of the LBA parameters.</p>
 <p>Let’s begin by loading <code>rtdists</code> package…</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rtdists)</code></pre></div>
 <p>…and now a complete trialwise (slow) log-likelihood function.</p>
@@ -328,6 +330,38 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 23
 </pre></td><td class="sourceCode"><pre><code class="sourceCode r"> <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(data)) {
     A =<span class="st"> </span>x[<span class="st">&quot;A&quot;</span>]
+    b.w =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, data<span class="op">$</span>cond[i], <span class="st">&quot;.W&quot;</span>)] <span class="op">+</span><span class="st"> </span>A
+    b.nw =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, data<span class="op">$</span>cond[i], <span class="st">&quot;.NW&quot;</span>)] <span class="op">+</span><span class="st"> </span>A
+    bs =<span class="st"> </span><span class="kw">list</span>(b.nw, b.w)
+    v.w =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;v.&quot;</span>, data<span class="op">$</span>stim[i], <span class="st">&quot;.W&quot;</span>)]
+    v.nw =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;v.&quot;</span>, data<span class="op">$</span>stim[i], <span class="st">&quot;.NW&quot;</span>)]
+    vs =<span class="st"> </span><span class="kw">c</span>(v.nw, v.w)
+    t0 =<span class="st"> </span>x[<span class="st">&quot;t0&quot;</span>]
+    s =<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>)</code></pre></td></tr></table></div>
+<p>It is important to check the order of your levels for the response factor to ensure you correctly order your <code>v.nw</code> and <code>v.w</code> accumulators in the <code>vs</code> vector.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">levels</span>(data<span class="op">$</span>resp)</code></pre></div>
+<pre><code>## [1] &quot;NW&quot; &quot;W&quot;</code></pre>
+<p>If we look at our levels for response, we see the order is <code>NW</code> and <code>W</code> respectively. This means that <code>NW</code> is coded as <code>1</code> and <code>W</code> is coded as <code>2</code>. Therefore, on line 36, if <code>data$resp[i] = N.W</code> the level is 1, and the first accumulator in position 1 will be chosen. If <code>data$resp[i] = W</code> this tells the sampler that the accumulator in position 2 will be chosen. In other words, the parameters will map correctly because <code>v.nw</code> is in position 1 and <code>v.w</code> in position 2 in our <code>vs</code> vector.</p>
+<p>The remaining lines of the log-likelihood function are identical to the function used in the Forstmann example in <a href="forstmannChapter.html#forstmannChapter">chapter 3</a>, except the threshold parameter <code>bs</code> (line 29 and 44) is a list with two elements (<code>b = bs</code>)</p>
+</div>
+<div id="wagFastll" class="section level2">
+<h2><span class="header-section-number">4.2</span> Fast LBA Log-likelihood function</h2>
+<p>Here is a faster log-likelihood function that only calls <code>dLBA</code> once when <code>sample = FALSE</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fast_lba_ll &lt;-<span class="st"> </span><span class="cf">function</span>(x, data, <span class="dt">sample =</span> <span class="ot">FALSE</span>) {
+  x &lt;-<span class="st"> </span><span class="kw">exp</span>(x)
+  <span class="cf">if</span> (<span class="kw">any</span>(data<span class="op">$</span>rt <span class="op">&lt;</span><span class="st"> </span>x[<span class="st">&quot;t0&quot;</span>])) {
+    <span class="kw">return</span>(<span class="op">-</span><span class="fl">1e10</span>)
+  }
+  
+  <span class="cf">if</span> (sample) {
+    data<span class="op">$</span>rt &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="ot">NA</span>, <span class="kw">nrow</span>(data))
+    data<span class="op">$</span>resp &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="ot">NA</span>, <span class="kw">nrow</span>(data))
+  } <span class="cf">else</span> {
+    out &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data))
+  }
+   <span class="cf">if</span> (sample) {
+    <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(data)) {
+    A =<span class="st"> </span>x[<span class="st">&quot;A&quot;</span>]
     b.w =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, data<span class="op">$</span>prop[i], <span class="st">&quot;.W&quot;</span>)] <span class="op">+</span><span class="st"> </span>A
     b.nw =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, data<span class="op">$</span>prop[i], <span class="st">&quot;.NW&quot;</span>)] <span class="op">+</span><span class="st"> </span>A
     bs =<span class="st"> </span><span class="kw">list</span>(b.nw, b.w)
@@ -335,7 +369,89 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
     v.nw =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;v.&quot;</span>, data<span class="op">$</span>freq[i], <span class="st">&quot;.NW&quot;</span>)]
     vs =<span class="st"> </span><span class="kw">c</span>(v.nw, v.w)
     t0 =<span class="st"> </span>x[<span class="st">&quot;t0&quot;</span>]
-    s =<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>)</code></pre></td></tr></table></div>
+    s =<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>)
+    
+    tmp &lt;-<span class="st"> </span><span class="kw">rLBA</span>(<span class="dt">n =</span> <span class="dv">1</span>,
+                <span class="dt">A =</span> A,
+                <span class="dt">b =</span> bs,
+                <span class="dt">mean_v =</span> vs,
+                <span class="dt">sd_v =</span> s,
+                <span class="dt">t0 =</span> t0,
+                <span class="dt">dist =</span> <span class="st">&quot;norm&quot;</span>,
+                <span class="dt">silent =</span> <span class="ot">TRUE</span>
+                )
+      data<span class="op">$</span>rt[i] &lt;-<span class="st"> </span>tmp<span class="op">$</span>rt
+      data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span>tmp<span class="op">$</span>resp
+    }
+  } <span class="cf">else</span> {
+    prop &lt;-<span class="st"> </span><span class="kw">levels</span>(data<span class="op">$</span>prop)
+    freq &lt;-<span class="st"> </span><span class="kw">levels</span>(data<span class="op">$</span>freq)
+
+    blist &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="st">&quot;b.nw&quot;</span> =<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data)), <span class="st">&quot;b.w&quot;</span> =<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data)))
+    vlist &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="st">&quot;v.nw&quot;</span> =<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data)), <span class="st">&quot;v.w&quot;</span> =<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data)))
+
+    <span class="cf">for</span> (p <span class="cf">in</span> prop) {
+      <span class="cf">for</span> (f <span class="cf">in</span> freq) {
+          use &lt;-<span class="st"> </span>data<span class="op">$</span>prop <span class="op">==</span><span class="st"> </span>p <span class="op">&amp;</span><span class="st"> </span>data<span class="op">$</span>freq <span class="op">==</span><span class="st"> </span>f 
+          <span class="cf">if</span> (<span class="kw">any</span>(use)) {
+            b.w =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, p, <span class="st">&quot;.W&quot;</span>)] <span class="op">+</span><span class="st"> </span>x[<span class="st">&quot;A&quot;</span>]
+            b.nw =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, p, <span class="st">&quot;.NW&quot;</span>)] <span class="op">+</span><span class="st"> </span>x[<span class="st">&quot;A&quot;</span>]
+            v.w =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;v.&quot;</span>, f, <span class="st">&quot;.W&quot;</span>)]
+            v.nw =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;v.&quot;</span>, f, <span class="st">&quot;.NW&quot;</span>)]
+            blist<span class="op">$</span>b.nw[use] =<span class="st"> </span>b.nw
+            blist<span class="op">$</span>b.w[use] =<span class="st"> </span>b.w
+            vlist<span class="op">$</span>v.nw[use] =<span class="st"> </span>v.nw
+            vlist<span class="op">$</span>v.w[use] =<span class="st"> </span>v.w
+          }
+      }
+    }
+    out &lt;-<span class="st"> </span><span class="kw">dLBA</span>(<span class="dt">rt =</span> data<span class="op">$</span>rt,
+                <span class="dt">resp =</span> data<span class="op">$</span>resp,
+                <span class="dt">A =</span> x[<span class="st">&quot;A&quot;</span>],
+                <span class="dt">b =</span>  blist,
+                <span class="dt">t0 =</span> x[<span class="st">&quot;t0&quot;</span>],
+                <span class="dt">mean_v =</span> vlist,
+                <span class="dt">sd_v =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>),
+                <span class="dt">distribution =</span> <span class="st">&quot;norm&quot;</span>,
+                <span class="dt">silent =</span> <span class="ot">TRUE</span>
+    )
+    }
+ 
+  <span class="cf">if</span> (sample) {
+    <span class="kw">return</span>(data)
+  } <span class="cf">else</span> {
+    bad &lt;-<span class="st"> </span>(out <span class="op">&lt;</span><span class="st"> </span><span class="fl">1e-10</span>) <span class="op">|</span><span class="st"> </span>(<span class="op">!</span><span class="kw">is.finite</span>(out))
+    out[bad] &lt;-<span class="st"> </span><span class="fl">1e-10</span>
+    out &lt;-<span class="st"> </span><span class="kw">sum</span>(<span class="kw">log</span>(out))
+    <span class="kw">return</span>(out)
+  }
+  }</code></pre></div>
+</div>
+<div id="testing-the-log-likelihood-function" class="section level2">
+<h2><span class="header-section-number">4.3</span> Testing the log-likelihood function</h2>
+<p>Here we cover tests to see if there are any errors in internal consistency with our loglikelihood function.</p>
+<p>I’ve assigned somewhat sensible x values, since I expect the threshold for the word accumulator to be lower than the threhold for the non-word accumulator, when 75% of the stimuli are words, and the opposite when 75% of the stimuli are non-words. I also expect people to have a much larger drift for the word accumulator when the stimului are high frequency words. These are just some of the assumptions ive made in my chosen values bellow.</p>
+<p>Line (p) will give me a value for my log-likelihood from the function.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">c</span>(<span class="st">&quot;A&quot;</span> =<span class="st"> </span><span class="dv">2</span>,
+           <span class="st">&quot;b.nw.NW&quot;</span> =<span class="st"> </span><span class="dv">1</span>,
+           <span class="st">&quot;b.nw.W&quot;</span> =<span class="st"> </span><span class="dv">2</span>,
+           <span class="st">&quot;b.w.NW&quot;</span> =<span class="st"> </span><span class="fl">2.5</span>,
+           <span class="st">&quot;b.w.W&quot;</span> =<span class="st"> </span>.<span class="dv">5</span>,
+           <span class="st">&quot;v.hf.NW&quot;</span> =<span class="st"> </span><span class="fl">1.5</span>,
+           <span class="st">&quot;v.hf.W&quot;</span> =<span class="st"> </span><span class="dv">5</span>,
+           <span class="st">&quot;v.lf.NW&quot;</span> =<span class="st"> </span><span class="fl">2.5</span>,
+           <span class="st">&quot;v.lf.W&quot;</span> =<span class="st"> </span><span class="fl">3.5</span>,
+           <span class="st">&quot;v.vlf.NW&quot;</span> =<span class="st"> </span><span class="dv">2</span>,
+           <span class="st">&quot;v.vlf.W&quot;</span> =<span class="st"> </span><span class="dv">3</span>,
+           <span class="st">&quot;v.nw.NW&quot;</span> =<span class="st"> </span><span class="dv">5</span>,
+           <span class="st">&quot;v.nw.W&quot;</span> =<span class="st"> </span><span class="dv">2</span>,
+           <span class="st">&quot;t0&quot;</span> =<span class="st"> </span>.<span class="dv">19</span>)
+         )
+
+<span class="kw">tw_lba_ll</span>(x, data, <span class="dt">sampl =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<pre><code>## [1] -19297.84</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">fast_lba_ll</span>(x, data, <span class="dt">sample =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<pre><code>## [1] -838187</code></pre>
 
 </div>
 </div>
