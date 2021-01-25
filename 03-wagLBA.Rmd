@@ -1,6 +1,6 @@
 # PMwG sampler with the Linear Ballistic Accumulator and a complex experiment design {.tabset .tabset-fade}
 
-In [chapter 2](#sdtOutline) we demonstrated how the PMwG sampler can be used to model a lexical decision task in a signal detection framework. However, the SDT framework does not allow us to consider response time (RT) and the join distribution of RT and accuracy. In this example we will expand on what was covered in chapter 1, by fitting the LBA - a more complex model - to the Wagenmakers 2008 data.
+In [chapter 2](#sdtOutline) we demonstrated how the PMwG sampler can be used to model a lexical decision task in a signal detection framework. However, the SDT framework does not allow us to consider response time (RT) and the join distribution of RT and accuracy. In this example we will expand on what was covered in chapter 2, by fitting the LBA - a more complex model - to the Wagenmakers 2008 data.
 
 A description of the Wagenmakers experiment and data is covered in [chapter 2](#sdtOutline). This experiment is more complicated than the Forstmann example in [chapter 3](#forstmannChapter), and the LBA is also more complicated than the SDT model. As a result, the log-likelihood function for this example will be more complex, however, you'll notice that each step closely follows those taken in previous chapters with simpler data sets and simpler models. 
 
