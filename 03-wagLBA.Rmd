@@ -421,6 +421,6 @@ gen_pp_data <- function (sampled, n, ll_func = sampled$ll_func, rbind.data = TRU
 <!-- wagpp_data <- gen_pp_data(sampled, n = 20) -->
 <!-- ``` -->
 
-<!-- The returned data is a matrix with the same dimensions and names as `wagenmakers` -- with the addition of `pp_iter` column. `pp_iter` is the iteration of posterior sample (in this example `i = 1:20`) for the corresponding subject. We now have two matrices based on samples from either model. The response (`resp`) and response time (`rt`) columns now contain posterior predictive data. -->
+The returned data is a matrix with the same dimensions and names as `wagenmakers` -- with the addition of `pp_iter` column. `pp_iter` is the iteration of posterior sample (in this example `i = 1:20`) for the corresponding subject. We now have two matrices based on samples from either model. The response (`resp`) and response time (`rt`) columns now contain posterior predictive data.
 
-<!-- In the next section, we will use the posterior predictive data to assess descriptive adequacy. -->
+In the next section, we will use the posterior predictive data to assess descriptive adequacy.
