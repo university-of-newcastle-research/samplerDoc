@@ -416,7 +416,7 @@ gen_pp_data <- function (sampled, n, ll_func = sampled$ll_func, rbind.data = TRU
 <!-- load("wagenmakers2008_sampled.RData") -->
 <!-- ``` -->
 
-<!-- We generate 20 posterior predictive data samples.  -->
+<!-- We generate 20 posterior predictive data samples. -->
 <!-- ```{r genppdata, eval=FALSE} -->
 <!-- wagpp_data <- gen_pp_data(sampled, n = 20) -->
 <!-- ``` -->
