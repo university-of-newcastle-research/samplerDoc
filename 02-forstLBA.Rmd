@@ -118,7 +118,6 @@ if (sample) {
 }
 ```
 
-
 The first line in the `tw_lba_ll` function (Line 2 below) takes the exponent of the parameter values. We do this as the LBA requires positive parameter values that are on the real line. Line 3 and 4 then checks RTs are faster than the non-decision time parameter `t0`, and returns a low value if `t0` is larger than RT, indicating that the given value of `t0` is unlikely. 
 
 ```{r twLBAll1, attr.source = '.numberLines startFrom="2"', echo=TRUE, eval=FALSE}
@@ -141,7 +140,6 @@ If `sample = FALSE` (the `else` statement from line 11) we create an `out` vecto
     out <- numeric(nrow(data))
   }
 ```
-
 
 Next, we loop over rows in the dataset. In this `for` loop, we find the values `(x)` of each parameter in our model for each row, so that any conditional parameters (for example `b` in our model) are correctly assigned. For example, we want to calculate the density for a model that has three threshold parameters (one for each condition; `1  = accuracy`, `2 = neutral`, or `3 = speed`). In the loop, we paste `b.` to the condition in row `[i]` and add `A` (the start point - we do this to ensure the threshold is greater than the starting point). 
 
@@ -343,7 +341,7 @@ The `pmwgs` function takes a set of arguments (listed below) and returns a list 
 * `data =` your data - a data frame (e.g.`forstmann`) with a column for participants called <b>`subject`</b>
 * `pars =` the model parameters to be used (e.g.`pars`)
 * `prior =` the priors to be used (e.g.`priors`)
-* `ll_func =` name of log-likelihood function to be used (e.g.`fast_lba_ll`)
+* `ll_func =` name of log-likelihood function to be used (e.g.`fast_lba_ll3b`)
 
 ```{r forstSampObj, eval=FALSE}
 sampler <- pmwgs(data = data,
@@ -440,7 +438,7 @@ sampled <- run_stage(adapted,
 
 The `sampled` object includes all samples from the `"sample"` stage above and the following elements:
 
-* `data` : your data (data frame) you included in your analysis
+* `data` : the data (data frame) you included in your analysis
 * `par_names`: parameter names 
 * `n_pars`: number of parameters
 * `n_subjects`: number of subjects
@@ -465,7 +463,7 @@ save(sampled, file = "forst3bSamp.RData")
 
 ## Simulating Posterior Predictive Data {#genppdatafunc}
 
-We can generate posterior predictive data by setting `sample = TRUE` in our log-likelihood function to generate response times and responses <i>given</i> the posterior parameter estimates for each subject. To do this, we use the `gen_pp_data` function below, which calls our log-likelihood function embedded in our `sampled` object. The `gen_pp_data` function takes four arguments:
+We can generate posterior predictive data by setting `sample = TRUE` in our log-likelihood function to generate response times and responses <i>given</i> the posterior parameter estimates for each subject. To do this, we use the `gen_pp_data` function below, which calls the log-likelihood function embedded in our `sampled` object. The `gen_pp_data` function takes four arguments:
 
 * `sampled`: is the object/output from the PMwG sampler
 * `n`: the number of posterior samples

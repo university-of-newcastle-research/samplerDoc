@@ -157,7 +157,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="4" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><i class="fa fa-check"></i><b>4</b> PMwG sampler with the Linear Ballistic Accumulator and a complex experiment design</a><ul>
 <li class="chapter" data-level="4.1" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#writing-the-lba-log-likelihood-function-for-the-wagenmakers-data-set"><i class="fa fa-check"></i><b>4.1</b> Writing the LBA log-likelihood function for the Wagenmakers data set</a></li>
 <li class="chapter" data-level="4.2" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#wagFastll"><i class="fa fa-check"></i><b>4.2</b> Fast LBA Log-likelihood function</a></li>
-<li class="chapter" data-level="4.3" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#testing-the-log-likelihood-function"><i class="fa fa-check"></i><b>4.3</b> Testing the log-likelihood function</a></li>
+<li class="chapter" data-level="4.3" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#pmwg-framework-1"><i class="fa fa-check"></i><b>4.3</b> PMwG Framework</a><ul>
+<li class="chapter" data-level="4.3.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#run-sampler"><i class="fa fa-check"></i><b>4.3.1</b> Running the sampler</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#genppdataWag"><i class="fa fa-check"></i><b>4.4</b> Simulating Posterior Predictive Data</a></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="troubleshoot.html"><a href="troubleshoot.html"><i class="fa fa-check"></i><b>5</b> Troubleshooting PMwG errors</a><ul>
 <li class="chapter" data-level="5.1" data-path="troubleshoot.html"><a href="troubleshoot.html#how-to-write-a-log-likelihood-function"><i class="fa fa-check"></i><b>5.1</b> How to write a log-likelihood function</a><ul>
@@ -664,7 +667,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><code>data =</code> your data - a data frame (e.g.<code>forstmann</code>) with a column for participants called <b><code>subject</code></b></li>
 <li><code>pars =</code> the model parameters to be used (e.g.<code>pars</code>)</li>
 <li><code>prior =</code> the priors to be used (e.g.<code>priors</code>)</li>
-<li><code>ll_func =</code> name of log-likelihood function to be used (e.g.<code>fast_lba_ll</code>)</li>
+<li><code>ll_func =</code> name of log-likelihood function to be used (e.g.<code>fast_lba_ll3b</code>)</li>
 </ul>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sampler &lt;-<span class="st"> </span><span class="kw">pmwgs</span>(<span class="dt">data =</span> data,
                  <span class="dt">pars =</span> pars,
@@ -730,7 +733,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
                      )</code></pre></div>
 <p>The <code>sampled</code> object includes all samples from the <code>&quot;sample&quot;</code> stage above and the following elements:</p>
 <ul>
-<li><code>data</code> : your data (data frame) you included in your analysis</li>
+<li><code>data</code> : the data (data frame) you included in your analysis</li>
 <li><code>par_names</code>: parameter names</li>
 <li><code>n_pars</code>: number of parameters</li>
 <li><code>n_subjects</code>: number of subjects</li>
@@ -753,7 +756,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </div>
 <div id="genppdatafunc" class="section level2">
 <h2><span class="header-section-number">3.5</span> Simulating Posterior Predictive Data</h2>
-<p>We can generate posterior predictive data by setting <code>sample = TRUE</code> in our log-likelihood function to generate response times and responses <i>given</i> the posterior parameter estimates for each subject. To do this, we use the <code>gen_pp_data</code> function below, which calls our log-likelihood function embedded in our <code>sampled</code> object. The <code>gen_pp_data</code> function takes four arguments:</p>
+<p>We can generate posterior predictive data by setting <code>sample = TRUE</code> in our log-likelihood function to generate response times and responses <i>given</i> the posterior parameter estimates for each subject. To do this, we use the <code>gen_pp_data</code> function below, which calls the log-likelihood function embedded in our <code>sampled</code> object. The <code>gen_pp_data</code> function takes four arguments:</p>
 <ul>
 <li><code>sampled</code>: is the object/output from the PMwG sampler</li>
 <li><code>n</code>: the number of posterior samples</li>

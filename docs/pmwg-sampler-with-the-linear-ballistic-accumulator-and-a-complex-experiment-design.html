@@ -157,7 +157,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="4" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><i class="fa fa-check"></i><b>4</b> PMwG sampler with the Linear Ballistic Accumulator and a complex experiment design</a><ul>
 <li class="chapter" data-level="4.1" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#writing-the-lba-log-likelihood-function-for-the-wagenmakers-data-set"><i class="fa fa-check"></i><b>4.1</b> Writing the LBA log-likelihood function for the Wagenmakers data set</a></li>
 <li class="chapter" data-level="4.2" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#wagFastll"><i class="fa fa-check"></i><b>4.2</b> Fast LBA Log-likelihood function</a></li>
-<li class="chapter" data-level="4.3" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#testing-the-log-likelihood-function"><i class="fa fa-check"></i><b>4.3</b> Testing the log-likelihood function</a></li>
+<li class="chapter" data-level="4.3" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#pmwg-framework-1"><i class="fa fa-check"></i><b>4.3</b> PMwG Framework</a><ul>
+<li class="chapter" data-level="4.3.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#run-sampler"><i class="fa fa-check"></i><b>4.3.1</b> Running the sampler</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#genppdataWag"><i class="fa fa-check"></i><b>4.4</b> Simulating Posterior Predictive Data</a></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="troubleshoot.html"><a href="troubleshoot.html"><i class="fa fa-check"></i><b>5</b> Troubleshooting PMwG errors</a><ul>
 <li class="chapter" data-level="5.1" data-path="troubleshoot.html"><a href="troubleshoot.html#how-to-write-a-log-likelihood-function"><i class="fa fa-check"></i><b>5.1</b> How to write a log-likelihood function</a><ul>
@@ -340,13 +343,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
     s =<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>)</code></pre></td></tr></table></div>
 <p>It is important to check the order of your levels for the response factor to ensure you correctly order your <code>v.nw</code> and <code>v.w</code> accumulators in the <code>vs</code> vector.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">levels</span>(data<span class="op">$</span>resp)</code></pre></div>
-<pre><code>## [1] &quot;NW&quot; &quot;W&quot;</code></pre>
-<p>If we look at our levels for response, we see the order is <code>NW</code> and <code>W</code> respectively. This means that <code>NW</code> is coded as <code>1</code> and <code>W</code> is coded as <code>2</code>. Therefore, on line 36, if <code>data$resp[i] = N.W</code> the level is 1, and the first accumulator in position 1 will be chosen. If <code>data$resp[i] = W</code> this tells the sampler that the accumulator in position 2 will be chosen. In other words, the parameters will map correctly because <code>v.nw</code> is in position 1 and <code>v.w</code> in position 2 in our <code>vs</code> vector.</p>
+<pre><code>## [1] &quot;1&quot; &quot;2&quot;</code></pre>
+<p>If we look at our levels for response, we see the order is <code>NW</code> and <code>W</code> respectively. This means that <code>NW</code> is coded as <code>1</code> and <code>W</code> is coded as <code>2</code>. Therefore, on line 36, if <code>data$resp[i] = N.W</code> then the level is 1, and the first accumulator in position 1 will be chosen. If <code>data$resp[i] = W</code> this tells the sampler that the accumulator in position 2 will be chosen. In other words, the parameters will map correctly because <code>v.nw</code> is in position 1 and <code>v.w</code> in position 2 in our <code>vs</code> vector.</p>
 <p>The remaining lines of the log-likelihood function are identical to the function used in the Forstmann example in <a href="forstmannChapter.html#forstmannChapter">chapter 3</a>, except the threshold parameter <code>bs</code> (line 29 and 44) is a list with two elements (<code>b = bs</code>)</p>
 </div>
 <div id="wagFastll" class="section level2">
 <h2><span class="header-section-number">4.2</span> Fast LBA Log-likelihood function</h2>
-<p>Here is a faster log-likelihood function that only calls <code>dLBA</code> once when <code>sample = FALSE</code>.</p>
+<p>As we mentioned in section <a href="forstmannChapter.html#fstLBALL">3.3.1</a>, the data is large and the dLBA function takes some time to run, so the log-likelihood code above is computationally inefficient. There are several ways to improve the log-likelihood’s performance; in our example below, we reduce the number of calls to dLBA to one call. We do this by passing a list of dLBA parameter values for the length of the data.</p>
+<p>Note: When generating posterior predictive data, the rLBA function is still executed for each row of data; however, it is only executed several times, so computational efficiency is uncompromised.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fast_lba_ll &lt;-<span class="st"> </span><span class="cf">function</span>(x, data, <span class="dt">sample =</span> <span class="ot">FALSE</span>) {
   x &lt;-<span class="st"> </span><span class="kw">exp</span>(x)
   <span class="cf">if</span> (<span class="kw">any</span>(data<span class="op">$</span>rt <span class="op">&lt;</span><span class="st"> </span>x[<span class="st">&quot;t0&quot;</span>])) {
@@ -362,11 +366,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
    <span class="cf">if</span> (sample) {
     <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(data)) {
     A =<span class="st"> </span>x[<span class="st">&quot;A&quot;</span>]
-    b.w =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, data<span class="op">$</span>prop[i], <span class="st">&quot;.W&quot;</span>)] <span class="op">+</span><span class="st"> </span>A
-    b.nw =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, data<span class="op">$</span>prop[i], <span class="st">&quot;.NW&quot;</span>)] <span class="op">+</span><span class="st"> </span>A
+    b.w =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, data<span class="op">$</span>cond[i], <span class="st">&quot;.W&quot;</span>)] <span class="op">+</span><span class="st"> </span>A
+    b.nw =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, data<span class="op">$</span>cond[i], <span class="st">&quot;.NW&quot;</span>)] <span class="op">+</span><span class="st"> </span>A
     bs =<span class="st"> </span><span class="kw">list</span>(b.nw, b.w)
-    v.w =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;v.&quot;</span>, data<span class="op">$</span>freq[i], <span class="st">&quot;.W&quot;</span>)]
-    v.nw =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;v.&quot;</span>, data<span class="op">$</span>freq[i], <span class="st">&quot;.NW&quot;</span>)]
+    v.w =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;v.&quot;</span>, data<span class="op">$</span>stim[i], <span class="st">&quot;.W&quot;</span>)]
+    v.nw =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;v.&quot;</span>, data<span class="op">$</span>stim[i], <span class="st">&quot;.NW&quot;</span>)]
     vs =<span class="st"> </span><span class="kw">c</span>(v.nw, v.w)
     t0 =<span class="st"> </span>x[<span class="st">&quot;t0&quot;</span>]
     s =<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>)
@@ -384,20 +388,20 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span>tmp<span class="op">$</span>resp
     }
   } <span class="cf">else</span> {
-    prop &lt;-<span class="st"> </span><span class="kw">levels</span>(data<span class="op">$</span>prop)
-    freq &lt;-<span class="st"> </span><span class="kw">levels</span>(data<span class="op">$</span>freq)
+    cond &lt;-<span class="st"> </span><span class="kw">levels</span>(data<span class="op">$</span>cond)
+    stim &lt;-<span class="st"> </span><span class="kw">levels</span>(data<span class="op">$</span>stim)
 
     blist &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="st">&quot;b.nw&quot;</span> =<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data)), <span class="st">&quot;b.w&quot;</span> =<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data)))
     vlist &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="st">&quot;v.nw&quot;</span> =<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data)), <span class="st">&quot;v.w&quot;</span> =<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data)))
 
-    <span class="cf">for</span> (p <span class="cf">in</span> prop) {
-      <span class="cf">for</span> (f <span class="cf">in</span> freq) {
-          use &lt;-<span class="st"> </span>data<span class="op">$</span>prop <span class="op">==</span><span class="st"> </span>p <span class="op">&amp;</span><span class="st"> </span>data<span class="op">$</span>freq <span class="op">==</span><span class="st"> </span>f 
+    <span class="cf">for</span> (c <span class="cf">in</span> cond) {
+      <span class="cf">for</span> (s <span class="cf">in</span> stim) {
+          use &lt;-<span class="st"> </span>data<span class="op">$</span>cond <span class="op">==</span><span class="st"> </span>c <span class="op">&amp;</span><span class="st"> </span>data<span class="op">$</span>stim <span class="op">==</span><span class="st"> </span>s 
           <span class="cf">if</span> (<span class="kw">any</span>(use)) {
-            b.w =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, p, <span class="st">&quot;.W&quot;</span>)] <span class="op">+</span><span class="st"> </span>x[<span class="st">&quot;A&quot;</span>]
-            b.nw =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, p, <span class="st">&quot;.NW&quot;</span>)] <span class="op">+</span><span class="st"> </span>x[<span class="st">&quot;A&quot;</span>]
-            v.w =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;v.&quot;</span>, f, <span class="st">&quot;.W&quot;</span>)]
-            v.nw =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;v.&quot;</span>, f, <span class="st">&quot;.NW&quot;</span>)]
+            b.w =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, c, <span class="st">&quot;.W&quot;</span>)] <span class="op">+</span><span class="st"> </span>x[<span class="st">&quot;A&quot;</span>]
+            b.nw =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, c, <span class="st">&quot;.NW&quot;</span>)] <span class="op">+</span><span class="st"> </span>x[<span class="st">&quot;A&quot;</span>]
+            v.w =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;v.&quot;</span>, s, <span class="st">&quot;.W&quot;</span>)]
+            v.nw =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;v.&quot;</span>, s, <span class="st">&quot;.NW&quot;</span>)]
             blist<span class="op">$</span>b.nw[use] =<span class="st"> </span>b.nw
             blist<span class="op">$</span>b.w[use] =<span class="st"> </span>b.w
             vlist<span class="op">$</span>v.nw[use] =<span class="st"> </span>v.nw
@@ -425,33 +429,171 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
     out &lt;-<span class="st"> </span><span class="kw">sum</span>(<span class="kw">log</span>(out))
     <span class="kw">return</span>(out)
   }
-  }</code></pre></div>
+}</code></pre></div>
+<p>You should improve your log-likelihood’s performance as you see fit. When you’re confident that your log-likelihood code functions correctly, we suggest saving it as a separate script so it can be sourced and loaded when running the sampler. If you’re learning how to write log-likelihood functions, take a look at our <a href="troubleshoot.html#troubleshoot">troubleshooting section</a> for tips. In our experience, a very large proportion of problems with sampling and inference are caused by inadequate checking and care in the likelihood function.</p>
 </div>
-<div id="testing-the-log-likelihood-function" class="section level2">
-<h2><span class="header-section-number">4.3</span> Testing the log-likelihood function</h2>
-<p>Here we cover tests to see if there are any errors in internal consistency with our loglikelihood function.</p>
-<p>I’ve assigned somewhat sensible x values, since I expect the threshold for the word accumulator to be lower than the threhold for the non-word accumulator, when 75% of the stimuli are words, and the opposite when 75% of the stimuli are non-words. I also expect people to have a much larger drift for the word accumulator when the stimului are high frequency words. These are just some of the assumptions ive made in my chosen values bellow.</p>
-<p>Line (p) will give me a value for my log-likelihood from the function.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">c</span>(<span class="st">&quot;A&quot;</span> =<span class="st"> </span><span class="dv">2</span>,
-           <span class="st">&quot;b.nw.NW&quot;</span> =<span class="st"> </span><span class="dv">1</span>,
-           <span class="st">&quot;b.nw.W&quot;</span> =<span class="st"> </span><span class="dv">2</span>,
-           <span class="st">&quot;b.w.NW&quot;</span> =<span class="st"> </span><span class="fl">2.5</span>,
-           <span class="st">&quot;b.w.W&quot;</span> =<span class="st"> </span>.<span class="dv">5</span>,
-           <span class="st">&quot;v.hf.NW&quot;</span> =<span class="st"> </span><span class="fl">1.5</span>,
-           <span class="st">&quot;v.hf.W&quot;</span> =<span class="st"> </span><span class="dv">5</span>,
-           <span class="st">&quot;v.lf.NW&quot;</span> =<span class="st"> </span><span class="fl">2.5</span>,
-           <span class="st">&quot;v.lf.W&quot;</span> =<span class="st"> </span><span class="fl">3.5</span>,
-           <span class="st">&quot;v.vlf.NW&quot;</span> =<span class="st"> </span><span class="dv">2</span>,
-           <span class="st">&quot;v.vlf.W&quot;</span> =<span class="st"> </span><span class="dv">3</span>,
-           <span class="st">&quot;v.nw.NW&quot;</span> =<span class="st"> </span><span class="dv">5</span>,
-           <span class="st">&quot;v.nw.W&quot;</span> =<span class="st"> </span><span class="dv">2</span>,
-           <span class="st">&quot;t0&quot;</span> =<span class="st"> </span>.<span class="dv">19</span>)
-         )
-
-<span class="kw">tw_lba_ll</span>(x, data, <span class="dt">sampl =</span> <span class="ot">FALSE</span>)</code></pre></div>
-<pre><code>## [1] -19297.84</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">fast_lba_ll</span>(x, data, <span class="dt">sample =</span> <span class="ot">FALSE</span>)</code></pre></div>
-<pre><code>## [1] -838187</code></pre>
+<div id="pmwg-framework-1" class="section level2">
+<h2><span class="header-section-number">4.3</span> PMwG Framework</h2>
+<p>Now that we have a log-likelihood function, we can set up the <code>PMwG</code> sampler. To run the sampler, we simply follow the procedure from <a href="pmwg-sampler-and-signal-detection-theory.html#sdtOutline">chapter 2</a> and <a href="forstmannChapter.html#forstmannChapter">chapter 3</a>; we need to set up a vector of model parameter names, create a <code>priors</code> object, source our LBA log-likelihood script and then create our <code>sampler</code> object.</p>
+<p>First, load the <code>PMwG</code> library and data…</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(pmwg)
+<span class="kw">load</span>(<span class="st">&quot;wagenmakers_2008.RData&quot;</span>)</code></pre></div>
+<p>Let’s create a vector of model parameter names. Remember that this must match the names and number of parameters you include in your log-likelihood function. You can name this vector as you wish; however, in our example, we name it <code>pars</code>.</p>
+<p>For the Wagenmakers dataset, we require four threshold parameters because we assume that both word proportion (<code>cond</code>) and response (<code>resp</code>) have an effect on level of caution (i.e. a threshold parameter for each combination of word proportion and response). We also need a <i> drift rate</i> for each cell of our design i.e. eight drift rate parameters; one for each level of <code>word frequency</code> (<code>hf</code>,<code>lf</code>,<code>vlf</code>,<code>nw</code>) for the Word response accumulator <code>.W</code>, and the non-word response accumulator <code>.NW</code>).</p>
+<p>We’ve made a decision to set the <code>sv</code> to 1 to satisfy the scaling properties of the model. As such, we haven’t included the <code>sv</code> parameter in the <code>pars</code> vector - it is found in the LBA’s log-likelihood function (see below).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pars &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;A&quot;</span>,
+          <span class="st">&quot;b.nw.NW&quot;</span>,
+          <span class="st">&quot;b.nw.W&quot;</span>,
+          <span class="st">&quot;b.w.NW&quot;</span>,
+          <span class="st">&quot;b.w.W&quot;</span>,
+          <span class="st">&quot;v.hf.NW&quot;</span>,
+          <span class="st">&quot;v.hf.W&quot;</span>,
+          <span class="st">&quot;v.lf.NW&quot;</span>,
+          <span class="st">&quot;v.lf.W&quot;</span>,
+          <span class="st">&quot;v.vlf.NW&quot;</span>,
+          <span class="st">&quot;v.vlf.W&quot;</span>,
+          <span class="st">&quot;v.nw.NW&quot;</span>,
+          <span class="st">&quot;v.nw.W&quot;</span>,
+          <span class="st">&quot;t0&quot;</span>)</code></pre></div>
+<p>For the mean of the distribution for random effects (theta_mu), we assume a multivariate normal prior. The user can specify the mean and variance of this prior distribution using the object <code>priors</code>, which has elements <code>theta_mu_mean</code> and <code>theta_mu_var</code>. A typical setting for LBA models is to set <code>theta_mu_mean</code> to be a zero vector and to set <code>theta_mu_var</code> to be a multiple of the identity matrix, e.g. with 9 on the diagonal (representing a standard deviation of 3 for the subject-level means in the prior).</p>
+<p>We create our <code>priors</code> object; a list that contains two components:</p>
+<ul>
+<li><code>theta_mu_mean</code> a vector containing the prior for model parameter means</li>
+<li><code>theta_mu_var</code> the prior covariance matrix for model parameters.</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">priors &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">theta_mu_mean =</span> <span class="kw">rep</span>(<span class="dv">0</span>, <span class="kw">length</span>(pars)),
+  <span class="dt">theat_mu_var =</span> <span class="kw">diag</span>(<span class="kw">rep</span>(<span class="dv">1</span>, <span class="kw">length</span>(pars)))
+)</code></pre></div>
+<p>Now source and load your log-likelihood script <i>before</i> you create the sampler object.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">source</span>(<span class="dt">file =</span> <span class="st">&quot;fast_lba_ll.R&quot;</span>)</code></pre></div>
+<p>Next we specify the PMwG <code>sampler</code> object. The <code>pmwgs</code> function takes a set of arguments (listed below) and returns a list containing the required components for performing the particle metropolis within Gibbs steps.</p>
+<ul>
+<li><code>data =</code> your data - a data frame (e.g.<code>wagenmakers</code>) with a column for participants called <b><code>subject</code></b></li>
+<li><code>pars =</code> the model parameters to be used (e.g.<code>pars</code>)</li>
+<li><code>prior =</code> the priors to be used (e.g.<code>priors</code>)</li>
+<li><code>ll_func =</code> name of log-likelihood function to be used (e.g.<code>fast_lba_ll</code>)</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sampler &lt;-<span class="st"> </span><span class="kw">pmwgs</span>(<span class="dt">data =</span> data,
+                 <span class="dt">pars =</span> pars,
+                 <span class="dt">prior =</span> priors,
+                 <span class="dt">ll_func =</span> fast_lba_ll
+                 )</code></pre></div>
+<div id="run-sampler" class="section level3">
+<h3><span class="header-section-number">4.3.1</span> Running the sampler</h3>
+<p>Setup is now complete and we can run the sampler. First, we use the <code>init</code> function to generate initial start points for the random effects and store them in the <code>sampler</code> object. If you wanted you could include start points for your chain. We will not specify start points as we did in the Forstmann three threshold model. This is why have not included a <code>start_mu</code> and a <code>start_sig</code>. Instead, the start points will be drawn from the prior.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sampler &lt;-<span class="st"> </span><span class="kw">init</span>(sampler)</code></pre></div>
+<p><br> To run the sampler, we use the <code>run_stage</code> function. To execute the <code>run_stage</code> function, you <b>must</b> provide values for two arguments:</p>
+<ul>
+<li><code>pmwgs =</code> the <code>sampler</code> object including parameters that were created by the <code>init</code> function above.</li>
+<li><code>stage =</code> the sampling stage (In order; <code>&quot;burn&quot;</code>, <code>&quot;adapt&quot;</code> or <code>&quot;sample&quot;</code>).</li>
+</ul>
+<p>The following arguments listed below are optional:</p>
+<ul>
+<li><code>iter =</code> is the number of iterations for the sampling stage. For burn-in, it is important to have enough iterations that the chains converge on the posterior distribution. Default = 1000.</li>
+<li><code>particles =</code> is the number of proposals (particles) generated for each random effect, on each iteration. Default = 1000, but set smaller or larger in order to target a reasonable acceptance rate (i.e. 10-60%).</li>
+<li><code>display_progress =</code> display a progress bar during sampling</li>
+<li><code>epsilon =</code> is a value greater than 0 which scales the variance of the proposal distribution. Smaller values (i.e. narrower proposal distributions) can lead to higher acceptance rates, but slower coverage of the posterior. Smaller values are especially useful when the number of random effects is large (e.g. &gt;10). The default is adaptively chosen based on the number of parameters.</li>
+<li><code>n_cores =</code> the number of cores on a machine you wish to use to run the sampler. This allows sampling to be run across cores (parallelising for subjects). Default = 1. <b> Note:</b> Setting <code>n_cores</code> greater than 1 is only permitted on Linux and Mac OS X machines.</li>
+</ul>
+<p><br> The first sampling stage is burn-in <code>&quot;burn&quot;</code>. The burn-in stage allows time for the sampler to move from the (arbitrary) start points that were provided by the user to the mode of the posterior distribution. This can be checked by examining the chains for stationarity. We take the <code>sampler</code> object created in the <code>init</code> function above, set the stage argument to <code>&quot;burn&quot;</code> and assign the outcome to an object called <code>burned</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">burned &lt;-<span class="st"> </span><span class="kw">run_stage</span>(sampler, 
+                    <span class="dt">stage =</span> <span class="st">&quot;burn&quot;</span>,
+                    <span class="dt">iter =</span> <span class="dv">1000</span>,
+                    <span class="dt">particles =</span> <span class="dv">10000</span>,
+                    <span class="dt">epsilon =</span> .<span class="dv">3</span>
+                    )</code></pre></div>
+<p>Next is the adaptation stage <code>&quot;adapt&quot;</code>. The adaptation stage draws samples using a simple, but relatively inefficient proposal distribution (the same proposal distribution as the <code>&quot;burn&quot;</code>stage). Enough samples are drawn to allow the algorithm to estimate a much more sophisticated and efficient proposal distribution, using conditional normal distributions. We take the <code>burned</code> object created in the previous stage and set iterations <code>iter =</code> to a high number (e.g. <code>10000</code>), as it should exit before reaching this point. If it doesn’t, there is likely an issue with acceptance rates, the likelihood function or limited data to operate on (i.e. few trials in some conditions). Here, we have saved the outcome of the adaptation stage to an object called <code>adapted</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">adapted &lt;-<span class="st"> </span><span class="kw">run_stage</span>(burned, 
+                     <span class="dt">stage =</span> <span class="st">&quot;adapt&quot;</span>, 
+                     <span class="dt">iter =</span> <span class="dv">10000</span>, 
+                     <span class="dt">particles =</span> <span class="dv">10000</span>,
+                     <span class="dt">epsilon =</span> .<span class="dv">3</span>
+                     )</code></pre></div>
+<p>The final stage is the sampling stage <code>&quot;sample&quot;</code>. The sampling stage uses the sophisticated and adaptive conditional normal proposal distributions. This allows for very efficient sampling, using far fewer particles. Samples from this stage are taken from the ‘posterior distribution’ and stored in the <code>sampled</code> object.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sampled &lt;-<span class="st"> </span><span class="kw">run_stage</span>(adapted, 
+                     <span class="dt">stage =</span> <span class="st">&quot;sample&quot;</span>,
+                     <span class="dt">iter =</span> <span class="dv">1000</span>, 
+                     <span class="dt">particles =</span> <span class="dv">1000</span>,
+                     <span class="dt">epsilon =</span> .<span class="dv">3</span>
+                     )</code></pre></div>
+<p>The <code>sampled</code> object includes all samples from the <code>&quot;sample&quot;</code> stage above and the following elements:</p>
+<ul>
+<li><code>data</code> : the data (data frame) you included in your analysis</li>
+<li><code>par_names</code>: parameter names</li>
+<li><code>n_pars</code>: number of parameters</li>
+<li><code>n_subjects</code>: number of subjects</li>
+<li><code>subjects</code>: subject IDs (1:n)</li>
+<li><code>prior</code>: list of the prior used</li>
+<li><code>ll_func</code>: the likelihood function specified</li>
+<li><code>samples</code>:</li>
+<li><code>alpha</code>: three dimensional array of random effects draws (dim = parameters x subjects x samples)</li>
+<li><code>theta_mu</code>: two dimensional array of parameter draws (dim = parameters x samples)</li>
+<li><code>theta_sig</code>: three dimensional array of covariance matrix draws (dim = covariance x samples)</li>
+<li><code>stage</code>: specifies the stage the sample is from (length = samples)</li>
+<li><code>subj_ll</code>: likelihood value for each subject for each iteration (dim = subject x samples)</li>
+<li><code>a_half</code>: the parameter used in calculating the inverse Wishart (dim = parameters x samples)</li>
+<li><code>idx</code>: total number of samples</li>
+<li><code>last_theta_sig_inv</code>: the inverse of the last sample for theta_sig (the variance-covariance matrix).</li>
+</ul>
+<p>You should save your sampled object at this point.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">save</span>(sampled, <span class="dt">file =</span> <span class="st">&quot;wagSamp.RData&quot;</span>)</code></pre></div>
+</div>
+</div>
+<div id="genppdataWag" class="section level2">
+<h2><span class="header-section-number">4.4</span> Simulating Posterior Predictive Data</h2>
+<p>We can generate posterior predictive data by setting <code>sample = TRUE</code> in our log-likelihood function to generate response times and responses <i>given</i> the posterior parameter estimates for each subject. To do this, we use the <code>gen_pp_data</code> function below, which calls the log-likelihood function embedded in our <code>sampled</code> object. The <code>gen_pp_data</code> function takes four arguments:</p>
+<ul>
+<li><code>sampled</code>: is the object/output from the PMwG sampler</li>
+<li><code>n</code>: the number of posterior samples</li>
+<li><code>ll_func =</code>: the log-likelihood function embedded in the <code>sampled</code> object</li>
+<li><code>rbind.data =</code>: bind the rows of each predictive sample into a rectangular array, or leave as a list.</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gen_pp_data &lt;-<span class="st"> </span><span class="cf">function</span> (sampled, n, <span class="dt">ll_func =</span> sampled<span class="op">$</span>ll_func, <span class="dt">rbind.data =</span> <span class="ot">TRUE</span>) {
+  sampled_stage &lt;-<span class="st"> </span><span class="kw">length</span>(sampled<span class="op">$</span>samples<span class="op">$</span>stage[sampled<span class="op">$</span>samples<span class="op">$</span>stage <span class="op">==</span><span class="st"> &quot;sample&quot;</span>])
+  iterations &lt;-<span class="st"> </span><span class="kw">round</span>(<span class="kw">seq</span>(<span class="dt">from =</span> (sampled<span class="op">$</span>samples<span class="op">$</span>idx <span class="op">-</span><span class="st"> </span>sampled_stage),
+                            <span class="dt">to =</span> sampled<span class="op">$</span>samples<span class="op">$</span>idx,
+                            <span class="dt">length.out =</span> n))
+  data &lt;-<span class="st"> </span>sampled<span class="op">$</span>data
+  S &lt;-<span class="st"> </span>sampled<span class="op">$</span>n_subjects
+  pp_data &lt;-<span class="st"> </span><span class="kw">list</span>()
+  
+    <span class="cf">for</span> (s <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>S){
+       <span class="kw">print</span>(<span class="kw">paste0</span>(<span class="st">&quot;subject&quot;</span>, s))
+      <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(iterations)) {
+        <span class="kw">print</span>(i)
+        x &lt;-<span class="st"> </span>sampled<span class="op">$</span>samples<span class="op">$</span>alpha[, s, iterations[i]]
+        <span class="kw">names</span>(x) &lt;-<span class="st"> </span>pars
+        out &lt;-<span class="st"> </span><span class="kw">ll_func</span>(<span class="dt">x =</span> x, 
+                       <span class="dt">data =</span> data[data<span class="op">$</span>subject <span class="op">==</span><span class="st"> </span>s, ],
+                       <span class="dt">sample =</span> <span class="ot">TRUE</span>)
+        
+        <span class="cf">if</span> (i <span class="op">==</span><span class="st"> </span><span class="dv">1</span>){
+          pp_data[[s]] =<span class="st"> </span><span class="kw">cbind</span>(<span class="dt">pp_subj =</span> i, out)
+        }
+        <span class="cf">else</span> {
+          pp_data[[s]] =<span class="st"> </span><span class="kw">rbind</span>(pp_data[[s]],
+                         <span class="kw">cbind</span>(<span class="dt">pp_subj =</span> i, out))
+        }
+      }
+    }
+  
+    <span class="cf">if</span> (rbind.data){
+    tidy_pp_data &lt;-<span class="st"> </span><span class="kw">do.call</span>(rbind, pp_data)  
+    <span class="kw">return</span>(tidy_pp_data)
+    }
+    <span class="cf">else</span> {
+      <span class="kw">return</span>(pp_data)
+    }
+}</code></pre></div>
+<!-- ```{r loadWagSamp, include = FALSE} -->
+<!-- load("wagenmakers2008_sampled.RData") -->
+<!-- ``` -->
+<!-- We generate 20 posterior predictive data samples.  -->
+<!-- ```{r genppdata, eval=FALSE} -->
+<!-- wagpp_data <- gen_pp_data(sampled, n = 20) -->
+<!-- ``` -->
+<!-- The returned data is a matrix with the same dimensions and names as `wagenmakers` -- with the addition of `pp_iter` column. `pp_iter` is the iteration of posterior sample (in this example `i = 1:20`) for the corresponding subject. We now have two matrices based on samples from either model. The response (`resp`) and response time (`rt`) columns now contain posterior predictive data. -->
+<!-- In the next section, we will use the posterior predictive data to assess descriptive adequacy. -->
 
 </div>
 </div>
