@@ -1230,9 +1230,12 @@ pp_var[, <span class="kw">c</span>(<span class="st">&quot;Q25&quot;</span>, <spa
                    <span class="dv">1</span>,
                    mean)
  
-  <span class="co"># Mean of each parameter across iterations. </span>
+  <span class="co"># Mean of each parameter across iterations.</span>
   <span class="co"># Keep dimensions for parameters and subjects</span>
-  mean_pars &lt;-<span class="st"> </span><span class="kw">t</span>(<span class="kw">apply</span>(sampled<span class="op">$</span>samples<span class="op">$</span>alpha, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, mean))
+  mean_pars &lt;-<span class="st"> </span><span class="kw">t</span>(<span class="kw">apply</span>(sampled<span class="op">$</span>samples<span class="op">$</span>alpha[,, sampled<span class="op">$</span>samples<span class="op">$</span>stage <span class="op">==</span><span class="st"> &quot;sample&quot;</span>],
+                       <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>,
+                       mean))
+
  
   <span class="co"># Name &#39;mean_pars&#39; so it can be used by the log_like function</span>
   <span class="kw">colnames</span>(mean_pars) &lt;-<span class="st"> </span>sampled<span class="op">$</span>par_names
@@ -1267,12 +1270,12 @@ pp_var[, <span class="kw">c</span>(<span class="st">&quot;Q25&quot;</span>, <spa
 sampled3b &lt;-<span class="st"> </span>sampled
 <span class="kw">pmwg_DIC</span>(<span class="dt">sampled =</span> sampled3b)</code></pre></div>
 <pre><code>             DIC   Effective parameters 
-     -15431.90924              41.38816 </code></pre>
+     -15381.53339              91.76401 </code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">load</span>(<span class="st">&quot;forstmann1b_sampled.RData&quot;</span>)
 sampled1b &lt;-<span class="st"> </span>sampled
 <span class="kw">pmwg_DIC</span>(<span class="dt">sampled =</span> sampled1b)</code></pre></div>
 <pre><code>             DIC   Effective parameters 
-    -10818.301739              5.489469 </code></pre>
+     -10778.94733              44.84388 </code></pre>
 <p>The three threshold model has a lower DIC value than the single threshold model, indicating a better explanation of the data. Based on the graphical evidence and the DIC, we can be confident that the three threshold model (i.e the model where threshold is varied with speed and accuracy instructions) is a better fit to our data than the single threshold model.</p>
 </div>
 </div>
