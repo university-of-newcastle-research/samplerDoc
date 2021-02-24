@@ -181,7 +181,7 @@ Participants were asked to indicate whether a letter string was a <i>word</i> or
 
 
 ```{r setupWagen, include=FALSE}
-load("wagenmakers_2008.RData")
+load("wagenmakers2008.RData")
 wgnmks2008 <- wagenmakers
 ```
 

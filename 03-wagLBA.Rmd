@@ -6,7 +6,7 @@ A description of the Wagenmakers experiment and data is covered in [chapter 2](#
 
 
 ```{r chpt4data, include = FALSE}
-load("wagenmakers_2008.RData")
+load("wagenmakers2008.RData")
 ```
 
 ## Writing the LBA log-likelihood function for the Wagenmakers data set 
@@ -127,79 +127,48 @@ fast_lba_ll <- function(x, data, sample = FALSE) {
   if (any(data$rt < x["t0"])) {
     return(-1e10)
   }
-  
-  if (sample) {
-    data$rt <- rep(NA, nrow(data))
-    data$resp <- rep(NA, nrow(data))
-  } else {
-    out <- numeric(nrow(data))
-  }
-   if (sample) {
-    for (i in 1:nrow(data)) {
-    A = x["A"]
-    b.w = x[paste0("b.", data$cond[i], ".W")] + A
-    b.nw = x[paste0("b.", data$cond[i], ".NW")] + A
-    bs = list(b.nw, b.w)
-    v.w = x[paste0("v.", data$stim[i], ".W")]
-    v.nw = x[paste0("v.", data$stim[i], ".NW")]
-    vs = c(v.nw, v.w)
-    t0 = x["t0"]
-    s = c(1, 1)
+  b.w = b.nw = v.w = v.nw = out = numeric(nrow(data))
+    for (p in unique(data$prop)) {
+      use <- data$prop == p  
+      b.w[use] = x[paste0("b.", p, ".W")] + x["A"]
+      b.nw[use] = x[paste0("b.", p, ".NW")] + x["A"]
+    }
+    for (f in unique(data$freq)) {
+      use <- data$freq == f 
+      v.w[use] = x[paste0("v.", f, ".W")]
+      v.nw[use] = x[paste0("v.", f, ".NW")]
+        }
+    bs = list(b.nw,b.w)
+    vs = list(v.nw,v.w)
     
-    tmp <- rLBA(n = 1,
-                A = A,
-                b = bs,
-                mean_v = vs,
-                sd_v = s,
-                t0 = t0,
-                dist = "norm",
-                silent = TRUE
-                )
-      data$rt[i] <- tmp$rt
-      data$resp[i] <- tmp$resp
-    }
-  } else {
-    cond <- levels(data$cond)
-    stim <- levels(data$stim)
-
-    blist <- list("b.nw" = numeric(nrow(data)), "b.w" = numeric(nrow(data)))
-    vlist <- list("v.nw" = numeric(nrow(data)), "v.w" = numeric(nrow(data)))
-
-
-    for (c in cond) {
-      for (s in stim) {
-          use <- data$cond == c & data$stim == s 
-          if (any(use)) {
-            b.w = x[paste0("b.", c, ".W")] + x["A"]
-            b.nw = x[paste0("b.", c, ".NW")] + x["A"]
-            v.w = x[paste0("v.", s, ".W")]
-            v.nw = x[paste0("v.", s, ".NW")]
-            blist$b.nw[use] = b.nw
-            blist$b.w[use] = b.w
-            vlist$v.nw[use] = v.nw
-            vlist$v.w[use] = v.w
-          }
-      }
-    }
+  if (!sample){
     out <- dLBA(rt = data$rt,
-                resp = data$resp,
+                resp = data$response,
                 A = x["A"],
-                b =  blist,
+                b = bs,
                 t0 = x["t0"],
-                mean_v = vlist,
-                sd_v = c(1, 1),
+                mean_v = vs,
+                sd_v = c(1, 1), 
                 distribution = "norm",
-                silent = TRUE
-    )
-    }
- 
-  if (sample) {
-    return(data)
-  } else {
-    bad <- (out < 1e-10) | (!is.finite(out))
-    out[bad] <- 1e-10
-    out <- sum(log(out))
+                silent = TRUE)
+    out <- sum(log(pmax(out,1e-10)))
     return(out)
+  } else {
+    data$rt <- NA
+    data$response <- NA
+    for (i in 1:nrow(data)){
+      tmp<- rLBA(n = 1,
+                 A = x["A"],
+                 b = list(b.nw[i], b.w[i]),
+                 t0 = x["t0"],
+                 mean_v = list(v.nw[i], v.w[i]),
+                 sd_v = c(1, 1),
+                 distribution = "norm",
+                 silent = TRUE)
+      data$rt[i] <- tmp$rt
+      data$response[i] <- tmp$resp
+    }
+      return(data)
   }
 }
 ```
@@ -215,7 +184,7 @@ First, load the `PMwG` library and data...
 
 ```{r loadpacks, include = TRUE}
 library(pmwg)
-load("wagenmakers_2008.RData")
+load("wagenmakers2008.RData")
 ```
 
 Let's create a vector of model parameter names. Remember that this must match the names and number of parameters you include in your log-likelihood function. You can name this vector as you wish; however, in our example, we name it `pars`. 
@@ -226,19 +195,19 @@ We've made a decision to set the `sv` to 1 to satisfy the scaling properties of 
 
 ```{r wagLBApars, include = TRUE}
 pars <- c("A",
-          "b.nw.NW",
-          "b.nw.W",
-          "b.w.NW",
-          "b.w.W",
-          "v.hf.NW",
-          "v.hf.W",
-          "v.lf.NW",
-          "v.lf.W",
-          "v.vlf.NW",
-          "v.vlf.W",
-          "v.nw.NW",
-          "v.nw.W",
-          "t0")
+         "b.nw.NW",
+         "b.nw.W",
+         "b.w.NW",
+         "b.w.W",
+         "v.hf.NW",
+         "v.hf.W",
+         "v.lf.NW",
+         "v.lf.W",
+         "v.vlf.NW",
+         "v.vlf.W",
+         "v.nw.NW",
+         "v.nw.W",
+         "t0")
 ```
 
 For the mean of the distribution for random effects (theta_mu), we assume a multivariate normal prior. The user can specify the mean and variance of this prior distribution using the object `priors`, which has elements `theta_mu_mean` and `theta_mu_var`. A typical setting for LBA models is to set `theta_mu_mean` to be a zero vector and to set `theta_mu_var` to be a multiple of the identity matrix, e.g. with 9 on the diagonal (representing a standard deviation of 3 for the subject-level means in the prior). 
@@ -392,11 +361,11 @@ gen_pp_data <- function (sampled, n, ll_func = sampled$ll_func, rbind.data = TRU
                        sample = TRUE)
         
         if (i == 1){
-          pp_data[[s]] = cbind(pp_subj = i, out)
+          pp_data[[s]] = cbind(pp_iter = i, out)
         }
         else {
           pp_data[[s]] = rbind(pp_data[[s]],
-                         cbind(pp_subj = i, out))
+                         cbind(pp_iter = i, out))
         }
       }
     }
@@ -412,15 +381,167 @@ gen_pp_data <- function (sampled, n, ll_func = sampled$ll_func, rbind.data = TRU
 ```
 
 
-<!-- ```{r loadWagSamp, include = FALSE} -->
-<!-- load("wagenmakers2008_sampled.RData") -->
-<!-- ``` -->
+We generate 20 posterior predictive data samples. 
+```{r genppdataWag, eval=FALSE}
+ppdataWag <- gen_pp_data(sampled, n = 20)
+```
 
-<!-- We generate 20 posterior predictive data samples. -->
-<!-- ```{r genppdata, eval=FALSE} -->
-<!-- wagpp_data <- gen_pp_data(sampled, n = 20) -->
-<!-- ``` -->
+```{r ppdataWag, include=FALSE}
+load("wagLBAsamp.RData")
+load("ppdataWag.RData")
+```
 
-The returned data is a matrix with the same dimensions and names as `wagenmakers` -- with the addition of `pp_iter` column. `pp_iter` is the iteration of posterior sample (in this example `i = 1:20`) for the corresponding subject. We now have two matrices based on samples from either model. The response (`resp`) and response time (`rt`) columns now contain posterior predictive data.
+The returned data is a matrix with the same dimensions and names as `wagenmakers` -- with the addition of `pp_iter` column. `pp_iter` is the iteration of the posterior sample (in this example `i = 1:20`) for the corresponding subject. We now have two matrices based on samples from either model. The response (`resp`) and response time (`rt`) columns now contain posterior predictive data.
 
 In the next section, we will use the posterior predictive data to assess descriptive adequacy.
+
+### Assessing Descriptive Adequacy (goodness of fit)
+
+Now we will plot the posterior predictive data against the real data. In the section below we compare observed RTs against predicted RTs, which is common for RT modelling; however, the code could also be modified for different types of data.
+
+```{r plotppdataWag, include=TRUE}
+# Subject x condition Q25, median and Q75 respone time + mean accuracy 
+# Wagenmakers dataset
+pqWag <- wagenmakers %>% 
+  group_by(condition, subject) %>% 
+  summarise(Q25 = quantile(rt, prob = 0.25),
+            median = median(rt), 
+            Q75 = quantile(rt, prob = 0.75),
+            acc =  mean(ifelse(correct == 2, 1, 0)),
+            .groups = "keep"
+            )
+
+# Subject x condition Q25, median and Q75 respone time for posterior predictive data
+pp_pqWag <- ppdataWag %>%
+  group_by(condition, pp_iter, subject) %>%
+  summarise(Q25 = quantile(rt, prob = 0.25),
+            median = median(rt), 
+            Q75 = quantile(rt, prob = 0.75),
+            acc = mean(ifelse(correct == 2, 1, 0)),
+            .groups = "keep"
+            )
+
+# Combine data with posterior predictive data and add data source
+pqWag <- bind_rows(cbind(src = rep("data", nrow(pqWag)), pqWag),
+                cbind(src = rep("model", nrow(pp_pqWag)), pp_pqWag)
+                )
+
+# Mean Q25, median, Q4 and accuracy for data and posterior predictive data
+av_pqWag <- pqWag %>%
+  group_by(src, condition) %>%
+  summarise_at(vars(Q25:acc), mean)
+
+# Variances of posterior samples
+pp_varWag <- pqWag %>%
+  filter(src != "data") %>%
+  group_by(condition, pp_iter, src) %>%
+  summarise_at(vars(Q25:acc), mean)
+
+# Convert source column to a factor and add labels
+av_pqWag$src <- factor(av_pqWag$src,
+                    levels = c("model", "data"),
+                    labels = c("model", "data")
+                    )
+
+pp_varsrcWag <- factor(pp_varWag$src,
+                    levels = c("model", "data"),
+                    labels = c("model", "data")
+                    )
+# Rename conditions
+levels(av_pqWag$condition) <-
+  levels(pp_varWag$condition) <- c("Accuracy", "Neutral", "Speed")
+
+# Convert rt to milliseconds and acc to percentage
+av_pqWag$acc <- 100 * av_pqWag$acc
+pp_varWag$acc <- 100 * pp_varWag$acc
+av_pqWag[, c("Q25", "median", "Q75")] <- 1000 * av_pqWag[, c("Q25", "median", "Q75")]
+pp_varWag[, c("Q25", "median", "Q75")] <- 1000 * pp_varWag[, c("Q25", "median", "Q75")]
+```
+
+
+```{r hideWagppdataplots, echo=FALSE}
+# Plot response times for data and posterior predictive data
+rtplotWag <- ggplot(data = av_pqWag,
+                 mapping = aes(x = condition,
+                               y = Q25,
+                               group = src,
+                                colour = src
+                               )
+                 ) +
+  geom_point(size = 2) +
+  geom_point(mapping = aes(x = condition,
+                           y = median,
+                           color = src,
+                           group = src
+                           ),
+             size = 4) +
+  geom_point(mapping = aes(x = condition,
+                           y = Q75,
+                           color = src,
+                           group = src
+                           ),
+             size = 2) +
+  geom_point(data = pp_varWag,
+             mapping = aes(x = condition,
+                           y = Q25,
+                           group = src),
+             size = 1,
+             color = "black",
+             alpha = 0.05) +
+  geom_point(data = pp_varWag,
+             mapping = aes(x = condition,
+                           y = median,
+                           group = src),
+             size = 2,
+             color = "black",
+             alpha = 0.05) +
+  geom_point(data = pp_varWag,
+             mapping = aes(x = condition,
+                           y = Q75,
+                           group = src),
+             size = 1,
+             color = "black",
+             alpha = 0.05) +
+  labs(x = "Condition",
+       y = "RT Percentiles (ms)",
+       colour = "Data source") +
+  theme(axis.title.y = element_text(size = 14, face = 'bold'),
+        axis.text.y = element_text(size = 14),
+        axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        legend.text = element_text(size = 12),
+        legend.key.size = unit(0.75, 'cm'),
+        legend.title = element_text(size = 14, face = 'bold'),
+        legend.title.align = 0.5,
+        legend.position = "top") +
+   ylim(400, 750)
+
+# Plot accuracy for data and posterior predictive data
+accplotWag <- ggplot(data = av_pqWag,
+                  mapping = aes(x = condition,
+                                y = acc,
+                                color = src,
+                                group = src
+                                )) +
+  geom_point(size = 4) +
+  geom_point(data = pp_varWag,
+             mapping = aes(x = condition,
+                           y = acc,
+                           group = src),
+             color = "black",
+             alpha = .2,
+             size = 2) +
+  labs(x = "Condition",
+       y = "Mean Accuracy (%)") +
+  theme(axis.title.y = element_text(size = 14, face = 'bold'),
+        axis.text.y = element_text(size=14),
+        axis.title.x = element_text(size = 14, face = 'bold'),
+        axis.text.x = element_text(size=14),
+        legend.position = "none") +
+  ylim(85, 100)
+```  
+```{r ppdataplotarrgWag, fig.align='center', fig.height=10, echo=FALSE, warning=FALSE}
+plotsWag <- rtplotWag/accplotWag
+plotsWag
+```

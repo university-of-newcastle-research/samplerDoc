@@ -160,7 +160,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="4.3" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#pmwg-framework-1"><i class="fa fa-check"></i><b>4.3</b> PMwG Framework</a><ul>
 <li class="chapter" data-level="4.3.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#run-sampler"><i class="fa fa-check"></i><b>4.3.1</b> Running the sampler</a></li>
 </ul></li>
-<li class="chapter" data-level="4.4" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#genppdataWag"><i class="fa fa-check"></i><b>4.4</b> Simulating Posterior Predictive Data</a></li>
+<li class="chapter" data-level="4.4" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#genppdataWag"><i class="fa fa-check"></i><b>4.4</b> Simulating Posterior Predictive Data</a><ul>
+<li class="chapter" data-level="4.4.1" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#assessing-descriptive-adequacy-goodness-of-fit-1"><i class="fa fa-check"></i><b>4.4.1</b> Assessing Descriptive Adequacy (goodness of fit)</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="troubleshoot.html"><a href="troubleshoot.html"><i class="fa fa-check"></i><b>5</b> Troubleshooting PMwG errors</a><ul>
 <li class="chapter" data-level="5.1" data-path="troubleshoot.html"><a href="troubleshoot.html#how-to-write-a-log-likelihood-function"><i class="fa fa-check"></i><b>5.1</b> How to write a log-likelihood function</a><ul>
@@ -356,78 +358,48 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
   <span class="cf">if</span> (<span class="kw">any</span>(data<span class="op">$</span>rt <span class="op">&lt;</span><span class="st"> </span>x[<span class="st">&quot;t0&quot;</span>])) {
     <span class="kw">return</span>(<span class="op">-</span><span class="fl">1e10</span>)
   }
-  
-  <span class="cf">if</span> (sample) {
-    data<span class="op">$</span>rt &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="ot">NA</span>, <span class="kw">nrow</span>(data))
-    data<span class="op">$</span>resp &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="ot">NA</span>, <span class="kw">nrow</span>(data))
-  } <span class="cf">else</span> {
-    out &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data))
-  }
-   <span class="cf">if</span> (sample) {
-    <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(data)) {
-    A =<span class="st"> </span>x[<span class="st">&quot;A&quot;</span>]
-    b.w =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, data<span class="op">$</span>cond[i], <span class="st">&quot;.W&quot;</span>)] <span class="op">+</span><span class="st"> </span>A
-    b.nw =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, data<span class="op">$</span>cond[i], <span class="st">&quot;.NW&quot;</span>)] <span class="op">+</span><span class="st"> </span>A
-    bs =<span class="st"> </span><span class="kw">list</span>(b.nw, b.w)
-    v.w =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;v.&quot;</span>, data<span class="op">$</span>stim[i], <span class="st">&quot;.W&quot;</span>)]
-    v.nw =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;v.&quot;</span>, data<span class="op">$</span>stim[i], <span class="st">&quot;.NW&quot;</span>)]
-    vs =<span class="st"> </span><span class="kw">c</span>(v.nw, v.w)
-    t0 =<span class="st"> </span>x[<span class="st">&quot;t0&quot;</span>]
-    s =<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>)
+  b.w =<span class="st"> </span>b.nw =<span class="st"> </span>v.w =<span class="st"> </span>v.nw =<span class="st"> </span>out =<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data))
+    <span class="cf">for</span> (p <span class="cf">in</span> <span class="kw">unique</span>(data<span class="op">$</span>prop)) {
+      use &lt;-<span class="st"> </span>data<span class="op">$</span>prop <span class="op">==</span><span class="st"> </span>p  
+      b.w[use] =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, p, <span class="st">&quot;.W&quot;</span>)] <span class="op">+</span><span class="st"> </span>x[<span class="st">&quot;A&quot;</span>]
+      b.nw[use] =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, p, <span class="st">&quot;.NW&quot;</span>)] <span class="op">+</span><span class="st"> </span>x[<span class="st">&quot;A&quot;</span>]
+    }
+    <span class="cf">for</span> (f <span class="cf">in</span> <span class="kw">unique</span>(data<span class="op">$</span>freq)) {
+      use &lt;-<span class="st"> </span>data<span class="op">$</span>freq <span class="op">==</span><span class="st"> </span>f 
+      v.w[use] =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;v.&quot;</span>, f, <span class="st">&quot;.W&quot;</span>)]
+      v.nw[use] =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;v.&quot;</span>, f, <span class="st">&quot;.NW&quot;</span>)]
+        }
+    bs =<span class="st"> </span><span class="kw">list</span>(b.nw,b.w)
+    vs =<span class="st"> </span><span class="kw">list</span>(v.nw,v.w)
     
-    tmp &lt;-<span class="st"> </span><span class="kw">rLBA</span>(<span class="dt">n =</span> <span class="dv">1</span>,
-                <span class="dt">A =</span> A,
-                <span class="dt">b =</span> bs,
-                <span class="dt">mean_v =</span> vs,
-                <span class="dt">sd_v =</span> s,
-                <span class="dt">t0 =</span> t0,
-                <span class="dt">dist =</span> <span class="st">&quot;norm&quot;</span>,
-                <span class="dt">silent =</span> <span class="ot">TRUE</span>
-                )
-      data<span class="op">$</span>rt[i] &lt;-<span class="st"> </span>tmp<span class="op">$</span>rt
-      data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span>tmp<span class="op">$</span>resp
-    }
-  } <span class="cf">else</span> {
-    cond &lt;-<span class="st"> </span><span class="kw">levels</span>(data<span class="op">$</span>cond)
-    stim &lt;-<span class="st"> </span><span class="kw">levels</span>(data<span class="op">$</span>stim)
-
-    blist &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="st">&quot;b.nw&quot;</span> =<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data)), <span class="st">&quot;b.w&quot;</span> =<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data)))
-    vlist &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="st">&quot;v.nw&quot;</span> =<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data)), <span class="st">&quot;v.w&quot;</span> =<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data)))
-
-    <span class="cf">for</span> (c <span class="cf">in</span> cond) {
-      <span class="cf">for</span> (s <span class="cf">in</span> stim) {
-          use &lt;-<span class="st"> </span>data<span class="op">$</span>cond <span class="op">==</span><span class="st"> </span>c <span class="op">&amp;</span><span class="st"> </span>data<span class="op">$</span>stim <span class="op">==</span><span class="st"> </span>s 
-          <span class="cf">if</span> (<span class="kw">any</span>(use)) {
-            b.w =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, c, <span class="st">&quot;.W&quot;</span>)] <span class="op">+</span><span class="st"> </span>x[<span class="st">&quot;A&quot;</span>]
-            b.nw =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, c, <span class="st">&quot;.NW&quot;</span>)] <span class="op">+</span><span class="st"> </span>x[<span class="st">&quot;A&quot;</span>]
-            v.w =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;v.&quot;</span>, s, <span class="st">&quot;.W&quot;</span>)]
-            v.nw =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;v.&quot;</span>, s, <span class="st">&quot;.NW&quot;</span>)]
-            blist<span class="op">$</span>b.nw[use] =<span class="st"> </span>b.nw
-            blist<span class="op">$</span>b.w[use] =<span class="st"> </span>b.w
-            vlist<span class="op">$</span>v.nw[use] =<span class="st"> </span>v.nw
-            vlist<span class="op">$</span>v.w[use] =<span class="st"> </span>v.w
-          }
-      }
-    }
+  <span class="cf">if</span> (<span class="op">!</span>sample){
     out &lt;-<span class="st"> </span><span class="kw">dLBA</span>(<span class="dt">rt =</span> data<span class="op">$</span>rt,
-                <span class="dt">resp =</span> data<span class="op">$</span>resp,
+                <span class="dt">resp =</span> data<span class="op">$</span>response,
                 <span class="dt">A =</span> x[<span class="st">&quot;A&quot;</span>],
-                <span class="dt">b =</span>  blist,
+                <span class="dt">b =</span> bs,
                 <span class="dt">t0 =</span> x[<span class="st">&quot;t0&quot;</span>],
-                <span class="dt">mean_v =</span> vlist,
-                <span class="dt">sd_v =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>),
+                <span class="dt">mean_v =</span> vs,
+                <span class="dt">sd_v =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>), 
                 <span class="dt">distribution =</span> <span class="st">&quot;norm&quot;</span>,
-                <span class="dt">silent =</span> <span class="ot">TRUE</span>
-    )
-    }
- 
-  <span class="cf">if</span> (sample) {
-    <span class="kw">return</span>(data)
-  } <span class="cf">else</span> {
-    bad &lt;-<span class="st"> </span>(out <span class="op">&lt;</span><span class="st"> </span><span class="fl">1e-10</span>) <span class="op">|</span><span class="st"> </span>(<span class="op">!</span><span class="kw">is.finite</span>(out))
-    out[bad] &lt;-<span class="st"> </span><span class="fl">1e-10</span>
-    out &lt;-<span class="st"> </span><span class="kw">sum</span>(<span class="kw">log</span>(out))
+                <span class="dt">silent =</span> <span class="ot">TRUE</span>)
+    out &lt;-<span class="st"> </span><span class="kw">sum</span>(<span class="kw">log</span>(<span class="kw">pmax</span>(out,<span class="fl">1e-10</span>)))
     <span class="kw">return</span>(out)
+  } <span class="cf">else</span> {
+    data<span class="op">$</span>rt &lt;-<span class="st"> </span><span class="ot">NA</span>
+    data<span class="op">$</span>response &lt;-<span class="st"> </span><span class="ot">NA</span>
+    <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(data)){
+      tmp&lt;-<span class="st"> </span><span class="kw">rLBA</span>(<span class="dt">n =</span> <span class="dv">1</span>,
+                 <span class="dt">A =</span> x[<span class="st">&quot;A&quot;</span>],
+                 <span class="dt">b =</span> <span class="kw">list</span>(b.nw[i], b.w[i]),
+                 <span class="dt">t0 =</span> x[<span class="st">&quot;t0&quot;</span>],
+                 <span class="dt">mean_v =</span> <span class="kw">list</span>(v.nw[i], v.w[i]),
+                 <span class="dt">sd_v =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>),
+                 <span class="dt">distribution =</span> <span class="st">&quot;norm&quot;</span>,
+                 <span class="dt">silent =</span> <span class="ot">TRUE</span>)
+      data<span class="op">$</span>rt[i] &lt;-<span class="st"> </span>tmp<span class="op">$</span>rt
+      data<span class="op">$</span>response[i] &lt;-<span class="st"> </span>tmp<span class="op">$</span>resp
+    }
+      <span class="kw">return</span>(data)
   }
 }</code></pre></div>
 <p>You should improve your log-likelihood’s performance as you see fit. When you’re confident that your log-likelihood code functions correctly, we suggest saving it as a separate script so it can be sourced and loaded when running the sampler. If you’re learning how to write log-likelihood functions, take a look at our <a href="troubleshoot.html#troubleshoot">troubleshooting section</a> for tips. In our experience, a very large proportion of problems with sampling and inference are caused by inadequate checking and care in the likelihood function.</p>
@@ -437,24 +409,24 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>Now that we have a log-likelihood function, we can set up the <code>PMwG</code> sampler. To run the sampler, we simply follow the procedure from <a href="pmwg-sampler-and-signal-detection-theory.html#sdtOutline">chapter 2</a> and <a href="forstmannChapter.html#forstmannChapter">chapter 3</a>; we need to set up a vector of model parameter names, create a <code>priors</code> object, source our LBA log-likelihood script and then create our <code>sampler</code> object.</p>
 <p>First, load the <code>PMwG</code> library and data…</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(pmwg)
-<span class="kw">load</span>(<span class="st">&quot;wagenmakers_2008.RData&quot;</span>)</code></pre></div>
+<span class="kw">load</span>(<span class="st">&quot;wagenmakers2008.RData&quot;</span>)</code></pre></div>
 <p>Let’s create a vector of model parameter names. Remember that this must match the names and number of parameters you include in your log-likelihood function. You can name this vector as you wish; however, in our example, we name it <code>pars</code>.</p>
 <p>For the Wagenmakers dataset, we require four threshold parameters because we assume that both word proportion (<code>cond</code>) and response (<code>resp</code>) have an effect on level of caution (i.e. a threshold parameter for each combination of word proportion and response). We also need a <i> drift rate</i> for each cell of our design i.e. eight drift rate parameters; one for each level of <code>word frequency</code> (<code>hf</code>,<code>lf</code>,<code>vlf</code>,<code>nw</code>) for the Word response accumulator <code>.W</code>, and the non-word response accumulator <code>.NW</code>).</p>
 <p>We’ve made a decision to set the <code>sv</code> to 1 to satisfy the scaling properties of the model. As such, we haven’t included the <code>sv</code> parameter in the <code>pars</code> vector - it is found in the LBA’s log-likelihood function (see below).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pars &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;A&quot;</span>,
-          <span class="st">&quot;b.nw.NW&quot;</span>,
-          <span class="st">&quot;b.nw.W&quot;</span>,
-          <span class="st">&quot;b.w.NW&quot;</span>,
-          <span class="st">&quot;b.w.W&quot;</span>,
-          <span class="st">&quot;v.hf.NW&quot;</span>,
-          <span class="st">&quot;v.hf.W&quot;</span>,
-          <span class="st">&quot;v.lf.NW&quot;</span>,
-          <span class="st">&quot;v.lf.W&quot;</span>,
-          <span class="st">&quot;v.vlf.NW&quot;</span>,
-          <span class="st">&quot;v.vlf.W&quot;</span>,
-          <span class="st">&quot;v.nw.NW&quot;</span>,
-          <span class="st">&quot;v.nw.W&quot;</span>,
-          <span class="st">&quot;t0&quot;</span>)</code></pre></div>
+         <span class="st">&quot;b.nw.NW&quot;</span>,
+         <span class="st">&quot;b.nw.W&quot;</span>,
+         <span class="st">&quot;b.w.NW&quot;</span>,
+         <span class="st">&quot;b.w.W&quot;</span>,
+         <span class="st">&quot;v.hf.NW&quot;</span>,
+         <span class="st">&quot;v.hf.W&quot;</span>,
+         <span class="st">&quot;v.lf.NW&quot;</span>,
+         <span class="st">&quot;v.lf.W&quot;</span>,
+         <span class="st">&quot;v.vlf.NW&quot;</span>,
+         <span class="st">&quot;v.vlf.W&quot;</span>,
+         <span class="st">&quot;v.nw.NW&quot;</span>,
+         <span class="st">&quot;v.nw.W&quot;</span>,
+         <span class="st">&quot;t0&quot;</span>)</code></pre></div>
 <p>For the mean of the distribution for random effects (theta_mu), we assume a multivariate normal prior. The user can specify the mean and variance of this prior distribution using the object <code>priors</code>, which has elements <code>theta_mu_mean</code> and <code>theta_mu_var</code>. A typical setting for LBA models is to set <code>theta_mu_mean</code> to be a zero vector and to set <code>theta_mu_var</code> to be a multiple of the identity matrix, e.g. with 9 on the diagonal (representing a standard deviation of 3 for the subject-level means in the prior).</p>
 <p>We create our <code>priors</code> object; a list that contains two components:</p>
 <ul>
@@ -568,11 +540,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
                        <span class="dt">sample =</span> <span class="ot">TRUE</span>)
         
         <span class="cf">if</span> (i <span class="op">==</span><span class="st"> </span><span class="dv">1</span>){
-          pp_data[[s]] =<span class="st"> </span><span class="kw">cbind</span>(<span class="dt">pp_subj =</span> i, out)
+          pp_data[[s]] =<span class="st"> </span><span class="kw">cbind</span>(<span class="dt">pp_iter =</span> i, out)
         }
         <span class="cf">else</span> {
           pp_data[[s]] =<span class="st"> </span><span class="kw">rbind</span>(pp_data[[s]],
-                         <span class="kw">cbind</span>(<span class="dt">pp_subj =</span> i, out))
+                         <span class="kw">cbind</span>(<span class="dt">pp_iter =</span> i, out))
         }
       }
     }
@@ -585,16 +557,72 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <span class="kw">return</span>(pp_data)
     }
 }</code></pre></div>
-<!-- ```{r loadWagSamp, include = FALSE} -->
-<!-- load("wagenmakers2008_sampled.RData") -->
-<!-- ``` -->
-<!-- We generate 20 posterior predictive data samples. -->
-<!-- ```{r genppdata, eval=FALSE} -->
-<!-- wagpp_data <- gen_pp_data(sampled, n = 20) -->
-<!-- ``` -->
-<p>The returned data is a matrix with the same dimensions and names as <code>wagenmakers</code> – with the addition of <code>pp_iter</code> column. <code>pp_iter</code> is the iteration of posterior sample (in this example <code>i = 1:20</code>) for the corresponding subject. We now have two matrices based on samples from either model. The response (<code>resp</code>) and response time (<code>rt</code>) columns now contain posterior predictive data.</p>
+<p>We generate 20 posterior predictive data samples.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ppdataWag &lt;-<span class="st"> </span><span class="kw">gen_pp_data</span>(sampled, <span class="dt">n =</span> <span class="dv">20</span>)</code></pre></div>
+<p>The returned data is a matrix with the same dimensions and names as <code>wagenmakers</code> – with the addition of <code>pp_iter</code> column. <code>pp_iter</code> is the iteration of the posterior sample (in this example <code>i = 1:20</code>) for the corresponding subject. We now have two matrices based on samples from either model. The response (<code>resp</code>) and response time (<code>rt</code>) columns now contain posterior predictive data.</p>
 <p>In the next section, we will use the posterior predictive data to assess descriptive adequacy.</p>
+<div id="assessing-descriptive-adequacy-goodness-of-fit-1" class="section level3">
+<h3><span class="header-section-number">4.4.1</span> Assessing Descriptive Adequacy (goodness of fit)</h3>
+<p>Now we will plot the posterior predictive data against the real data. In the section below we compare observed RTs against predicted RTs, which is common for RT modelling; however, the code could also be modified for different types of data.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Subject x condition Q25, median and Q75 respone time + mean accuracy </span>
+<span class="co"># Wagenmakers dataset</span>
+pqWag &lt;-<span class="st"> </span>wagenmakers <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">group_by</span>(condition, subject) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">Q25 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.25</span>),
+            <span class="dt">median =</span> <span class="kw">median</span>(rt), 
+            <span class="dt">Q75 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.75</span>),
+            <span class="dt">acc =</span>  <span class="kw">mean</span>(<span class="kw">ifelse</span>(correct <span class="op">==</span><span class="st"> </span><span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">0</span>)),
+            <span class="dt">.groups =</span> <span class="st">&quot;keep&quot;</span>
+            )
 
+<span class="co"># Subject x condition Q25, median and Q75 respone time for posterior predictive data</span>
+pp_pqWag &lt;-<span class="st"> </span>ppdataWag <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">group_by</span>(condition, pp_iter, subject) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">summarise</span>(<span class="dt">Q25 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.25</span>),
+            <span class="dt">median =</span> <span class="kw">median</span>(rt), 
+            <span class="dt">Q75 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.75</span>),
+            <span class="dt">acc =</span> <span class="kw">mean</span>(<span class="kw">ifelse</span>(correct <span class="op">==</span><span class="st"> </span><span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">0</span>)),
+            <span class="dt">.groups =</span> <span class="st">&quot;keep&quot;</span>
+            )
+
+<span class="co"># Combine data with posterior predictive data and add data source</span>
+pqWag &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(<span class="kw">cbind</span>(<span class="dt">src =</span> <span class="kw">rep</span>(<span class="st">&quot;data&quot;</span>, <span class="kw">nrow</span>(pqWag)), pqWag),
+                <span class="kw">cbind</span>(<span class="dt">src =</span> <span class="kw">rep</span>(<span class="st">&quot;model&quot;</span>, <span class="kw">nrow</span>(pp_pqWag)), pp_pqWag)
+                )
+
+<span class="co"># Mean Q25, median, Q4 and accuracy for data and posterior predictive data</span>
+av_pqWag &lt;-<span class="st"> </span>pqWag <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">group_by</span>(src, condition) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(Q25<span class="op">:</span>acc), mean)
+
+<span class="co"># Variances of posterior samples</span>
+pp_varWag &lt;-<span class="st"> </span>pqWag <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">filter</span>(src <span class="op">!=</span><span class="st"> &quot;data&quot;</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">group_by</span>(condition, pp_iter, src) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(Q25<span class="op">:</span>acc), mean)
+
+<span class="co"># Convert source column to a factor and add labels</span>
+av_pqWag<span class="op">$</span>src &lt;-<span class="st"> </span><span class="kw">factor</span>(av_pqWag<span class="op">$</span>src,
+                    <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;model&quot;</span>, <span class="st">&quot;data&quot;</span>),
+                    <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;model&quot;</span>, <span class="st">&quot;data&quot;</span>)
+                    )
+
+pp_varsrcWag &lt;-<span class="st"> </span><span class="kw">factor</span>(pp_varWag<span class="op">$</span>src,
+                    <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;model&quot;</span>, <span class="st">&quot;data&quot;</span>),
+                    <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;model&quot;</span>, <span class="st">&quot;data&quot;</span>)
+                    )
+<span class="co"># Rename conditions</span>
+<span class="kw">levels</span>(av_pqWag<span class="op">$</span>condition) &lt;-
+<span class="st">  </span><span class="kw">levels</span>(pp_varWag<span class="op">$</span>condition) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Accuracy&quot;</span>, <span class="st">&quot;Neutral&quot;</span>, <span class="st">&quot;Speed&quot;</span>)
+
+<span class="co"># Convert rt to milliseconds and acc to percentage</span>
+av_pqWag<span class="op">$</span>acc &lt;-<span class="st"> </span><span class="dv">100</span> <span class="op">*</span><span class="st"> </span>av_pqWag<span class="op">$</span>acc
+pp_varWag<span class="op">$</span>acc &lt;-<span class="st"> </span><span class="dv">100</span> <span class="op">*</span><span class="st"> </span>pp_varWag<span class="op">$</span>acc
+av_pqWag[, <span class="kw">c</span>(<span class="st">&quot;Q25&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q75&quot;</span>)] &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="op">*</span><span class="st"> </span>av_pqWag[, <span class="kw">c</span>(<span class="st">&quot;Q25&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q75&quot;</span>)]
+pp_varWag[, <span class="kw">c</span>(<span class="st">&quot;Q25&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q75&quot;</span>)] &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="op">*</span><span class="st"> </span>pp_varWag[, <span class="kw">c</span>(<span class="st">&quot;Q25&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q75&quot;</span>)]</code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/ppdataplotarrgWag-1.png" width="672" style="display: block; margin: auto;" /></p>
+
+</div>
 </div>
 </div>
             </section>

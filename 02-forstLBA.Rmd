@@ -491,11 +491,11 @@ gen_pp_data <- function (sampled, n, ll_func = sampled$ll_func, rbind.data = TRU
                        sample = TRUE)
         
         if (i == 1){
-          pp_data[[s]] = cbind(pp_subj = i, out)
+          pp_data[[s]] = cbind(pp_iter = i, out)
         }
         else {
           pp_data[[s]] = rbind(pp_data[[s]],
-                         cbind(pp_subj = i, out))
+                         cbind(pp_iter = i, out))
         }
       }
     }
