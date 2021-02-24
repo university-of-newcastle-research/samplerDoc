@@ -1177,9 +1177,12 @@ pmwg_DIC <- function(sampled, pD = FALSE){
                    1,
                    mean)
  
-  # Mean of each parameter across iterations. 
+  # Mean of each parameter across iterations.
   # Keep dimensions for parameters and subjects
-  mean_pars <- t(apply(sampled$samples$alpha, 1:2, mean))
+  mean_pars <- t(apply(sampled$samples$alpha[,, sampled$samples$stage == "sample"],
+                       1:2,
+                       mean))
+
  
   # Name 'mean_pars' so it can be used by the log_like function
   colnames(mean_pars) <- sampled$par_names
