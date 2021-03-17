@@ -403,17 +403,20 @@ Now we will plot the posterior predictive data against the real data. In the sec
 # Recode condition column in order to calculate accuracy
 # Data
 wagenmakers$condition <- recode(wagenmakers$condition, w = "W", nw ="NW" )
+wagenmakers$correct <- wagenmakers$correct - 1
 # Posterior predictive data
 ppdataWag$condition <- recode(ppdataWag$condition, w = "W", nw ="NW" )
+ppdataWag$binary_stim <- ifelse(ppdataWag$stim =="nw", 1, 2)
+ppdataWag$correct <- ifelse(ppdataWag$binary_stim == ppdataWag$response, 1, 0)
 
 # Subject x condition Q25, median and Q75 respone time + mean accuracy 
 # Wagenmakers dataset
 pqWag <- wagenmakers %>% 
-  group_by(condition, subject, stim) %>% 
+  group_by(subject, condition, stim) %>% 
   summarise(Q25 = quantile(rt, prob = 0.25),
             median = median(rt), 
             Q75 = quantile(rt, prob = 0.75),
-            acc =  mean(ifelse(correct == 2, 1, 0)),
+            acc =  mean(correct),
             .groups = "keep"
             )
 
@@ -423,7 +426,7 @@ pp_pqWag <- ppdataWag %>%
   summarise(Q25 = quantile(rt, prob = 0.25),
             median = median(rt), 
             Q75 = quantile(rt, prob = 0.75),
-            acc = mean(ifelse(correct == 2, 1, 0)),
+            acc = mean(correct),
             .groups = "keep"
             )
 
@@ -546,7 +549,7 @@ accplotWag <- ggplot(data = av_pqWag,
         axis.title.x = element_text(size = 14, face = 'bold'),
         axis.text.x = element_text(size=14),
         legend.position = "none") +
-  ylim(65, 100)
+  ylim(55, 100)
 ```  
 ```{r ppdataplotarrgWag, fig.align='center', fig.height=10, echo=FALSE, warning=FALSE}
 plotsWag <- rtplotWag/accplotWag
