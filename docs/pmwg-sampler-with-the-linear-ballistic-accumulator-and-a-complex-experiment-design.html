@@ -564,10 +564,16 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="assessing-descriptive-adequacy-goodness-of-fit-1" class="section level3">
 <h3><span class="header-section-number">4.4.1</span> Assessing Descriptive Adequacy (goodness of fit)</h3>
 <p>Now we will plot the posterior predictive data against the real data. In the section below we compare observed RTs against predicted RTs, which is common for RT modelling; however, the code could also be modified for different types of data.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Subject x condition Q25, median and Q75 respone time + mean accuracy </span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Recode condition column in order to calculate accuracy</span>
+<span class="co"># Data</span>
+wagenmakers<span class="op">$</span>condition &lt;-<span class="st"> </span><span class="kw">recode</span>(wagenmakers<span class="op">$</span>condition, <span class="dt">w =</span> <span class="st">&quot;W&quot;</span>, <span class="dt">nw =</span><span class="st">&quot;NW&quot;</span> )
+<span class="co"># Posterior predictive data</span>
+ppdataWag<span class="op">$</span>condition &lt;-<span class="st"> </span><span class="kw">recode</span>(ppdataWag<span class="op">$</span>condition, <span class="dt">w =</span> <span class="st">&quot;W&quot;</span>, <span class="dt">nw =</span><span class="st">&quot;NW&quot;</span> )
+
+<span class="co"># Subject x condition Q25, median and Q75 respone time + mean accuracy </span>
 <span class="co"># Wagenmakers dataset</span>
 pqWag &lt;-<span class="st"> </span>wagenmakers <span class="op">%&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">group_by</span>(condition, subject) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">group_by</span>(condition, subject, stim) <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw">summarise</span>(<span class="dt">Q25 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.25</span>),
             <span class="dt">median =</span> <span class="kw">median</span>(rt), 
             <span class="dt">Q75 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.75</span>),
@@ -577,7 +583,7 @@ pqWag &lt;-<span class="st"> </span>wagenmakers <span class="op">%&gt;%</span><s
 
 <span class="co"># Subject x condition Q25, median and Q75 respone time for posterior predictive data</span>
 pp_pqWag &lt;-<span class="st"> </span>ppdataWag <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">group_by</span>(condition, pp_iter, subject) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">group_by</span>(condition, pp_iter, subject, stim) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">summarise</span>(<span class="dt">Q25 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.25</span>),
             <span class="dt">median =</span> <span class="kw">median</span>(rt), 
             <span class="dt">Q75 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.75</span>),
@@ -592,13 +598,13 @@ pqWag &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(<span clas
 
 <span class="co"># Mean Q25, median, Q4 and accuracy for data and posterior predictive data</span>
 av_pqWag &lt;-<span class="st"> </span>pqWag <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">group_by</span>(src, condition) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">group_by</span>(src, condition, stim) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(Q25<span class="op">:</span>acc), mean)
 
 <span class="co"># Variances of posterior samples</span>
 pp_varWag &lt;-<span class="st"> </span>pqWag <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">filter</span>(src <span class="op">!=</span><span class="st"> &quot;data&quot;</span>) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">group_by</span>(condition, pp_iter, src) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">group_by</span>(condition, pp_iter, src, stim) <span class="op">%&gt;%</span>
 <span class="st">  </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(Q25<span class="op">:</span>acc), mean)
 
 <span class="co"># Convert source column to a factor and add labels</span>
@@ -613,7 +619,7 @@ pp_varsrcWag &lt;-<span class="st"> </span><span class="kw">factor</span>(pp_var
                     )
 <span class="co"># Rename conditions</span>
 <span class="kw">levels</span>(av_pqWag<span class="op">$</span>condition) &lt;-
-<span class="st">  </span><span class="kw">levels</span>(pp_varWag<span class="op">$</span>condition) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Accuracy&quot;</span>, <span class="st">&quot;Neutral&quot;</span>, <span class="st">&quot;Speed&quot;</span>)
+<span class="st">  </span><span class="kw">levels</span>(pp_varWag<span class="op">$</span>condition) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;75% Non-Word stimuli&quot;</span>,<span class="st">&quot;75% Word stimuli&quot;</span>)
 
 <span class="co"># Convert rt to milliseconds and acc to percentage</span>
 av_pqWag<span class="op">$</span>acc &lt;-<span class="st"> </span><span class="dv">100</span> <span class="op">*</span><span class="st"> </span>av_pqWag<span class="op">$</span>acc

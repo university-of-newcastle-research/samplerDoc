@@ -400,10 +400,16 @@ In the next section, we will use the posterior predictive data to assess descrip
 Now we will plot the posterior predictive data against the real data. In the section below we compare observed RTs against predicted RTs, which is common for RT modelling; however, the code could also be modified for different types of data.
 
 ```{r plotppdataWag, include=TRUE}
+# Recode condition column in order to calculate accuracy
+# Data
+wagenmakers$condition <- recode(wagenmakers$condition, w = "W", nw ="NW" )
+# Posterior predictive data
+ppdataWag$condition <- recode(ppdataWag$condition, w = "W", nw ="NW" )
+
 # Subject x condition Q25, median and Q75 respone time + mean accuracy 
 # Wagenmakers dataset
 pqWag <- wagenmakers %>% 
-  group_by(condition, subject) %>% 
+  group_by(condition, subject, stim) %>% 
   summarise(Q25 = quantile(rt, prob = 0.25),
             median = median(rt), 
             Q75 = quantile(rt, prob = 0.75),
@@ -413,7 +419,7 @@ pqWag <- wagenmakers %>%
 
 # Subject x condition Q25, median and Q75 respone time for posterior predictive data
 pp_pqWag <- ppdataWag %>%
-  group_by(condition, pp_iter, subject) %>%
+  group_by(condition, pp_iter, subject, stim) %>%
   summarise(Q25 = quantile(rt, prob = 0.25),
             median = median(rt), 
             Q75 = quantile(rt, prob = 0.75),
@@ -428,13 +434,13 @@ pqWag <- bind_rows(cbind(src = rep("data", nrow(pqWag)), pqWag),
 
 # Mean Q25, median, Q4 and accuracy for data and posterior predictive data
 av_pqWag <- pqWag %>%
-  group_by(src, condition) %>%
+  group_by(src, condition, stim) %>%
   summarise_at(vars(Q25:acc), mean)
 
 # Variances of posterior samples
 pp_varWag <- pqWag %>%
   filter(src != "data") %>%
-  group_by(condition, pp_iter, src) %>%
+  group_by(condition, pp_iter, src, stim) %>%
   summarise_at(vars(Q25:acc), mean)
 
 # Convert source column to a factor and add labels
@@ -449,7 +455,7 @@ pp_varsrcWag <- factor(pp_varWag$src,
                     )
 # Rename conditions
 levels(av_pqWag$condition) <-
-  levels(pp_varWag$condition) <- c("Accuracy", "Neutral", "Speed")
+  levels(pp_varWag$condition) <- c("75% Non-Word stimuli","75% Word stimuli")
 
 # Convert rt to milliseconds and acc to percentage
 av_pqWag$acc <- 100 * av_pqWag$acc
@@ -468,7 +474,8 @@ rtplotWag <- ggplot(data = av_pqWag,
                                 colour = src
                                )
                  ) +
-  geom_point(size = 2) +
+  geom_point(size = 2) + 
+  facet_wrap(~stim) +
   geom_point(mapping = aes(x = condition,
                            y = median,
                            color = src,
@@ -515,7 +522,7 @@ rtplotWag <- ggplot(data = av_pqWag,
         legend.title = element_text(size = 14, face = 'bold'),
         legend.title.align = 0.5,
         legend.position = "top") +
-   ylim(400, 750)
+   ylim(400, 850)
 
 # Plot accuracy for data and posterior predictive data
 accplotWag <- ggplot(data = av_pqWag,
@@ -539,7 +546,7 @@ accplotWag <- ggplot(data = av_pqWag,
         axis.title.x = element_text(size = 14, face = 'bold'),
         axis.text.x = element_text(size=14),
         legend.position = "none") +
-  ylim(85, 100)
+  ylim(65, 100)
 ```  
 ```{r ppdataplotarrgWag, fig.align='center', fig.height=10, echo=FALSE, warning=FALSE}
 plotsWag <- rtplotWag/accplotWag
