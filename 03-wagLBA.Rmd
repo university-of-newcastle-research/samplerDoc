@@ -534,6 +534,7 @@ accplotWag <- ggplot(data = av_pqWag,
                                 color = src,
                                 group = src
                                 )) +
+  facet_wrap(~stim) +
   geom_point(size = 4) +
   geom_point(data = pp_varWag,
              mapping = aes(x = condition,
@@ -549,7 +550,7 @@ accplotWag <- ggplot(data = av_pqWag,
         axis.title.x = element_text(size = 14, face = 'bold'),
         axis.text.x = element_text(size=14),
         legend.position = "none") +
-  ylim(55, 100)
+  ylim(0, 100)
 ```  
 ```{r ppdataplotarrgWag, fig.align='center', fig.height=10, echo=FALSE, warning=FALSE}
 plotsWag <- rtplotWag/accplotWag
