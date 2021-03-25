@@ -458,7 +458,10 @@ pp_varsrcWag <- factor(pp_varWag$src,
                     )
 # Rename conditions
 levels(av_pqWag$condition) <-
-  levels(pp_varWag$condition) <- c("75% Non-Word stimuli","75% Word stimuli")
+  levels(pp_varWag$condition) <- c("75% \nNon-Word \nstimuli","75% \nWord stimuli")
+# Change plot stimuli labels
+
+
 
 # Convert rt to milliseconds and acc to percentage
 av_pqWag$acc <- 100 * av_pqWag$acc
@@ -478,7 +481,7 @@ rtplotWag <- ggplot(data = av_pqWag,
                                )
                  ) +
   geom_point(size = 2) + 
-  facet_wrap(~stim) +
+  facet_wrap(vars(fct_recode(stim, "High Frequency" = "hf", "Low Frequency" = "lf", "Very Low Frequency" = "vlf", "Non-word" = "nw"))) +
   geom_point(mapping = aes(x = condition,
                            y = median,
                            color = src,
@@ -534,7 +537,7 @@ accplotWag <- ggplot(data = av_pqWag,
                                 color = src,
                                 group = src
                                 )) +
-  facet_wrap(~stim) +
+  facet_wrap(vars(fct_recode(stim, "High Frequency" = "hf", "Low Frequency" = "lf", "Very Low Frequency" = "vlf", "Non-word" = "nw"))) +
   geom_point(size = 4) +
   geom_point(data = pp_varWag,
              mapping = aes(x = condition,
@@ -550,7 +553,7 @@ accplotWag <- ggplot(data = av_pqWag,
         axis.title.x = element_text(size = 14, face = 'bold'),
         axis.text.x = element_text(size=14),
         legend.position = "none") +
-  ylim(0, 100)
+  ylim(50, 100)
 ```  
 ```{r ppdataplotarrgWag, fig.align='center', fig.height=10, echo=FALSE, warning=FALSE}
 plotsWag <- rtplotWag/accplotWag
