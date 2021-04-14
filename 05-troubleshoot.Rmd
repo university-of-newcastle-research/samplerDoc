@@ -1,14 +1,6 @@
 # Troubleshooting PMwG errors {#troubleshoot}
 
-## How to write a log-likelihood function
-
-* What key elements are required in a log-likelihood function to be used in the sampler
-* Show comparison times for slow LL and fast LL
-* Check list for commmon errors - brief list check this, check that etc.
-
-
-
-### Writing your log-likelihood function: Tips, errors and check list
+## Writing your log-likelihood function: Tips, errors and check list
 
 
 <b>1. The parameter specified does not exist</b>

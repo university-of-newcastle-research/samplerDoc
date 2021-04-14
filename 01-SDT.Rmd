@@ -20,9 +20,13 @@ knitr::include_graphics('SDT_2.png')
 ```
 
 
-### Writing a log-likelihood function
+### Writing a log-likelihood function{#SDTLLFun}
 
-Let's write a simple log-likelihood  function for a fabricated data set. You can copy the code below to follow along with the example.  
+The log-likelihood function is the 'engine' of the PMwG sampler. It takes in data, parameter values and estimates how likely those parameter values are given those data. This process is completed for each data point or trial and the estimates for each data point/trial are summed to obtain a likelihood value for the model. The likelihood value is only meaningful when compared to another model's likelihood. For example, model A's likelihood may be -1000 and model B's likelihood may be -2500. In the case, model A's likelihood is greater than model B's likelihood, therefore, given the data, model A's parameter values are more likely than the model B's parameter values i.e. we seek the maximum likelihood.
+
+In the likelihood function, the parameter values must be assigned to the correct conditions and model parameters. For example, a linear regression model could have a slope and intercept parameter for easy and hard conditions i.e. four parameters. In this case, we would need to map the parameter value for the slope in the easy conditon onto the easy condition's slope model parameter and then do the same for the hard slope and intercept parameters. We would then use these parameter values to work out how likely the data were given these values (for each condition). Then we can calculate how likely the parameter values are for their associated data points for each subject. 
+
+Let's write a simple log-likelihood function for a fabricated data set. You can copy the code below to follow along with the example.  
 ```{r setupllfab}
 stim <- c("word", "word", "non-word", "word", "non-word", "non-word", "non-word", "word")
 resp <- c("word", "word", "non-word", "word", "non-word", "non-word", "word", "non-word")
@@ -35,7 +39,7 @@ kable(fab_data, caption = 'A fabricated dataset of 8 trials with a response and 
 
 Our log-likelihood function will step through the data, line by line, and find a likelihood value for each trial, under two parameters; d-prime `d` and criterion `C`. 
 
-Here is our complete log-likelihood function. We have omitted some code from the code blocks below to enhance appearance, so we encourage you to copy the log-likelihood function from the following code block if you'd like to follow along with our example. We'll now step through each component of the log-likelihood below.
+Here is our complete log-likelihood function. We have omitted some code from the code blocks below to enhance their appearance, so we encourage you to copy the log-likelihood function from the following code block if you'd like to follow along with our example. We'll now step through each component of the log-likelihood below.
 ```{r sdtLlComplete, attr.source = '.numberLines', eval=FALSE}
 SDT_ll <- function(x, data, sample = FALSE){
   if (!sample) {
@@ -391,11 +395,11 @@ SDT_ll(pars, wgnmks2008, sample = FALSE)
 ```
 
 
-### Computation time of log-likelihood function
+### Computation time of the log-likelihood function
 
 You may have noticed that our log-likelihood function is slow and heavy on computer time when processing the data trial by trial. We recommend you write a 'slow' log-likelihood (as written above) to check it functions as it should before improving the function's efficiency.
 <br>
-Now we'll speed up our log-likelihood function. We have 16 possible values that could be assigned per line in the previous function (for the 16 cells of the design given by proportion (2) x stimuli (4) x response (2)). Rather than looping over each trial, we could calculate the log-likelihood for each cell in the design and multiply the number of instances for each subject. To do this, we add a column to the dataframe by tabling as shown in the code below
+Now we'll speed up our log-likelihood function. We have 16 possible values that could be assigned per line in the previous function (for the 16 cells of the design, given by proportion (2) x stimuli (4) x response (2)). Rather than looping over each trial, we could calculate the log-likelihood for each cell in the design and multiply the number of instances for each subject. To do this, we add a "<b>n</b>" column to the dataframe as shown in the code below.
 ```{r part8.1,include=TRUE}
 wgnmks2008Fast <- as.data.frame(table(wgnmks2008$subject, wgnmks2008$cond,
                                   wgnmks2008$stim, wgnmks2008$resp))
@@ -408,7 +412,7 @@ kable(head(wgnmks2008Fast))
 ```
 
 
-For our SDT log-likelihood function, we add `n*` (i.e. a multiplying factor) to each of these values to calculate the model log-likelihood and we no longer loop over trials, otherwise the log-likelihoods are the same.
+For our SDT log-likelihood function, we add a multiplying factor (`data$n[i]`) to calculate the model log-likelihood and rather than looping over trials.
 ```{r part8.2, eval=FALSE}
 SDT_ll_fast <- function(x, data, sample = FALSE) {
   if (!sample) {
@@ -608,14 +612,15 @@ SDT_ll(pars, wgnmks2008, sample = FALSE)
 SDT_ll_fast(pars, wgnmks2008Fast, sample = FALSE)
 ```
 
-Great—both functions produce the same log-likelihood! And we can run one final check by modifying the parameter vector's values
+Great—both functions produce the same log-likelihood! And we can run one final check by modifying the parameter vector's values and seeing if the log-likelihood value updates.
 
 ```{r part8.7,include=TRUE}
 pars <- log(c(C.w = 1, C.nw = 0.8, HF.d = 2.7, LF.d = 1.8, VLF.d = 1.3))
 SDT_ll(pars, wgnmks2008, sample = FALSE)
 SDT_ll_fast(pars, wgnmks2008Fast, sample = FALSE)
 ```
-
+As we saw with the fabricated dataset, the log-likelihood has changed. The second vector of parameter values are more likely than the first vector, given the data.
+</br>
 We recommend speeding up your code however you wish.  When you're confident that your log-likelihood functions correctly, you should save it as a separate script so it can be sourced and loaded when running the sampler.
 
 
@@ -656,7 +661,7 @@ The next step is to load your log-likelihood function/script.
 source(file = "yourLogLikelihoodFile.R")
 ```
 
-Once you have setup your parameters, priors and written a log-likelihood function, the next step is to initialise the `sampler` object. 
+Once you have set up your parameters, priors and written a log-likelihood function, the next step is to initialise the `sampler` object. 
 ```{r SDTsamplerObject, echo=TRUE, eval=FALSE}
 sampler <- pmwgs(data = wgnmks2008Fast,
                  pars = pars,
@@ -740,7 +745,7 @@ sampled <- run_stage(adapted,
 ```
 
 
-## Check sampling process
+## Check the sampling process
 
 It is a good idea to check your samples by producing some simple plots as shown below. The first plot gives an indication of the trace for the group level parameters. In this example, you will see the chains take only several iterations before arriving at the posterior, however, this may not always be the case. Each parameter trace (lines on plot \@ref(fig:parPlot)) should be stationary i.e. the trace should not trend up or down, and once the sampler reaches the posterior, the trace should remain relatively 'thin'. If the trace is wide and bounces between large values (e.g. between -3 and 3) then there may be an error in your log-likelihood function. 
 

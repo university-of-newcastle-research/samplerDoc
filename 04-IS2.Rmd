@@ -1,0 +1,334 @@
+# Estimating the Marginal Likelihood via Importance Sampling (IS<sup>2</sup>)
+
+In [chapter 3](#forstMC), we outlined two model comparison methods (i.e. graphical and information criterion) to determine the "<i>best fitting</i>" models for the Forstmann dataset. However, the current gold standard for model selection/comparison is to use mariginal likelihood with Bayes factors. In this chapter we will illustrate how you can [estimate marginal likelihood via importance sampling squared (IS2)](https://link.springer.com/article/10.3758/s13428-020-01348-w). The IS2 method is a robust estimation method that accounts for model flexibility and provides unbiased estimates of the marginal likelihood. Marginal likelihood estimates allows you to assess the fit of a model and the model's flexibility by integrating the likelihood across the prior predictive space of a model. In hierarchical models, obtaining the marginal likelihood is difficult, as the likelihood function is the density of the data with the random effects integrated out when viewed as a function of the group-level parameters; an integral which is often unavailable (computationally or as it is intractable). Despite this integral being intractable, IS2 allows a method of estimating the marginal likelihood when the likelihood is intractable but can be estimated in unbiasedly. 
+
+The method works by first sampling from the posterior via a sampling scheme such as MCMC (or here, PMwG). These draws are then used to create the importance distribution for the fixed parameters. This importance distribution is constructed by fitting a mixture of normal or Student t distributions to these MCMC samples. We then construct conditional proposal parameters - called particles - for each subject. The marginal likelihood is then estimated unbiasedly which is combined with the importance distribution. From this method, the importance sampling procedure is in itself an importance sampling procedure which can be used to estimate the likelihood. 
+
+## Using IS2 with the Forstmann dataset
+
+Here we will demonstrate how to use the IS2 algorithm to compare models from the Forstmann example in [Chapter 3](#forstmannChapter). In the example shown here, we use samples taken from the two Forstmann (2008) models shown in chapter 3. We use samples from the PMwG posterior sampling stage (the `sampled` object). IS2 is robust enough to be able to use samples from any stage of PMwG; however, we recommend sampling from the posterior for lower variance.
+
+In this example we run IS2 to compare the four models in an unbiased manner. The [IS2 paper](https://link.springer.com/article/10.3758/s13428-020-01348-w) uses the same method, and so this chapter provides a walkthrough of how this example was run. As we are using samples from the PMwG algorithm, the prior_dist function is specifically coded for PMwG priors. To run other models, the prior_dist function needs to be updated (more on this later maybe). 
+
+### load packages and samples
+
+First we load the required packages and set up the environment, including the number of CPUs to use and the sampled object. 
+
+```{r IS2loadpkgs, eval=FALSE}
+rm(list=ls())
+library(mvtnorm)
+library(MCMCpack)
+library(rtdists)
+library(invgamma)
+library(mixtools)
+library(condMVNorm)
+library(parallel)
+setwd("~/Documents/Research/Modelling Project/Work/IS2/Tutorial")
+load("forstmannM1_sampled.Rdata")
+
+cpus = 20
+```
+
+### set variables
+
+Next we set up the variables to be used by the algorithm. With PMwG these can remain as specified here. Essentially the algorithm needs the number of subjects, random effects, iterations of samples, number of required IS2 samples, number of IS2 particles and the parameter names. Here, for convenience we use 1000 samples and 250 particles. It is oftne more reliable to run a larger number of samples and particles, however, this decreases efficiency. We recommend reading blog post for more information. We also recommend running the IS2 algorithm for several iterations and combing the IS2 samples output to achieve more stable estimates. 
+
+```{r setVar, eval=FALSE}
+###### set up variables #####
+# number of particles, samples, subjects, random effects etc
+n_randeffect=sampled$n_pars
+n_subjects = sampled$n_subjects
+n_iter = length(sampled$samples$stage[sampled$samples$stage=="sample"])
+length_draws = sampled$samples$idx #length of the full transformed random effect vector and/or parameter vector
+IS_samples = 1000 #number of importance samples
+n_particles = 250 #number of particles
+pars = sampled$pars
+
+```
+
+
+### store the samples
+
+In this next step, we store the outputs from PMwG to be used in the IS2 algorithm. This leads to us creating X, an array of all parameters, random effects, off diagonal covariances and a-half values used in the PMwG sampling by the length of posterior samples. 
+
+```{r store, eval=FALSE}
+# grab the sampled stage of PMwG
+# store the random effects
+alpha <- sampled$samples$alpha[,,sampled$samples$stage=="sample"]
+# store the mu
+theta <- sampled$samples$theta_mu[,sampled$samples$stage=="sample"]
+# store the cholesky transformed sigma
+sig <- sampled$samples$theta_sig[,,sampled$samples$stage=="sample"]
+# the a-hlaf is used in  calculating the Huang and Wand (2013) prior. 
+# The a is a random sample from inv gamma which weights the inv wishart. The mix of inverse wisharts is the prior on the correlation matrix
+a_half <- log(sampled$samples$a_half[,sampled$samples$stage=="sample"])
+
+
+
+
+unwind=function(x,reverse=FALSE) {
+
+  if (reverse) {
+    ##        if ((n*n+n)!=2*length(x)) stop("Wrong sizes in unwind.")
+    n=sqrt(2*length(x)+0.25)-0.5 ## Dim of matrix.
+    out=array(0,dim=c(n,n))
+    out[lower.tri(out,diag=TRUE)]=x
+    diag(out)=exp(diag(out))
+    out=out%*%t(out)
+  } else {
+    y=t(chol(x))
+    diag(y)=log(diag(y))
+    out=y[lower.tri(y,diag=TRUE)]
+  }
+  return(out)
+}
+
+#unwound sigma
+pts2.unwound = apply(sig,3,unwind)
+
+n.params<- nrow(pts2.unwound)+n_randeffect+n_randeffect
+all_samples=array(dim=c(n_subjects,n.params,n_iter))
+mu_tilde=array(dim = c(n_subjects,n.params))
+sigma_tilde=array(dim = c(n_subjects,n.params,n.params))
+
+
+for (j in 1:n_subjects){
+  all_samples[j,,] = rbind(alpha[,j,],theta[,],pts2.unwound[,])
+  # calculate the mean for re, mu and sigma
+  mu_tilde[j,] =apply(all_samples[j,,],1,mean)
+  # calculate the covariance matrix for random effects, mu and sigma
+  sigma_tilde[j,,] = cov(t(all_samples[j,,]))
+}
+
+
+
+X <- cbind(t(theta),t(pts2.unwound),t(a_half)) 
+
+```
+
+
+
+### Estimate the normal mix
+
+Here we create an importance distribution by using a mixture of two gaussians, however this can be done differently. This takes ages. 
+
+```{r mixture, eval=FALSE}
+# do k=2, for a mixture of 2 gaussians (Davids suggestions, could be between 1-5 really)
+k = 2 #number of dists
+
+#mvnormalmixEM is a weak point - function can fail. needs a note or output to show if it doesn't work. Should restart if it fails
+mix = NULL
+while(is.null(mix)) {
+  tryCatch(mix<-mvnormalmixEM(X,k=k, maxit = 5000),error=function(e){
+  },finally={})
+}
+
+
+mix_weight <- mix$lambda
+mix_mu <- mix$mu
+mix_sigma <- mix$sigma
+
+```
+
+### Generate proposal parameters from importance samples
+
+Now that we have our importance distribution, we can generate proposals from this. Here, we protect against low amounts of samples by including the pmax and pmin arguments, ensuring that even if the weights are low, that we do sample from the both parts of the mixture. 
+
+```{r proposals, eval=FALSE}
+
+###### generate the proposal parameters from the mix of importance samples  #####
+
+# use the weight to get samples for n1. n2 = samples-n1 (i.e 9000 and 1000)
+n1=rbinom(n=1, size=IS_samples,prob=max(mix_weight))
+n1=pmax(n1,2)
+n1=pmin(n1,IS_samples-2)
+n2=IS_samples-n1
+
+# generates the 10,000 IS proposals given the mix
+proposals1=rmvnorm(n1,mix_mu[[1]],mix_sigma[[1]])
+proposals2=rmvnorm(n2,mix_mu[[2]],mix_sigma[[2]])
+prop_theta=rbind(proposals1,proposals2)
+
+
+
+```
+
+
+### Make your group_dist function
+
+this function is used in the IS2 algorithm, however, it will vary with the type of priors that are set. For PMwG we use a multivariate normal prior and so here we calculate the density using dmvnorm. The density is calculated for the current random effect particle given the group level parameters and variance. 
+
+```{groupdist, eval=FALSE}
+
+group_dist = function(random_effect = NULL, parameters, sample = FALSE, n_samples = NULL, n_randeffect){
+  param.theta.mu <- parameters[1:n_randeffect]
+  ##scott would like it to ask for n(unwind) rather than doing the calculation for how many it actually needs, you should just input the length of the unwound object
+  param.theta.sig.unwound <- parameters[(n_randeffect+1):(length(parameters)-n_randeffect)] 
+  param.theta.sig2 <- unwind(param.theta.sig.unwound, reverse = TRUE)
+  if (sample){
+    return(mvtnorm::rmvnorm(n_samples, param.theta.mu,param.theta.sig2))
+  }else{
+    logw_second<-mvtnorm::dmvnorm(random_effect, param.theta.mu,param.theta.sig2,log=TRUE)
+    return(logw_second)
+  }
+}
+
+```
+
+
+
+### Make your prior_dist function
+
+
+This function is used in PMwG to calculate the density under the prior. Here we use Huang and Wand's (2013) prior (as used in PMwG) for a multivariate normal. The final line shows the value that is returned, which is equation x in the paper. This takes the density of the current parameters under the prior mean (log_prior_mu), variance (log_prior_sigma) and variance on the variance (log_prior_a). There are several other calculations performed here, which can be found in the paper.
+
+```{priorDist, eval=FALSE}
+prior_dist = function(parameters, prior_parameters = sampled$prior, n_randeffect){ ###mod notes: the sampled$prior needs to be fixed/passed in some other time
+  param.theta.mu <- parameters[1:n_randeffect]
+  param.theta.sig.unwound <- parameters[(n_randeffect+1):(length(parameters)-n_randeffect)] ##scott would like it to ask for n(unwind)
+  param.theta.sig2 <- unwind(param.theta.sig.unwound, reverse = TRUE)
+  param.a <- exp(parameters[((length(parameters)-n_randeffect)+1):(length(parameters))])
+  v_alpha=2
+  
+  log_prior_mu=mvtnorm::dmvnorm(param.theta.mu, mean = prior_parameters$theta_mu_mean, sigma = prior_parameters$theta_mu_var, log =TRUE)
+  log_prior_sigma = log(MCMCpack::diwish(param.theta.sig2, v=v_alpha+ n_randeffect-1, S = 2*v_alpha*diag(1/param.a)))  #exp of a-half -> positive only
+  log_prior_a = sum(invgamma::dinvgamma(param.a,scale = 0.5,shape=1,log=TRUE))
+  
+  logw_den2 <- sum(log(1/param.a)) # jacobian determinant of transformation of log of the a-half
+  logw_den3 <- log(2^n_randeffect)+sum((n_randeffect:1+1)*log(diag(param.theta.sig2))) #jacobian determinant of cholesky factors of cov matrix
+  
+  return(log_prior_mu + log_prior_sigma + log_prior_a + logw_den3 - logw_den2)
+}
+
+
+
+```
+
+
+### Make your get_logp function
+
+Next we need to create the function used to calculate the density of each particle. This is Equation 5 in the paper. This function calcualtes the density of each proposal for each subject across n particles. Here we first generate the particles from a mix of the group level parameters and a conditional multivariate normal, conditioned on the current subjects mean and variance. We then obtain the density of these proposed parameters under the likelihood and the group_dist functions over the likelihood of these proposals (as per equation 5). We then protect against badness and return the sum of these values (summed across participants, where participants are summed across particles)
+
+
+```{r getlogp,, eval=FALSE}
+get_logp=function(prop_theta,data,n_subjects,n_particles,n_randeffect,mu_tilde,sigma_tilde,i, group_dist=group_dist){
+  #make an array for the density
+  logp=array(dim=c(n_particles,n_subjects))
+  # for each subject, get 1000 IS samples (particles) and find log weight of each
+  for (j in 1:n_subjects){
+    #generate the particles from the conditional MVnorm AND mix of group level proposals
+    wmix <- 0.95
+    n1=rbinom(n=1,size=n_particles,prob=wmix)
+    if (n1<2) n1=2
+    if (n1>(n_particles-2)) n1=n_particles-2 ## These just avoid degenerate arrays.
+    n2=n_particles-n1
+    # do conditional MVnorm based on the proposal distribution
+    conditional = condMVNorm::condMVN(mean=mu_tilde[j,],sigma=sigma_tilde[j,,],dependent.ind=1:n_randeffect,
+                          given.ind=(n_randeffect+1):n.params,X.given=prop_theta[i,1:(n.params-n_randeffect)])
+    particles1 <- mvtnorm::rmvnorm(n1, conditional$condMean,conditional$condVar)
+    # mix of proposal params and conditional
+    particles2 <- group_dist(n_samples=n2, parameters = prop_theta[i,],sample=TRUE, n_randeffect=n_randeffect)
+    particles <- rbind(particles1,particles2)
+    
+    for (k in 1:n_particles){
+      x <-particles[k,]
+      #names for ll function to work
+      #mod notes: this is the bit the prior effects
+      names(x)<-pars
+      #   do lba log likelihood with given parameters for each subject, gets density of particle from ll func
+      logw_first=sampled$ll_func(x,data = data[as.numeric(factor(data$subject))==j,]) #mod notes: do we pass this in or the whole sampled object????
+      # below gets second part of equation 5 numerator ie density under prop_theta
+      # particle k and big vector of things
+      logw_second<-group_dist(random_effect = particles[k,], parameters = prop_theta[i,], sample= FALSE, n_randeffect = n_randeffect) #mod notes: group dist
+      # below is the denominator - ie mix of density under conditional and density under pro_theta
+      logw_third <- log(wmix*dmvnorm(particles[k,], conditional$condMean,conditional$condVar)+(1-wmix)*exp(logw_second)) #mod notes: fine?
+      #does equation 5
+      logw=(logw_first+logw_second)-logw_third
+      #assign to correct row/column
+      logp[k,j]=logw 
+    }
+  }
+  #we use this part to centre the logw before addign back on at the end. This avoids inf and -inf values
+  sub_max = apply(logp,2,max)
+  logw = t(t(logp) - sub_max)
+  w = exp(logw)
+  subj_logp = log(apply(w,2,mean))+sub_max #means
+  
+
+  # sum the logp and return 
+  return(sum(subj_logp))
+}
+
+```
+
+### Compute the LW
+
+Finally, we need to create our compute_lw function. This function does equation 10 to obtain the log weights for the proposed particles. We first use get_logp to to get the density of the particles for each subject, then use prior_dist to get the density of the proposals under the prior. Finally we get tge density of the proposed parameters under the mixture distribution. This then gives us equation 10. 
+
+```{r computeLW, eval=FALSE}
+compute_lw=function(prop_theta,data,n_subjects,n_particles,n_randeffect,mu_tilde,sigma_tilde,i, prior_dist=prior_dist, sampled=sampled){
+  
+  logp.out <- get_logp(prop_theta,data,n_subjects,n_particles,n_randeffect,mu_tilde,sigma_tilde,i, group_dist=group_dist)
+  ##do equation 10
+  logw_num <- logp.out[1]+prior_dist(parameters = prop_theta[i,], prior_parameters = sampled$prior, n_randeffect)
+  logw_den <- log(mix_weight[1]* mvtnorm::dmvnorm(prop_theta[i,], mix_mu[[1]], mix_sigma[[1]])+ mix_weight[2]* mvtnorm::dmvnorm(prop_theta[i,], mix_mu[[2]], mix_sigma[[2]])) #density of proposed params under the means
+  logw <- logw_num-logw_den #this is the equation 10
+  return(c(logw))
+  #NOTE: we should leave a note if variance is shit - variance is given by the logp function (currently commented out)
+}
+
+```
+
+### Make it work
+
+Next we have to run it, see code below;
+
+```{r runit, eval=FALSE}
+
+#makes an array to store the IS samples
+tmp<-array(dim=c(IS_samples))
+
+#do the sampling
+if (cpus>1){
+  tmp <- mclapply(X=1:IS_samples,mc.cores = cpus, FUN = compute_lw, prop_theta = prop_theta,data = data,n_subjects= n_subjects,n_particles = n_particles,
+                  n_randeffect = n_randeffect,mu_tilde=mu_tilde,sigma_tilde = sigma_tilde, prior_dist=prior_dist, sampled=sampled)
+} else{
+  for (i in 1:IS_samples){
+    cat(i)
+    tmp[i]<-compute_lw(prop_theta,data,n_subjects,n_particles, n_randeffect,mu_tilde,sigma_tilde,i,prior_dist=prior_dist, sampled=sampled)
+  }
+}
+
+
+
+# get the ML value
+finished <- tmp
+tmp<-unlist(tmp)
+max.lw <- max(tmp)
+mean.centred.lw <- mean(exp(tmp-max.lw)) #takes off the max and gets mean (avoids infs)
+lw <-log(mean.centred.lw)+max.lw #puts max back on to get the lw
+
+```
+
+
+### bootstrapping for SE 
+
+to calculate standard error, we use a bootstrapping method, which can be done using the code below. 
+
+```{r boots, eval=FALSE}
+bootstrap = 10000
+log_marglik_boot= array(dim = bootstrap)
+for (i in 1:bootstrap){
+  log_weight_boot = sample(tmp, IS_samples, replace = TRUE) #resample with replacement from the lw
+  max.boot <- max(log_weight_boot)
+  centred.boot <- mean(exp(log_weight_boot-max.boot)) #takes off the max and gets mean (avoids infs)
+  log_marglik_boot[i] <-log(centred.boot)+max.boot #puts max back on 
+}
+var(log_marglik_boot) ###SE
+
+
+
+```
+
+
+

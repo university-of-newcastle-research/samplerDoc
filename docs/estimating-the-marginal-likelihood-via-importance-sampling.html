@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 6 Estimating the Marginal Likelihood via Importance Sampling | Particle Based Samplers for MCMC</title>
+  <meta name="description" content="Particle Based Sampler for MCMC" />
+  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 6 Estimating the Marginal Likelihood via Importance Sampling | Particle Based Samplers for MCMC" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Particle Based Sampler for MCMC" />
+  <meta name="github-repo" content="rstudio/bookdown-demo" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 6 Estimating the Marginal Likelihood via Importance Sampling | Particle Based Samplers for MCMC" />
+  
+  <meta name="twitter:description" content="Particle Based Sampler for MCMC" />
+  
+
+<meta name="author" content="Jon-Paul Cavallaro" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="troubleshoot.html"/>
+<link rel="next" href="appendix.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">PMwG Samplers Package</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction to particle based sampler for MCMC</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#assumed-knowledge"><i class="fa fa-check"></i><b>1.1</b> Assumed knowledge</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#why-would-you-use-particle-metropolis-within-gibbs-sampling"><i class="fa fa-check"></i><b>1.2</b> Why would you use Particle Metropolis within Gibbs sampling?</a></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#the-assumed-hierarchical-structure"><i class="fa fa-check"></i><b>1.3</b> The assumed hierarchical structure</a></li>
+<li class="chapter" data-level="1.4" data-path="index.html"><a href="index.html#what-particle-metropolis-within-gibbs-sampling-provides"><i class="fa fa-check"></i><b>1.4</b> What Particle Metropolis within Gibbs sampling provides</a></li>
+<li class="chapter" data-level="1.5" data-path="index.html"><a href="index.html#what-is-particle-metropolis-within-gibbs-sampling"><i class="fa fa-check"></i><b>1.5</b> What is Particle Metropolis within Gibbs sampling?</a></li>
+<li class="chapter" data-level="1.6" data-path="index.html"><a href="index.html#generating-proposals-in-pmwg-sampling-using-particle-metropolis"><i class="fa fa-check"></i><b>1.6</b> Generating proposals in PMwG sampling using Particle Metropolis</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html"><i class="fa fa-check"></i><b>2</b> PMwG sampler and Signal Detection Theory</a><ul>
+<li class="chapter" data-level="2.0.1" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#sdtOutline"><i class="fa fa-check"></i><b>2.0.1</b> Signal Detection Theory analysis of lexical decision task</a></li>
+<li class="chapter" data-level="2.0.2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#writing-a-log-likelihood-function"><i class="fa fa-check"></i><b>2.0.2</b> Writing a log-likelihood function</a></li>
+<li class="chapter" data-level="2.1" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#testing-the-sdt-log-likelihood-function"><i class="fa fa-check"></i><b>2.1</b> Testing the SDT log-likelihood function</a></li>
+<li class="chapter" data-level="2.2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#sdtWag"><i class="fa fa-check"></i><b>2.2</b> SDT log-likelihood function for Wagenmakers experiment</a><ul>
+<li class="chapter" data-level="2.2.1" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#description-of-wagenmakers-experiment"><i class="fa fa-check"></i><b>2.2.1</b> Description of Wagenmakers experiment</a></li>
+<li class="chapter" data-level="2.2.2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#computation-time-of-log-likelihood-function"><i class="fa fa-check"></i><b>2.2.2</b> Computation time of log-likelihood function</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#sdtPMwG"><i class="fa fa-check"></i><b>2.3</b> PMwG Framework</a><ul>
+<li class="chapter" data-level="2.3.1" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#start-points"><i class="fa fa-check"></i><b>2.3.1</b> Model start points</a></li>
+<li class="chapter" data-level="2.3.2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#run-sdtsampler"><i class="fa fa-check"></i><b>2.3.2</b> Running the sampler</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#check-sampling-process"><i class="fa fa-check"></i><b>2.4</b> Check sampling process</a></li>
+<li class="chapter" data-level="2.5" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#simulating-posterior-data"><i class="fa fa-check"></i><b>2.5</b> Simulating posterior data</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="forstmannChapter.html"><a href="forstmannChapter.html"><i class="fa fa-check"></i><b>3</b> PMwG sampler and sequential sampling models</a><ul>
+<li class="chapter" data-level="3.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#the-speed-accuracy-tradeoff-in-perceptual-decisions"><i class="fa fa-check"></i><b>3.1</b> The speed-accuracy tradeoff in perceptual decisions</a></li>
+<li class="chapter" data-level="3.2" data-path="forstmannChapter.html"><a href="forstmannChapter.html#LBAParameters"><i class="fa fa-check"></i><b>3.2</b> Linear Ballistic Accumulator Parameters</a></li>
+<li class="chapter" data-level="3.3" data-path="forstmannChapter.html"><a href="forstmannChapter.html#writellFunc"><i class="fa fa-check"></i><b>3.3</b> Writing the log-likelihood function</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#fstLBALL"><i class="fa fa-check"></i><b>3.3.1</b> Fast LBA Log-likelihood Function</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="forstmannChapter.html"><a href="forstmannChapter.html#pmwg-framework"><i class="fa fa-check"></i><b>3.4</b> PMwG Framework</a><ul>
+<li class="chapter" data-level="3.4.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#lbaStartPts"><i class="fa fa-check"></i><b>3.4.1</b> Model start points</a></li>
+<li class="chapter" data-level="3.4.2" data-path="forstmannChapter.html"><a href="forstmannChapter.html#run-sampler"><i class="fa fa-check"></i><b>3.4.2</b> Running the sampler</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="forstmannChapter.html"><a href="forstmannChapter.html#genppdatafunc"><i class="fa fa-check"></i><b>3.5</b> Simulating Posterior Predictive Data</a><ul>
+<li class="chapter" data-level="3.5.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#assessing-descriptive-adequacy-goodness-of-fit"><i class="fa fa-check"></i><b>3.5.1</b> Assessing Descriptive Adequacy (goodness of fit)</a></li>
+</ul></li>
+<li class="chapter" data-level="3.6" data-path="forstmannChapter.html"><a href="forstmannChapter.html#evaluating-different-models---single-threshold-lba"><i class="fa fa-check"></i><b>3.6</b> Evaluating different models - single threshold LBA</a><ul>
+<li class="chapter" data-level="3.6.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#pmwg-framework-for-a-single-threshold-model"><i class="fa fa-check"></i><b>3.6.1</b> PMwG framework for a single threshold model</a></li>
+</ul></li>
+<li class="chapter" data-level="3.7" data-path="forstmannChapter.html"><a href="forstmannChapter.html#checking-descriptive-adequacy-of-1b-model."><i class="fa fa-check"></i><b>3.7</b> Checking Descriptive Adequacy of 1b model.</a></li>
+<li class="chapter" data-level="3.8" data-path="forstmannChapter.html"><a href="forstmannChapter.html#model-comparison"><i class="fa fa-check"></i><b>3.8</b> Model Comparison</a><ul>
+<li class="chapter" data-level="3.8.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#assessing-descriptive-adequacy-graphically"><i class="fa fa-check"></i><b>3.8.1</b> Assessing Descriptive Adequacy Graphically</a></li>
+<li class="chapter" data-level="3.8.2" data-path="forstmannChapter.html"><a href="forstmannChapter.html#forstDIC"><i class="fa fa-check"></i><b>3.8.2</b> Model comparison via DIC</a></li>
+</ul></li>
+<li class="chapter" data-level="3.9" data-path="forstmannChapter.html"><a href="forstmannChapter.html#checking-the-lba-log-likelihood-function"><i class="fa fa-check"></i><b>3.9</b> Checking the LBA log-likelihood function</a><ul>
+<li class="chapter" data-level="3.9.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#test-one-do-changes-in-parameter-values-cause-changes-in-the-returned-log-likelihood"><i class="fa fa-check"></i><b>3.9.1</b> Test one: Do changes in parameter values cause changes in the returned log-likelihood?</a></li>
+<li class="chapter" data-level="3.9.2" data-path="forstmannChapter.html"><a href="forstmannChapter.html#testing-whether-true-x-values-have-the-highest-likelihood"><i class="fa fa-check"></i><b>3.9.2</b> Testing whether true-x values have the highest likelihood</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><i class="fa fa-check"></i><b>4</b> PMwG sampler with the Linear Ballistic Accumulator and a complex experiment design</a><ul>
+<li class="chapter" data-level="4.1" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#writing-the-lba-log-likelihood-function-for-the-wagenmakers-data-set"><i class="fa fa-check"></i><b>4.1</b> Writing the LBA log-likelihood function for the Wagenmakers data set</a></li>
+<li class="chapter" data-level="4.2" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#wagFastll"><i class="fa fa-check"></i><b>4.2</b> Fast LBA Log-likelihood function</a></li>
+<li class="chapter" data-level="4.3" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#pmwg-framework-1"><i class="fa fa-check"></i><b>4.3</b> PMwG Framework</a><ul>
+<li class="chapter" data-level="4.3.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#run-sampler"><i class="fa fa-check"></i><b>4.3.1</b> Running the sampler</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#genppdataWag"><i class="fa fa-check"></i><b>4.4</b> Simulating Posterior Predictive Data</a><ul>
+<li class="chapter" data-level="4.4.1" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#assessing-descriptive-adequacy-goodness-of-fit-1"><i class="fa fa-check"></i><b>4.4.1</b> Assessing Descriptive Adequacy (goodness of fit)</a></li>
+</ul></li>
+<li class="chapter" data-level="4.5" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#model-comparison-via-dic"><i class="fa fa-check"></i><b>4.5</b> Model Comparison via DIC</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="troubleshoot.html"><a href="troubleshoot.html"><i class="fa fa-check"></i><b>5</b> Troubleshooting PMwG errors</a><ul>
+<li class="chapter" data-level="5.1" data-path="troubleshoot.html"><a href="troubleshoot.html#how-to-write-a-log-likelihood-function"><i class="fa fa-check"></i><b>5.1</b> How to write a log-likelihood function</a><ul>
+<li class="chapter" data-level="5.1.1" data-path="troubleshoot.html"><a href="troubleshoot.html#writing-your-log-likelihood-function-tips-errors-and-check-list"><i class="fa fa-check"></i><b>5.1.1</b> Writing your log-likelihood function: Tips, errors and check list</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="estimating-the-marginal-likelihood-via-importance-sampling.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling.html"><i class="fa fa-check"></i><b>6</b> Estimating the Marginal Likelihood via Importance Sampling</a><ul>
+<li class="chapter" data-level="6.1" data-path="estimating-the-marginal-likelihood-via-importance-sampling.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling.html#forstmann-example"><i class="fa fa-check"></i><b>6.1</b> Forstmann Example</a><ul>
+<li class="chapter" data-level="6.1.1" data-path="estimating-the-marginal-likelihood-via-importance-sampling.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling.html#load-packages-and-samples"><i class="fa fa-check"></i><b>6.1.1</b> load packages and samples</a></li>
+<li class="chapter" data-level="6.1.2" data-path="estimating-the-marginal-likelihood-via-importance-sampling.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling.html#set-variables"><i class="fa fa-check"></i><b>6.1.2</b> set variables</a></li>
+<li class="chapter" data-level="6.1.3" data-path="estimating-the-marginal-likelihood-via-importance-sampling.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling.html#store-the-samples"><i class="fa fa-check"></i><b>6.1.3</b> store the samples</a></li>
+<li class="chapter" data-level="6.1.4" data-path="estimating-the-marginal-likelihood-via-importance-sampling.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling.html#estimate-the-normal-mix"><i class="fa fa-check"></i><b>6.1.4</b> Estimate the normal mix</a></li>
+<li class="chapter" data-level="6.1.5" data-path="estimating-the-marginal-likelihood-via-importance-sampling.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling.html#generate-proposal-parameters-from-importance-samples"><i class="fa fa-check"></i><b>6.1.5</b> Generate proposal parameters from importance samples</a></li>
+<li class="chapter" data-level="6.1.6" data-path="estimating-the-marginal-likelihood-via-importance-sampling.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling.html#make-your-group_dist-function"><i class="fa fa-check"></i><b>6.1.6</b> Make your group_dist function</a></li>
+<li class="chapter" data-level="6.1.7" data-path="estimating-the-marginal-likelihood-via-importance-sampling.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling.html#make-your-prior_dist-function"><i class="fa fa-check"></i><b>6.1.7</b> Make your prior_dist function</a></li>
+<li class="chapter" data-level="6.1.8" data-path="estimating-the-marginal-likelihood-via-importance-sampling.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling.html#make-your-get_logp-function"><i class="fa fa-check"></i><b>6.1.8</b> Make your get_logp function</a></li>
+<li class="chapter" data-level="6.1.9" data-path="estimating-the-marginal-likelihood-via-importance-sampling.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling.html#compute-the-lw"><i class="fa fa-check"></i><b>6.1.9</b> Compute the LW</a></li>
+<li class="chapter" data-level="6.1.10" data-path="estimating-the-marginal-likelihood-via-importance-sampling.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling.html#make-it-work"><i class="fa fa-check"></i><b>6.1.10</b> Make it work</a></li>
+<li class="chapter" data-level="6.1.11" data-path="estimating-the-marginal-likelihood-via-importance-sampling.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling.html#bootstrapping-for-se"><i class="fa fa-check"></i><b>6.1.11</b> bootstrapping for SE</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="appendix.html"><a href="appendix.html"><i class="fa fa-check"></i><b>7</b> Appendix</a><ul>
+<li class="chapter" data-level="7.1" data-path="appendix.html"><a href="appendix.html#wagSDTscript"><i class="fa fa-check"></i><b>7.1</b> Wagenmakers SDT script</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://newcastlecl.org/" target="blank">Published by Newcastle Cognition Lab</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Particle Based Samplers for MCMC</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="estimating-the-marginal-likelihood-via-importance-sampling" class="section level1">
+<h1><span class="header-section-number">Chapter 6</span> Estimating the Marginal Likelihood via Importance Sampling</h1>
+<p>Despite the strengths of the PMwG sampling approach, one problem it fails to address is that of model comparison. Model comparison was alluded to earlier when comparing SDT models, and is commonly encountered in computational cognitive modelling when we aim to distinguish between varying model accounts of the data. Establishing which model is the ``best fit’’ to the data plays a large role in determining inferences made from modelling exercises, and so whilst PMwG is more accurate and efficient in obtaining accurate posterior estimates from models, there are many other considerations and issues that remain with model comparison methods. In the current example, we used a recently developed model selection method - importance sampling squared (IS2) - to distinguish between models. this method is more robust, accounts for model flexibility and gives unbiased estimates of the marginal likelihood of the model, which can then be used for model comparison. The marginal likelihood of a model is the average likelihood of the model, given the data, where the average is taken over the prior of the model parameters.</p>
+<p>There are several methods of model comparison which are now viewed as gold standard methods, as these are able to account for the descriptive adequacy of a model, as well as the models flexibility. Cross validation is one emerging method proposed as a gold standard as this method provides a robust test of models in instances where it is possible. Margin likelihood estimates are viewed as another emerging gold standard of model comparison, as these values account for the fit of the model and the model flexibility (by integrating the likelihood across the prior predictive space of a model). By accounting for model flexibility, marginal likelihood does not need post-hoc complexity corrections, such as AIC, BIC or DIC. In hierarchical models, obtaining the marginal likelihood is difficult, as the likelihood function is the density of the data with the random effects integrated out when viewed as a function of the group-level parameters, an integral which is often unavailable (computationally or as it is intractable). Despite this integral being intractable, IS2, allows a method of estimating the marginal likelihood when the likelihood is intractable but can be estimated in unbiasedly.</p>
+<p>The method works by first sampling from the posterior via a sampling scheme such as MCMC (or here, PMwG). These draws are then used to create the importance distribution for the fixed parameters. This importance distribution is constructed by fitting a mixture of normal or Student t distributions to these MCMC samples. We then construct conditional proposal parameters - called particles - for each subject. The marginal likelihood is then estimated unbiasedly which is combined with the importance distribution. From this method, the importance sampling procedure is in itself an importance sampling procedure which can be used to estimate the likelihood.</p>
+<div id="forstmann-example" class="section level2">
+<h2><span class="header-section-number">6.1</span> Forstmann Example</h2>
+<p>Below we detail code, with comments, to assist in running the IS2 algorithm. This will be updated as the package progresses. In the example shown here, we use samples taken from the four Forstmann (2008) models shown in Chapter 3. All samples used here are taken from the posterior sampling stage of PMwG. IS2 is robust enough to be able to use samples from any stage of PMwG (as shown in blog post), however, we recommend sampling from the posterior for lower variance.</p>
+<p>In this example we run IS2 to compare the four models in an unbiased manner. The original IS2 paper uses the same method, and so this chapter provides a walkthrough of how this example was run. As we are using samples from the PMwG algorithm, the prior_dist function is specifically coded for PMwG priors. To run other models, the prior_dist function needs to be updated (more on this later maybe).</p>
+<div id="load-packages-and-samples" class="section level3">
+<h3><span class="header-section-number">6.1.1</span> load packages and samples</h3>
+<p>First we load the required packages and set up the environment, including the number of CPUs to use and the sampled object.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">#######       IS2 Psuedo Code       #########
+
+## set up environment and packages 
+<span class="kw">rm</span>(<span class="dt">list=</span><span class="kw">ls</span>())
+<span class="kw">library</span>(mvtnorm)
+<span class="kw">library</span>(MCMCpack)
+<span class="kw">library</span>(rtdists)
+<span class="kw">library</span>(invgamma)
+<span class="kw">library</span>(mixtools)
+<span class="kw">library</span>(condMVNorm)
+<span class="kw">library</span>(parallel)
+<span class="kw">setwd</span>(<span class="st">&quot;~/Documents/Research/Modelling Project/Work/IS2/Tutorial&quot;</span>)
+<span class="kw">load</span>(<span class="st">&quot;forstmannM1_sampled.Rdata&quot;</span>)
+
+cpus =<span class="st"> </span><span class="dv">20</span></code></pre></div>
+</div>
+<div id="set-variables" class="section level3">
+<h3><span class="header-section-number">6.1.2</span> set variables</h3>
+<p>Next we set up the variables to be used by the algorithm. With PMwG these can remain as specified here. Essentially the algorithm needs the number of subjects, random effects, iterations of samples, number of required IS2 samples, number of IS2 particles and the parameter names. Here, for convenience we use 1000 samples and 250 particles. It is oftne more reliable to run a larger number of samples and particles, however, this decreases efficiency. We recommend reading blog post for more information. We also recommend running the IS2 algorithm for several iterations and combing the IS2 samples output to achieve more stable estimates.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">###### set up variables #####
+<span class="co"># number of particles, samples, subjects, random effects etc</span>
+n_randeffect=sampled<span class="op">$</span>n_pars
+n_subjects =<span class="st"> </span>sampled<span class="op">$</span>n_subjects
+n_iter =<span class="st"> </span><span class="kw">length</span>(sampled<span class="op">$</span>samples<span class="op">$</span>stage[sampled<span class="op">$</span>samples<span class="op">$</span>stage<span class="op">==</span><span class="st">&quot;sample&quot;</span>])
+length_draws =<span class="st"> </span>sampled<span class="op">$</span>samples<span class="op">$</span>idx <span class="co">#length of the full transformed random effect vector and/or parameter vector</span>
+IS_samples =<span class="st"> </span><span class="dv">1000</span> <span class="co">#number of importance samples</span>
+n_particles =<span class="st"> </span><span class="dv">250</span> <span class="co">#number of particles</span>
+pars =<span class="st"> </span>sampled<span class="op">$</span>pars</code></pre></div>
+</div>
+<div id="store-the-samples" class="section level3">
+<h3><span class="header-section-number">6.1.3</span> store the samples</h3>
+<p>In this next step, we store the outputs from PMwG to be used in the IS2 algorithm. This leads to us creating X, an array of all parameters, random effects, off diagonal covariances and a-half values used in the PMwG sampling by the length of posterior samples.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># grab the sampled stage of PMwG</span>
+<span class="co"># store the random effects</span>
+alpha &lt;-<span class="st"> </span>sampled<span class="op">$</span>samples<span class="op">$</span>alpha[,,sampled<span class="op">$</span>samples<span class="op">$</span>stage<span class="op">==</span><span class="st">&quot;sample&quot;</span>]
+<span class="co"># store the mu</span>
+theta &lt;-<span class="st"> </span>sampled<span class="op">$</span>samples<span class="op">$</span>theta_mu[,sampled<span class="op">$</span>samples<span class="op">$</span>stage<span class="op">==</span><span class="st">&quot;sample&quot;</span>]
+<span class="co"># store the cholesky transformed sigma</span>
+sig &lt;-<span class="st"> </span>sampled<span class="op">$</span>samples<span class="op">$</span>theta_sig[,,sampled<span class="op">$</span>samples<span class="op">$</span>stage<span class="op">==</span><span class="st">&quot;sample&quot;</span>]
+<span class="co"># the a-hlaf is used in  calculating the Huang and Wand (2013) prior. </span>
+<span class="co"># The a is a random sample from inv gamma which weights the inv wishart. The mix of inverse wisharts is the prior on the correlation matrix</span>
+a_half &lt;-<span class="st"> </span><span class="kw">log</span>(sampled<span class="op">$</span>samples<span class="op">$</span>a_half[,sampled<span class="op">$</span>samples<span class="op">$</span>stage<span class="op">==</span><span class="st">&quot;sample&quot;</span>])
+
+
+
+
+unwind=<span class="cf">function</span>(x,<span class="dt">reverse=</span><span class="ot">FALSE</span>) {
+
+  <span class="cf">if</span> (reverse) {
+    ##        if ((n*n+n)!=2*length(x)) stop(&quot;Wrong sizes in unwind.&quot;)
+    n=<span class="kw">sqrt</span>(<span class="dv">2</span><span class="op">*</span><span class="kw">length</span>(x)<span class="op">+</span><span class="fl">0.25</span>)<span class="op">-</span><span class="fl">0.5</span> ## Dim of matrix.
+    out=<span class="kw">array</span>(<span class="dv">0</span>,<span class="dt">dim=</span><span class="kw">c</span>(n,n))
+    out[<span class="kw">lower.tri</span>(out,<span class="dt">diag=</span><span class="ot">TRUE</span>)]=x
+    <span class="kw">diag</span>(out)=<span class="kw">exp</span>(<span class="kw">diag</span>(out))
+    out=out<span class="op">%*%</span><span class="kw">t</span>(out)
+  } <span class="cf">else</span> {
+    y=<span class="kw">t</span>(<span class="kw">chol</span>(x))
+    <span class="kw">diag</span>(y)=<span class="kw">log</span>(<span class="kw">diag</span>(y))
+    out=y[<span class="kw">lower.tri</span>(y,<span class="dt">diag=</span><span class="ot">TRUE</span>)]
+  }
+  <span class="kw">return</span>(out)
+}
+
+<span class="co">#unwound sigma</span>
+pts2.unwound =<span class="st"> </span><span class="kw">apply</span>(sig,<span class="dv">3</span>,unwind)
+
+n.params&lt;-<span class="st"> </span><span class="kw">nrow</span>(pts2.unwound)<span class="op">+</span>n_randeffect<span class="op">+</span>n_randeffect
+all_samples=<span class="kw">array</span>(<span class="dt">dim=</span><span class="kw">c</span>(n_subjects,n.params,n_iter))
+mu_tilde=<span class="kw">array</span>(<span class="dt">dim =</span> <span class="kw">c</span>(n_subjects,n.params))
+sigma_tilde=<span class="kw">array</span>(<span class="dt">dim =</span> <span class="kw">c</span>(n_subjects,n.params,n.params))
+
+
+<span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>n_subjects){
+  all_samples[j,,] =<span class="st"> </span><span class="kw">rbind</span>(alpha[,j,],theta[,],pts2.unwound[,])
+  <span class="co"># calculate the mean for re, mu and sigma</span>
+  mu_tilde[j,] =<span class="kw">apply</span>(all_samples[j,,],<span class="dv">1</span>,mean)
+  <span class="co"># calculate the covariance matrix for random effects, mu and sigma</span>
+  sigma_tilde[j,,] =<span class="st"> </span><span class="kw">cov</span>(<span class="kw">t</span>(all_samples[j,,]))
+}
+
+
+
+X &lt;-<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">t</span>(theta),<span class="kw">t</span>(pts2.unwound),<span class="kw">t</span>(a_half)) </code></pre></div>
+</div>
+<div id="estimate-the-normal-mix" class="section level3">
+<h3><span class="header-section-number">6.1.4</span> Estimate the normal mix</h3>
+<p>Here we create an importance distribution by using a mixture of two gaussians, however this can be done differently. This takes ages.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># do k=2, for a mixture of 2 gaussians (Davids suggestions, could be between 1-5 really)</span>
+k =<span class="st"> </span><span class="dv">2</span> <span class="co">#number of dists</span>
+
+<span class="co">#mvnormalmixEM is a weak point - function can fail. needs a note or output to show if it doesn&#39;t work. Should restart if it fails</span>
+mix =<span class="st"> </span><span class="ot">NULL</span>
+<span class="cf">while</span>(<span class="kw">is.null</span>(mix)) {
+  <span class="kw">tryCatch</span>(mix&lt;-<span class="kw">mvnormalmixEM</span>(X,<span class="dt">k=</span>k, <span class="dt">maxit =</span> <span class="dv">5000</span>),<span class="dt">error=</span><span class="cf">function</span>(e){
+  },<span class="dt">finally=</span>{})
+}
+
+
+mix_weight &lt;-<span class="st"> </span>mix<span class="op">$</span>lambda
+mix_mu &lt;-<span class="st"> </span>mix<span class="op">$</span>mu
+mix_sigma &lt;-<span class="st"> </span>mix<span class="op">$</span>sigma</code></pre></div>
+</div>
+<div id="generate-proposal-parameters-from-importance-samples" class="section level3">
+<h3><span class="header-section-number">6.1.5</span> Generate proposal parameters from importance samples</h3>
+<p>Now that we have our importance distribution, we can generate proposals from this. Here, we protect against low amounts of samples by including the pmax and pmin arguments, ensuring that even if the weights are low, that we do sample from the both parts of the mixture.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">###### generate the proposal parameters from the mix of importance samples  #####
+
+<span class="co"># use the weight to get samples for n1. n2 = samples-n1 (i.e 9000 and 1000)</span>
+n1=<span class="kw">rbinom</span>(<span class="dt">n=</span><span class="dv">1</span>, <span class="dt">size=</span>IS_samples,<span class="dt">prob=</span><span class="kw">max</span>(mix_weight))
+n1=<span class="kw">pmax</span>(n1,<span class="dv">2</span>)
+n1=<span class="kw">pmin</span>(n1,IS_samples<span class="op">-</span><span class="dv">2</span>)
+n2=IS_samples<span class="op">-</span>n1
+
+<span class="co"># generates the 10,000 IS proposals given the mix</span>
+proposals1=<span class="kw">rmvnorm</span>(n1,mix_mu[[<span class="dv">1</span>]],mix_sigma[[<span class="dv">1</span>]])
+proposals2=<span class="kw">rmvnorm</span>(n2,mix_mu[[<span class="dv">2</span>]],mix_sigma[[<span class="dv">2</span>]])
+prop_theta=<span class="kw">rbind</span>(proposals1,proposals2)</code></pre></div>
+</div>
+<div id="make-your-group_dist-function" class="section level3">
+<h3><span class="header-section-number">6.1.6</span> Make your group_dist function</h3>
+<p>this function is used in the IS2 algorithm, however, it will vary with the type of priors that are set. For PMwG we use a multivariate normal prior and so here we calculate the density using dmvnorm. The density is calculated for the current random effect particle given the group level parameters and variance.</p>
+<pre class="groupdist"><code>
+group_dist = function(random_effect = NULL, parameters, sample = FALSE, n_samples = NULL, n_randeffect){
+  param.theta.mu &lt;- parameters[1:n_randeffect]
+  ##scott would like it to ask for n(unwind) rather than doing the calculation for how many it actually needs, you should just input the length of the unwound object
+  param.theta.sig.unwound &lt;- parameters[(n_randeffect+1):(length(parameters)-n_randeffect)] 
+  param.theta.sig2 &lt;- unwind(param.theta.sig.unwound, reverse = TRUE)
+  if (sample){
+    return(mvtnorm::rmvnorm(n_samples, param.theta.mu,param.theta.sig2))
+  }else{
+    logw_second&lt;-mvtnorm::dmvnorm(random_effect, param.theta.mu,param.theta.sig2,log=TRUE)
+    return(logw_second)
+  }
+}
+</code></pre>
+</div>
+<div id="make-your-prior_dist-function" class="section level3">
+<h3><span class="header-section-number">6.1.7</span> Make your prior_dist function</h3>
+<p>This function is used in PMwG to calculate the density under the prior. Here we use Huang and Wand’s (2013) prior (as used in PMwG) for a multivariate normal. The final line shows the value that is returned, which is equation x in the paper. This takes the density of the current parameters under the prior mean (log_prior_mu), variance (log_prior_sigma) and variance on the variance (log_prior_a). There are several other calculations performed here, which can be found in the paper.</p>
+<pre class="priordist"><code>prior_dist = function(parameters, prior_parameters = sampled$prior, n_randeffect){ ###mod notes: the sampled$prior needs to be fixed/passed in some other time
+  param.theta.mu &lt;- parameters[1:n_randeffect]
+  param.theta.sig.unwound &lt;- parameters[(n_randeffect+1):(length(parameters)-n_randeffect)] ##scott would like it to ask for n(unwind)
+  param.theta.sig2 &lt;- unwind(param.theta.sig.unwound, reverse = TRUE)
+  param.a &lt;- exp(parameters[((length(parameters)-n_randeffect)+1):(length(parameters))])
+  v_alpha=2
+  
+  log_prior_mu=mvtnorm::dmvnorm(param.theta.mu, mean = prior_parameters$theta_mu_mean, sigma = prior_parameters$theta_mu_var, log =TRUE)
+  log_prior_sigma = log(MCMCpack::diwish(param.theta.sig2, v=v_alpha+ n_randeffect-1, S = 2*v_alpha*diag(1/param.a)))  #exp of a-half -&gt; positive only
+  log_prior_a = sum(invgamma::dinvgamma(param.a,scale = 0.5,shape=1,log=TRUE))
+  
+  logw_den2 &lt;- sum(log(1/param.a)) # jacobian determinant of transformation of log of the a-half
+  logw_den3 &lt;- log(2^n_randeffect)+sum((n_randeffect:1+1)*log(diag(param.theta.sig2))) #jacobian determinant of cholesky factors of cov matrix
+  
+  return(log_prior_mu + log_prior_sigma + log_prior_a + logw_den3 - logw_den2)
+}
+</code></pre>
+</div>
+<div id="make-your-get_logp-function" class="section level3">
+<h3><span class="header-section-number">6.1.8</span> Make your get_logp function</h3>
+<p>Next we need to create the function used to calculate the density of each particle. This is Equation 5 in the paper. This function calcualtes the density of each proposal for each subject across n particles. Here we first generate the particles from a mix of the group level parameters and a conditional multivariate normal, conditioned on the current subjects mean and variance. We then obtain the density of these proposed parameters under the likelihood and the group_dist functions over the likelihood of these proposals (as per equation 5). We then protect against badness and return the sum of these values (summed across participants, where participants are summed across particles)</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">get_logp=<span class="cf">function</span>(prop_theta,data,n_subjects,n_particles,n_randeffect,mu_tilde,sigma_tilde,i, <span class="dt">group_dist=</span>group_dist){
+  <span class="co">#make an array for the density</span>
+  logp=<span class="kw">array</span>(<span class="dt">dim=</span><span class="kw">c</span>(n_particles,n_subjects))
+  <span class="co"># for each subject, get 1000 IS samples (particles) and find log weight of each</span>
+  <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>n_subjects){
+    <span class="co">#generate the particles from the conditional MVnorm AND mix of group level proposals</span>
+    wmix &lt;-<span class="st"> </span><span class="fl">0.95</span>
+    n1=<span class="kw">rbinom</span>(<span class="dt">n=</span><span class="dv">1</span>,<span class="dt">size=</span>n_particles,<span class="dt">prob=</span>wmix)
+    <span class="cf">if</span> (n1<span class="op">&lt;</span><span class="dv">2</span>) n1=<span class="dv">2</span>
+    <span class="cf">if</span> (n1<span class="op">&gt;</span>(n_particles<span class="op">-</span><span class="dv">2</span>)) n1=n_particles<span class="op">-</span><span class="dv">2</span> ## These just avoid degenerate arrays.
+    n2=n_particles<span class="op">-</span>n1
+    <span class="co"># do conditional MVnorm based on the proposal distribution</span>
+    conditional =<span class="st"> </span>condMVNorm<span class="op">::</span><span class="kw">condMVN</span>(<span class="dt">mean=</span>mu_tilde[j,],<span class="dt">sigma=</span>sigma_tilde[j,,],<span class="dt">dependent.ind=</span><span class="dv">1</span><span class="op">:</span>n_randeffect,
+                          <span class="dt">given.ind=</span>(n_randeffect<span class="op">+</span><span class="dv">1</span>)<span class="op">:</span>n.params,<span class="dt">X.given=</span>prop_theta[i,<span class="dv">1</span><span class="op">:</span>(n.params<span class="op">-</span>n_randeffect)])
+    particles1 &lt;-<span class="st"> </span>mvtnorm<span class="op">::</span><span class="kw">rmvnorm</span>(n1, conditional<span class="op">$</span>condMean,conditional<span class="op">$</span>condVar)
+    <span class="co"># mix of proposal params and conditional</span>
+    particles2 &lt;-<span class="st"> </span><span class="kw">group_dist</span>(<span class="dt">n_samples=</span>n2, <span class="dt">parameters =</span> prop_theta[i,],<span class="dt">sample=</span><span class="ot">TRUE</span>, <span class="dt">n_randeffect=</span>n_randeffect)
+    particles &lt;-<span class="st"> </span><span class="kw">rbind</span>(particles1,particles2)
+    
+    <span class="cf">for</span> (k <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>n_particles){
+      x &lt;-particles[k,]
+      <span class="co">#names for ll function to work</span>
+      <span class="co">#mod notes: this is the bit the prior effects</span>
+      <span class="kw">names</span>(x)&lt;-pars
+      <span class="co">#   do lba log likelihood with given parameters for each subject, gets density of particle from ll func</span>
+      logw_first=sampled<span class="op">$</span><span class="kw">ll_func</span>(x,<span class="dt">data =</span> data[<span class="kw">as.numeric</span>(<span class="kw">factor</span>(data<span class="op">$</span>subject))<span class="op">==</span>j,]) <span class="co">#mod notes: do we pass this in or the whole sampled object????</span>
+      <span class="co"># below gets second part of equation 5 numerator ie density under prop_theta</span>
+      <span class="co"># particle k and big vector of things</span>
+      logw_second&lt;-<span class="kw">group_dist</span>(<span class="dt">random_effect =</span> particles[k,], <span class="dt">parameters =</span> prop_theta[i,], <span class="dt">sample=</span> <span class="ot">FALSE</span>, <span class="dt">n_randeffect =</span> n_randeffect) <span class="co">#mod notes: group dist</span>
+      <span class="co"># below is the denominator - ie mix of density under conditional and density under pro_theta</span>
+      logw_third &lt;-<span class="st"> </span><span class="kw">log</span>(wmix<span class="op">*</span><span class="kw">dmvnorm</span>(particles[k,], conditional<span class="op">$</span>condMean,conditional<span class="op">$</span>condVar)<span class="op">+</span>(<span class="dv">1</span><span class="op">-</span>wmix)<span class="op">*</span><span class="kw">exp</span>(logw_second)) <span class="co">#mod notes: fine?</span>
+      <span class="co">#does equation 5</span>
+      logw=(logw_first<span class="op">+</span>logw_second)<span class="op">-</span>logw_third
+      <span class="co">#assign to correct row/column</span>
+      logp[k,j]=logw 
+    }
+  }
+  <span class="co">#we use this part to centre the logw before addign back on at the end. This avoids inf and -inf values</span>
+  sub_max =<span class="st"> </span><span class="kw">apply</span>(logp,<span class="dv">2</span>,max)
+  logw =<span class="st"> </span><span class="kw">t</span>(<span class="kw">t</span>(logp) <span class="op">-</span><span class="st"> </span>sub_max)
+  w =<span class="st"> </span><span class="kw">exp</span>(logw)
+  subj_logp =<span class="st"> </span><span class="kw">log</span>(<span class="kw">apply</span>(w,<span class="dv">2</span>,mean))<span class="op">+</span>sub_max <span class="co">#means</span>
+  
+
+  <span class="co"># sum the logp and return </span>
+  <span class="kw">return</span>(<span class="kw">sum</span>(subj_logp))
+}</code></pre></div>
+</div>
+<div id="compute-the-lw" class="section level3">
+<h3><span class="header-section-number">6.1.9</span> Compute the LW</h3>
+<p>Finally, we need to create our compute_lw function. This function does equation 10 to obtain the log weights for the proposed particles. We first use get_logp to to get the density of the particles for each subject, then use prior_dist to get the density of the proposals under the prior. Finally we get tge density of the proposed parameters under the mixture distribution. This then gives us equation 10.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">compute_lw=<span class="cf">function</span>(prop_theta,data,n_subjects,n_particles,n_randeffect,mu_tilde,sigma_tilde,i, <span class="dt">prior_dist=</span>prior_dist, <span class="dt">sampled=</span>sampled){
+  
+  logp.out &lt;-<span class="st"> </span><span class="kw">get_logp</span>(prop_theta,data,n_subjects,n_particles,n_randeffect,mu_tilde,sigma_tilde,i, <span class="dt">group_dist=</span>group_dist)
+  ##do equation 10
+  logw_num &lt;-<span class="st"> </span>logp.out[<span class="dv">1</span>]<span class="op">+</span><span class="kw">prior_dist</span>(<span class="dt">parameters =</span> prop_theta[i,], <span class="dt">prior_parameters =</span> sampled<span class="op">$</span>prior, n_randeffect)
+  logw_den &lt;-<span class="st"> </span><span class="kw">log</span>(mix_weight[<span class="dv">1</span>]<span class="op">*</span><span class="st"> </span>mvtnorm<span class="op">::</span><span class="kw">dmvnorm</span>(prop_theta[i,], mix_mu[[<span class="dv">1</span>]], mix_sigma[[<span class="dv">1</span>]])<span class="op">+</span><span class="st"> </span>mix_weight[<span class="dv">2</span>]<span class="op">*</span><span class="st"> </span>mvtnorm<span class="op">::</span><span class="kw">dmvnorm</span>(prop_theta[i,], mix_mu[[<span class="dv">2</span>]], mix_sigma[[<span class="dv">2</span>]])) <span class="co">#density of proposed params under the means</span>
+  logw &lt;-<span class="st"> </span>logw_num<span class="op">-</span>logw_den <span class="co">#this is the equation 10</span>
+  <span class="kw">return</span>(<span class="kw">c</span>(logw))
+  <span class="co">#NOTE: we should leave a note if variance is shit - variance is given by the logp function (currently commented out)</span>
+}</code></pre></div>
+</div>
+<div id="make-it-work" class="section level3">
+<h3><span class="header-section-number">6.1.10</span> Make it work</h3>
+<p>Next we have to run it, see code below;</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#makes an array to store the IS samples</span>
+tmp&lt;-<span class="kw">array</span>(<span class="dt">dim=</span><span class="kw">c</span>(IS_samples))
+
+<span class="co">#do the sampling</span>
+<span class="cf">if</span> (cpus<span class="op">&gt;</span><span class="dv">1</span>){
+  tmp &lt;-<span class="st"> </span><span class="kw">mclapply</span>(<span class="dt">X=</span><span class="dv">1</span><span class="op">:</span>IS_samples,<span class="dt">mc.cores =</span> cpus, <span class="dt">FUN =</span> compute_lw, <span class="dt">prop_theta =</span> prop_theta,<span class="dt">data =</span> data,<span class="dt">n_subjects=</span> n_subjects,<span class="dt">n_particles =</span> n_particles,
+                  <span class="dt">n_randeffect =</span> n_randeffect,<span class="dt">mu_tilde=</span>mu_tilde,<span class="dt">sigma_tilde =</span> sigma_tilde, <span class="dt">prior_dist=</span>prior_dist, <span class="dt">sampled=</span>sampled)
+} <span class="cf">else</span>{
+  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>IS_samples){
+    <span class="kw">cat</span>(i)
+    tmp[i]&lt;-<span class="kw">compute_lw</span>(prop_theta,data,n_subjects,n_particles, n_randeffect,mu_tilde,sigma_tilde,i,<span class="dt">prior_dist=</span>prior_dist, <span class="dt">sampled=</span>sampled)
+  }
+}
+
+
+
+<span class="co"># get the ML value</span>
+finished &lt;-<span class="st"> </span>tmp
+tmp&lt;-<span class="kw">unlist</span>(tmp)
+max.lw &lt;-<span class="st"> </span><span class="kw">max</span>(tmp)
+mean.centred.lw &lt;-<span class="st"> </span><span class="kw">mean</span>(<span class="kw">exp</span>(tmp<span class="op">-</span>max.lw)) <span class="co">#takes off the max and gets mean (avoids infs)</span>
+lw &lt;-<span class="kw">log</span>(mean.centred.lw)<span class="op">+</span>max.lw <span class="co">#puts max back on to get the lw</span></code></pre></div>
+</div>
+<div id="bootstrapping-for-se" class="section level3">
+<h3><span class="header-section-number">6.1.11</span> bootstrapping for SE</h3>
+<p>to calculate standard error, we use a bootstrapping method, which can be done using the code below.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">bootstrap =<span class="st"> </span><span class="dv">10000</span>
+log_marglik_boot=<span class="st"> </span><span class="kw">array</span>(<span class="dt">dim =</span> bootstrap)
+<span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>bootstrap){
+  log_weight_boot =<span class="st"> </span><span class="kw">sample</span>(tmp, IS_samples, <span class="dt">replace =</span> <span class="ot">TRUE</span>) <span class="co">#resample with replacement from the lw</span>
+  max.boot &lt;-<span class="st"> </span><span class="kw">max</span>(log_weight_boot)
+  centred.boot &lt;-<span class="st"> </span><span class="kw">mean</span>(<span class="kw">exp</span>(log_weight_boot<span class="op">-</span>max.boot)) <span class="co">#takes off the max and gets mean (avoids infs)</span>
+  log_marglik_boot[i] &lt;-<span class="kw">log</span>(centred.boot)<span class="op">+</span>max.boot <span class="co">#puts max back on </span>
+}
+<span class="kw">var</span>(log_marglik_boot) ###SE</code></pre></div>
+
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="troubleshoot.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="appendix.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/05-IS2.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["bookdown-demo.pdf", "bookdown-demo.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

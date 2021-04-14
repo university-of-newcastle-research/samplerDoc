@@ -30,7 +30,7 @@ There are preliminary steps we need to complete before running the sampler. Let'
 
 ## Writing the log-likelihood function {#writellFunc}
 
-Just as we did with the SDT example, we'll write a slow and a fast log-likelihood function. The runtime difference is caused by calling the `dLBA` function line-by-line for the slow log-likelihood and calling the `dLBA` function once for all the data in the fast log-likelihood function. When writing a new log-likelihood function, we suggest starting with a slow, line-by-line function for easier debugging. 
+Just as we did with the [SDT chapter](#SDTLLFun), we'll write a slow and a fast log-likelihood function. The trialwise (slow) log-likelihood function is approximately five times slower than the fast log-likelihood function because the `dLBA` function is called line-by-line (trialwise), where as the `dLBA` function is called once for all the data in the fast log-likelihood function. When writing a new log-likelihood function, we suggest starting with a slow, line-by-line function for easier debugging. See section  \@ref(LBAllcheck) for a detailed debugging process. 
 
 
 The LBA log-likelihood function takes three arguments: 
@@ -42,7 +42,7 @@ The LBA log-likelihood function takes three arguments:
 
 The log-likelihood function shown below includes functions from the `rtdists` package for generating data and estimating density. If you'd like to run through this example, it is best to copy the `tw_lba_ll` function from the code block below rather than copying from the separate code chunks where curly braces have been removed.
 
-NOTE: The trialwise log-likelihood is very slow and inneficient because `rLBA` and `dLBA` will be called on each line of the data. This will result in very slow sampling times and is a consequence of the `rtdists` package, not an issue with the PMwG sampling speed. If you have experience writing log-likelihoods, we recommend writing a faster version than our trialwise function, or use the fast log-likelihood we have written in section \@ref(fstLBALL). If you are new to modelling, we recommend trying the trialwise (slow) log-likelihood function as it is easier to follow, troubleshoot and is less likely to result in errors. 
+<b>Note</b>: The trialwise log-likelihood is very slow and inneficient because `rLBA` and `dLBA` will be called on each line of the data. This will result in very slow sampling times and is a consequence of the `rtdists` package, not an issue with the PMwG sampling speed. If you have experience writing log-likelihoods, we recommend writing a faster version than our trialwise function, or use the fast log-likelihood we have written in section \@ref(fstLBALL). If you are new to modelling, we recommend trying the trialwise (slow) log-likelihood function as it is easier to follow, troubleshoot and is less likely to result in errors. 
 
 Let's begin by loading the `rtdists` package...
 
@@ -374,7 +374,7 @@ start_points <- list(mu = log(c(1.2, 1.2, 1.2,
 
 ### Running the sampler {#run-sampler}
 
-Setup is now complete and we can run the sampler. First, we use the `init` function to generate initial start points for the random effects and store them in the `sampler` object. Here we specify start points by providing values for the `start_mu` and `start_sig` arguments.
+Setup is now complete and we can run the sampler. First, we use the `init` function to generate initial start points for the random effects and store them in the `sampler` object. Here we specify start points by providing values for the `start_mu` and `start_sig` arguments. <b>Note</b>: The `init` stage can take some time to run because it uses a large number of particles 
 
 ```{r runlbaSampler, echo=TRUE, eval=FALSE}
 sampler <- init(sampler, 
@@ -401,7 +401,7 @@ The following arguments listed below are optional:
 
 
 <br>
-The first sampling stage is burn-in `"burn"`. The burn-in stage allows time for the sampler to move from the (arbitrary) start points that were provided by the user to the mode of the posterior distribution. This can be checked by examining the chains for stationarity. We take the `sampler` object created in the `init` function above, set the stage argument to `"burn"` and assign the outcome to an object called `burned`. 
+The first sampling stage is burn-in `"burn"`. The burn-in stage allows time for the sampler to move from the (arbitrary) start points that were provided by the user to the mode of the posterior distribution. We take the `sampler` object created in the `init` function above, set the stage argument to `"burn"` and assign the outcome to an object called `burned`. <b>Note</b>: You should visually check the chains for convergence/stationarity after burn-in.
 
 ```{r forstlbaburn, echo=TRUE, eval=FALSE}
 burned <- run_stage(sampler, 
@@ -677,7 +677,9 @@ plots3b
 
 ##Evaluating different models - single threshold LBA 
 
-Now let's run through an example where the model differs and we assume that participants's level of caution does not change with emphasis instructions i.e. the threshold for `Accuracy`, `Neutral`, and `Speed` conditions is the same. We will call this our "single threshold LBA model". The single threhold LBA model's log-likelihood has one `b` parameter, instead of three (see line 18, 31 and 64 below).
+In this section we will evaluate different LBA models. For each model, we will the estimate posterior distribution, generate posterior predictive data, and then compare those against real data.
+
+In this example we assume that participants's level of caution does not change with emphasis instructions i.e. the threshold for `Accuracy`, `Neutral`, and `Speed` conditions is the same. We will call this our "single threshold LBA model". The single threshold LBA model's log-likelihood has one `b` parameter, instead of three (see line 18, 31 and 64 below).  For each model, we will estimate the posterior distribution, generate posterior predictive data, and then compare these against the empirical data.
 
 For brevity, we specify only the '<i>fast</i>' log-likelihood function for the single threshold model. 
 ```{r 1bfastll, attr.source = '.numberLines', include=TRUE}
@@ -978,7 +980,7 @@ plots1b <- rtplot1b/accplot1b
 plots1b
 ```
 
-## Model Comparison
+## Model Comparison {#forstMC}
 
 In this section, we are going to compare the three threshold model and the single threshold model for the forstmann (2008) data to determine which model best represents the data. We begin by using a graphical method i.e. plotting the modelled data against the observed data.
  
@@ -1163,9 +1165,9 @@ ModelCompPlots
 ```
 The plots show that values in the three threshold model (red circles) better describe the data than the single threshold model (blue circles).
 
-### Model comparison via DIC
+### Model comparison via DIC {#forstDIC}
 
-Another method of model comparison is using information criterions. Here we provide a function for calculating deviance information criterion (DIC). <b>Note:</b> we recommend using marginal likelihood (Bayes factors) instead of DIC for model selection. For more information, see this paper on [estimating the Marginal Likelihood via importance sampling](https://link.springer.com/article/10.3758/s13428-020-01348-w).
+Another method of model comparison is using an information criterion such as the deviance information criterion (DiC). Here we provide a function for calculating DIC. <b>Note:</b> we recommend using marginal likelihood (Bayes factors) instead of DIC for model selection. For more information, see this paper on [estimating the Marginal Likelihood via importance sampling](https://link.springer.com/article/10.3758/s13428-020-01348-w).
 
 ```{r DICcode, include = TRUE}
 pmwg_DIC <- function(sampled, pD = FALSE){
@@ -1248,7 +1250,7 @@ pmwg_DIC(sampled = sampled1b)
 
 The three threshold model has a lower DIC value than the single threshold model, indicating a better explanation of the data. Based on the graphical evidence and the DIC, we can be confident that the three threshold model (i.e the model where threshold is varied with speed and accuracy instructions) is a better fit to our data than the single threshold model. 
 
-## Checking the LBA log-likelihood function
+## Checking the LBA log-likelihood function {#LBAllcheck}
 
 Here we show two ways to test your log-likelihood function. This method is not fail-safe, however, it allows you to establish whether your function operates as intended. 
 
@@ -1309,16 +1311,16 @@ These log-likelihoods are lower than the previous two, so the parameter (`x`) va
 
 This is a good first check to see if our log-likelihood is behaving as it should; changing log-likelihood value with changing parameter values. However, our log-likelihood functions may contain inconsistencies, which leads us onto our second check.
 
-### Testing whether true-x values have the highest likelihood
+### Testing whether data generating parameter values have the highest likelihood
 
-A more comprehensive way to test your log-likelihood function is to generate 'synthetic' data for which you know the true data generating values. This is a form of 'parameter recovery', where you run the sampler on generated data and plot the log-likelihood change as x values move away from your 'true' x-value. If the true-x has the highest log-likelihood, then it is likely that your function is working as intended. 
+A more comprehensive way to test your log-likelihood function is to generate 'synthetic' data for which you know the data generating values. This is a form of 'parameter recovery', where you run the sampler on generated data and plot the log-likelihood change as x values move away from your data generating parameter x-values. If the data generating x-values have the highest log-likelihood, then it is likely that your function is working as intended. 
 
 There are several steps to this method:
 
  1. Assign values to parameters of the model - these are known as the generating values. <br><b>Note</b>: ensure these are sensible values - for example in the LBA, we want the drift rate for the mismatch/error accumulator (`ve`) to be smaller than the match/correct accumulator (`vc`) and the non-decision time parameter `t0` should not be too large. 
 
 ```{r check2Par,include=TRUE}
-true_x <- log(c(A = 2,
+dgpv <- log(c(A = 2,
                 b.1 = 2,
                 b.2 = 1,
                 b.3 = .5,
@@ -1329,20 +1331,20 @@ true_x <- log(c(A = 2,
               )
 ```
 
- 2.  Pass the generating parameter values (`true_x`) into the log-likelihood and generate data using your log-likelihood function, where `sample = TRUE`.
+ 2.  Pass the data generating parameter values (`dgpv`) into the log-likelihood and generate data using your log-likelihood function, where `sample = TRUE`.
 ```{r testdatacheck2, include=TRUE}
-test_data <- tw_lba_ll(x = true_x,
+test_data <- tw_lba_ll(x = dgpv,
                        data = data,
                        sample = TRUE
                        )
 ```
 
- 3. Generate profile plots to compare the log-likelihood of the `true_x` parameter values against nearby values in the 'synethetic' data. You can write your own function for this, or use the function below. 
+ 3. Generate profile plots to compare the log-likelihood of the `dgpv` parameter values against nearby values in the 'synethetic' data. You can write your own function for this, or use the function below. 
 
 Our plotting function takes five arguments: 
 
 * `x` is a vector of named parameter values.
-* `n_values` specifies how many parameter x-values we will assess to compare to compare to the true data-generating parameter value. Default is 9.
+* `n_values` specifies how many parameter x-values we will assess to compare to the data-generating parameter values. Default is 9.
 * `synth_data` is the synthetic data
 * `dims` specifies the layout for the plots we will generate. In this example, we have 7 parameters, so I will set my dimensions to be 4 rows with 2 columns.
 * `ll_func` specifies the name of the log-likelihood function you have created.
@@ -1366,7 +1368,7 @@ test_ll <- function(x,
                   length.out = n_values)
   op <- par(mfrow = dims)
   par_likelihoods <- lapply(setNames(pars, pars), function(p){
-    testvalues <- sequence + true_x[[p]]
+    testvalues <- sequence + dgpv[[p]]
     tmp <- unlist(lapply(testvalues, function (i){ 
       #for each test vlaue, it will apply the function where i = testvalue.
     xtmp[[p]] <- i
@@ -1380,7 +1382,7 @@ test_ll <- function(x,
          xlab = "log par values",
          ylab = "log-likelihood",
          ...)
-    abline(v = true_x[[p]], col = "red")
+    abline(v = dgpv[[p]], col = "red")
     return(tmp)})
   par(op)
   return(par_likelihoods)
@@ -1390,7 +1392,7 @@ test_ll <- function(x,
 Whilst we used the trialwise log-likelihood function to generate data, we will use the fast log-likelihood function in this "parameter recovery" simulation for computational efficiency. 
 
 ```{r llPlots, include=TRUE}
-ll_plots <- test_ll(x = true_x,
+ll_plots <- test_ll(x = dgpv,
                     n_values = 9,
                     synth_data = test_data,
                     dims = c(2, 2),
@@ -1504,7 +1506,7 @@ incorrect_lba_ll <- function(x, data, sample = FALSE) {
 ```
 
 ```{r dodgellplots, echo=FALSE}
-incorrect_ll_plots <- test_ll(x = true_x,
+incorrect_ll_plots <- test_ll(x = dgpv,
                               n_values = 9,
                               synth_data = test_data,
                               dims = c(2,2),
