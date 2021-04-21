@@ -20,13 +20,14 @@ knitr::include_graphics('SDT_2.png')
 ```
 
 
-### Writing a log-likelihood function{#SDTLLFun}
+### The log-likelihood function{#SDTLLFun}
+#### What is a log-likelhood?{#WTFisaLLf}
+The log-likelihood function is the ‘engine’ of the PMwG sampler. It is the way that the parameters of the model are connected to the data. In making this connection between data and parameters, the log-likelihood function actually defines the model and it's associated psychological theory. The function takes in data (for a single subject) parameter values (for a single subject - ``random effects'') and calculates the likelihood of the data given those random effect values. For most data sets, this process operates line-by-line: the log-likelihood is calculated for each observation and added. For example, we could compute the likelihood of a response time given a set of random effect values for a model. If the data are more likely given these random effect values are more likely (i.e. the model is closer to the data), the likelihood will be higher.
 
-The log-likelihood function is the 'engine' of the PMwG sampler. It takes in data, parameter values and estimates how likely those parameter values are given the associated data. This process is completed for each data point or trial and the estimates for each data point/trial are summed to obtain a likelihood value for those input parameter values. For example, we could compute the likelihood of a response time given a set of random effect values for a model. If the random effect values are more likely (i.e. the model is closer to the data) then the likelihood values will be higher for each data point. 
- 
-In the likelihood function, the parameter values must be assigned to the correct conditions and model parameters. For example, a linear regression model could have a slope and intercept parameter for easy and hard conditions i.e. four parameters. In this case, we would need to map the input parameter value for the slope in the easy conditon onto the easy condition's slope model parameter and then do the same for the hard slope and intercept parameters. We would then use these parameter values to work out how likely the data were given these values (for each condition). Then we can calculate how likely the parameter values are for their associated data points for each subject. 
+In the likelihood function, the parameter values must be assigned to the correct conditions and model parameters. For example, a linear regression model could have a slope and intercept parameter for easy and hard conditions i.e. four parameters. In this case, we would need to map the input parameter value for the slope in the easy condition onto the easy condition’s slope model parameter and then do the same for the hard slope and intercept parameters. This is much of the work of the log-likelihood function. Once mapped, we can use the appropriate values to calculate how likely were the data observed in each condition. Then we can calculate how likely the data are for the subject.
 
-Let's write a simple log-likelihood function for a fabricated data set. You can copy the code below to follow along with the example.  
+#### Writing a simple log-likelihood function
+Let's write a simple log-likelihood function for a fabricated data set. You can copy the code below to follow along with our example.  
 ```{r setupllfab}
 stim <- c("word", "word", "non-word", "word", "non-word", "non-word", "non-word", "word")
 resp <- c("word", "word", "non-word", "word", "non-word", "non-word", "word", "non-word")

@@ -9,9 +9,13 @@ A description of the Wagenmakers experiment and data is covered in [chapter 2](#
 load("wagenmakers2008.RData")
 ```
 
-## Writing the LBA log-likelihood function for the Wagenmakers data set 
+## The LBA log-likelihood function for the Wagenmakers data set 
 
-Here we have written a computationally-slow and easy to follow log-likelihood function. The log-likelihood function steps through the data line by line (i.e. trial by trial) and gives a likelihood value for each line given `x` parameters. As mentioned in previous chapters, we encourage those who have experience writing likelihood functions to write a computationally efficient function or use our [fast LBA log-likelihood function](#wagFastll). For those new to modelling, the trialwise function directly below is easier to follow, debug and is less likely to result in errors. 
+### What is a log-likelihood function?
+If you're unsure what a log-likehood function is and/or does, see our explanation [here](#WTFisaLLf).
+
+### Writing the LBA log-likelihood for the Wagenmakers data set
+As we have shown in the previous two examples, we include a computationally-slow and easy to follow log-likelihood function. The log-likelihood function steps through the data line by line (i.e. trial by trial) and gives a likelihood value for each line given `x` parameters. As mentioned in previous chapters, we encourage those who have experience writing likelihood functions to write a computationally efficient function or use our [fast LBA log-likelihood function](#wagFastll). For those new to modelling, the trialwise function directly below is easier to follow, debug and is less likely to result in errors. The down side is that the slow/trialwise log-likelihood function is approximately five times slower to run than the fast log-likelihood function.
 
 The structure of our log-likelihood function follows those in the preceding chapters, so we will focus on the parts that differ i.e. the experiment design and hypothesis about which parameters are being influenced by the experimental manipulations. See [chapter 3](#LBAParameters) for an outline of the LBA parameters.
 
@@ -248,7 +252,7 @@ sampler <- pmwgs(data = data,
 
 ### Running the sampler {#run-sampler}
 
-Setup is now complete and we can run the sampler. First, we use the `init` function to generate initial start points for the random effects and store them in the `sampler` object. If you wanted you could include start points for your chain. We will not specify start points as we did in the Forstmann three threshold model. This is why have not included a `start_mu` and a `start_sig`. Instead, the start points will be drawn from the prior. 
+Setup is now complete and we can run the sampler. First, we use the `init` function to generate initial start points for the random effects and store them in the `sampler` object. If you wanted you could include start points for your chain. We will not specify start points as we did in the Forstmann three threshold model. This is why have not included a `start_mu` and a `start_sig`. Instead, the start points will be drawn from the prior. <b>Note:</b> The `init` stage can take some time to run because it uses a large number of particles. 
 
 ```{r runwaglbaSampler, echo=TRUE, eval=FALSE}
 sampler <- init(sampler)
@@ -271,15 +275,13 @@ The following arguments listed below are optional:
 * `n_cores =` the number of cores on a machine you wish to use to run the sampler. This allows sampling to be run across cores (parallelising for subjects). Default = 1. <b> Note:</b> Setting `n_cores` greater than 1 is only permitted on Linux and Mac OS X machines.
 
 
-<br>
-The first sampling stage is burn-in `"burn"`. The burn-in stage allows time for the sampler to move from the (arbitrary) start points that were provided by the user to the mode of the posterior distribution. This can be checked by examining the chains for stationarity. We take the `sampler` object created in the `init` function above, set the stage argument to `"burn"` and assign the outcome to an object called `burned`. 
+The first sampling stage is burn-in `"burn"`. The burn-in stage allows time for the sampler to move from the (arbitrary) start points that were provided by the user to the mode of the posterior distribution. This can be checked by examining the chains for stationarity. We take the `sampler` object created in the `init` function above, set the stage argument to `"burn"` and assign the outcome to an object called `burned`. Iterations for burn-in (in this example `iter = 1000`) are set by choosing a sufficient number of iterations that will get the sampler to the posterior space <b>Note:</b> You should visually check the chains for convergence/stationarity after burn-in.
 
 ```{r wagBurn, echo=TRUE, eval=FALSE}
 burned <- run_stage(sampler, 
                     stage = "burn",
                     iter = 1000,
-                    particles = 10000,
-                    epsilon = .3
+                    particles = 100
                     )
 ```
 
@@ -288,9 +290,8 @@ Next is the adaptation stage `"adapt"`. The adaptation stage draws samples using
 ```{r wagAdapt, echo=TRUE, eval=FALSE}
 adapted <- run_stage(burned, 
                      stage = "adapt", 
-                     iter = 10000, 
-                     particles = 10000,
-                     epsilon = .3
+                     iter = 5000, 
+                     particles = 100
                      )
 ```
 
@@ -300,9 +301,8 @@ The final stage is the sampling stage `"sample"`. The sampling stage uses the so
 ``` {r wagSamp,eval=FALSE}
 sampled <- run_stage(adapted, 
                      stage = "sample",
-                     iter = 1000, 
-                     particles = 1000,
-                     epsilon = .3
+                     iter = 10000, 
+                     particles = 100
                      )
 ```
 
@@ -330,6 +330,8 @@ You should save your sampled object at this point.
 ```{r saveWagSamp}
 save(sampled, file = "wagSamp.RData")
 ```
+
+For help with determining an appropriate number of iterations and particles required for your model estimation, see [estimation settings for the PMwG sampler](#estSet) in chapter 3.
 
 ## Simulating Posterior Predictive Data {#genppdataWag}
 

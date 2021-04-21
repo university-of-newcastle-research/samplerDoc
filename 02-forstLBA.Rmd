@@ -28,9 +28,13 @@ There are preliminary steps we need to complete before running the sampler. Let'
 * `t0` is non-decision time 
 * `sv` is the standard deviation of the across-trial distribution of drift rates
 
-## Writing the log-likelihood function {#writellFunc}
+## The log-likelihood function {#theLLFunc}
 
-Just as we did with the [SDT chapter](#SDTLLFun), we'll write a slow and a fast log-likelihood function. The trialwise (slow) log-likelihood function is approximately five times slower than the fast log-likelihood function because the `dLBA` function is called line-by-line (trialwise), where as the `dLBA` function is called once for all the data in the fast log-likelihood function. When writing a new log-likelihood function, we suggest starting with a slow, line-by-line function for easier debugging. See section  \@ref(LBAllcheck) for a detailed debugging process. 
+### What is a log-likelihood function?
+If you're unsure what a log-likehood function is and/or does, see our explanation [here](#WTFisaLLf).
+
+### Writing the log-likelihood function for the Forstmann data set
+Just as we did with the [SDT chapter](#SDTLLFun), we'll write a slow and a fast log-likelihood function. The trialwise (slow) log-likelihood function is approximately five times slower than the fast log-likelihood function because the `dLBA` function is called line-by-line (trialwise), where as the `dLBA` function is called once for all the data in the fast log-likelihood function. When writing a new log-likelihood function, we suggest starting with a slow, line-by-line function for easier debugging. See section \@ref(LBAllcheck) for a detailed debugging process. 
 
 
 The LBA log-likelihood function takes three arguments: 
@@ -400,14 +404,15 @@ The following arguments listed below are optional:
 * `n_cores =` the number of cores on a machine you wish to use to run the sampler. This allows sampling to be run across cores (parallelising for subjects). Default = 1. <b> Note:</b> Setting `n_cores` greater than 1 is only permitted on Linux and Mac OS X machines.
 
 
+
 <br>
 The first sampling stage is burn-in `"burn"`. The burn-in stage allows time for the sampler to move from the (arbitrary) start points that were provided by the user to the mode of the posterior distribution. We take the `sampler` object created in the `init` function above, set the stage argument to `"burn"` and assign the outcome to an object called `burned`. <b>Note</b>: You should visually check the chains for convergence/stationarity after burn-in.
 
 ```{r forstlbaburn, echo=TRUE, eval=FALSE}
 burned <- run_stage(sampler, 
                     stage = "burn",
-                    iter = 500,
-                    particles = 2000,
+                    iter = 1000,
+                    particles = 100,
                     epsilon = .5
                     )
 ```
@@ -419,7 +424,7 @@ Next is the adaptation stage `"adapt"`. The adaptation stage draws samples using
 adapted <- run_stage(burned, 
                      stage = "adapt", 
                      iter = 10000, 
-                     particles = 2000,
+                     particles = 100,
                      epsilon = .5
                      )
 ```
@@ -429,8 +434,8 @@ The final stage is the sampling stage `"sample"`. The sampling stage uses the so
 ``` {r part 7.12,eval=FALSE}
 sampled <- run_stage(adapted, 
                      stage = "sample",
-                     iter = 1000, 
-                     particles = 200,
+                     iter = 10000, 
+                     particles = 100,
                      epsilon = .5
                      )
 ```
@@ -460,6 +465,11 @@ You should save your sampled object at this point.
 ```{r}
 save(sampled, file = "forst3bSamp.RData")
 ```
+
+### Determining estimation settings for the PMwG sampler {#estSet}
+
+Deciding on values for iterations and particles (and epsilon) is entirely model and data dependent. As model complexity increases, so to does the number of particles required. Increasing the number of particles gives the PMwG sampler a greater chance of finding a new particle on each iteration. For epsilon, as the number of parameters increases, the epsilon value decreases because smaller epsilon values restrict the sampling range/space. As a result, reaching the posterior space is slower, however, it means that we generate more particles closer to the current particle, which increases the amount of new particles accepted (i.e. acceptance rate). For the iterations, this also links in with number of particles and the value of epsilon. The main aim of the initial stages is to reach the posterior space and generate a conditional distribution from which we draw particles for each subject. If a model is complex, epsilon is small and there are few new particles on each iteration, we may need more iterations to ensure we get to this space OR we may need more particles to increase the amount of new particles on each iteration - meaning it is quicker to reach the posterior space. Note that increasing the particles and iterations will increase the time taken to run (with increased particles taking longer as this is evaluated for each subject). Ultimately, we should aim for between 10% and 80% new particle rates in the burnin stage, and by the end of burnin, we should see stationarity in the parameter estimates.
+
 
 ## Simulating Posterior Predictive Data {#genppdatafunc}
 
@@ -1261,7 +1271,7 @@ We will use the three threshold LBA model log-likelihood function in the followi
 
 We will test our log-likelihood functions by passing a parameter vector (`x`) of plausible, arbitrary values, followed by a second parameter vector with different, plausible, arbitrary values. If the log-likehood functions are functioning correctly, we should see the log-likelihood value change with the change in parameter values. We may also wish to check that unrealistic parameter values are effectively dealt with (for example, `t0` should not be able to be greater than any RTs). 
 
-Let's compare the output from the trialwise log-likelihood function in section \@ref(writellFunc) and the fast log-likelihood function in section \@ref(fstLBALL) :
+Let's compare the output from the trialwise log-likelihood function in section \@ref(theLLFunc) and the fast log-likelihood function in section \@ref(fstLBALL) :
 ```{r llTest, include=TRUE}
 x <- log(c(A = 2,
            b.1 = 2, 

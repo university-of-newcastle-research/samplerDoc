@@ -115,7 +115,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li class="chapter" data-level="2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html"><i class="fa fa-check"></i><b>2</b> PMwG sampler and Signal Detection Theory</a><ul>
 <li class="chapter" data-level="2.0.1" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#sdtOutline"><i class="fa fa-check"></i><b>2.0.1</b> Signal Detection Theory analysis of lexical decision task</a></li>
-<li class="chapter" data-level="2.0.2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#SDTLLFun"><i class="fa fa-check"></i><b>2.0.2</b> Writing a log-likelihood function</a></li>
+<li class="chapter" data-level="2.0.2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#SDTLLFun"><i class="fa fa-check"></i><b>2.0.2</b> The log-likelihood function</a></li>
 <li class="chapter" data-level="2.1" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#testing-the-sdt-log-likelihood-function"><i class="fa fa-check"></i><b>2.1</b> Testing the SDT log-likelihood function</a></li>
 <li class="chapter" data-level="2.2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#sdtWag"><i class="fa fa-check"></i><b>2.2</b> SDT log-likelihood function for Wagenmakers experiment</a><ul>
 <li class="chapter" data-level="2.2.1" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#description-of-wagenmakers-experiment"><i class="fa fa-check"></i><b>2.2.1</b> Description of Wagenmakers experiment</a></li>
@@ -131,12 +131,15 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="3" data-path="forstmannChapter.html"><a href="forstmannChapter.html"><i class="fa fa-check"></i><b>3</b> PMwG sampler and sequential sampling models</a><ul>
 <li class="chapter" data-level="3.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#the-speed-accuracy-tradeoff-in-perceptual-decisions"><i class="fa fa-check"></i><b>3.1</b> The speed-accuracy tradeoff in perceptual decisions</a></li>
 <li class="chapter" data-level="3.2" data-path="forstmannChapter.html"><a href="forstmannChapter.html#LBAParameters"><i class="fa fa-check"></i><b>3.2</b> Linear Ballistic Accumulator Parameters</a></li>
-<li class="chapter" data-level="3.3" data-path="forstmannChapter.html"><a href="forstmannChapter.html#writellFunc"><i class="fa fa-check"></i><b>3.3</b> Writing the log-likelihood function</a><ul>
-<li class="chapter" data-level="3.3.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#fstLBALL"><i class="fa fa-check"></i><b>3.3.1</b> Fast LBA Log-likelihood Function</a></li>
+<li class="chapter" data-level="3.3" data-path="forstmannChapter.html"><a href="forstmannChapter.html#theLLFunc"><i class="fa fa-check"></i><b>3.3</b> The log-likelihood function</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#what-is-a-log-likelihood-function"><i class="fa fa-check"></i><b>3.3.1</b> What is a log-likelihood function?</a></li>
+<li class="chapter" data-level="3.3.2" data-path="forstmannChapter.html"><a href="forstmannChapter.html#writing-the-log-likelihood-function-for-the-forstmann-data-set"><i class="fa fa-check"></i><b>3.3.2</b> Writing the log-likelihood function for the Forstmann data set</a></li>
+<li class="chapter" data-level="3.3.3" data-path="forstmannChapter.html"><a href="forstmannChapter.html#fstLBALL"><i class="fa fa-check"></i><b>3.3.3</b> Fast LBA Log-likelihood Function</a></li>
 </ul></li>
 <li class="chapter" data-level="3.4" data-path="forstmannChapter.html"><a href="forstmannChapter.html#pmwg-framework"><i class="fa fa-check"></i><b>3.4</b> PMwG Framework</a><ul>
 <li class="chapter" data-level="3.4.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#lbaStartPts"><i class="fa fa-check"></i><b>3.4.1</b> Model start points</a></li>
 <li class="chapter" data-level="3.4.2" data-path="forstmannChapter.html"><a href="forstmannChapter.html#run-sampler"><i class="fa fa-check"></i><b>3.4.2</b> Running the sampler</a></li>
+<li class="chapter" data-level="3.4.3" data-path="forstmannChapter.html"><a href="forstmannChapter.html#estSet"><i class="fa fa-check"></i><b>3.4.3</b> Determining estimation settings for the PMwG sampler</a></li>
 </ul></li>
 <li class="chapter" data-level="3.5" data-path="forstmannChapter.html"><a href="forstmannChapter.html#genppdatafunc"><i class="fa fa-check"></i><b>3.5</b> Simulating Posterior Predictive Data</a><ul>
 <li class="chapter" data-level="3.5.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#assessing-descriptive-adequacy-goodness-of-fit"><i class="fa fa-check"></i><b>3.5.1</b> Assessing Descriptive Adequacy (goodness of fit)</a></li>
@@ -155,7 +158,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><i class="fa fa-check"></i><b>4</b> PMwG sampler with the Linear Ballistic Accumulator and a complex experiment design</a><ul>
-<li class="chapter" data-level="4.1" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#writing-the-lba-log-likelihood-function-for-the-wagenmakers-data-set"><i class="fa fa-check"></i><b>4.1</b> Writing the LBA log-likelihood function for the Wagenmakers data set</a></li>
+<li class="chapter" data-level="4.1" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#the-lba-log-likelihood-function-for-the-wagenmakers-data-set"><i class="fa fa-check"></i><b>4.1</b> The LBA log-likelihood function for the Wagenmakers data set</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#what-is-a-log-likelihood-function-1"><i class="fa fa-check"></i><b>4.1.1</b> What is a log-likelihood function?</a></li>
+<li class="chapter" data-level="4.1.2" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#writing-the-lba-log-likelihood-for-the-wagenmakers-data-set"><i class="fa fa-check"></i><b>4.1.2</b> Writing the LBA log-likelihood for the Wagenmakers data set</a></li>
+</ul></li>
 <li class="chapter" data-level="4.2" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#wagFastll"><i class="fa fa-check"></i><b>4.2</b> Fast LBA Log-likelihood function</a></li>
 <li class="chapter" data-level="4.3" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#pmwg-framework-1"><i class="fa fa-check"></i><b>4.3</b> PMwG Framework</a><ul>
 <li class="chapter" data-level="4.3.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#run-sampler"><i class="fa fa-check"></i><b>4.3.1</b> Running the sampler</a></li>
@@ -211,9 +217,15 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h1><span class="header-section-number">Chapter 4</span> PMwG sampler with the Linear Ballistic Accumulator and a complex experiment design</h1>
 <p>In <a href="pmwg-sampler-and-signal-detection-theory.html#sdtOutline">chapter 2</a> we demonstrated how the PMwG sampler can be used to model a lexical decision task in a signal detection framework. However, the SDT framework does not allow us to consider response time (RT) and the join distribution of RT and accuracy. In this example we will expand on what was covered in chapter 2, by fitting the LBA - a more complex model - to the Wagenmakers 2008 data.</p>
 <p>A description of the Wagenmakers experiment and data is covered in <a href="pmwg-sampler-and-signal-detection-theory.html#sdtOutline">chapter 2</a>. This experiment is more complicated than the Forstmann example in <a href="forstmannChapter.html#forstmannChapter">chapter 3</a>, and the LBA is also more complicated than the SDT model. As a result, the log-likelihood function for this example will be more complex, however, you’ll notice that each step closely follows those taken in previous chapters with simpler data sets and simpler models.</p>
-<div id="writing-the-lba-log-likelihood-function-for-the-wagenmakers-data-set" class="section level2">
-<h2><span class="header-section-number">4.1</span> Writing the LBA log-likelihood function for the Wagenmakers data set</h2>
-<p>Here we have written a computationally-slow and easy to follow log-likelihood function. The log-likelihood function steps through the data line by line (i.e. trial by trial) and gives a likelihood value for each line given <code>x</code> parameters. As mentioned in previous chapters, we encourage those who have experience writing likelihood functions to write a computationally efficient function or use our <a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#wagFastll">fast LBA log-likelihood function</a>. For those new to modelling, the trialwise function directly below is easier to follow, debug and is less likely to result in errors.</p>
+<div id="the-lba-log-likelihood-function-for-the-wagenmakers-data-set" class="section level2">
+<h2><span class="header-section-number">4.1</span> The LBA log-likelihood function for the Wagenmakers data set</h2>
+<div id="what-is-a-log-likelihood-function-1" class="section level3">
+<h3><span class="header-section-number">4.1.1</span> What is a log-likelihood function?</h3>
+<p>If you’re unsure what a log-likehood function is and/or does, see our explanation <a href="pmwg-sampler-and-signal-detection-theory.html#WTFisaLLf">here</a>.</p>
+</div>
+<div id="writing-the-lba-log-likelihood-for-the-wagenmakers-data-set" class="section level3">
+<h3><span class="header-section-number">4.1.2</span> Writing the LBA log-likelihood for the Wagenmakers data set</h3>
+<p>As we have shown in the previous two examples, we include a computationally-slow and easy to follow log-likelihood function. The log-likelihood function steps through the data line by line (i.e. trial by trial) and gives a likelihood value for each line given <code>x</code> parameters. As mentioned in previous chapters, we encourage those who have experience writing likelihood functions to write a computationally efficient function or use our <a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#wagFastll">fast LBA log-likelihood function</a>. For those new to modelling, the trialwise function directly below is easier to follow, debug and is less likely to result in errors. The down side is that the slow/trialwise log-likelihood function is approximately five times slower to run than the fast log-likelihood function.</p>
 <p>The structure of our log-likelihood function follows those in the preceding chapters, so we will focus on the parts that differ i.e. the experiment design and hypothesis about which parameters are being influenced by the experimental manipulations. See <a href="forstmannChapter.html#LBAParameters">chapter 3</a> for an outline of the LBA parameters.</p>
 <p>Let’s begin by loading <code>rtdists</code> package…</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rtdists)</code></pre></div>
@@ -363,9 +375,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>If we look at our levels for response, we see the order is <code>NW</code> and <code>W</code> respectively. This means that <code>NW</code> is coded as <code>1</code> and <code>W</code> is coded as <code>2</code>. Therefore, on line 36, if <code>data$resp[i] = N.W</code> then the level is 1, and the first accumulator in position 1 will be chosen. If <code>data$resp[i] = W</code> this tells the sampler that the accumulator in position 2 will be chosen. In other words, the parameters will map correctly because <code>v.nw</code> is in position 1 and <code>v.w</code> in position 2 in our <code>vs</code> vector.</p>
 <p>The remaining lines of the log-likelihood function are identical to the function used in the Forstmann example in <a href="forstmannChapter.html#forstmannChapter">chapter 3</a>, except the threshold parameter <code>bs</code> (line 29 and 44) is a list with two elements (<code>b = bs</code>)</p>
 </div>
+</div>
 <div id="wagFastll" class="section level2">
 <h2><span class="header-section-number">4.2</span> Fast LBA Log-likelihood function</h2>
-<p>As we mentioned in section <a href="forstmannChapter.html#fstLBALL">3.3.1</a>, the data is large and the dLBA function takes some time to run, so the log-likelihood code above is computationally inefficient. There are several ways to improve the log-likelihood’s performance; in our example below, we reduce the number of calls to dLBA to one call. We do this by passing a list of dLBA parameter values for the length of the data.</p>
+<p>As we mentioned in section <a href="forstmannChapter.html#fstLBALL">3.3.3</a>, the data is large and the dLBA function takes some time to run, so the log-likelihood code above is computationally inefficient. There are several ways to improve the log-likelihood’s performance; in our example below, we reduce the number of calls to dLBA to one call. We do this by passing a list of dLBA parameter values for the length of the data.</p>
 <p>Note: When generating posterior predictive data, the rLBA function is still executed for each row of data; however, it is only executed several times, so computational efficiency is uncompromised.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">fast_lba_ll &lt;-<span class="st"> </span><span class="cf">function</span>(x, data, <span class="dt">sample =</span> <span class="ot">FALSE</span>) {
   x &lt;-<span class="st"> </span><span class="kw">exp</span>(x)
@@ -466,7 +479,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
                  )</code></pre></div>
 <div id="run-sampler" class="section level3">
 <h3><span class="header-section-number">4.3.1</span> Running the sampler</h3>
-<p>Setup is now complete and we can run the sampler. First, we use the <code>init</code> function to generate initial start points for the random effects and store them in the <code>sampler</code> object. If you wanted you could include start points for your chain. We will not specify start points as we did in the Forstmann three threshold model. This is why have not included a <code>start_mu</code> and a <code>start_sig</code>. Instead, the start points will be drawn from the prior.</p>
+<p>Setup is now complete and we can run the sampler. First, we use the <code>init</code> function to generate initial start points for the random effects and store them in the <code>sampler</code> object. If you wanted you could include start points for your chain. We will not specify start points as we did in the Forstmann three threshold model. This is why have not included a <code>start_mu</code> and a <code>start_sig</code>. Instead, the start points will be drawn from the prior. <b>Note:</b> The <code>init</code> stage can take some time to run because it uses a large number of particles.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sampler &lt;-<span class="st"> </span><span class="kw">init</span>(sampler)</code></pre></div>
 <p><br> To run the sampler, we use the <code>run_stage</code> function. To execute the <code>run_stage</code> function, you <b>must</b> provide values for two arguments:</p>
 <ul>
@@ -481,26 +494,23 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><code>epsilon =</code> is a value greater than 0 which scales the variance of the proposal distribution. Smaller values (i.e. narrower proposal distributions) can lead to higher acceptance rates, but slower coverage of the posterior. Smaller values are especially useful when the number of random effects is large (e.g. &gt;10). The default is adaptively chosen based on the number of parameters.</li>
 <li><code>n_cores =</code> the number of cores on a machine you wish to use to run the sampler. This allows sampling to be run across cores (parallelising for subjects). Default = 1. <b> Note:</b> Setting <code>n_cores</code> greater than 1 is only permitted on Linux and Mac OS X machines.</li>
 </ul>
-<p><br> The first sampling stage is burn-in <code>&quot;burn&quot;</code>. The burn-in stage allows time for the sampler to move from the (arbitrary) start points that were provided by the user to the mode of the posterior distribution. This can be checked by examining the chains for stationarity. We take the <code>sampler</code> object created in the <code>init</code> function above, set the stage argument to <code>&quot;burn&quot;</code> and assign the outcome to an object called <code>burned</code>.</p>
+<p>The first sampling stage is burn-in <code>&quot;burn&quot;</code>. The burn-in stage allows time for the sampler to move from the (arbitrary) start points that were provided by the user to the mode of the posterior distribution. This can be checked by examining the chains for stationarity. We take the <code>sampler</code> object created in the <code>init</code> function above, set the stage argument to <code>&quot;burn&quot;</code> and assign the outcome to an object called <code>burned</code>. Iterations for burn-in (in this example <code>iter = 1000</code>) are set by choosing a sufficient number of iterations that will get the sampler to the posterior space <b>Note:</b> You should visually check the chains for convergence/stationarity after burn-in.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">burned &lt;-<span class="st"> </span><span class="kw">run_stage</span>(sampler, 
                     <span class="dt">stage =</span> <span class="st">&quot;burn&quot;</span>,
                     <span class="dt">iter =</span> <span class="dv">1000</span>,
-                    <span class="dt">particles =</span> <span class="dv">10000</span>,
-                    <span class="dt">epsilon =</span> .<span class="dv">3</span>
+                    <span class="dt">particles =</span> <span class="dv">100</span>
                     )</code></pre></div>
 <p>Next is the adaptation stage <code>&quot;adapt&quot;</code>. The adaptation stage draws samples using a simple, but relatively inefficient proposal distribution (the same proposal distribution as the <code>&quot;burn&quot;</code>stage). Enough samples are drawn to allow the algorithm to estimate a much more sophisticated and efficient proposal distribution, using conditional normal distributions. We take the <code>burned</code> object created in the previous stage and set iterations <code>iter =</code> to a high number (e.g. <code>10000</code>), as it should exit before reaching this point. If it doesn’t, there is likely an issue with acceptance rates, the likelihood function or limited data to operate on (i.e. few trials in some conditions). Here, we have saved the outcome of the adaptation stage to an object called <code>adapted</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">adapted &lt;-<span class="st"> </span><span class="kw">run_stage</span>(burned, 
                      <span class="dt">stage =</span> <span class="st">&quot;adapt&quot;</span>, 
-                     <span class="dt">iter =</span> <span class="dv">10000</span>, 
-                     <span class="dt">particles =</span> <span class="dv">10000</span>,
-                     <span class="dt">epsilon =</span> .<span class="dv">3</span>
+                     <span class="dt">iter =</span> <span class="dv">5000</span>, 
+                     <span class="dt">particles =</span> <span class="dv">100</span>
                      )</code></pre></div>
 <p>The final stage is the sampling stage <code>&quot;sample&quot;</code>. The sampling stage uses the sophisticated and adaptive conditional normal proposal distributions. This allows for very efficient sampling, using far fewer particles. Samples from this stage are taken from the ‘posterior distribution’ and stored in the <code>sampled</code> object.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sampled &lt;-<span class="st"> </span><span class="kw">run_stage</span>(adapted, 
                      <span class="dt">stage =</span> <span class="st">&quot;sample&quot;</span>,
-                     <span class="dt">iter =</span> <span class="dv">1000</span>, 
-                     <span class="dt">particles =</span> <span class="dv">1000</span>,
-                     <span class="dt">epsilon =</span> .<span class="dv">3</span>
+                     <span class="dt">iter =</span> <span class="dv">10000</span>, 
+                     <span class="dt">particles =</span> <span class="dv">100</span>
                      )</code></pre></div>
 <p>The <code>sampled</code> object includes all samples from the <code>&quot;sample&quot;</code> stage above and the following elements:</p>
 <ul>
@@ -523,6 +533,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul>
 <p>You should save your sampled object at this point.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">save</span>(sampled, <span class="dt">file =</span> <span class="st">&quot;wagSamp.RData&quot;</span>)</code></pre></div>
+<p>For help with determining an appropriate number of iterations and particles required for your model estimation, see <a href="forstmannChapter.html#estSet">estimation settings for the PMwG sampler</a> in chapter 3.</p>
 </div>
 </div>
 <div id="genppdataWag" class="section level2">
