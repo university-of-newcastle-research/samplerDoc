@@ -76,7 +76,7 @@ The key to making the algorithm efficient is to propose particles carefully. Our
 PMwG has three sampling stages. The first stage is called `burn-in`, the second is `adaptation`, and the third is the `sampled` stage. The stages employ different numbers of particles, and different proposal distributions. This makes the algorithm most efficient. 
 
 ```{r tracePlteg, echo=FALSE, out.width='100%', fig.show='hold', fig.cap="Trace plot with vertical lines demarcating the PMwG sampler's three sampling stages"}
-knitr::include_graphics('Traceplotintro.png')
+knitr::include_graphics('pngs/Traceplotintro.png')
 ```
 
 In the `burn-in` and `adaptation stages`, the proposals (or random effects vectors) for each subject are sampled from a mixture of two sources. One source is the group-level distribution and the second source is a multivariate normal distribution centred on the current best guess for the subject’s random effects vector (alpha), with a variance that is smaller than the group level distribution. We generate proposals from both sources, because proposals generated from the group level distribution act as a safety net in situations where proposals generated from the subject’s current alpha are unusual or unlikely. If this occurs instead of the sampler taking a long way to return a sensible vector of random effects, a group level proposal will instead be chosen, leading to a faster sampling time.  

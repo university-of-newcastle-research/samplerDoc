@@ -690,7 +690,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
   <span class="dt">theat_mu_var =</span> <span class="kw">diag</span>(<span class="kw">rep</span>(<span class="dv">1</span>, <span class="kw">length</span>(pars)))
 )</code></pre></div>
 <p>Now source and load your log-likelihood script <i>before</i> you create the sampler object.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">source</span>(<span class="dt">file =</span> <span class="st">&quot;fast_lba_ll3b.R&quot;</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">source</span>(<span class="dt">file =</span> <span class="st">&quot;dataObjects/fast_lba_ll3b.R&quot;</span>)</code></pre></div>
 <p>Next we specify the PMwG <code>sampler</code> object. The <code>pmwgs</code> function takes a set of arguments (listed below) and returns a list containing the required components for performing the particle metropolis within Gibbs steps.</p>
 <ul>
 <li><code>data =</code> your data - a data frame (e.g.<code>forstmann</code>) with a column for participants called <b><code>subject</code></b></li>

@@ -221,14 +221,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>We won’t cover SDT and lexical decision tasks (LDT) in detail here, however we will explain how you can use the PMwG package with SDT in the context of a lexical decision task. If you require more information, please visit the <a href="https://en.wikipedia.org/wiki/Detection_theory">SDT</a> and <a href="https://en.wikipedia.org/wiki/Lexical_decision_task">LDT</a> wikipedia pages. Also, this <a href="https://www.frontiersin.org/articles/10.3389/fpsyg.2015.00762/full">Frontiers in Psychology</a> tutorial paper by <span class="citation">Anderson (<a href="#ref-anderson2015teaching">2015</a>)</span> is another good resource for SDT. <br></p>
 Participants were asked to indicate whether a letter string was a <i>word</i> or a <i>non-word</i>. We begin with the distributions for <i>non-word</i> and <i>word</i> stimuli. You can think of these two distributions as the ‘noise’ and ‘signal’ curves, respectively. Each distribution represents the evidence for ‘word-likeness’ and they are assumed to be normally distributed. The <i>non-word</i> distribution (or the ‘noise’ distribution) has a mean (<span class="math inline">\(\mu\)</span>) of 0 and a standard deviation (SD) of 1. We could estimate SD here, but we will use 1 in this example for simplicity. The mean for the <i>word</i> distribution is unknown at this point; however, we assign a d-prime (d’) parameter to denote the difference between the mean of the <i>non-word</i> and the mean of the <i>word</i> distributions (i.e. the ‘sensitivity’ to word stimuli or the signal-noise difference between <i>words</i> and <i>non-word</i>). As can be seen in Figure <a href="pmwg-sampler-and-signal-detection-theory.html#fig:SDT1">2.1</a>, the <i>word</i> distribution mean is greater than the <i>non-word</i> distribution mean; however, the distributions partially overlap where <i>non-words</i> and <i>words</i> are difficult to classify. <br>
 <div class="figure"><span id="fig:SDT1"></span>
-<img src="SDT_1.png" alt="Simple SDT example of lexical decision task" width="100%" />
+<img src="pngs/SDT_1.png" alt="Simple SDT example of lexical decision task" width="100%" />
 <p class="caption">
 Figure 2.1: Simple SDT example of lexical decision task
 </p>
 </div>
 <p>The second parameter we denote is the criterion (<b>C</b>) parameter. The criterion is the point at which an individual responds <i>non-word</i> (to the left of <b>C</b> in Figure <a href="pmwg-sampler-and-signal-detection-theory.html#fig:SDT2">2.2</a>) or <i>word</i> (to the right of <b>C</b> in Figure <a href="pmwg-sampler-and-signal-detection-theory.html#fig:SDT2">2.2</a>) and it is set somewhere between the means of the two distributions. If you’re biased to respond <i>word</i>, the criterion would move to the left. Conversely, if you’re biased to respond <i>non-word</i> then the criterion would move to the right.</p>
 <div class="figure"><span id="fig:SDT2"></span>
-<img src="SDT_2.png" alt="Simple SDT example of lexical decision task" width="100%" />
+<img src="pngs/SDT_2.png" alt="Simple SDT example of lexical decision task" width="100%" />
 <p class="caption">
 Figure 2.2: Simple SDT example of lexical decision task
 </p>
@@ -539,7 +539,7 @@ fab_data &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<sp
 </table>
 <p>Our log-likelihood function for Wagenmakers experimental data is similar to the function we wrote above, except now we require a criterion parameter for each condition and a d-prime parameter for each of the <code>stim</code> <i>word</i> types. This is illustrated in figure <a href="pmwg-sampler-and-signal-detection-theory.html#fig:SDT3">2.3</a> below, where we have a non-word criterion <B>C<sub>nw</sub></B>, a word criterion <B>C<sub>w</sub></B> and three distributions for each of the <code>stim</code> types with corresponding d-prime for each distribution: <b>d<sub>vlf</sub></b>, <b>d<sub>lf</sub></b>, <b>d<sub>hf</sub></b>.</p>
 <div class="figure"><span id="fig:SDT3"></span>
-<img src="SDT_3.png" alt="Signal detection theory example of lexical decision task" width="100%" />
+<img src="pngs/SDT_3.png" alt="Signal detection theory example of lexical decision task" width="100%" />
 <p class="caption">
 Figure 2.3: Signal detection theory example of lexical decision task
 </p>

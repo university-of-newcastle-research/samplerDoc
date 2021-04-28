@@ -336,7 +336,7 @@ priors <- list(theta_mu_mean = rep(0, length(pars)),
 
 Now source and load your log-likelihood script <i>before</i> you create the sampler object.
 ```{r loadLL, echo=TRUE, eval=FALSE}
-source(file = "fast_lba_ll3b.R")
+source(file = "dataObjects/fast_lba_ll3b.R")
 ```
 
 Next we specify the PMwG `sampler` object. 
@@ -521,8 +521,8 @@ gen_pp_data <- function (sampled, n, ll_func = sampled$ll_func, rbind.data = TRU
 ```
 
 ```{r loadForstSampled, include = FALSE}
-load("forstmann3b_sampled.RData")
-load("ppdata3b.RData")
+load("dataObjects/forstmann3b_sampled.RData")
+load("dataObjects/ppdata3b.RData")
 ```
 
 We generate 20 posterior predictive data samples. 
@@ -839,7 +839,7 @@ pp_data_1b <- gen_pp_data(sampled, n = 20)
 ```
 
 ```{r part10.5.4, include=FALSE}
-load("ppdata1b.RData")
+load("dataObjects/ppdata1b.RData")
 ```
 
 ```{r plotppdata1b, include=TRUE}
@@ -1229,7 +1229,7 @@ pmwg_DIC <- function(sampled, pD = FALSE){
 
 We calculate the DIC value for each model by passing the `sampled` object into the `pmwgDIC` function. 
 ```{r DIC3b, echo=FALSE}
-load("forstmann3b_sampled.RData")
+load("dataObjects/forstmann3b_sampled.RData")
 sampled3b <- sampled
 ```
 
@@ -1244,7 +1244,7 @@ pmwg_DIC(sampled = sampled3b)
 ```
 
 ```{r DIC1b, echo=FALSE}
-load("forstmann1b_sampled.RData")
+load("dataObjects/forstmann1b_sampled.RData")
 sampled1b <- sampled
 ```
 

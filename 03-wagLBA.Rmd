@@ -6,7 +6,7 @@ A description of the Wagenmakers experiment and data is covered in [chapter 2](#
 
 
 ```{r chpt4data, include = FALSE}
-load("wagenmakers2008.RData")
+load("dataObjects/wagenmakers2008.RData")
 ```
 
 ## The LBA log-likelihood function for the Wagenmakers data set 
@@ -188,7 +188,7 @@ First, load the `PMwG` library and data...
 
 ```{r loadpacks, include = TRUE}
 library(pmwg)
-load("wagenmakers2008.RData")
+load("dataObjects/wagenmakers2008.RData")
 ```
 
 Let's create a vector of model parameter names. Remember that this must match the names and number of parameters you include in your log-likelihood function. You can name this vector as you wish; however, in our example, we name it `pars`. 
@@ -389,8 +389,8 @@ ppdataWag <- gen_pp_data(sampled, n = 20)
 ```
 
 ```{r ppdataWag, include=FALSE}
-load("wagLBAsamp.RData")
-load("ppdataWag.RData")
+load("dataObjects/wagLBAsamp.RData")
+load("dataObjects/ppdataWag.RData")
 ```
 
 The returned data is a matrix with the same dimensions and names as `wagenmakers` -- with the addition of `pp_iter` column. `pp_iter` is the iteration of the posterior sample (in this example `i = 1:20`) for the corresponding subject. We now have two matrices based on samples from either model. The response (`resp`) and response time (`rt`) columns now contain posterior predictive data.
@@ -618,7 +618,7 @@ pmwg_DIC <- function(sampled, pD = FALSE){
 
 We calculate a DIC value for a model by passing the `sampled` object into the `pmwgDIC` function. 
 ```{r DICwag, echo=FALSE}
-load("wagLBAsamp.RData")
+load("dataObjects/wagLBAsamp.RData")
 sampledWag <- sampled
 ```
 

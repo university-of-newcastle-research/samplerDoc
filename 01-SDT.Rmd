@@ -10,13 +10,13 @@ We won't cover SDT and lexical decision tasks (LDT) in detail here, however we w
 Participants were asked to indicate whether a letter string was a <i>word</i> or a <i>non-word</i>. We begin with the distributions for <i>non-word</i> and <i>word</i> stimuli. You can think of these two distributions as the 'noise' and 'signal' curves, respectively. Each distribution represents the evidence for 'word-likeness' and they are assumed to be normally distributed. The <i>non-word</i> distribution (or the 'noise' distribution) has a mean ($\mu$) of 0 and a standard deviation (SD) of 1. We could estimate SD here, but we will use 1 in this example for simplicity. The mean for the <i>word</i> distribution is unknown at this point; however, we assign a d-prime (d') parameter to denote the difference between the mean of the <i>non-word</i> and the mean of the <i>word</i> distributions (i.e. the 'sensitivity' to word stimuli or the signal-noise difference between <i>words</i> and <i>non-word</i>). As can be seen in Figure \@ref(fig:SDT1), the <i>word</i> distribution mean is greater than the <i>non-word</i> distribution mean; however, the distributions partially overlap where <i>non-words</i> and <i>words</i> are difficult to classify.
 <br>
 ```{r SDT1, echo=FALSE, out.width='100%', fig.show='hold', fig.cap='Simple SDT example of lexical decision task'}
-knitr::include_graphics('SDT_1.png')
+knitr::include_graphics('pngs/SDT_1.png')
 ```
 
 The second parameter we denote is the criterion (<b>C</b>) parameter. The criterion is the point at which an individual responds <i>non-word</i> (to the left of <b>C</b> in Figure \@ref(fig:SDT2)) or <i>word</i> (to the right of <b>C</b> in Figure \@ref(fig:SDT2)) and it is set somewhere between the means of the two distributions. If you're biased to respond <i>word</i>, the criterion would move to the left. Conversely, if you're biased to respond <i>non-word</i> then the criterion would move to the right.
 
 ```{r SDT2, echo=FALSE, out.width='100%', fig.show='hold', fig.cap='Simple SDT example of lexical decision task'}
-knitr::include_graphics('SDT_2.png')
+knitr::include_graphics('pngs/SDT_2.png')
 ```
 
 
@@ -186,7 +186,7 @@ Participants were asked to indicate whether a letter string was a <i>word</i> or
 
 
 ```{r setupWagen, include=FALSE}
-load("wagenmakers2008.RData")
+load("dataObjects/wagenmakers2008.RData")
 wgnmks2008 <- wagenmakers
 ```
 
@@ -197,7 +197,7 @@ kable(slice(wgnmks2008, 91:102), row.names = FALSE, caption = 'Subset of 12 tria
 Our log-likelihood function for Wagenmakers experimental data is similar to the function we wrote above, except now we require a criterion parameter for each condition and a d-prime parameter for each of the `stim` <i>word</i> types. This is illustrated in figure \@ref(fig:SDT3) below, where we have a non-word criterion <B>C<sub>nw</sub></B>, a word criterion <B>C<sub>w</sub></B> and three distributions for each of the `stim` types with corresponding d-prime for each distribution: <b>d<sub>vlf</sub></b>, <b>d<sub>lf</sub></b>, <b>d<sub>hf</sub></b>.
 
 ```{r SDT3, echo=FALSE, out.width='100%', fig.show='hold', fig.cap='Signal detection theory example of lexical decision task'}
-knitr::include_graphics('SDT_3.png')
+knitr::include_graphics('pngs/SDT_3.png')
 ```
 
 
@@ -754,7 +754,7 @@ It is a good idea to check your samples by producing some simple plots as shown 
 As you can see in \@ref(fig:parPlot), the traces are clearly stable. Note that the number of iterations for the adaptation stage here is quite short because it's easy to estimate and so gets lots of unique draws.
 
 ```{r load_data, include=FALSE}
-load("SDT_sampled.Rdata")
+load("dataObjects/SDT_sampled.Rdata")
 ```
 
 
