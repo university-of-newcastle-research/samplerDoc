@@ -748,10 +748,10 @@ sampled <- run_stage(adapted,
 
 ## Check the sampling process
 
-It is a good idea to check your samples by producing some simple plots as shown below. The first plot gives an indication of the trace for the group level parameters. In this example, you will see the chains take only several iterations before arriving at the posterior, however, this may not always be the case. Each parameter trace (lines on plot \@ref(fig:parPlot)) should be stationary i.e. the trace should not trend up or down, and once the sampler reaches the posterior, the trace should remain relatively 'thin'. If the trace is wide and bounces between large values (e.g. between -3 and 3) then there may be an error in your log-likelihood function. 
+It is a good idea to check your samples by producing some simple plots as shown below. The first plot gives an indication of the trace for the group level parameters. In this example, you will see the chains take only several iterations before arriving at the posterior, however, this may not always be the case. Each parameter trace (horizontal lines on plot \@ref(fig:parPlot)) should be stationary i.e. the trace should not trend up or down, and once the sampler reaches the posterior, the trace should remain relatively 'thin'. If the trace is wide and bounces between large values (e.g. between -3 and 3) then there may be an error in your log-likelihood function. 
 
 
-As you can see in \@ref(fig:parPlot), the traces are clearly stable. Note that the number of iterations for the adaptation stage here is quite short because it's easy to estimate and so gets lots of unique draws.
+As you can see in \@ref(fig:parPlot), the traces are clearly stable. Note that the number of iterations for the adaptation stage here is quite short because it's easy to estimate and so gets lots of unique draws. <b>Note:</b> The sampling stages (i.e. burn-in, adapatation and sampling) are demarcated by the black, vertical lines.
 
 ```{r load_data, include=FALSE}
 load("dataObjects/SDT_sampled.Rdata")
@@ -782,8 +782,7 @@ trcPltSDT <- ggplot(pltstrct,
                                     face = 'bold'),
         axis.text.x = element_text(size=14),
         legend.position = "none") +
-  geom_vline(xintercept = stage.changes) +
-  xlim(c(0, 2000))
+  geom_vline(xintercept = stage.changes)
 trcPltSDT
 ```
 
@@ -814,8 +813,7 @@ subjTrcPltSDT <- ggplot(pltstrct,
                                     face = 'bold'),
         axis.text.x = element_text(size=14),
         legend.position = "none") +
-  geom_vline(xintercept = stage.changes) +
-  xlim(c(0, 2000))
+  geom_vline(xintercept = stage.changes)
 subjTrcPltSDT
 ```
 

@@ -462,7 +462,7 @@ The `sampled` object includes all samples from the `"sample"` stage above and th
 
 
 You should save your sampled object at this point.
-```{r}
+```{r saveForst3b, echo=TRUE, eval=FALSE}
 save(sampled, file = "forst3bSamp.RData")
 ```
 
