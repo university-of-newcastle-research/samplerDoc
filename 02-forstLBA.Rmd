@@ -1330,7 +1330,7 @@ There are several steps to this method:
  1. Assign values to parameters of the model - these are known as the generating values. <br><b>Note</b>: ensure these are sensible values - for example in the LBA, we want the drift rate for the mismatch/error accumulator (`ve`) to be smaller than the match/correct accumulator (`vc`) and the non-decision time parameter `t0` should not be too large. 
 
 ```{r check2Par,include=TRUE}
-dgpv <- log(c(A = 2,
+x <- log(c(A = 2,
                 b.1 = 2,
                 b.2 = 1,
                 b.3 = .5,
@@ -1341,15 +1341,15 @@ dgpv <- log(c(A = 2,
               )
 ```
 
- 2.  Pass the data generating parameter values (`dgpv`) into the log-likelihood and generate data using your log-likelihood function, where `sample = TRUE`.
+ 2.  Pass the data generating parameter values (`x`) into the log-likelihood and generate data using your log-likelihood function, where `sample = TRUE`.
 ```{r testdatacheck2, include=TRUE}
-test_data <- tw_lba_ll(x = dgpv,
+test_data <- tw_lba_ll(x = x,
                        data = data,
                        sample = TRUE
                        )
 ```
 
- 3. Generate profile plots to compare the log-likelihood of the `dgpv` parameter values against nearby values in the 'synethetic' data. You can write your own function for this, or use the function below. 
+ 3. Generate profile plots to compare the log-likelihood of the `x` parameter values against nearby values in the 'synethetic' data. You can write your own function for this, or use the function below. 
 
 Our plotting function takes five arguments: 
 
@@ -1378,7 +1378,7 @@ test_ll <- function(x,
                   length.out = n_values)
   op <- par(mfrow = dims)
   par_likelihoods <- lapply(setNames(pars, pars), function(p){
-    testvalues <- sequence + dgpv[[p]]
+    testvalues <- sequence + x[[p]]
     tmp <- unlist(lapply(testvalues, function (i){ 
       #for each test vlaue, it will apply the function where i = testvalue.
     xtmp[[p]] <- i
@@ -1392,7 +1392,7 @@ test_ll <- function(x,
          xlab = "log par values",
          ylab = "log-likelihood",
          ...)
-    abline(v = dgpv[[p]], col = "red")
+    abline(v = x[[p]], col = "red")
     return(tmp)})
   par(op)
   return(par_likelihoods)
@@ -1402,7 +1402,7 @@ test_ll <- function(x,
 Whilst we used the trialwise log-likelihood function to generate data, we will use the fast log-likelihood function in this "parameter recovery" simulation for computational efficiency. 
 
 ```{r llPlots, include=TRUE}
-ll_plots <- test_ll(x = dgpv,
+ll_plots <- test_ll(x = x,
                     n_values = 9,
                     synth_data = test_data,
                     dims = c(2, 2),
@@ -1516,7 +1516,7 @@ incorrect_lba_ll <- function(x, data, sample = FALSE) {
 ```
 
 ```{r dodgellplots, echo=FALSE}
-incorrect_ll_plots <- test_ll(x = dgpv,
+incorrect_ll_plots <- test_ll(x = x,
                               n_values = 9,
                               synth_data = test_data,
                               dims = c(2,2),
