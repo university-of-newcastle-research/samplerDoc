@@ -10,12 +10,12 @@ library(rtdists)
 
 ## The speed-accuracy tradeoff in perceptual decisions
 
-We demonstrate the application of the LBA with the PMwG sampler to a study of perceptual decision making. @forstmann2008striatum looked at neural correlates of decision making under time pressure, with an aim to identify areas of the brain associated with speed-accuracy tradeoff. Imaging (fMRI) and behavioural data was collected; however, we will analyse behavioural data from the decision-making task only. In terms of modelling the data, Forstmann expected to find differences in thresholds for each of the three speed-emphasis conditions. We have included the Forstmann et als data in the `PMwG` package as a data frame named `forstmann`. The sampler requires a data frame with a <b>`subject`</b> column. The subject column data type can be a factor or numeric.
+We demonstrate the application of the LBA with the PMwG sampler in a study of perceptual decision making. @forstmann2008striatum looked at neural correlates of decision making under time pressure, with an aim to identify areas of the brain associated with speed-accuracy tradeoff. Imaging (fMRI) and behavioural data was collected; however, we will analyse behavioural data from the decision-making task only. In terms of modelling the data, Forstmann expected to find differences in thresholds for each of the three speed-emphasis conditions. We have included the Forstmann et als data in the `PMwG` package as a data frame named `forstmann`. The sampler requires a data frame with a <b>`subject`</b> column. The subject column data type can be a factor or numeric.
 
 Table \@ref(tab:forsthead10) shows the first ten trials from the Forstmann dataset. Participants `(n = 19)` were asked to indicate whether a cloud of dots in a random-dot kinematogram (RDK) moved to the left or the right of the screen. The IV was a within-subject, speed-accuracy manipulation where, before each trial began, pariticipants were instructed to make their choice <i>accurately</i> `(condition = 1)`, with <i>urgency</i>`(condition = 3)`or were presented with a <i>neutral</i> message `(condition = 2)`. Stimuli moved either <i>left</i> `(stim = 1)` or <i>right</i> `(stim = 2)` and responses were <i>left</i> `(resp = 1)` or <i>right</i> `(resp = 2)`. Response times `(rt)` were recorded in seconds. For more information about the design of the experiment please see [the original paper](https://www.pnas.org/content/105/45/17538.short).
 
 ```{r forsthead10, echo=FALSE, out.width='80%', fig.asp=.75, fig.align='center', warning=FALSE}
-kable(head(forstmann, 10), row.names = F,  align = "ccccc", caption = 'First 10 trials in Forstmann dataset. The `forstmann` dataset is an data frame ')
+kable(head(forstmann, 10), row.names = F,  align = "ccccc", caption = 'First 10 trials in Forstmann dataset. The `forstmann` dataset is a data frame ')
 ```
 
 ## Linear Ballistic Accumulator Parameters{#LBAParameters}
@@ -468,7 +468,7 @@ save(sampled, file = "forst3bSamp.RData")
 
 ### Determining estimation settings for the PMwG sampler {#estSet}
 
-Deciding on values for iterations and particles (and epsilon) is entirely model and data dependent. As model complexity increases, so to does the number of particles required. Increasing the number of particles gives the PMwG sampler a greater chance of finding a new particle on each iteration. For epsilon, as the number of parameters increases, the epsilon value decreases because smaller epsilon values restrict the sampling range/space. As a result, reaching the posterior space is slower, however, it means that we generate more particles closer to the current particle, which increases the amount of new particles accepted (i.e. acceptance rate). For the iterations, this also links in with number of particles and the value of epsilon. The main aim of the initial stages is to reach the posterior space and generate a conditional distribution from which we draw particles for each subject. If a model is complex, epsilon is small and there are few new particles on each iteration, we may need more iterations to ensure we get to this space OR we may need more particles to increase the amount of new particles on each iteration - meaning it is quicker to reach the posterior space. Note that increasing the particles and iterations will increase the time taken to run (with increased particles taking longer as this is evaluated for each subject). Ultimately, we should aim for between 10% and 80% new particle rates in the burnin stage, and by the end of burnin, we should see stationarity in the parameter estimates.
+Deciding on values for iterations and particles (and epsilon) is entirely model and data dependent. As model complexity increases, so to does the number of particles required. Increasing the number of particles gives the PMwG sampler a greater chance of finding a new particle on each iteration. For epsilon, as the number of parameters increases, the epsilon value decreases because smaller epsilon values restrict the sampling range/space. As a result, reaching the posterior space is slower, however, it means that we generate more particles closer to the current particle, which increases the amount of new particles accepted (i.e. acceptance rate). For the iterations, this also links in with number of particles and the value of epsilon. The main aim of the initial stages is to reach the posterior space and generate a conditional distribution from which we draw particles for each subject. If a model is complex, epsilon is small and there are few new particles on each iteration, we may need more iterations to ensure we get to this space OR we may need more particles to increase the amount of new particles on each iteration - meaning it is quicker to reach the posterior space. Note that increasing the particles and iterations will increase the time taken to run (with increased particles taking longer as this is evaluated for each subject). Ultimately, we should aim for between 10% and 80% new particle rates in the burn-in stage, and by the end of burn-in, we should see stationarity in the parameter estimates.
 
 
 ## Simulating Posterior Predictive Data {#genppdatafunc}
@@ -536,7 +536,7 @@ In the next section, we will use the posterior predictive data to assess descrip
 
 ### Assessing Descriptive Adequacy (goodness of fit)
 
-Now we will plot the posterior predictive data against the real data. In the section below we compare observed RTs against predicted RTs, which is common for RT modelling; however, the code could also be modified for different types of data.
+Now we will plot the posterior predictive data against the observed data. In the section below we compare observed RTs against predicted RTs, which is common for RT modelling; however, the code could also be modified for different types of data.
 
 ```{r plotppdata3b, include=TRUE}
 # Subject x condition Q25, median and Q75 respone time + mean accuracy 
@@ -687,7 +687,7 @@ plots3b
 
 ##Evaluating different models - single threshold LBA 
 
-In this section we will evaluate different LBA models. For each model, we will the estimate posterior distribution, generate posterior predictive data, and then compare those against real data.
+In this section we will evaluate different LBA models. For each model, we will the estimate posterior distribution, generate posterior predictive data, and then compare those against observed data.
 
 In this example we assume that participants's level of caution does not change with emphasis instructions i.e. the threshold for `Accuracy`, `Neutral`, and `Speed` conditions is the same. We will call this our "single threshold LBA model". The single threshold LBA model's log-likelihood has one `b` parameter, instead of three (see line 18, 31 and 64 below).  For each model, we will estimate the posterior distribution, generate posterior predictive data, and then compare these against the empirical data.
 
@@ -992,11 +992,11 @@ plots1b
 
 ## Model Comparison {#forstMC}
 
-In this section, we are going to compare the three threshold model and the single threshold model for the forstmann (2008) data to determine which model best represents the data. We begin by using a graphical method i.e. plotting the modelled data against the observed data.
+In this section, we are going to compare the three threshold model and the single threshold model for the @forstmann2008striatum data to determine which model best represents the data. We begin by using a graphical method i.e. plotting the modelled data against the observed data.
  
 ### Assessing Descriptive Adequacy Graphically
 
-We can assess descriptive adequacy graphically by plotting the observed data, three threshold and single threshold data on a single plot. 
+We can assess descriptive adequacy graphically by plotting the observed data, three threshold model and single threshold model data on a single plot. 
 
 ```{r ppdataModelComp, include=TRUE}
 # Subject x condition Q25, median and Q75 respone time + mean accuracy 
@@ -1317,9 +1317,9 @@ fast_lba_ll3b(x, forstmann, sample = FALSE)
 
 These log-likelihoods are lower than the previous two, so the parameter (`x`) values are less accurate given the data. Notice how we can also use this process to check the fast, efficient log-likelihood function (`fast_lba_ll3b`) against the trialwise function (`tw_lba_ll`). Given the same data and parameter values - they should give the same output, as we see above.
 
-<b>Not</b>: We only changed some named (`x`) parameter values. You could perform a thorough check by changing one parameter value at a time and see if there is a change in the log-likelihood. 
+<b>Note</b>: We only changed some named (`x`) parameter values. You could perform a thorough check by changing one parameter value at a time and see if there is a change in the log-likelihood. 
 
-This is a good first check to see if our log-likelihood is behaving as it should; changing log-likelihood value with changing parameter values. However, our log-likelihood functions may contain inconsistencies, which leads us onto our second check.
+This is a good first check to see if our log-likelihood is behaving as it should; change in log-likelihood value with a change in parameter values. However, our log-likelihood functions may contain inconsistencies, which leads us onto our second check.
 
 ### Testing whether data generating parameter values have the highest likelihood
 
@@ -1342,8 +1342,8 @@ x <- log(c(A = 2,
 ```
 
  2.  Pass the data generating parameter values (`x`) into the log-likelihood and generate data using your log-likelihood function, where `sample = TRUE`.
-```{r testdatacheck2, include=TRUE}
-test_data <- tw_lba_ll(x = x,
+```{r testdatacheck2, include=TRUE, warning=FALSE}
+test_data <- fast_lba_ll3b(x = x,
                        data = data,
                        sample = TRUE
                        )
@@ -1353,11 +1353,11 @@ test_data <- tw_lba_ll(x = x,
 
 Our plotting function takes five arguments: 
 
-* `x` is a vector of named parameter values.
-* `n_values` specifies how many parameter x-values we will assess to compare to the data-generating parameter values. Default is 9.
-* `synth_data` is the synthetic data
-* `dims` specifies the layout for the plots we will generate. In this example, we have 7 parameters, so I will set my dimensions to be 4 rows with 2 columns.
-* `ll_func` specifies the name of the log-likelihood function you have created.
+* `x`  is a named parameter vector
+* `n_values` number of parameter x-values we will assess to compare to the data-generating parameter values. Default is 9.
+* `synth_data` your synthetic/simulated data
+* `dims` plot dimensions. Here we have 7 parameters, so we display 2 plots per dimension.
+* `ll_func`  name of log-likelihood function to be used
 * `server` should only be set to true if running on a device with multiple cores. This argument speeds up computational efficiency.
  
 
@@ -1384,6 +1384,10 @@ test_ll <- function(x,
     xtmp[[p]] <- i
     ll_func(x = xtmp, data = synth_data)
     }))
+    
+    ggplot2::ggplot()
+    
+    
     
     plot(x = testvalues,
          y = tmp,

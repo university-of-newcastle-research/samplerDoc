@@ -4,7 +4,7 @@ Here we demonstrate how to use the PMwG sampler package to run a simple signal d
 
 ### Signal Detection Theory analysis of lexical decision task {#sdtOutline}
 
-We won't cover SDT and lexical decision tasks (LDT) in detail here, however we will explain how you can use the PMwG package with SDT in the context of a lexical decision task. If you require more information, please visit the [SDT](https://en.wikipedia.org/wiki/Detection_theory) and [LDT](https://en.wikipedia.org/wiki/Lexical_decision_task) wikipedia pages. Also, this [Frontiers in Psychology](https://www.frontiersin.org/articles/10.3389/fpsyg.2015.00762/full) tutorial paper by @anderson2015teaching is another good resource for SDT.
+We won't cover SDT and lexical decision tasks (LDT) in detail here; however, we will explain how you can use the PMwG package with SDT in the context of a lexical decision task. If you require more information, please visit the [SDT](https://en.wikipedia.org/wiki/Detection_theory) and [LDT](https://en.wikipedia.org/wiki/Lexical_decision_task) wikipedia pages. Also, this [Frontiers in Psychology](https://www.frontiersin.org/articles/10.3389/fpsyg.2015.00762/full) tutorial paper by @anderson2015teaching is another good resource for SDT.
 <br> 
 
 Participants were asked to indicate whether a letter string was a <i>word</i> or a <i>non-word</i>. We begin with the distributions for <i>non-word</i> and <i>word</i> stimuli. You can think of these two distributions as the 'noise' and 'signal' curves, respectively. Each distribution represents the evidence for 'word-likeness' and they are assumed to be normally distributed. The <i>non-word</i> distribution (or the 'noise' distribution) has a mean ($\mu$) of 0 and a standard deviation (SD) of 1. We could estimate SD here, but we will use 1 in this example for simplicity. The mean for the <i>word</i> distribution is unknown at this point; however, we assign a d-prime (d') parameter to denote the difference between the mean of the <i>non-word</i> and the mean of the <i>word</i> distributions (i.e. the 'sensitivity' to word stimuli or the signal-noise difference between <i>words</i> and <i>non-word</i>). As can be seen in Figure \@ref(fig:SDT1), the <i>word</i> distribution mean is greater than the <i>non-word</i> distribution mean; however, the distributions partially overlap where <i>non-words</i> and <i>words</i> are difficult to classify.
@@ -715,7 +715,7 @@ Now we can run the sampler using the `run_stage` function. The `run_stage` funct
 * `epsilon = ` is a value between 0 and 1 which reduces the size of the sampling space. We use lower values of epsilon when there are more parameters to estimate. Default = 1.
 
 
-It is optional to include the `iter =` and `particles =` arguments. If these are not included, `iter` and `particles` default to 1000. The number of iterations you choose for your burn in stage is similar to choices made when running deMCMC, however, this varies depending on the time the model takes to reach the 'real' posterior space. 
+It is optional to include the `iter =` and `particles =` arguments. If these are not included, `iter` and `particles` default to 1000. The number of iterations you choose for your burn-in stage is similar to choices made when running deMCMC; however, this varies depending on the time the model takes to reach the 'real' posterior space. 
 
 First we run our burn-in stage by setting `stage =` to `"burn"`. 
 ```{r SDTburn, echo=TRUE, eval=FALSE}
@@ -748,7 +748,7 @@ sampled <- run_stage(adapted,
 
 ## Check the sampling process
 
-It is a good idea to check your samples by producing some simple plots as shown below. The first plot gives an indication of the trace for the group level parameters. In this example, you will see the chains take only several iterations before arriving at the posterior, however, this may not always be the case. Each parameter trace (horizontal lines on plot \@ref(fig:parPlot)) should be stationary i.e. the trace should not trend up or down, and once the sampler reaches the posterior, the trace should remain relatively 'thin'. If the trace is wide and bounces between large values (e.g. between -3 and 3) then there may be an error in your log-likelihood function. 
+It is a good idea to check your samples by producing some simple plots as shown below. The first plot gives an indication of the trace for the group level parameters. In this example, you will see the chains take only several iterations before arriving at the posterior; however, this may not always be the case. Each parameter trace (horizontal lines on plot \@ref(fig:parPlot)) should be stationary i.e. the trace should not trend up or down, and once the sampler reaches the posterior, the trace should remain relatively 'thin'. If the trace is wide and bounces between large values (e.g. between -3 and 3) then there may be an error in your log-likelihood function. 
 
 
 As you can see in \@ref(fig:parPlot), the traces are clearly stable. Note that the number of iterations for the adaptation stage here is quite short because it's easy to estimate and so gets lots of unique draws. <b>Note:</b> The sampling stages (i.e. burn-in, adapatation and sampling) are demarcated by the black, vertical lines.

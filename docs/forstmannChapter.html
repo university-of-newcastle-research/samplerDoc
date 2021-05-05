@@ -21,7 +21,6 @@
   <meta name="twitter:description" content="Particle Based Sampler for MCMC" />
   
 
-<meta name="author" content="Jon-Paul Cavallaro" />
 
 
 
@@ -220,10 +219,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="kw">library</span>(rtdists)</code></pre></div>
 <div id="the-speed-accuracy-tradeoff-in-perceptual-decisions" class="section level2">
 <h2><span class="header-section-number">3.1</span> The speed-accuracy tradeoff in perceptual decisions</h2>
-<p>We demonstrate the application of the LBA with the PMwG sampler to a study of perceptual decision making. <span class="citation">Forstmann et al. (<a href="#ref-forstmann2008striatum">2008</a>)</span> looked at neural correlates of decision making under time pressure, with an aim to identify areas of the brain associated with speed-accuracy tradeoff. Imaging (fMRI) and behavioural data was collected; however, we will analyse behavioural data from the decision-making task only. In terms of modelling the data, Forstmann expected to find differences in thresholds for each of the three speed-emphasis conditions. We have included the Forstmann et als data in the <code>PMwG</code> package as a data frame named <code>forstmann</code>. The sampler requires a data frame with a <b><code>subject</code></b> column. The subject column data type can be a factor or numeric.</p>
+<p>We demonstrate the application of the LBA with the PMwG sampler in a study of perceptual decision making. <span class="citation">Forstmann et al. (<a href="#ref-forstmann2008striatum">2008</a>)</span> looked at neural correlates of decision making under time pressure, with an aim to identify areas of the brain associated with speed-accuracy tradeoff. Imaging (fMRI) and behavioural data was collected; however, we will analyse behavioural data from the decision-making task only. In terms of modelling the data, Forstmann expected to find differences in thresholds for each of the three speed-emphasis conditions. We have included the Forstmann et als data in the <code>PMwG</code> package as a data frame named <code>forstmann</code>. The sampler requires a data frame with a <b><code>subject</code></b> column. The subject column data type can be a factor or numeric.</p>
 <p>Table <a href="forstmannChapter.html#tab:forsthead10">3.1</a> shows the first ten trials from the Forstmann dataset. Participants <code>(n = 19)</code> were asked to indicate whether a cloud of dots in a random-dot kinematogram (RDK) moved to the left or the right of the screen. The IV was a within-subject, speed-accuracy manipulation where, before each trial began, pariticipants were instructed to make their choice <i>accurately</i> <code>(condition = 1)</code>, with <i>urgency</i><code>(condition = 3)</code>or were presented with a <i>neutral</i> message <code>(condition = 2)</code>. Stimuli moved either <i>left</i> <code>(stim = 1)</code> or <i>right</i> <code>(stim = 2)</code> and responses were <i>left</i> <code>(resp = 1)</code> or <i>right</i> <code>(resp = 2)</code>. Response times <code>(rt)</code> were recorded in seconds. For more information about the design of the experiment please see <a href="https://www.pnas.org/content/105/45/17538.short">the original paper</a>.</p>
 <table>
-<caption><span id="tab:forsthead10">Table 3.1: </span>First 10 trials in Forstmann dataset. The <code>forstmann</code> dataset is an data frame</caption>
+<caption><span id="tab:forsthead10">Table 3.1: </span>First 10 trials in Forstmann dataset. The <code>forstmann</code> dataset is a data frame</caption>
 <thead>
 <tr class="header">
 <th align="center">subject</th>
@@ -784,7 +783,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </div>
 <div id="estSet" class="section level3">
 <h3><span class="header-section-number">3.4.3</span> Determining estimation settings for the PMwG sampler</h3>
-<p>Deciding on values for iterations and particles (and epsilon) is entirely model and data dependent. As model complexity increases, so to does the number of particles required. Increasing the number of particles gives the PMwG sampler a greater chance of finding a new particle on each iteration. For epsilon, as the number of parameters increases, the epsilon value decreases because smaller epsilon values restrict the sampling range/space. As a result, reaching the posterior space is slower, however, it means that we generate more particles closer to the current particle, which increases the amount of new particles accepted (i.e. acceptance rate). For the iterations, this also links in with number of particles and the value of epsilon. The main aim of the initial stages is to reach the posterior space and generate a conditional distribution from which we draw particles for each subject. If a model is complex, epsilon is small and there are few new particles on each iteration, we may need more iterations to ensure we get to this space OR we may need more particles to increase the amount of new particles on each iteration - meaning it is quicker to reach the posterior space. Note that increasing the particles and iterations will increase the time taken to run (with increased particles taking longer as this is evaluated for each subject). Ultimately, we should aim for between 10% and 80% new particle rates in the burnin stage, and by the end of burnin, we should see stationarity in the parameter estimates.</p>
+<p>Deciding on values for iterations and particles (and epsilon) is entirely model and data dependent. As model complexity increases, so to does the number of particles required. Increasing the number of particles gives the PMwG sampler a greater chance of finding a new particle on each iteration. For epsilon, as the number of parameters increases, the epsilon value decreases because smaller epsilon values restrict the sampling range/space. As a result, reaching the posterior space is slower, however, it means that we generate more particles closer to the current particle, which increases the amount of new particles accepted (i.e. acceptance rate). For the iterations, this also links in with number of particles and the value of epsilon. The main aim of the initial stages is to reach the posterior space and generate a conditional distribution from which we draw particles for each subject. If a model is complex, epsilon is small and there are few new particles on each iteration, we may need more iterations to ensure we get to this space OR we may need more particles to increase the amount of new particles on each iteration - meaning it is quicker to reach the posterior space. Note that increasing the particles and iterations will increase the time taken to run (with increased particles taking longer as this is evaluated for each subject). Ultimately, we should aim for between 10% and 80% new particle rates in the burn-in stage, and by the end of burn-in, we should see stationarity in the parameter estimates.</p>
 </div>
 </div>
 <div id="genppdatafunc" class="section level2">
@@ -839,7 +838,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>In the next section, we will use the posterior predictive data to assess descriptive adequacy.</p>
 <div id="assessing-descriptive-adequacy-goodness-of-fit" class="section level3">
 <h3><span class="header-section-number">3.5.1</span> Assessing Descriptive Adequacy (goodness of fit)</h3>
-<p>Now we will plot the posterior predictive data against the real data. In the section below we compare observed RTs against predicted RTs, which is common for RT modelling; however, the code could also be modified for different types of data.</p>
+<p>Now we will plot the posterior predictive data against the observed data. In the section below we compare observed RTs against predicted RTs, which is common for RT modelling; however, the code could also be modified for different types of data.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Subject x condition Q25, median and Q75 respone time + mean accuracy </span>
 <span class="co"># Forstmann dataset</span>
 pq3b &lt;-<span class="st"> </span>forstmann <span class="op">%&gt;%</span><span class="st"> </span>
@@ -901,7 +900,7 @@ pp_var3b[, <span class="kw">c</span>(<span class="st">&quot;Q25&quot;</span>, <s
 </div>
 <div id="evaluating-different-models---single-threshold-lba" class="section level2">
 <h2><span class="header-section-number">3.6</span> Evaluating different models - single threshold LBA</h2>
-<p>In this section we will evaluate different LBA models. For each model, we will the estimate posterior distribution, generate posterior predictive data, and then compare those against real data.</p>
+<p>In this section we will evaluate different LBA models. For each model, we will the estimate posterior distribution, generate posterior predictive data, and then compare those against observed data.</p>
 <p>In this example we assume that participants’s level of caution does not change with emphasis instructions i.e. the threshold for <code>Accuracy</code>, <code>Neutral</code>, and <code>Speed</code> conditions is the same. We will call this our “single threshold LBA model”. The single threshold LBA model’s log-likelihood has one <code>b</code> parameter, instead of three (see line 18, 31 and 64 below). For each model, we will estimate the posterior distribution, generate posterior predictive data, and then compare these against the empirical data.</p>
 <p>For brevity, we specify only the ‘<i>fast</i>’ log-likelihood function for the single threshold model.</p>
 <div class="sourceCode"><table class="sourceCode r numberLines"><tr class="sourceCode"><td class="lineNumbers"><pre>1
@@ -1176,10 +1175,10 @@ pp_var1b[, <span class="kw">c</span>(<span class="st">&quot;Q25&quot;</span>, <s
 </div>
 <div id="forstMC" class="section level2">
 <h2><span class="header-section-number">3.8</span> Model Comparison</h2>
-<p>In this section, we are going to compare the three threshold model and the single threshold model for the forstmann (2008) data to determine which model best represents the data. We begin by using a graphical method i.e. plotting the modelled data against the observed data.</p>
+<p>In this section, we are going to compare the three threshold model and the single threshold model for the <span class="citation">Forstmann et al. (<a href="#ref-forstmann2008striatum">2008</a>)</span> data to determine which model best represents the data. We begin by using a graphical method i.e. plotting the modelled data against the observed data.</p>
 <div id="assessing-descriptive-adequacy-graphically" class="section level3">
 <h3><span class="header-section-number">3.8.1</span> Assessing Descriptive Adequacy Graphically</h3>
-<p>We can assess descriptive adequacy graphically by plotting the observed data, three threshold and single threshold data on a single plot.</p>
+<p>We can assess descriptive adequacy graphically by plotting the observed data, three threshold model and single threshold model data on a single plot.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Subject x condition Q25, median and Q75 respone time + mean accuracy </span>
 <span class="co"># Forstmann data</span>
 pq &lt;-<span class="st"> </span>forstmann <span class="op">%&gt;%</span>
@@ -1347,8 +1346,8 @@ sampled1b &lt;-<span class="st"> </span>sampled
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">fast_lba_ll3b</span>(x, forstmann, <span class="dt">sample =</span> <span class="ot">FALSE</span>)</code></pre></div>
 <pre><code>## [1] -202667.3</code></pre>
 <p>These log-likelihoods are lower than the previous two, so the parameter (<code>x</code>) values are less accurate given the data. Notice how we can also use this process to check the fast, efficient log-likelihood function (<code>fast_lba_ll3b</code>) against the trialwise function (<code>tw_lba_ll</code>). Given the same data and parameter values - they should give the same output, as we see above.</p>
-<p><b>Not</b>: We only changed some named (<code>x</code>) parameter values. You could perform a thorough check by changing one parameter value at a time and see if there is a change in the log-likelihood.</p>
-<p>This is a good first check to see if our log-likelihood is behaving as it should; changing log-likelihood value with changing parameter values. However, our log-likelihood functions may contain inconsistencies, which leads us onto our second check.</p>
+<p><b>Note</b>: We only changed some named (<code>x</code>) parameter values. You could perform a thorough check by changing one parameter value at a time and see if there is a change in the log-likelihood.</p>
+<p>This is a good first check to see if our log-likelihood is behaving as it should; change in log-likelihood value with a change in parameter values. However, our log-likelihood functions may contain inconsistencies, which leads us onto our second check.</p>
 </div>
 <div id="testing-whether-data-generating-parameter-values-have-the-highest-likelihood" class="section level3">
 <h3><span class="header-section-number">3.9.2</span> Testing whether data generating parameter values have the highest likelihood</h3>
@@ -1369,22 +1368,20 @@ sampled1b &lt;-<span class="st"> </span>sampled
 <ol start="2" style="list-style-type: decimal">
 <li>Pass the data generating parameter values (<code>x</code>) into the log-likelihood and generate data using your log-likelihood function, where <code>sample = TRUE</code>.</li>
 </ol>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">test_data &lt;-<span class="st"> </span><span class="kw">tw_lba_ll</span>(<span class="dt">x =</span> x,
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">test_data &lt;-<span class="st"> </span><span class="kw">fast_lba_ll3b</span>(<span class="dt">x =</span> x,
                        <span class="dt">data =</span> data,
                        <span class="dt">sample =</span> <span class="ot">TRUE</span>
                        )</code></pre></div>
-<pre><code>## Warning in rnorm(length(ind.no)): &#39;.Random.seed[1]&#39; is not a valid integer, so
-## ignored</code></pre>
 <ol start="3" style="list-style-type: decimal">
 <li>Generate profile plots to compare the log-likelihood of the <code>x</code> parameter values against nearby values in the ‘synethetic’ data. You can write your own function for this, or use the function below.</li>
 </ol>
 <p>Our plotting function takes five arguments:</p>
 <ul>
-<li><code>x</code> is a vector of named parameter values.</li>
-<li><code>n_values</code> specifies how many parameter x-values we will assess to compare to the data-generating parameter values. Default is 9.</li>
-<li><code>synth_data</code> is the synthetic data</li>
-<li><code>dims</code> specifies the layout for the plots we will generate. In this example, we have 7 parameters, so I will set my dimensions to be 4 rows with 2 columns.</li>
-<li><code>ll_func</code> specifies the name of the log-likelihood function you have created.</li>
+<li><code>x</code> is a named parameter vector</li>
+<li><code>n_values</code> number of parameter x-values we will assess to compare to the data-generating parameter values. Default is 9.</li>
+<li><code>synth_data</code> your synthetic/simulated data</li>
+<li><code>dims</code> plot dimensions. Here we have 7 parameters, so we display 2 plots per dimension.</li>
+<li><code>ll_func</code> name of log-likelihood function to be used</li>
 <li><code>server</code> should only be set to true if running on a device with multiple cores. This argument speeds up computational efficiency.</li>
 </ul>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(parallel)
@@ -1409,6 +1406,10 @@ test_ll &lt;-<span class="st"> </span><span class="cf">function</span>(x,
     <span class="kw">ll_func</span>(<span class="dt">x =</span> xtmp, <span class="dt">data =</span> synth_data)
     }))
     
+    ggplot2<span class="op">::</span><span class="kw">ggplot</span>()
+    
+    
+    
     <span class="kw">plot</span>(<span class="dt">x =</span> testvalues,
          <span class="dt">y =</span> tmp,
          <span class="dt">type =</span> <span class="st">&quot;b&quot;</span>,
@@ -1425,10 +1426,10 @@ test_ll &lt;-<span class="st"> </span><span class="cf">function</span>(x,
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ll_plots &lt;-<span class="st"> </span><span class="kw">test_ll</span>(<span class="dt">x =</span> x,
                     <span class="dt">n_values =</span> <span class="dv">9</span>,
                     <span class="dt">synth_data =</span> test_data,
-                    <span class="dt">dims =</span> <span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">2</span>),
+                    <span class="dt">dims =</span> <span class="kw">c</span>(<span class="dv">4</span>, <span class="dv">2</span>),
                     <span class="dt">ll_func =</span> fast_lba_ll3b
                     ) </code></pre></div>
-<p><img src="bookdown-demo_files/figure-html/llPlots-1.png" width="672" /><img src="bookdown-demo_files/figure-html/llPlots-2.png" width="672" /></p>
+<p><img src="bookdown-demo_files/figure-html/llPlots-1.png" width="672" /></p>
 <p>The red line indicates the true generating parameter value (i.e. the data generating values for the parameters) have the best (highest) likelihoods.</p>
 <p>Note: The plots above do not tell you if your log-likelihood is correct in the sense that you have written a log-likelihood for the model you actually want to test. The plots allow you to determine if your function is functioning as intended.</p>
 <p>Below is output from a function with a potential error. We can see that the red lines indicating the generating parameter values (i.e. the data generating values for the parameters) do not have the best (highest) likelihoods. Plots with flat lines for parameter values would also be indicative of an error somewhere within your log-likelihood code.</p>
