@@ -1358,14 +1358,14 @@ sampled1b &lt;-<span class="st"> </span>sampled
 <li>Assign values to parameters of the model - these are known as the generating values. <br><b>Note</b>: ensure these are sensible values - for example in the LBA, we want the drift rate for the mismatch/error accumulator (<code>ve</code>) to be smaller than the match/correct accumulator (<code>vc</code>) and the non-decision time parameter <code>t0</code> should not be too large.</li>
 </ol>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">c</span>(<span class="dt">A =</span> <span class="dv">2</span>,
-          <span class="dt">b.1 =</span> <span class="dv">2</span>,
-          <span class="dt">b.2 =</span> <span class="dv">1</span>,
-          <span class="dt">b.3 =</span> .<span class="dv">5</span>,
-          <span class="dt">vc =</span> <span class="dv">4</span>,
-          <span class="dt">ve =</span> <span class="dv">2</span>,
-          <span class="dt">t0 =</span> .<span class="dv">18</span>
-                )
-              )</code></pre></div>
+           <span class="dt">b.1 =</span> <span class="dv">1</span>,
+           <span class="dt">b.2 =</span> <span class="dv">3</span>,
+           <span class="dt">b.3 =</span> <span class="dv">3</span>,
+           <span class="dt">vc =</span> <span class="dv">4</span>,
+           <span class="dt">ve =</span> <span class="dv">2</span>,
+           <span class="dt">t0 =</span> .<span class="dv">18</span>
+           )
+         )</code></pre></div>
 <ol start="2" style="list-style-type: decimal">
 <li>Produce profile plots to compare the log-likelihood of the <code>x</code> parameter values against nearby values in the ‘synethetic’ data. You can write your own function for this, or use the function below.</li>
 </ol>
@@ -1384,7 +1384,7 @@ sampled1b &lt;-<span class="st"> </span>sampled
   }
   <span class="co">#Create test data set. We use a tenth of the total data for speed</span>
   test &lt;-<span class="st"> </span>sampler<span class="op">$</span><span class="kw">ll_func</span>(<span class="dt">x =</span> generating_values,
-                  <span class="dt">data =</span> sampler<span class="op">$</span>data[<span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span>(<span class="kw">nrow</span>(sampler<span class="op">$</span>data) <span class="op">/</span><span class="st"> </span><span class="dv">10</span>)),],
+                  <span class="dt">data =</span> sampler<span class="op">$</span>data[<span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span>(<span class="kw">nrow</span>(sampler<span class="op">$</span>data) <span class="op">/</span><span class="st"> </span><span class="dv">3</span>)),],
                   <span class="dt">sample =</span> <span class="ot">TRUE</span>)
   <span class="co"># n_values = number of values to test and plot. </span>
   n_values &lt;-<span class="st"> </span><span class="dv">9</span>
@@ -1441,6 +1441,7 @@ sampled1b &lt;-<span class="st"> </span>sampled
 <p>The red line indicates the true generating parameter value (i.e. the data generating values for the parameters) have the best (highest) likelihoods.</p>
 <p>Note: The plots above do not tell you if your log-likelihood is correct in the sense that you have written a log-likelihood for the model you actually want to test. The plots allow you to determine if your function is functioning as intended.</p>
 <p>Below is output from a function with a potential error. We can see that the red lines indicating the generating parameter values (i.e. the data generating values for the parameters) do not have the best (highest) likelihoods. Plots with flat lines for parameter values would also be indicative of an error somewhere within your log-likelihood code.</p>
+<p><img src="bookdown-demo_files/figure-html/dodgellplots-1.png" width="672" /></p>
 
 </div>
 </div>

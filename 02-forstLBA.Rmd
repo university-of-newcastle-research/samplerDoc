@@ -1332,14 +1332,14 @@ There are two steps to this method:
 
 ```{r check2Par,include=TRUE}
 x <- log(c(A = 2,
-          b.1 = 2,
-          b.2 = 1,
-          b.3 = .5,
-          vc = 4,
-          ve = 2,
-          t0 = .18
-                )
-              )
+           b.1 = 1,
+           b.2 = 3,
+           b.3 = 3,
+           vc = 4,
+           ve = 2,
+           t0 = .18
+           )
+         )
 ```
 
 2. Produce profile plots to compare the log-likelihood of the `x` parameter values against nearby values in the 'synethetic' data. You can write your own function for this, or use the function below. 
@@ -1362,7 +1362,7 @@ profilePlot <- function(sampler, generating_values = NULL){
   }
   #Create test data set. We use a tenth of the total data for speed
   test <- sampler$ll_func(x = generating_values,
-                  data = sampler$data[c(1:(nrow(sampler$data) / 10)),],
+                  data = sampler$data[c(1:(nrow(sampler$data) / 3)),],
                   sample = TRUE)
   # n_values = number of values to test and plot. 
   n_values <- 9
@@ -1531,12 +1531,9 @@ incorrect_lba_ll <- function(x, data, sample = FALSE) {
 
 ```
 
+
 ```{r dodgellplots, echo=FALSE}
-# incorrect_ll_plots <- pmwg_profilePlot(x = x,
-#                               n_values = 9,
-#                               synth_data = test_data,
-#                               dims = c(2,2),
-#                               ll_func = incorrect_lba_ll
-#                               ) 
+Samplah$ll_func <- incorrect_lba_ll
+profilePlot(sampler = Samplah, generating_values = x)
 ```
 
