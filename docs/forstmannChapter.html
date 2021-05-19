@@ -216,7 +216,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h1><span class="header-section-number">Chapter 3</span> PMwG sampler and sequential sampling models</h1>
 <p>In this chapter we’ll demonstrate how to use the PMwG sampler with a sequential sampling model; the Linear Ballistic Accumulator (LBA). Please ensure the <code>PMwG</code> and <code>rtdists</code> packages are loaded.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(pmwg)
-<span class="kw">library</span>(rtdists)</code></pre></div>
+<span class="kw">library</span>(rtdists)
+<span class="kw">require</span>(tidyverse)</code></pre></div>
 <div id="the-speed-accuracy-tradeoff-in-perceptual-decisions" class="section level2">
 <h2><span class="header-section-number">3.1</span> The speed-accuracy tradeoff in perceptual decisions</h2>
 <p>We demonstrate the application of the LBA with the PMwG sampler in a study of perceptual decision making. <span class="citation">Forstmann et al. (<a href="#ref-forstmann2008striatum">2008</a>)</span> looked at neural correlates of decision making under time pressure, with an aim to identify areas of the brain associated with speed-accuracy tradeoff. Imaging (fMRI) and behavioural data was collected; however, we will analyse behavioural data from the decision-making task only. In terms of modelling the data, Forstmann expected to find differences in thresholds for each of the three speed-emphasis conditions. We have included the Forstmann et als data in the <code>PMwG</code> package as a data frame named <code>forstmann</code>. The sampler requires a data frame with a <b><code>subject</code></b> column. The subject column data type can be a factor or numeric.</p>
@@ -678,7 +679,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>Now that we have a log-likelihood function, we can set up the <code>PMwG</code> sampler. Running the sampler follows the same procedure outlined in the <a href="pmwg-sampler-and-signal-detection-theory.html#sdtPMwG">SDT chapter</a>; we need to set up a vector of model parameter names, create a <code>priors</code> object, source our LBA log-likelihood script and then create our <code>sampler</code> object.</p>
 <p>Let’s begin by creating a vector of model parameter names, which we’ll use in our log-likelihood function. You can name this object as you wish; however, in our example, we name it <code>pars</code>.<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> For the <code>forstmann</code> dataset, we use three threshold parameters (one <code>b</code> for each condition) because we assume that the condition has an effect on level of caution, we include two drift rate parameters: <code>ve</code> for the incorrect accumulator and <code>vc</code> for the correct accumulator, a start point parameter <code>A</code> and a non-decision time <code>t0</code> parameter.</p>
 <p>We’ve made a decision to set the <code>sv</code> to 1 to satisfy the scaling properties of the model. As such, we haven’t included the <code>sv</code> parameter in the <code>pars</code> vector - it is found in the LBA’s log-likelihood function (see above).</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pars &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;b1&quot;</span>, <span class="st">&quot;b2&quot;</span>, <span class="st">&quot;b3&quot;</span>, <span class="st">&quot;A&quot;</span>, <span class="st">&quot;ve&quot;</span>, <span class="st">&quot;vc&quot;</span>, <span class="st">&quot;t0&quot;</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pars &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;b.1&quot;</span>, <span class="st">&quot;b.2&quot;</span>, <span class="st">&quot;b.3&quot;</span>, <span class="st">&quot;A&quot;</span>, <span class="st">&quot;ve&quot;</span>, <span class="st">&quot;vc&quot;</span>, <span class="st">&quot;t0&quot;</span>)</code></pre></div>
 <p>For the mean of the distribution for random effects (theta_mu), we assume a multivariate normal prior. The user can specify the mean and variance of this prior distribution using the object <code>priors</code>, which has elements <code>theta_mu_mean</code> and <code>theta_mu_var</code>. A typical setting for LBA models is to set <code>theta_mu_mean</code> to be a zero vector and to set <code>theta_mu_var</code> to be a multiple of the identity matrix, e.g. with 9 on the diagonal (representing a standard deviation of 3 for the subject-level means in the prior).</p>
 <p>We create our <code>priors</code> object; a list that contains two components:</p>
 <ul>
@@ -1352,88 +1353,94 @@ sampled1b &lt;-<span class="st"> </span>sampled
 <div id="testing-whether-data-generating-parameter-values-have-the-highest-likelihood" class="section level3">
 <h3><span class="header-section-number">3.9.2</span> Testing whether data generating parameter values have the highest likelihood</h3>
 <p>A more comprehensive way to test your log-likelihood function is to generate ‘synthetic’ data for which you know the data generating values. This is a form of ‘parameter recovery’, where you run the sampler on generated data and plot the log-likelihood change as x values move away from your data generating parameter x-values. If the data generating x-values have the highest log-likelihood, then it is likely that your function is working as intended.</p>
-<p>There are several steps to this method:</p>
+<p>There are two steps to this method:</p>
 <ol style="list-style-type: decimal">
 <li>Assign values to parameters of the model - these are known as the generating values. <br><b>Note</b>: ensure these are sensible values - for example in the LBA, we want the drift rate for the mismatch/error accumulator (<code>ve</code>) to be smaller than the match/correct accumulator (<code>vc</code>) and the non-decision time parameter <code>t0</code> should not be too large.</li>
 </ol>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">log</span>(<span class="kw">c</span>(<span class="dt">A =</span> <span class="dv">2</span>,
-                <span class="dt">b.1 =</span> <span class="dv">2</span>,
-                <span class="dt">b.2 =</span> <span class="dv">1</span>,
-                <span class="dt">b.3 =</span> .<span class="dv">5</span>,
-                <span class="dt">vc =</span> <span class="dv">4</span>,
-                <span class="dt">ve =</span> <span class="dv">2</span>,
-                <span class="dt">t0 =</span> .<span class="dv">18</span>
+          <span class="dt">b.1 =</span> <span class="dv">2</span>,
+          <span class="dt">b.2 =</span> <span class="dv">1</span>,
+          <span class="dt">b.3 =</span> .<span class="dv">5</span>,
+          <span class="dt">vc =</span> <span class="dv">4</span>,
+          <span class="dt">ve =</span> <span class="dv">2</span>,
+          <span class="dt">t0 =</span> .<span class="dv">18</span>
                 )
               )</code></pre></div>
 <ol start="2" style="list-style-type: decimal">
-<li>Pass the data generating parameter values (<code>x</code>) into the log-likelihood and generate data using your log-likelihood function, where <code>sample = TRUE</code>.</li>
+<li>Produce profile plots to compare the log-likelihood of the <code>x</code> parameter values against nearby values in the ‘synethetic’ data. You can write your own function for this, or use the function below.</li>
 </ol>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">test_data &lt;-<span class="st"> </span><span class="kw">fast_lba_ll3b</span>(<span class="dt">x =</span> x,
-                       <span class="dt">data =</span> data,
-                       <span class="dt">sample =</span> <span class="ot">TRUE</span>
-                       )</code></pre></div>
-<ol start="3" style="list-style-type: decimal">
-<li>Generate profile plots to compare the log-likelihood of the <code>x</code> parameter values against nearby values in the ‘synethetic’ data. You can write your own function for this, or use the function below.</li>
-</ol>
-<p>Our plotting function takes five arguments:</p>
+<p>Our plotting function takes two arguments:</p>
 <ul>
-<li><code>x</code> is a named parameter vector</li>
-<li><code>n_values</code> number of parameter x-values we will assess to compare to the data-generating parameter values. Default is 9.</li>
-<li><code>synth_data</code> your synthetic/simulated data</li>
-<li><code>dims</code> plot dimensions. Here we have 7 parameters, so we display 2 plots per dimension.</li>
-<li><code>ll_func</code> name of log-likelihood function to be used</li>
-<li><code>server</code> should only be set to true if running on a device with multiple cores. This argument speeds up computational efficiency.</li>
+<li><code>sampler</code> is the initiated sampler object. See section <a href="forstmannChapter.html#run-sampler">3.4.2</a> above.</li>
+<li><code>generating_values = Null</code> create ‘generating values’ based on <code>theta_mu</code> from sampler object or use values output from the log-likelihood function.</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(parallel)
-
-test_ll &lt;-<span class="st"> </span><span class="cf">function</span>(x, 
-                    <span class="dt">n_values =</span> <span class="dv">9</span>,
-                    synth_data,
-                    dims,
-                    ll_func,
-                    <span class="dt">server =</span> <span class="ot">FALSE</span>,...) {
-  pars &lt;-<span class="st"> </span><span class="kw">names</span>(x)
-  xtmp &lt;-<span class="st"> </span>x
-  sequence &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dt">from =</span> <span class="op">-</span>.<span class="dv">22</span>,
-                  <span class="dt">to =</span> .<span class="dv">22</span>,
-                  <span class="dt">length.out =</span> n_values)
-  op &lt;-<span class="st"> </span><span class="kw">par</span>(<span class="dt">mfrow =</span> dims)
-  par_likelihoods &lt;-<span class="st"> </span><span class="kw">lapply</span>(<span class="kw">setNames</span>(pars, pars), <span class="cf">function</span>(p){
-    testvalues &lt;-<span class="st"> </span>sequence <span class="op">+</span><span class="st"> </span>x[[p]]
-    tmp &lt;-<span class="st"> </span><span class="kw">unlist</span>(<span class="kw">lapply</span>(testvalues, <span class="cf">function</span> (i){ 
-      <span class="co">#for each test vlaue, it will apply the function where i = testvalue.</span>
-    xtmp[[p]] &lt;-<span class="st"> </span>i
-    <span class="kw">ll_func</span>(<span class="dt">x =</span> xtmp, <span class="dt">data =</span> synth_data)
-    }))
-    
-    ggplot2<span class="op">::</span><span class="kw">ggplot</span>()
-    
-    
-    
-    <span class="kw">plot</span>(<span class="dt">x =</span> testvalues,
-         <span class="dt">y =</span> tmp,
-         <span class="dt">type =</span> <span class="st">&quot;b&quot;</span>,
-         <span class="dt">main =</span> p,
-         <span class="dt">xlab =</span> <span class="st">&quot;log par values&quot;</span>,
-         <span class="dt">ylab =</span> <span class="st">&quot;log-likelihood&quot;</span>,
-         ...)
-    <span class="kw">abline</span>(<span class="dt">v =</span> x[[p]], <span class="dt">col =</span> <span class="st">&quot;red&quot;</span>)
-    <span class="kw">return</span>(tmp)})
-  <span class="kw">par</span>(op)
-  <span class="kw">return</span>(par_likelihoods)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">profilePlot &lt;-<span class="st"> </span><span class="cf">function</span>(sampler, <span class="dt">generating_values =</span> <span class="ot">NULL</span>){
+  <span class="cf">if</span>(<span class="kw">is.null</span>(generating_values)){
+    <span class="co"># Create generating values based on theta_mu</span>
+    generating_values &lt;-<span class="st"> </span>sampler<span class="op">$</span>samples<span class="op">$</span>theta_mu
+    <span class="kw">names</span>(generating_values) &lt;-<span class="st"> </span>sampler<span class="op">$</span>par_names
+  } <span class="cf">else</span>{
+    <span class="kw">names</span>(generating_values) &lt;-<span class="st"> </span>sampler<span class="op">$</span>par_names
+  }
+  <span class="co">#Create test data set. We use a tenth of the total data for speed</span>
+  test &lt;-<span class="st"> </span>sampler<span class="op">$</span><span class="kw">ll_func</span>(<span class="dt">x =</span> generating_values,
+                  <span class="dt">data =</span> sampler<span class="op">$</span>data[<span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span>(<span class="kw">nrow</span>(sampler<span class="op">$</span>data) <span class="op">/</span><span class="st"> </span><span class="dv">10</span>)),],
+                  <span class="dt">sample =</span> <span class="ot">TRUE</span>)
+  <span class="co"># n_values = number of values to test and plot. </span>
+  n_values &lt;-<span class="st"> </span><span class="dv">9</span>
+  tmp &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="dt">dim =</span> <span class="kw">c</span>(n_values, sampler<span class="op">$</span>n_pars))
+  <span class="co"># Scale for increment. Can be made smaller or larger.</span>
+  <span class="co"># Here we use theta_mu - .2 to theta_mu + .2, with n_values length</span>
+  increment &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dt">from =</span> <span class="op">-</span>.<span class="dv">2</span>,
+                   <span class="dt">to =</span> .<span class="dv">2</span>,
+                   <span class="dt">length.out =</span> n_values)
+  
+  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>sampler<span class="op">$</span>n_pars){
+    <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>n_values){
+      <span class="co"># Use all generating values except the current parameter being tested</span>
+      test_values &lt;-<span class="st"> </span>generating_values
+      <span class="co"># Change the current parameter by adding the increment</span>
+      test_values[i] &lt;-<span class="st"> </span>generating_values[i] <span class="op">+</span><span class="st"> </span>increment[j]
+      <span class="co"># Test the likelihood given these new values and the test data</span>
+      tmp[j, i] &lt;-<span class="st"> </span>sampler<span class="op">$</span><span class="kw">ll_func</span>(<span class="dt">x =</span> test_values, 
+                                   <span class="dt">data =</span> test,
+                                   <span class="dt">sample =</span> <span class="ot">FALSE</span>)
+    }
+  }
+  <span class="co"># Prepare output for plotting</span>
+  <span class="kw">colnames</span>(tmp) &lt;-<span class="st"> </span>sampler<span class="op">$</span>par_names
+  tmp &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(tmp)
+  tmp &lt;-<span class="st"> </span>tidyr<span class="op">::</span><span class="kw">pivot_longer</span>(tmp, 
+                             <span class="kw">everything</span>(),
+                             <span class="dt">names_to =</span> <span class="st">&quot;pars&quot;</span>,
+                             <span class="dt">values_to =</span> <span class="st">&quot;likelihood&quot;</span>)
+  tmp<span class="op">$</span>increment &lt;-<span class="st"> </span><span class="kw">rep</span>(increment, 
+                       <span class="dt">each =</span> sampler<span class="op">$</span>n_pars)
+  <span class="co"># Plot values for each parameter</span>
+  ggplot2<span class="op">::</span><span class="kw">ggplot</span>(tmp, 
+                  <span class="kw">aes</span>(<span class="dt">x =</span> increment,
+                      <span class="dt">y =</span> likelihood)
+                  ) <span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_point</span>() <span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_line</span>() <span class="op">+</span>
+<span class="st">    </span><span class="kw">facet_wrap</span>(<span class="op">~</span>pars,
+               <span class="dt">scales =</span> <span class="st">&quot;free&quot;</span>) <span class="op">+</span>
+<span class="st">    </span><span class="kw">theme_bw</span>() <span class="op">+</span>
+<span class="st">    </span><span class="kw">theme</span>(<span class="dt">axis.title.y =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">14</span>, <span class="dt">face =</span> <span class="st">&#39;bold&#39;</span>),
+        <span class="dt">axis.text.y =</span> <span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">14</span>),
+        <span class="dt">axis.title.x =</span> <span class="kw">element_text</span>(<span class="dt">size =</span> <span class="dv">14</span>, <span class="dt">face =</span> <span class="st">&#39;bold&#39;</span>),
+        <span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">size=</span><span class="dv">14</span>)
+        ) <span class="op">+</span><span class="st"> </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Increment&quot;</span>,
+       <span class="dt">y =</span> <span class="st">&quot;Likelihood&quot;</span>) <span class="op">+</span>
+<span class="st">    </span><span class="kw">geom_vline</span>(<span class="dt">xintercept =</span> <span class="dv">0</span>,
+               <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>,
+               <span class="dt">alpha =</span> <span class="fl">0.3</span>)
 }</code></pre></div>
-<p>Whilst we used the trialwise log-likelihood function to generate data, we will use the fast log-likelihood function in this “parameter recovery” simulation for computational efficiency.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ll_plots &lt;-<span class="st"> </span><span class="kw">test_ll</span>(<span class="dt">x =</span> x,
-                    <span class="dt">n_values =</span> <span class="dv">9</span>,
-                    <span class="dt">synth_data =</span> test_data,
-                    <span class="dt">dims =</span> <span class="kw">c</span>(<span class="dv">4</span>, <span class="dv">2</span>),
-                    <span class="dt">ll_func =</span> fast_lba_ll3b
-                    ) </code></pre></div>
-<p><img src="bookdown-demo_files/figure-html/llPlots-1.png" width="672" /></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">profilePlot</span>(<span class="dt">sampler =</span> sampler, <span class="dt">generating_values =</span> x)</code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/loadSamplahObj-1.png" width="672" /></p>
 <p>The red line indicates the true generating parameter value (i.e. the data generating values for the parameters) have the best (highest) likelihoods.</p>
 <p>Note: The plots above do not tell you if your log-likelihood is correct in the sense that you have written a log-likelihood for the model you actually want to test. The plots allow you to determine if your function is functioning as intended.</p>
 <p>Below is output from a function with a potential error. We can see that the red lines indicating the generating parameter values (i.e. the data generating values for the parameters) do not have the best (highest) likelihoods. Plots with flat lines for parameter values would also be indicative of an error somewhere within your log-likelihood code.</p>
-<p><img src="bookdown-demo_files/figure-html/dodgellplots-1.png" width="672" /><img src="bookdown-demo_files/figure-html/dodgellplots-2.png" width="672" /></p>
 
 </div>
 </div>

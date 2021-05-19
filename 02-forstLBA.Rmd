@@ -6,6 +6,7 @@ Please ensure the `PMwG` and `rtdists` packages are loaded.
 ```{r loadpkg}
 library(pmwg)
 library(rtdists)
+require(tidyverse)
 ```
 
 ## The speed-accuracy tradeoff in perceptual decisions
@@ -316,7 +317,7 @@ Let's begin by creating a vector of model parameter names, which we'll use in ou
 We've made a decision to set the `sv` to 1 to satisfy the scaling properties of the model. As such, we haven't included the `sv` parameter in the `pars` vector - it is found in the LBA's log-likelihood function (see above).
 
 ```{r pars}
-pars <- c("b1", "b2", "b3", "A", "ve", "vc", "t0")
+pars <- c("b.1", "b.2", "b.3", "A", "ve", "vc", "t0")
 ```
 
 
@@ -1325,99 +1326,110 @@ This is a good first check to see if our log-likelihood is behaving as it should
 
 A more comprehensive way to test your log-likelihood function is to generate 'synthetic' data for which you know the data generating values. This is a form of 'parameter recovery', where you run the sampler on generated data and plot the log-likelihood change as x values move away from your data generating parameter x-values. If the data generating x-values have the highest log-likelihood, then it is likely that your function is working as intended. 
 
-There are several steps to this method:
+There are two steps to this method:
 
- 1. Assign values to parameters of the model - these are known as the generating values. <br><b>Note</b>: ensure these are sensible values - for example in the LBA, we want the drift rate for the mismatch/error accumulator (`ve`) to be smaller than the match/correct accumulator (`vc`) and the non-decision time parameter `t0` should not be too large. 
+1. Assign values to parameters of the model - these are known as the generating values. <br><b>Note</b>: ensure these are sensible values - for example in the LBA, we want the drift rate for the mismatch/error accumulator (`ve`) to be smaller than the match/correct accumulator (`vc`) and the non-decision time parameter `t0` should not be too large. 
 
 ```{r check2Par,include=TRUE}
 x <- log(c(A = 2,
-                b.1 = 2,
-                b.2 = 1,
-                b.3 = .5,
-                vc = 4,
-                ve = 2,
-                t0 = .18
+          b.1 = 2,
+          b.2 = 1,
+          b.3 = .5,
+          vc = 4,
+          ve = 2,
+          t0 = .18
                 )
               )
 ```
 
- 2.  Pass the data generating parameter values (`x`) into the log-likelihood and generate data using your log-likelihood function, where `sample = TRUE`.
-```{r testdatacheck2, include=TRUE, warning=FALSE}
-test_data <- fast_lba_ll3b(x = x,
-                       data = data,
-                       sample = TRUE
-                       )
-```
+2. Produce profile plots to compare the log-likelihood of the `x` parameter values against nearby values in the 'synethetic' data. You can write your own function for this, or use the function below. 
 
- 3. Generate profile plots to compare the log-likelihood of the `x` parameter values against nearby values in the 'synethetic' data. You can write your own function for this, or use the function below. 
+Our plotting function takes two arguments: 
 
-Our plotting function takes five arguments: 
+* `sampler` is the initiated sampler object. See section \@ref(run-sampler) above.
+* `generating_values = Null` create 'generating values' based on `theta_mu` from sampler object or use values output from the log-likelihood function. 
 
-* `x`  is a named parameter vector
-* `n_values` number of parameter x-values we will assess to compare to the data-generating parameter values. Default is 9.
-* `synth_data` your synthetic/simulated data
-* `dims` plot dimensions. Here we have 7 parameters, so we display 2 plots per dimension.
-* `ll_func`  name of log-likelihood function to be used
-* `server` should only be set to true if running on a device with multiple cores. This argument speeds up computational efficiency.
- 
 
-```{r testllfun,include=TRUE}
 
-library(parallel)
-
-test_ll <- function(x, 
-                    n_values = 9,
-                    synth_data,
-                    dims,
-                    ll_func,
-                    server = FALSE,...) {
-  pars <- names(x)
-  xtmp <- x
-  sequence <- seq(from = -.22,
-                  to = .22,
-                  length.out = n_values)
-  op <- par(mfrow = dims)
-  par_likelihoods <- lapply(setNames(pars, pars), function(p){
-    testvalues <- sequence + x[[p]]
-    tmp <- unlist(lapply(testvalues, function (i){ 
-      #for each test vlaue, it will apply the function where i = testvalue.
-    xtmp[[p]] <- i
-    ll_func(x = xtmp, data = synth_data)
-    }))
-    
-    ggplot2::ggplot()
-    
-    
-    
-    plot(x = testvalues,
-         y = tmp,
-         type = "b",
-         main = p,
-         xlab = "log par values",
-         ylab = "log-likelihood",
-         ...)
-    abline(v = x[[p]], col = "red")
-    return(tmp)})
-  par(op)
-  return(par_likelihoods)
+```{r testllfun, include=TRUE}
+profilePlot <- function(sampler, generating_values = NULL){
+  if(is.null(generating_values)){
+    # Create generating values based on theta_mu
+    generating_values <- sampler$samples$theta_mu
+    names(generating_values) <- sampler$par_names
+  } else{
+    names(generating_values) <- sampler$par_names
+  }
+  #Create test data set. We use a tenth of the total data for speed
+  test <- sampler$ll_func(x = generating_values,
+                  data = sampler$data[c(1:(nrow(sampler$data) / 10)),],
+                  sample = TRUE)
+  # n_values = number of values to test and plot. 
+  n_values <- 9
+  tmp <- array(dim = c(n_values, sampler$n_pars))
+  # Scale for increment. Can be made smaller or larger.
+  # Here we use theta_mu - .2 to theta_mu + .2, with n_values length
+  increment <- seq(from = -.2,
+                   to = .2,
+                   length.out = n_values)
+  
+  for (i in 1:sampler$n_pars){
+    for (j in 1:n_values){
+      # Use all generating values except the current parameter being tested
+      test_values <- generating_values
+      # Change the current parameter by adding the increment
+      test_values[i] <- generating_values[i] + increment[j]
+      # Test the likelihood given these new values and the test data
+      tmp[j, i] <- sampler$ll_func(x = test_values, 
+                                   data = test,
+                                   sample = FALSE)
+    }
+  }
+  # Prepare output for plotting
+  colnames(tmp) <- sampler$par_names
+  tmp <- as.data.frame(tmp)
+  tmp <- tidyr::pivot_longer(tmp, 
+                             everything(),
+                             names_to = "pars",
+                             values_to = "likelihood")
+  tmp$increment <- rep(increment, 
+                       each = sampler$n_pars)
+  # Plot values for each parameter
+  ggplot2::ggplot(tmp, 
+                  aes(x = increment,
+                      y = likelihood)
+                  ) +
+    geom_point() +
+    geom_line() +
+    facet_wrap(~pars,
+               scales = "free") +
+    theme_bw() +
+    theme(axis.title.y = element_text(size = 14, face = 'bold'),
+        axis.text.y = element_text(size=14),
+        axis.title.x = element_text(size = 14, face = 'bold'),
+        axis.text.x = element_text(size=14)
+        ) + labs(x = "Increment",
+       y = "Likelihood") +
+    geom_vline(xintercept = 0,
+               color = "red",
+               alpha = 0.3)
 }
 ```
 
-Whilst we used the trialwise log-likelihood function to generate data, we will use the fast log-likelihood function in this "parameter recovery" simulation for computational efficiency. 
 
-```{r llPlots, include=TRUE}
-ll_plots <- test_ll(x = x,
-                    n_values = 9,
-                    synth_data = test_data,
-                    dims = c(2, 2),
-                    ll_func = fast_lba_ll3b
-                    ) 
+```{r llprofplots, eval=FALSE}
+profilePlot(sampler = sampler, generating_values = x)
+```
+
+
+```{r loadSamplahObj,echo=FALSE, warning=FALSE}
+load(file = "dataObjects/samplah.RData")
+profilePlot(sampler = Samplah, generating_values = x)
 ```
 
 The red line indicates the true generating parameter value (i.e. the data generating values for the parameters) have the best (highest) likelihoods.
 
 Note: The plots above do not tell you if your log-likelihood is correct in the sense that you have written a log-likelihood for the model you actually want to test. The plots allow you to determine if your function is functioning as intended.
-
 
 Below is output from a function with a potential error. We can see that the red lines indicating the generating parameter values (i.e. the data generating values for the parameters) do not have the best (highest) likelihoods. 
 Plots with flat lines for parameter values would also be indicative of an error somewhere within your log-likelihood code. 
@@ -1520,11 +1532,11 @@ incorrect_lba_ll <- function(x, data, sample = FALSE) {
 ```
 
 ```{r dodgellplots, echo=FALSE}
-incorrect_ll_plots <- test_ll(x = x,
-                              n_values = 9,
-                              synth_data = test_data,
-                              dims = c(2,2),
-                              ll_func = incorrect_lba_ll
-                              ) 
+# incorrect_ll_plots <- pmwg_profilePlot(x = x,
+#                               n_values = 9,
+#                               synth_data = test_data,
+#                               dims = c(2,2),
+#                               ll_func = incorrect_lba_ll
+#                               ) 
 ```
 
