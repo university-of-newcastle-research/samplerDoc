@@ -133,12 +133,12 @@ fast_lba_ll <- function(x, data, sample = FALSE) {
   }
   b.w = b.nw = v.w = v.nw = out = numeric(nrow(data))
     for (p in unique(data$prop)) {
-      use <- data$prop == p  
+      use <- data$cond == p  
       b.w[use] = x[paste0("b.", p, ".W")] + x["A"]
       b.nw[use] = x[paste0("b.", p, ".NW")] + x["A"]
     }
     for (f in unique(data$freq)) {
-      use <- data$freq == f 
+      use <- data$stim == f 
       v.w[use] = x[paste0("v.", f, ".W")]
       v.nw[use] = x[paste0("v.", f, ".NW")]
         }
@@ -147,7 +147,7 @@ fast_lba_ll <- function(x, data, sample = FALSE) {
     
   if (!sample){
     out <- dLBA(rt = data$rt,
-                resp = data$response,
+                resp = data$resp,
                 A = x["A"],
                 b = bs,
                 t0 = x["t0"],
@@ -159,7 +159,7 @@ fast_lba_ll <- function(x, data, sample = FALSE) {
     return(out)
   } else {
     data$rt <- NA
-    data$response <- NA
+    data$resp <- NA
     for (i in 1:nrow(data)){
       tmp<- rLBA(n = 1,
                  A = x["A"],
@@ -170,7 +170,7 @@ fast_lba_ll <- function(x, data, sample = FALSE) {
                  distribution = "norm",
                  silent = TRUE)
       data$rt[i] <- tmp$rt
-      data$response[i] <- tmp$resp
+      data$resp[i] <- tmp$resp
     }
       return(data)
   }
@@ -224,7 +224,7 @@ We create our `priors` object; a list that contains two components:
 
 ```{r waglBApriors}
 priors <- list(theta_mu_mean = rep(0, length(pars)),
-  theat_mu_var = diag(rep(1, length(pars)))
+  theta_mu_var = diag(rep(1, length(pars)))
 )
 ```
 
