@@ -386,12 +386,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
   }
   b.w =<span class="st"> </span>b.nw =<span class="st"> </span>v.w =<span class="st"> </span>v.nw =<span class="st"> </span>out =<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data))
     <span class="cf">for</span> (p <span class="cf">in</span> <span class="kw">unique</span>(data<span class="op">$</span>prop)) {
-      use &lt;-<span class="st"> </span>data<span class="op">$</span>prop <span class="op">==</span><span class="st"> </span>p  
+      use &lt;-<span class="st"> </span>data<span class="op">$</span>cond <span class="op">==</span><span class="st"> </span>p  
       b.w[use] =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, p, <span class="st">&quot;.W&quot;</span>)] <span class="op">+</span><span class="st"> </span>x[<span class="st">&quot;A&quot;</span>]
       b.nw[use] =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, p, <span class="st">&quot;.NW&quot;</span>)] <span class="op">+</span><span class="st"> </span>x[<span class="st">&quot;A&quot;</span>]
     }
     <span class="cf">for</span> (f <span class="cf">in</span> <span class="kw">unique</span>(data<span class="op">$</span>freq)) {
-      use &lt;-<span class="st"> </span>data<span class="op">$</span>freq <span class="op">==</span><span class="st"> </span>f 
+      use &lt;-<span class="st"> </span>data<span class="op">$</span>stim <span class="op">==</span><span class="st"> </span>f 
       v.w[use] =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;v.&quot;</span>, f, <span class="st">&quot;.W&quot;</span>)]
       v.nw[use] =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;v.&quot;</span>, f, <span class="st">&quot;.NW&quot;</span>)]
         }
@@ -400,7 +400,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
     
   <span class="cf">if</span> (<span class="op">!</span>sample){
     out &lt;-<span class="st"> </span><span class="kw">dLBA</span>(<span class="dt">rt =</span> data<span class="op">$</span>rt,
-                <span class="dt">resp =</span> data<span class="op">$</span>response,
+                <span class="dt">resp =</span> data<span class="op">$</span>resp,
                 <span class="dt">A =</span> x[<span class="st">&quot;A&quot;</span>],
                 <span class="dt">b =</span> bs,
                 <span class="dt">t0 =</span> x[<span class="st">&quot;t0&quot;</span>],
@@ -412,7 +412,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
     <span class="kw">return</span>(out)
   } <span class="cf">else</span> {
     data<span class="op">$</span>rt &lt;-<span class="st"> </span><span class="ot">NA</span>
-    data<span class="op">$</span>response &lt;-<span class="st"> </span><span class="ot">NA</span>
+    data<span class="op">$</span>resp &lt;-<span class="st"> </span><span class="ot">NA</span>
     <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(data)){
       tmp&lt;-<span class="st"> </span><span class="kw">rLBA</span>(<span class="dt">n =</span> <span class="dv">1</span>,
                  <span class="dt">A =</span> x[<span class="st">&quot;A&quot;</span>],
@@ -423,7 +423,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
                  <span class="dt">distribution =</span> <span class="st">&quot;norm&quot;</span>,
                  <span class="dt">silent =</span> <span class="ot">TRUE</span>)
       data<span class="op">$</span>rt[i] &lt;-<span class="st"> </span>tmp<span class="op">$</span>rt
-      data<span class="op">$</span>response[i] &lt;-<span class="st"> </span>tmp<span class="op">$</span>resp
+      data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span>tmp<span class="op">$</span>resp
     }
       <span class="kw">return</span>(data)
   }
@@ -460,7 +460,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><code>theta_mu_var</code> the prior covariance matrix for model parameters.</li>
 </ul>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">priors &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">theta_mu_mean =</span> <span class="kw">rep</span>(<span class="dv">0</span>, <span class="kw">length</span>(pars)),
-  <span class="dt">theat_mu_var =</span> <span class="kw">diag</span>(<span class="kw">rep</span>(<span class="dv">1</span>, <span class="kw">length</span>(pars)))
+  <span class="dt">theta_mu_var =</span> <span class="kw">diag</span>(<span class="kw">rep</span>(<span class="dv">1</span>, <span class="kw">length</span>(pars)))
 )</code></pre></div>
 <p>Now source and load your log-likelihood script <i>before</i> you create the sampler object.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">source</span>(<span class="dt">file =</span> <span class="st">&quot;fast_lba_ll.R&quot;</span>)</code></pre></div>
