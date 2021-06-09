@@ -331,7 +331,7 @@ We create our `priors` object; a list that contains two components:
 
 ```{r priors}
 priors <- list(theta_mu_mean = rep(0, length(pars)),
-  theat_mu_var = diag(rep(1, length(pars)))
+  theta_mu_var = diag(rep(1, length(pars)))
 )
 ```
 
