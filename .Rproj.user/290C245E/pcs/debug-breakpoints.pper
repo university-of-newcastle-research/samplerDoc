@@ -1,0 +1,36 @@
+{
+    "debugBreakpointsState" : {
+        "breakpoints" : [
+            {
+                "editor_line_number" : 16,
+                "editor_state" : 1,
+                "function_name" : "toplevel",
+                "function_steps" : "",
+                "id" : 0,
+                "is_package_breakpoint" : false,
+                "is_pending_debug_completion" : false,
+                "line_number" : 16,
+                "needs_updated_steps" : false,
+                "package_name" : "",
+                "path" : "~/Documents/PhD/Experiments/Exp1b-Pizza/02_deadline/analysis/scripts/02-exclCrit.R",
+                "state" : 1,
+                "type" : 1
+            },
+            {
+                "editor_line_number" : 301,
+                "editor_state" : 1,
+                "function_name" : "toplevel",
+                "function_steps" : "",
+                "id" : 1,
+                "is_package_breakpoint" : false,
+                "is_pending_debug_completion" : false,
+                "line_number" : 301,
+                "needs_updated_steps" : false,
+                "package_name" : "",
+                "path" : "~/Documents/PhD/Experiments/Exp1a-MPhone/01_instructions/analysis/modelling/exp1aSAT-TRDM/ppdataRDM-Null.R",
+                "state" : 1,
+                "type" : 1
+            }
+        ]
+    }
+}

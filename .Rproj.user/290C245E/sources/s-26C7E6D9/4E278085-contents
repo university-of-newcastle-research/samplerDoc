@@ -1,0 +1,86 @@
+@Book{xie2015,
+  title = {Dynamic Documents with {R} and knitr},
+  author = {Yihui Xie},
+  publisher = {Chapman and Hall/CRC},
+  address = {Boca Raton, Florida},
+  year = {2015},
+  edition = {2nd},
+  note = {ISBN 978-1498716963},
+  url = {http://yihui.name/knitr/},
+}
+
+@article{anderson2015teaching,
+  title={Teaching signal detection theory with pseudoscience},
+  author={Anderson, Nicole D},
+  journal={Frontiers in psychology},
+  volume={6},
+  pages={762},
+  year={2015},
+  publisher={Frontiers}
+}
+
+@Article{brown2008simplest,
+  title = {The simplest complete model of choice response time: Linear ballistic accumulation},
+  author = {Brown, Scott and Heathcote, Andrew},
+  journal = {Cognitive psychology},
+  volume = {57},
+  number = {3},
+  pages = {153--178},
+  year = {2008},
+  publisher = {Elsevier}
+}
+
+@article{forstmann2008striatum,
+  title={Striatum and pre-SMA facilitate decision-making under time pressure},
+  author={Forstmann, Birte U and Dutilh, Gilles and Brown, Scott and Neumann, Jane and Von Cramon, D Yves and Ridderinkhof, K Richard and Wagenmakers, Eric-Jan},
+  journal={Proceedings of the National Academy of Sciences},
+  volume={105},
+  number={45},
+  pages={17538--17542},
+  year={2008},
+  publisher={National Acad Sciences}
+}
+
+@article{gunawan2020new,
+  title={New estimation approaches for the hierarchical Linear Ballistic Accumulator model},
+  author={Gunawan, David and Hawkins, Guy E and Tran, M-N and Kohn, Robert and Brown, SD},
+  journal={Journal of Mathematical Psychology},
+  volume={96},
+  pages={102368},
+  year={2020},
+  publisher={Elsevier}
+}
+
+@article{shiffrin2008survey,
+  title={A survey of model evaluation approaches with a tutorial on hierarchical Bayesian methods},
+  author={Shiffrin, Richard M and Lee, Michael D and Kim, Woojae and Wagenmakers, Eric-Jan},
+  journal={Cognitive Science},
+  volume={32},
+  number={8},
+  pages={1248--1284},
+  year={2008},
+  publisher={Wiley Online Library}
+}
+
+@article{van2018simple,
+  title={A simple introduction to Markov Chain Monte--Carlo sampling},
+  author={Van Ravenzwaaij, Don and Cassey, Pete and Brown, Scott D},
+  journal={Psychonomic bulletin \& review},
+  volume={25},
+  number={1},
+  pages={143--154},
+  year={2018},
+  publisher={Springer}
+}
+
+@article{wagenmakers2008diffusion,
+  title={A diffusion model account of criterion shifts in the lexical decision task},
+  author={Wagenmakers, Eric-Jan and Ratcliff, Roger and Gomez, Pablo and McKoon, Gail},
+  journal={Journal of memory and language},
+  volume={58},
+  number={1},
+  pages={140--159},
+  year={2008},
+  publisher={Elsevier}
+}
+

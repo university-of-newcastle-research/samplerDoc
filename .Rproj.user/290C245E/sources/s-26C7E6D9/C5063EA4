@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1622597105344.000,
+    "dirty" : true,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "292872515",
+    "id" : "C5063EA4",
+    "lastKnownWriteTime" : 1623209654,
+    "last_content_update" : 1623209951550,
+    "path" : "~/Documents/Contract Work/Samplers Project/PMwG-Sampler/index.Rmd",
+    "project_path" : "index.Rmd",
+    "properties" : {
+        "cursorPosition" : "48,328",
+        "scrollLine" : "33"
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}
