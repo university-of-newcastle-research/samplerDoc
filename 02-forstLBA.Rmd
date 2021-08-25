@@ -496,9 +496,9 @@ gen_pp_data <- function (sampled, n, ll_func = sampled$ll_func, rbind.data = TRU
       for (i in 1:length(iterations)) {
         print(i)
         x <- sampled$samples$alpha[, s, iterations[i]]
-        names(x) <- pars
+        names(x) <- sampled$par_names
         out <- ll_func(x = x, 
-                       data = data[data$subject == s, ],
+                       data = data[data$subject == unique(data$subject)[s], ],
                        sample = TRUE)
         
         if (i == 1){
