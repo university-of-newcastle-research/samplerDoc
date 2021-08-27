@@ -12,4 +12,6 @@ pre {
 pre code {
   white-space: inherit;
 }
-
+pre.numberSource a.sourceLine::before  {
+  left: -0.2em;
+}

@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 7 Appendix | Particle Based Samplers for MCMC</title>
   <meta name="description" content="Particle Based Sampler for MCMC" />
-  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.23 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 7 Appendix | Particle Based Samplers for MCMC" />
   <meta property="og:type" content="book" />
@@ -31,7 +31,7 @@
   
 <link rel="prev" href="troubleshoot.html"/>
 <link rel="next" href="references.html"/>
-<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -48,45 +48,73 @@
 
 
 
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
 
 
 <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
+
 
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
@@ -142,18 +170,16 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li class="chapter" data-level="3.5" data-path="forstmannChapter.html"><a href="forstmannChapter.html#genppdatafunc"><i class="fa fa-check"></i><b>3.5</b> Simulating Posterior Predictive Data</a><ul>
 <li class="chapter" data-level="3.5.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#assessing-descriptive-adequacy-goodness-of-fit"><i class="fa fa-check"></i><b>3.5.1</b> Assessing Descriptive Adequacy (goodness of fit)</a></li>
+<li class="chapter" data-level="3.5.2" data-path="forstmannChapter.html"><a href="forstmannChapter.html#pmwg-framework-for-a-single-threshold-model"><i class="fa fa-check"></i><b>3.5.2</b> PMwG framework for a single threshold model</a></li>
 </ul></li>
-<li class="chapter" data-level="3.6" data-path="forstmannChapter.html"><a href="forstmannChapter.html#evaluating-different-models---single-threshold-lba"><i class="fa fa-check"></i><b>3.6</b> Evaluating different models - single threshold LBA</a><ul>
-<li class="chapter" data-level="3.6.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#pmwg-framework-for-a-single-threshold-model"><i class="fa fa-check"></i><b>3.6.1</b> PMwG framework for a single threshold model</a></li>
+<li class="chapter" data-level="3.6" data-path="forstmannChapter.html"><a href="forstmannChapter.html#checking-descriptive-adequacy-of-1b-model."><i class="fa fa-check"></i><b>3.6</b> Checking Descriptive Adequacy of 1b model.</a></li>
+<li class="chapter" data-level="3.7" data-path="forstmannChapter.html"><a href="forstmannChapter.html#forstMC"><i class="fa fa-check"></i><b>3.7</b> Model Comparison</a><ul>
+<li class="chapter" data-level="3.7.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#assessing-descriptive-adequacy-graphically"><i class="fa fa-check"></i><b>3.7.1</b> Assessing Descriptive Adequacy Graphically</a></li>
+<li class="chapter" data-level="3.7.2" data-path="forstmannChapter.html"><a href="forstmannChapter.html#forstDIC"><i class="fa fa-check"></i><b>3.7.2</b> Model comparison via DIC</a></li>
 </ul></li>
-<li class="chapter" data-level="3.7" data-path="forstmannChapter.html"><a href="forstmannChapter.html#checking-descriptive-adequacy-of-1b-model."><i class="fa fa-check"></i><b>3.7</b> Checking Descriptive Adequacy of 1b model.</a></li>
-<li class="chapter" data-level="3.8" data-path="forstmannChapter.html"><a href="forstmannChapter.html#forstMC"><i class="fa fa-check"></i><b>3.8</b> Model Comparison</a><ul>
-<li class="chapter" data-level="3.8.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#assessing-descriptive-adequacy-graphically"><i class="fa fa-check"></i><b>3.8.1</b> Assessing Descriptive Adequacy Graphically</a></li>
-<li class="chapter" data-level="3.8.2" data-path="forstmannChapter.html"><a href="forstmannChapter.html#forstDIC"><i class="fa fa-check"></i><b>3.8.2</b> Model comparison via DIC</a></li>
-</ul></li>
-<li class="chapter" data-level="3.9" data-path="forstmannChapter.html"><a href="forstmannChapter.html#LBAllcheck"><i class="fa fa-check"></i><b>3.9</b> Checking the LBA log-likelihood function</a><ul>
-<li class="chapter" data-level="3.9.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#test-one-do-changes-in-parameter-values-cause-changes-in-the-returned-log-likelihood"><i class="fa fa-check"></i><b>3.9.1</b> Test one: Do changes in parameter values cause changes in the returned log-likelihood?</a></li>
-<li class="chapter" data-level="3.9.2" data-path="forstmannChapter.html"><a href="forstmannChapter.html#testing-whether-data-generating-parameter-values-have-the-highest-likelihood"><i class="fa fa-check"></i><b>3.9.2</b> Testing whether data generating parameter values have the highest likelihood</a></li>
+<li class="chapter" data-level="3.8" data-path="forstmannChapter.html"><a href="forstmannChapter.html#LBAllcheck"><i class="fa fa-check"></i><b>3.8</b> Checking the LBA log-likelihood function</a><ul>
+<li class="chapter" data-level="3.8.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#test-one-do-changes-in-parameter-values-cause-changes-in-the-returned-log-likelihood"><i class="fa fa-check"></i><b>3.8.1</b> Test one: Do changes in parameter values cause changes in the returned log-likelihood?</a></li>
+<li class="chapter" data-level="3.8.2" data-path="forstmannChapter.html"><a href="forstmannChapter.html#testing-whether-data-generating-parameter-values-have-the-highest-likelihood"><i class="fa fa-check"></i><b>3.8.2</b> Testing whether data generating parameter values have the highest likelihood</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><i class="fa fa-check"></i><b>4</b> PMwG sampler with the Linear Ballistic Accumulator and a complex experiment design</a><ul>
@@ -216,83 +242,83 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h1><span class="header-section-number">Chapter 7</span> Appendix</h1>
 <div id="wagSDTscript" class="section level2">
 <h2><span class="header-section-number">7.1</span> Wagenmakers SDT script</h2>
-<p>Use the script below to process the data file so that the dataset structure is the same as shown in our <a href="pmwg-sampler-and-signal-detection-theory.html#sdtWag">SDT example</a>. A zipped folder containing the dataset from <span class="citation">Wagenmakers et al. (<a href="#ref-wagenmakers2008diffusion">2008</a>)</span> can be found at this <a href="https://www.ejwagenmakers.com/Code/2008/LexDecData.zip">link</a>. As shown in our script below, the data is stored in the <code>&quot;PropData.txt&quot;</code> file.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#~~~~~~~~~~~~~~~~~~~~ Wagenmakers 2008 Lexical decision task ~~~~~~~~~~~~~~~~~~~~~~~~~~~#</span>
-
-<span class="co"># 1) subject = participant number</span>
-<span class="co"># 2) block = block number</span>
-<span class="co"># 3) practice = 1 if practice block, otherwise 0</span>
-<span class="co"># 4) cond = condition either &quot;2&quot; for 75% words or &quot;1&quot; for 75% nonwords)</span>
-<span class="co"># 5) stimulus = unique identifier of stimulus, stimuli are nested in frequency conditions</span>
-<span class="co"># 6) freq = Code &quot;1&quot; means &quot;high frequency word&quot;, code &quot;2&quot; means &quot;low frequency word&quot;,</span>
-<span class="co">#    and code &quot;3&quot; means &quot;very low frequency word&quot;. Codes 4, 5, and 6 = &quot;nonword&quot;.</span>
-<span class="co"># 7) resp =  0 is nonword, 1 is word, -1 is not interpretable response (i.e., pushed a button,</span>
-<span class="co">#         but not the right one and also not the one next to the right button)</span>
-<span class="co"># 8) rt = response time in seconds</span>
-<span class="co"># 9) censor = 1 if value is eliminated from further analysis;</span>
-<span class="co">#       practice block, uninterpretable response, too fast response (&lt;180 ms), too slow response (&gt;3 sec)</span>
-
-<span class="kw">rm</span>(<span class="dt">list=</span><span class="kw">ls</span>())
-<span class="kw">require</span>(tidyverse)
-
-wagenmakers2008 &lt;-<span class="st"> </span><span class="kw">read.delim</span>(<span class="st">&quot;PropData.txt&quot;</span>,
-                              <span class="dt">header =</span> <span class="ot">FALSE</span>)
-
-<span class="kw">names</span>(wagenmakers2008) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;subject&quot;</span>,<span class="st">&quot;block&quot;</span>,<span class="st">&quot;practice&quot;</span>,
-                            <span class="st">&quot;cond&quot;</span>,<span class="st">&quot;stimulus&quot;</span>,<span class="st">&quot;freq&quot;</span>,<span class="st">&quot;resp&quot;</span>,<span class="st">&quot;rt&quot;</span>,
-                            <span class="st">&quot;censor&quot;</span>)
-
-wagenmakers2008 &lt;-<span class="st"> </span>wagenmakers2008[wagenmakers2008<span class="op">$</span>censor<span class="op">!=</span><span class="dv">1</span>,<span class="op">-</span><span class="kw">c</span>(<span class="dv">3</span>,<span class="dv">9</span>)]
-
-wagenmakers2008<span class="op">$</span>subject &lt;-<span class="st"> </span><span class="kw">factor</span>(wagenmakers2008<span class="op">$</span>subject)
-
-wagenmakers2008<span class="op">$</span>cond &lt;-<span class="st"> </span><span class="kw">factor</span>(wagenmakers2008<span class="op">$</span>cond,
-                     <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;nw&quot;</span>,<span class="st">&quot;w&quot;</span>))
-
-wagenmakers2008<span class="op">$</span>stimulus &lt;-<span class="st"> </span>wagenmakers2008<span class="op">$</span>freq <span class="op">&lt;</span><span class="st"> </span><span class="dv">4</span>
-
-wagenmakers2008<span class="op">$</span>stimulus &lt;-<span class="st"> </span><span class="kw">factor</span>(wagenmakers2008<span class="op">$</span>stimulus,
-                     <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;nw&quot;</span>, <span class="st">&quot;w&quot;</span>))
-
-wagenmakers2008<span class="op">$</span>resp &lt;-<span class="st"> </span><span class="kw">factor</span>(wagenmakers2008<span class="op">$</span>resp,
-                     <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;NW&quot;</span>,<span class="st">&quot;W&quot;</span>))
-
-wagenmakers2008<span class="op">$</span>freq &lt;-<span class="st"> </span>((wagenmakers2008<span class="op">$</span>freq<span class="op">-</span><span class="dv">1</span>) <span class="op">%%</span><span class="st"> </span><span class="dv">3</span>)<span class="op">+</span><span class="dv">1</span>
-
-wagenmakers2008<span class="op">$</span>freq &lt;-<span class="st"> </span><span class="kw">factor</span>(wagenmakers2008<span class="op">$</span>freq,
-                  <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;hf&quot;</span>,<span class="st">&quot;lf&quot;</span>,<span class="st">&quot;vlf&quot;</span>))
-
-wagenmakers2008<span class="op">$</span>correct &lt;-<span class="st"> </span><span class="kw">toupper</span>(wagenmakers2008<span class="op">$</span>stimulus) <span class="op">==</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">toupper</span>(wagenmakers2008<span class="op">$</span>resp)
-
-wagenmakers2008<span class="op">$</span>W &lt;-<span class="st"> </span><span class="kw">as.character</span>(wagenmakers2008<span class="op">$</span>freq)
-
-wagenmakers2008<span class="op">$</span>W[wagenmakers2008<span class="op">$</span>stimulus <span class="op">==</span><span class="st"> &quot;nw&quot;</span>] &lt;-<span class="st"> &quot;nw&quot;</span>
-
-wagenmakers2008<span class="op">$</span>W &lt;-<span class="st"> </span><span class="kw">factor</span>(wagenmakers2008<span class="op">$</span>W,
-                  <span class="kw">c</span>(<span class="st">&quot;hf&quot;</span>,<span class="st">&quot;lf&quot;</span>,<span class="st">&quot;vlf&quot;</span>,<span class="st">&quot;nw&quot;</span>))
-
-wagenmakers2008 &lt;-<span class="st"> </span><span class="kw">select</span>(<span class="dt">.data =</span> wagenmakers2008,
-                          subject,
-                          cond,
-                          W,
-                          resp,
-                          rt,
-                          correct) <span class="op">%&gt;%</span>
-<span class="st">  </span><span class="kw">rename</span>(<span class="dt">stimulus =</span> W)
-
-wagenmakers2008<span class="op">$</span>correct &lt;-<span class="st"> </span><span class="kw">if_else</span>(wagenmakers2008<span class="op">$</span>correct,
-                                   <span class="dt">true =</span> <span class="st">&quot;2&quot;</span>,
-                                   <span class="dt">false =</span> <span class="st">&quot;1&quot;</span>)
-<span class="kw">save</span>(wagenmakers2008,
-     <span class="dt">file =</span> <span class="st">&quot;wagenmakers2008.RData&quot;</span>)</code></pre></div>
+<p>Use the script below to process the data file so that the dataset structure is the same as shown in our <a href="pmwg-sampler-and-signal-detection-theory.html#sdtWag">SDT example</a>. A zipped folder containing the dataset from <span class="citation">Wagenmakers et al. (<a href="#ref-wagenmakers2008diffusion">2008</a>)</span> can be found at this <a href="https://www.ejwagenmakers.com/Code/2008/LexDecData.zip">link</a>. As shown in our script below, the data is stored in the <code>"PropData.txt"</code> file.</p>
+<div class="sourceCode" id="cb120"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb120-1" title="1"><span class="co">#~~~~~~~~~~~~~~~~~~~~ Wagenmakers 2008 Lexical decision task ~~~~~~~~~~~~~~~~~~~~~~~~~~~#</span></a>
+<a class="sourceLine" id="cb120-2" title="2"></a>
+<a class="sourceLine" id="cb120-3" title="3"><span class="co"># 1) subject = participant number</span></a>
+<a class="sourceLine" id="cb120-4" title="4"><span class="co"># 2) block = block number</span></a>
+<a class="sourceLine" id="cb120-5" title="5"><span class="co"># 3) practice = 1 if practice block, otherwise 0</span></a>
+<a class="sourceLine" id="cb120-6" title="6"><span class="co"># 4) cond = condition either &quot;2&quot; for 75% words or &quot;1&quot; for 75% nonwords)</span></a>
+<a class="sourceLine" id="cb120-7" title="7"><span class="co"># 5) stimulus = unique identifier of stimulus, stimuli are nested in frequency conditions</span></a>
+<a class="sourceLine" id="cb120-8" title="8"><span class="co"># 6) freq = Code &quot;1&quot; means &quot;high frequency word&quot;, code &quot;2&quot; means &quot;low frequency word&quot;,</span></a>
+<a class="sourceLine" id="cb120-9" title="9"><span class="co">#    and code &quot;3&quot; means &quot;very low frequency word&quot;. Codes 4, 5, and 6 = &quot;nonword&quot;.</span></a>
+<a class="sourceLine" id="cb120-10" title="10"><span class="co"># 7) resp =  0 is nonword, 1 is word, -1 is not interpretable response (i.e., pushed a button,</span></a>
+<a class="sourceLine" id="cb120-11" title="11"><span class="co">#         but not the right one and also not the one next to the right button)</span></a>
+<a class="sourceLine" id="cb120-12" title="12"><span class="co"># 8) rt = response time in seconds</span></a>
+<a class="sourceLine" id="cb120-13" title="13"><span class="co"># 9) censor = 1 if value is eliminated from further analysis;</span></a>
+<a class="sourceLine" id="cb120-14" title="14"><span class="co">#       practice block, uninterpretable response, too fast response (&lt;180 ms), too slow response (&gt;3 sec)</span></a>
+<a class="sourceLine" id="cb120-15" title="15"></a>
+<a class="sourceLine" id="cb120-16" title="16"><span class="kw">rm</span>(<span class="dt">list=</span><span class="kw">ls</span>())</a>
+<a class="sourceLine" id="cb120-17" title="17"><span class="kw">require</span>(tidyverse)</a>
+<a class="sourceLine" id="cb120-18" title="18"></a>
+<a class="sourceLine" id="cb120-19" title="19">wagenmakers2008 &lt;-<span class="st"> </span><span class="kw">read.delim</span>(<span class="st">&quot;PropData.txt&quot;</span>,</a>
+<a class="sourceLine" id="cb120-20" title="20">                              <span class="dt">header =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb120-21" title="21"></a>
+<a class="sourceLine" id="cb120-22" title="22"><span class="kw">names</span>(wagenmakers2008) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;subject&quot;</span>,<span class="st">&quot;block&quot;</span>,<span class="st">&quot;practice&quot;</span>,</a>
+<a class="sourceLine" id="cb120-23" title="23">                            <span class="st">&quot;cond&quot;</span>,<span class="st">&quot;stimulus&quot;</span>,<span class="st">&quot;freq&quot;</span>,<span class="st">&quot;resp&quot;</span>,<span class="st">&quot;rt&quot;</span>,</a>
+<a class="sourceLine" id="cb120-24" title="24">                            <span class="st">&quot;censor&quot;</span>)</a>
+<a class="sourceLine" id="cb120-25" title="25"></a>
+<a class="sourceLine" id="cb120-26" title="26">wagenmakers2008 &lt;-<span class="st"> </span>wagenmakers2008[wagenmakers2008<span class="op">$</span>censor<span class="op">!=</span><span class="dv">1</span>,<span class="op">-</span><span class="kw">c</span>(<span class="dv">3</span>,<span class="dv">9</span>)]</a>
+<a class="sourceLine" id="cb120-27" title="27"></a>
+<a class="sourceLine" id="cb120-28" title="28">wagenmakers2008<span class="op">$</span>subject &lt;-<span class="st"> </span><span class="kw">factor</span>(wagenmakers2008<span class="op">$</span>subject)</a>
+<a class="sourceLine" id="cb120-29" title="29"></a>
+<a class="sourceLine" id="cb120-30" title="30">wagenmakers2008<span class="op">$</span>cond &lt;-<span class="st"> </span><span class="kw">factor</span>(wagenmakers2008<span class="op">$</span>cond,</a>
+<a class="sourceLine" id="cb120-31" title="31">                     <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;nw&quot;</span>,<span class="st">&quot;w&quot;</span>))</a>
+<a class="sourceLine" id="cb120-32" title="32"></a>
+<a class="sourceLine" id="cb120-33" title="33">wagenmakers2008<span class="op">$</span>stimulus &lt;-<span class="st"> </span>wagenmakers2008<span class="op">$</span>freq <span class="op">&lt;</span><span class="st"> </span><span class="dv">4</span></a>
+<a class="sourceLine" id="cb120-34" title="34"></a>
+<a class="sourceLine" id="cb120-35" title="35">wagenmakers2008<span class="op">$</span>stimulus &lt;-<span class="st"> </span><span class="kw">factor</span>(wagenmakers2008<span class="op">$</span>stimulus,</a>
+<a class="sourceLine" id="cb120-36" title="36">                     <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;nw&quot;</span>, <span class="st">&quot;w&quot;</span>))</a>
+<a class="sourceLine" id="cb120-37" title="37"></a>
+<a class="sourceLine" id="cb120-38" title="38">wagenmakers2008<span class="op">$</span>resp &lt;-<span class="st"> </span><span class="kw">factor</span>(wagenmakers2008<span class="op">$</span>resp,</a>
+<a class="sourceLine" id="cb120-39" title="39">                     <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;NW&quot;</span>,<span class="st">&quot;W&quot;</span>))</a>
+<a class="sourceLine" id="cb120-40" title="40"></a>
+<a class="sourceLine" id="cb120-41" title="41">wagenmakers2008<span class="op">$</span>freq &lt;-<span class="st"> </span>((wagenmakers2008<span class="op">$</span>freq<span class="dv">-1</span>) <span class="op">%%</span><span class="st"> </span><span class="dv">3</span>)<span class="op">+</span><span class="dv">1</span></a>
+<a class="sourceLine" id="cb120-42" title="42"></a>
+<a class="sourceLine" id="cb120-43" title="43">wagenmakers2008<span class="op">$</span>freq &lt;-<span class="st"> </span><span class="kw">factor</span>(wagenmakers2008<span class="op">$</span>freq,</a>
+<a class="sourceLine" id="cb120-44" title="44">                  <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;hf&quot;</span>,<span class="st">&quot;lf&quot;</span>,<span class="st">&quot;vlf&quot;</span>))</a>
+<a class="sourceLine" id="cb120-45" title="45"></a>
+<a class="sourceLine" id="cb120-46" title="46">wagenmakers2008<span class="op">$</span>correct &lt;-<span class="st"> </span><span class="kw">toupper</span>(wagenmakers2008<span class="op">$</span>stimulus) <span class="op">==</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb120-47" title="47"><span class="st">  </span><span class="kw">toupper</span>(wagenmakers2008<span class="op">$</span>resp)</a>
+<a class="sourceLine" id="cb120-48" title="48"></a>
+<a class="sourceLine" id="cb120-49" title="49">wagenmakers2008<span class="op">$</span>W &lt;-<span class="st"> </span><span class="kw">as.character</span>(wagenmakers2008<span class="op">$</span>freq)</a>
+<a class="sourceLine" id="cb120-50" title="50"></a>
+<a class="sourceLine" id="cb120-51" title="51">wagenmakers2008<span class="op">$</span>W[wagenmakers2008<span class="op">$</span>stimulus <span class="op">==</span><span class="st"> &quot;nw&quot;</span>] &lt;-<span class="st"> &quot;nw&quot;</span></a>
+<a class="sourceLine" id="cb120-52" title="52"></a>
+<a class="sourceLine" id="cb120-53" title="53">wagenmakers2008<span class="op">$</span>W &lt;-<span class="st"> </span><span class="kw">factor</span>(wagenmakers2008<span class="op">$</span>W,</a>
+<a class="sourceLine" id="cb120-54" title="54">                  <span class="kw">c</span>(<span class="st">&quot;hf&quot;</span>,<span class="st">&quot;lf&quot;</span>,<span class="st">&quot;vlf&quot;</span>,<span class="st">&quot;nw&quot;</span>))</a>
+<a class="sourceLine" id="cb120-55" title="55"></a>
+<a class="sourceLine" id="cb120-56" title="56">wagenmakers2008 &lt;-<span class="st"> </span><span class="kw">select</span>(<span class="dt">.data =</span> wagenmakers2008,</a>
+<a class="sourceLine" id="cb120-57" title="57">                          subject,</a>
+<a class="sourceLine" id="cb120-58" title="58">                          cond,</a>
+<a class="sourceLine" id="cb120-59" title="59">                          W,</a>
+<a class="sourceLine" id="cb120-60" title="60">                          resp,</a>
+<a class="sourceLine" id="cb120-61" title="61">                          rt,</a>
+<a class="sourceLine" id="cb120-62" title="62">                          correct) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb120-63" title="63"><span class="st">  </span><span class="kw">rename</span>(<span class="dt">stimulus =</span> W)</a>
+<a class="sourceLine" id="cb120-64" title="64"></a>
+<a class="sourceLine" id="cb120-65" title="65">wagenmakers2008<span class="op">$</span>correct &lt;-<span class="st"> </span><span class="kw">if_else</span>(wagenmakers2008<span class="op">$</span>correct,</a>
+<a class="sourceLine" id="cb120-66" title="66">                                   <span class="dt">true =</span> <span class="st">&quot;2&quot;</span>,</a>
+<a class="sourceLine" id="cb120-67" title="67">                                   <span class="dt">false =</span> <span class="st">&quot;1&quot;</span>)</a>
+<a class="sourceLine" id="cb120-68" title="68"><span class="kw">save</span>(wagenmakers2008,</a>
+<a class="sourceLine" id="cb120-69" title="69">     <span class="dt">file =</span> <span class="st">&quot;wagenmakers2008.RData&quot;</span>)</a></code></pre></div>
 
 </div>
 </div>
 <h3>References</h3>
 <div id="refs" class="references">
 <div id="ref-wagenmakers2008diffusion">
-<p>Wagenmakers, Eric-Jan, Roger Ratcliff, Pablo Gomez, and Gail McKoon. 2008. “A Diffusion Model Account of Criterion Shifts in the Lexical Decision Task.” <em>Journal of Memory and Language</em> 58 (1). Elsevier: 140–59.</p>
+<p>Wagenmakers, Eric-Jan, Roger Ratcliff, Pablo Gomez, and Gail McKoon. 2008. “A Diffusion Model Account of Criterion Shifts in the Lexical Decision Task.” <em>Journal of Memory and Language</em> 58 (1): 140–59.</p>
 </div>
 </div>
             </section>
@@ -324,6 +350,7 @@ gitbook.start({
 "weibo": false,
 "instapaper": false,
 "vk": false,
+"whatsapp": false,
 "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
@@ -343,7 +370,11 @@ gitbook.start({
 "link": null,
 "text": null
 },
-"download": ["bookdown-demo.pdf", "bookdown-demo.epub"],
+"download": ["PMwG-Sampler-Tutorial.pdf", "PMwG-Sampler-Tutorial.epub"],
+"search": {
+"engine": "lunr",
+"options": null
+},
 "toc": {
 "collapse": "subsection"
 }
@@ -356,7 +387,7 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    var src = "";
+    var src = "true";
     if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:")
       if (/^https?:/.test(src))
