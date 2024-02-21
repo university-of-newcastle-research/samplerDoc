@@ -2,7 +2,7 @@
 
 This is the repository for the bookdown site which describes how to work with the PMwG R package.
 
-The book is located at https://github.com/university-of-newcastle-research/samplerDoc/
+The book is located at https://university-of-newcastle-research.github.io/samplerDoc/
 
 The PMwG package can be found at https://github.com/university-of-newcastle-research/pmwg
 
