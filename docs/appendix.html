@@ -6,11 +6,10 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 7 Appendix | Particle Based Samplers for MCMC</title>
   <meta name="description" content="Particle Based Sampler for MCMC" />
-  <meta name="generator" content="bookdown 0.23 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.42 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 7 Appendix | Particle Based Samplers for MCMC" />
   <meta property="og:type" content="book" />
-  
   
   <meta property="og:description" content="Particle Based Sampler for MCMC" />
   <meta name="github-repo" content="rstudio/bookdown-demo" />
@@ -32,6 +31,7 @@
 <link rel="prev" href="troubleshoot.html"/>
 <link rel="next" href="references.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -47,31 +47,33 @@
 
 
 
-
-<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
-<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
 
 
 <style type="text/css">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -80,15 +82,15 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
 code span.at { color: #7d9029; } /* Attribute */
 code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
+code span.bu { color: #008000; } /* BuiltIn */
 code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
 code span.ch { color: #4070a0; } /* Char */
 code span.cn { color: #880000; } /* Constant */
@@ -101,7 +103,7 @@ code span.er { color: #ff0000; font-weight: bold; } /* Error */
 code span.ex { } /* Extension */
 code span.fl { color: #40a070; } /* Float */
 code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
+code span.im { color: #008000; font-weight: bold; } /* Import */
 code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 code span.kw { color: #007020; font-weight: bold; } /* Keyword */
 code span.op { color: #666666; } /* Operator */
@@ -115,6 +117,33 @@ code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
@@ -132,7 +161,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="./">PMwG Samplers Package</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction to particle based sampler for MCMC</a><ul>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction to particle based sampler for MCMC</a>
+<ul>
 <li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#assumed-knowledge"><i class="fa fa-check"></i><b>1.1</b> Assumed knowledge</a></li>
 <li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#why-would-you-use-particle-metropolis-within-gibbs-sampling"><i class="fa fa-check"></i><b>1.2</b> Why would you use Particle Metropolis within Gibbs sampling?</a></li>
 <li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#the-assumed-hierarchical-structure"><i class="fa fa-check"></i><b>1.3</b> The assumed hierarchical structure</a></li>
@@ -140,64 +170,79 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="1.5" data-path="index.html"><a href="index.html#what-is-particle-metropolis-within-gibbs-sampling"><i class="fa fa-check"></i><b>1.5</b> What is Particle Metropolis within Gibbs sampling?</a></li>
 <li class="chapter" data-level="1.6" data-path="index.html"><a href="index.html#generating-proposals-in-pmwg-sampling-using-particle-metropolis"><i class="fa fa-check"></i><b>1.6</b> Generating proposals in PMwG sampling using Particle Metropolis</a></li>
 </ul></li>
-<li class="chapter" data-level="2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html"><i class="fa fa-check"></i><b>2</b> PMwG sampler and Signal Detection Theory</a><ul>
+<li class="chapter" data-level="2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html"><i class="fa fa-check"></i><b>2</b> PMwG sampler and Signal Detection Theory</a>
+<ul>
 <li class="chapter" data-level="2.0.1" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#sdtOutline"><i class="fa fa-check"></i><b>2.0.1</b> Signal Detection Theory analysis of lexical decision task</a></li>
 <li class="chapter" data-level="2.0.2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#SDTLLFun"><i class="fa fa-check"></i><b>2.0.2</b> The log-likelihood function</a></li>
 <li class="chapter" data-level="2.1" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#testing-the-sdt-log-likelihood-function"><i class="fa fa-check"></i><b>2.1</b> Testing the SDT log-likelihood function</a></li>
-<li class="chapter" data-level="2.2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#sdtWag"><i class="fa fa-check"></i><b>2.2</b> SDT log-likelihood function for Wagenmakers experiment</a><ul>
+<li class="chapter" data-level="2.2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#sdtWag"><i class="fa fa-check"></i><b>2.2</b> SDT log-likelihood function for Wagenmakers experiment</a>
+<ul>
 <li class="chapter" data-level="2.2.1" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#description-of-wagenmakers-experiment"><i class="fa fa-check"></i><b>2.2.1</b> Description of Wagenmakers experiment</a></li>
 <li class="chapter" data-level="2.2.2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#computation-time-of-the-log-likelihood-function"><i class="fa fa-check"></i><b>2.2.2</b> Computation time of the log-likelihood function</a></li>
 </ul></li>
-<li class="chapter" data-level="2.3" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#sdtPMwG"><i class="fa fa-check"></i><b>2.3</b> PMwG Framework</a><ul>
+<li class="chapter" data-level="2.3" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#sdtPMwG"><i class="fa fa-check"></i><b>2.3</b> PMwG Framework</a>
+<ul>
 <li class="chapter" data-level="2.3.1" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#start-points"><i class="fa fa-check"></i><b>2.3.1</b> Model start points</a></li>
 <li class="chapter" data-level="2.3.2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#run-sdtsampler"><i class="fa fa-check"></i><b>2.3.2</b> Running the sampler</a></li>
 </ul></li>
 <li class="chapter" data-level="2.4" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#check-the-sampling-process"><i class="fa fa-check"></i><b>2.4</b> Check the sampling process</a></li>
 <li class="chapter" data-level="2.5" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#simulating-posterior-data"><i class="fa fa-check"></i><b>2.5</b> Simulating posterior data</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="forstmannChapter.html"><a href="forstmannChapter.html"><i class="fa fa-check"></i><b>3</b> PMwG sampler and sequential sampling models</a><ul>
-<li class="chapter" data-level="3.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#the-speed-accuracy-tradeoff-in-perceptual-decisions"><i class="fa fa-check"></i><b>3.1</b> The speed-accuracy tradeoff in perceptual decisions</a></li>
+<li class="chapter" data-level="3" data-path="forstmannChapter.html"><a href="forstmannChapter.html"><i class="fa fa-check"></i><b>3</b> PMwG sampler and sequential sampling models</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#the-speed-accuracy-trade-off-in-perceptual-decisions"><i class="fa fa-check"></i><b>3.1</b> The speed-accuracy trade-off in perceptual decisions</a></li>
 <li class="chapter" data-level="3.2" data-path="forstmannChapter.html"><a href="forstmannChapter.html#LBAParameters"><i class="fa fa-check"></i><b>3.2</b> Linear Ballistic Accumulator Parameters</a></li>
-<li class="chapter" data-level="3.3" data-path="forstmannChapter.html"><a href="forstmannChapter.html#theLLFunc"><i class="fa fa-check"></i><b>3.3</b> The log-likelihood function</a><ul>
+<li class="chapter" data-level="3.3" data-path="forstmannChapter.html"><a href="forstmannChapter.html#theLLFunc"><i class="fa fa-check"></i><b>3.3</b> The log-likelihood function</a>
+<ul>
 <li class="chapter" data-level="3.3.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#what-is-a-log-likelihood-function"><i class="fa fa-check"></i><b>3.3.1</b> What is a log-likelihood function?</a></li>
 <li class="chapter" data-level="3.3.2" data-path="forstmannChapter.html"><a href="forstmannChapter.html#writing-the-log-likelihood-function-for-the-forstmann-data-set"><i class="fa fa-check"></i><b>3.3.2</b> Writing the log-likelihood function for the Forstmann data set</a></li>
 <li class="chapter" data-level="3.3.3" data-path="forstmannChapter.html"><a href="forstmannChapter.html#fstLBALL"><i class="fa fa-check"></i><b>3.3.3</b> Fast LBA Log-likelihood Function</a></li>
 </ul></li>
-<li class="chapter" data-level="3.4" data-path="forstmannChapter.html"><a href="forstmannChapter.html#pmwg-framework"><i class="fa fa-check"></i><b>3.4</b> PMwG Framework</a><ul>
+<li class="chapter" data-level="3.4" data-path="forstmannChapter.html"><a href="forstmannChapter.html#pmwg-framework"><i class="fa fa-check"></i><b>3.4</b> PMwG Framework</a>
+<ul>
 <li class="chapter" data-level="3.4.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#lbaStartPts"><i class="fa fa-check"></i><b>3.4.1</b> Model start points</a></li>
 <li class="chapter" data-level="3.4.2" data-path="forstmannChapter.html"><a href="forstmannChapter.html#run-sampler"><i class="fa fa-check"></i><b>3.4.2</b> Running the sampler</a></li>
 <li class="chapter" data-level="3.4.3" data-path="forstmannChapter.html"><a href="forstmannChapter.html#estSet"><i class="fa fa-check"></i><b>3.4.3</b> Determining estimation settings for the PMwG sampler</a></li>
 </ul></li>
-<li class="chapter" data-level="3.5" data-path="forstmannChapter.html"><a href="forstmannChapter.html#genppdatafunc"><i class="fa fa-check"></i><b>3.5</b> Simulating Posterior Predictive Data</a><ul>
+<li class="chapter" data-level="3.5" data-path="forstmannChapter.html"><a href="forstmannChapter.html#genppdatafunc"><i class="fa fa-check"></i><b>3.5</b> Simulating Posterior Predictive Data</a>
+<ul>
 <li class="chapter" data-level="3.5.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#assessing-descriptive-adequacy-goodness-of-fit"><i class="fa fa-check"></i><b>3.5.1</b> Assessing Descriptive Adequacy (goodness of fit)</a></li>
 <li class="chapter" data-level="3.5.2" data-path="forstmannChapter.html"><a href="forstmannChapter.html#pmwg-framework-for-a-single-threshold-model"><i class="fa fa-check"></i><b>3.5.2</b> PMwG framework for a single threshold model</a></li>
 </ul></li>
 <li class="chapter" data-level="3.6" data-path="forstmannChapter.html"><a href="forstmannChapter.html#checking-descriptive-adequacy-of-1b-model."><i class="fa fa-check"></i><b>3.6</b> Checking Descriptive Adequacy of 1b model.</a></li>
-<li class="chapter" data-level="3.7" data-path="forstmannChapter.html"><a href="forstmannChapter.html#forstMC"><i class="fa fa-check"></i><b>3.7</b> Model Comparison</a><ul>
+<li class="chapter" data-level="3.7" data-path="forstmannChapter.html"><a href="forstmannChapter.html#forstMC"><i class="fa fa-check"></i><b>3.7</b> Model Comparison</a>
+<ul>
 <li class="chapter" data-level="3.7.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#assessing-descriptive-adequacy-graphically"><i class="fa fa-check"></i><b>3.7.1</b> Assessing Descriptive Adequacy Graphically</a></li>
 <li class="chapter" data-level="3.7.2" data-path="forstmannChapter.html"><a href="forstmannChapter.html#forstDIC"><i class="fa fa-check"></i><b>3.7.2</b> Model comparison via DIC</a></li>
 </ul></li>
-<li class="chapter" data-level="3.8" data-path="forstmannChapter.html"><a href="forstmannChapter.html#LBAllcheck"><i class="fa fa-check"></i><b>3.8</b> Checking the LBA log-likelihood function</a><ul>
+<li class="chapter" data-level="3.8" data-path="forstmannChapter.html"><a href="forstmannChapter.html#LBAllcheck"><i class="fa fa-check"></i><b>3.8</b> Checking the LBA log-likelihood function</a>
+<ul>
 <li class="chapter" data-level="3.8.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#test-one-do-changes-in-parameter-values-cause-changes-in-the-returned-log-likelihood"><i class="fa fa-check"></i><b>3.8.1</b> Test one: Do changes in parameter values cause changes in the returned log-likelihood?</a></li>
 <li class="chapter" data-level="3.8.2" data-path="forstmannChapter.html"><a href="forstmannChapter.html#testing-whether-data-generating-parameter-values-have-the-highest-likelihood"><i class="fa fa-check"></i><b>3.8.2</b> Testing whether data generating parameter values have the highest likelihood</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><i class="fa fa-check"></i><b>4</b> PMwG sampler with the Linear Ballistic Accumulator and a complex experiment design</a><ul>
-<li class="chapter" data-level="4.1" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#the-lba-log-likelihood-function-for-the-wagenmakers-data-set"><i class="fa fa-check"></i><b>4.1</b> The LBA log-likelihood function for the Wagenmakers data set</a><ul>
+<li class="chapter" data-level="4" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><i class="fa fa-check"></i><b>4</b> PMwG sampler with the Linear Ballistic Accumulator and a complex experiment design</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#the-lba-log-likelihood-function-for-the-wagenmakers-data-set"><i class="fa fa-check"></i><b>4.1</b> The LBA log-likelihood function for the Wagenmakers data set</a>
+<ul>
 <li class="chapter" data-level="4.1.1" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#what-is-a-log-likelihood-function-1"><i class="fa fa-check"></i><b>4.1.1</b> What is a log-likelihood function?</a></li>
 <li class="chapter" data-level="4.1.2" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#writing-the-lba-log-likelihood-for-the-wagenmakers-data-set"><i class="fa fa-check"></i><b>4.1.2</b> Writing the LBA log-likelihood for the Wagenmakers data set</a></li>
 </ul></li>
 <li class="chapter" data-level="4.2" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#wagFastll"><i class="fa fa-check"></i><b>4.2</b> Fast LBA Log-likelihood function</a></li>
-<li class="chapter" data-level="4.3" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#pmwg-framework-1"><i class="fa fa-check"></i><b>4.3</b> PMwG Framework</a><ul>
+<li class="chapter" data-level="4.3" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#pmwg-framework-1"><i class="fa fa-check"></i><b>4.3</b> PMwG Framework</a>
+<ul>
 <li class="chapter" data-level="4.3.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#run-sampler"><i class="fa fa-check"></i><b>4.3.1</b> Running the sampler</a></li>
 </ul></li>
-<li class="chapter" data-level="4.4" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#genppdataWag"><i class="fa fa-check"></i><b>4.4</b> Simulating Posterior Predictive Data</a><ul>
+<li class="chapter" data-level="4.4" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#genppdataWag"><i class="fa fa-check"></i><b>4.4</b> Simulating Posterior Predictive Data</a>
+<ul>
 <li class="chapter" data-level="4.4.1" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#assessing-descriptive-adequacy-goodness-of-fit-1"><i class="fa fa-check"></i><b>4.4.1</b> Assessing Descriptive Adequacy (goodness of fit)</a></li>
 </ul></li>
 <li class="chapter" data-level="4.5" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#model-comparison-via-dic"><i class="fa fa-check"></i><b>4.5</b> Model Comparison via DIC</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><i class="fa fa-check"></i><b>5</b> Estimating the Marginal Likelihood via Importance Sampling (IS<sup>2</sup>)</a><ul>
-<li class="chapter" data-level="5.1" data-path="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling-is2.html#using-is2-with-the-forstmann-dataset"><i class="fa fa-check"></i><b>5.1</b> Using IS2 with the Forstmann dataset</a><ul>
+<li class="chapter" data-level="5" data-path="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><i class="fa fa-check"></i><b>5</b> Estimating the Marginal Likelihood via Importance Sampling (IS<sup>2</sup>)</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling-is2.html#using-is2-with-the-forstmann-dataset"><i class="fa fa-check"></i><b>5.1</b> Using IS2 with the Forstmann dataset</a>
+<ul>
 <li class="chapter" data-level="5.1.1" data-path="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling-is2.html#load-packages-and-samples"><i class="fa fa-check"></i><b>5.1.1</b> Load packages and samples</a></li>
 <li class="chapter" data-level="5.1.2" data-path="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling-is2.html#set-up-variables"><i class="fa fa-check"></i><b>5.1.2</b> Set up variables</a></li>
 <li class="chapter" data-level="5.1.3" data-path="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling-is2.html#store-the-samples"><i class="fa fa-check"></i><b>5.1.3</b> Store the samples</a></li>
@@ -205,16 +250,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="5.1.5" data-path="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling-is2.html#generate-proposal-parameters-from-importance-samples"><i class="fa fa-check"></i><b>5.1.5</b> Generate proposal parameters from importance samples</a></li>
 <li class="chapter" data-level="5.1.6" data-path="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling-is2.html#write-a-group-distribution-function"><i class="fa fa-check"></i><b>5.1.6</b> Write a group distribution function</a></li>
 <li class="chapter" data-level="5.1.7" data-path="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling-is2.html#write-a-prior-distribution-function"><i class="fa fa-check"></i><b>5.1.7</b> Write a prior distribution function</a></li>
-<li class="chapter" data-level="5.1.8" data-path="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling-is2.html#write-a-get_logp-function"><i class="fa fa-check"></i><b>5.1.8</b> Write a get_logp function</a></li>
-<li class="chapter" data-level="5.1.9" data-path="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling-is2.html#compute-the-lw"><i class="fa fa-check"></i><b>5.1.9</b> Compute the LW</a></li>
+<li class="chapter" data-level="5.1.8" data-path="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling-is2.html#write-a-get_logp-function"><i class="fa fa-check"></i><b>5.1.8</b> Write a <code>get_logp</code> function</a></li>
+<li class="chapter" data-level="5.1.9" data-path="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling-is2.html#compute-the-log-weights"><i class="fa fa-check"></i><b>5.1.9</b> Compute the Log Weights</a></li>
 <li class="chapter" data-level="5.1.10" data-path="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling-is2.html#make-it-work"><i class="fa fa-check"></i><b>5.1.10</b> Make it work</a></li>
 <li class="chapter" data-level="5.1.11" data-path="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling-is2.html#bootstrapping-for-se"><i class="fa fa-check"></i><b>5.1.11</b> Bootstrapping for SE</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="6" data-path="troubleshoot.html"><a href="troubleshoot.html"><i class="fa fa-check"></i><b>6</b> Troubleshooting PMwG errors</a><ul>
+<li class="chapter" data-level="6" data-path="troubleshoot.html"><a href="troubleshoot.html"><i class="fa fa-check"></i><b>6</b> Troubleshooting PMwG errors</a>
+<ul>
 <li class="chapter" data-level="6.1" data-path="troubleshoot.html"><a href="troubleshoot.html#writing-your-log-likelihood-function-tips-errors-and-check-list"><i class="fa fa-check"></i><b>6.1</b> Writing your log-likelihood function: Tips, errors and check list</a></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="appendix.html"><a href="appendix.html"><i class="fa fa-check"></i><b>7</b> Appendix</a><ul>
+<li class="chapter" data-level="7" data-path="appendix.html"><a href="appendix.html"><i class="fa fa-check"></i><b>7</b> Appendix</a>
+<ul>
 <li class="chapter" data-level="7.1" data-path="appendix.html"><a href="appendix.html#wagSDTscript"><i class="fa fa-check"></i><b>7.1</b> Wagenmakers SDT script</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
@@ -238,87 +285,87 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="appendix" class="section level1">
-<h1><span class="header-section-number">Chapter 7</span> Appendix</h1>
-<div id="wagSDTscript" class="section level2">
-<h2><span class="header-section-number">7.1</span> Wagenmakers SDT script</h2>
+<div id="appendix" class="section level1 hasAnchor" number="7">
+<h1><span class="header-section-number">Chapter 7</span> Appendix<a href="appendix.html#appendix" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="wagSDTscript" class="section level2 hasAnchor" number="7.1">
+<h2><span class="header-section-number">7.1</span> Wagenmakers SDT script<a href="appendix.html#wagSDTscript" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Use the script below to process the data file so that the dataset structure is the same as shown in our <a href="pmwg-sampler-and-signal-detection-theory.html#sdtWag">SDT example</a>. A zipped folder containing the dataset from <span class="citation">Wagenmakers et al. (<a href="#ref-wagenmakers2008diffusion">2008</a>)</span> can be found at this <a href="https://www.ejwagenmakers.com/Code/2008/LexDecData.zip">link</a>. As shown in our script below, the data is stored in the <code>"PropData.txt"</code> file.</p>
-<div class="sourceCode" id="cb120"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb120-1" title="1"><span class="co">#~~~~~~~~~~~~~~~~~~~~ Wagenmakers 2008 Lexical decision task ~~~~~~~~~~~~~~~~~~~~~~~~~~~#</span></a>
-<a class="sourceLine" id="cb120-2" title="2"></a>
-<a class="sourceLine" id="cb120-3" title="3"><span class="co"># 1) subject = participant number</span></a>
-<a class="sourceLine" id="cb120-4" title="4"><span class="co"># 2) block = block number</span></a>
-<a class="sourceLine" id="cb120-5" title="5"><span class="co"># 3) practice = 1 if practice block, otherwise 0</span></a>
-<a class="sourceLine" id="cb120-6" title="6"><span class="co"># 4) cond = condition either &quot;2&quot; for 75% words or &quot;1&quot; for 75% nonwords)</span></a>
-<a class="sourceLine" id="cb120-7" title="7"><span class="co"># 5) stimulus = unique identifier of stimulus, stimuli are nested in frequency conditions</span></a>
-<a class="sourceLine" id="cb120-8" title="8"><span class="co"># 6) freq = Code &quot;1&quot; means &quot;high frequency word&quot;, code &quot;2&quot; means &quot;low frequency word&quot;,</span></a>
-<a class="sourceLine" id="cb120-9" title="9"><span class="co">#    and code &quot;3&quot; means &quot;very low frequency word&quot;. Codes 4, 5, and 6 = &quot;nonword&quot;.</span></a>
-<a class="sourceLine" id="cb120-10" title="10"><span class="co"># 7) resp =  0 is nonword, 1 is word, -1 is not interpretable response (i.e., pushed a button,</span></a>
-<a class="sourceLine" id="cb120-11" title="11"><span class="co">#         but not the right one and also not the one next to the right button)</span></a>
-<a class="sourceLine" id="cb120-12" title="12"><span class="co"># 8) rt = response time in seconds</span></a>
-<a class="sourceLine" id="cb120-13" title="13"><span class="co"># 9) censor = 1 if value is eliminated from further analysis;</span></a>
-<a class="sourceLine" id="cb120-14" title="14"><span class="co">#       practice block, uninterpretable response, too fast response (&lt;180 ms), too slow response (&gt;3 sec)</span></a>
-<a class="sourceLine" id="cb120-15" title="15"></a>
-<a class="sourceLine" id="cb120-16" title="16"><span class="kw">rm</span>(<span class="dt">list=</span><span class="kw">ls</span>())</a>
-<a class="sourceLine" id="cb120-17" title="17"><span class="kw">require</span>(tidyverse)</a>
-<a class="sourceLine" id="cb120-18" title="18"></a>
-<a class="sourceLine" id="cb120-19" title="19">wagenmakers2008 &lt;-<span class="st"> </span><span class="kw">read.delim</span>(<span class="st">&quot;PropData.txt&quot;</span>,</a>
-<a class="sourceLine" id="cb120-20" title="20">                              <span class="dt">header =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb120-21" title="21"></a>
-<a class="sourceLine" id="cb120-22" title="22"><span class="kw">names</span>(wagenmakers2008) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;subject&quot;</span>,<span class="st">&quot;block&quot;</span>,<span class="st">&quot;practice&quot;</span>,</a>
-<a class="sourceLine" id="cb120-23" title="23">                            <span class="st">&quot;cond&quot;</span>,<span class="st">&quot;stimulus&quot;</span>,<span class="st">&quot;freq&quot;</span>,<span class="st">&quot;resp&quot;</span>,<span class="st">&quot;rt&quot;</span>,</a>
-<a class="sourceLine" id="cb120-24" title="24">                            <span class="st">&quot;censor&quot;</span>)</a>
-<a class="sourceLine" id="cb120-25" title="25"></a>
-<a class="sourceLine" id="cb120-26" title="26">wagenmakers2008 &lt;-<span class="st"> </span>wagenmakers2008[wagenmakers2008<span class="op">$</span>censor<span class="op">!=</span><span class="dv">1</span>,<span class="op">-</span><span class="kw">c</span>(<span class="dv">3</span>,<span class="dv">9</span>)]</a>
-<a class="sourceLine" id="cb120-27" title="27"></a>
-<a class="sourceLine" id="cb120-28" title="28">wagenmakers2008<span class="op">$</span>subject &lt;-<span class="st"> </span><span class="kw">factor</span>(wagenmakers2008<span class="op">$</span>subject)</a>
-<a class="sourceLine" id="cb120-29" title="29"></a>
-<a class="sourceLine" id="cb120-30" title="30">wagenmakers2008<span class="op">$</span>cond &lt;-<span class="st"> </span><span class="kw">factor</span>(wagenmakers2008<span class="op">$</span>cond,</a>
-<a class="sourceLine" id="cb120-31" title="31">                     <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;nw&quot;</span>,<span class="st">&quot;w&quot;</span>))</a>
-<a class="sourceLine" id="cb120-32" title="32"></a>
-<a class="sourceLine" id="cb120-33" title="33">wagenmakers2008<span class="op">$</span>stimulus &lt;-<span class="st"> </span>wagenmakers2008<span class="op">$</span>freq <span class="op">&lt;</span><span class="st"> </span><span class="dv">4</span></a>
-<a class="sourceLine" id="cb120-34" title="34"></a>
-<a class="sourceLine" id="cb120-35" title="35">wagenmakers2008<span class="op">$</span>stimulus &lt;-<span class="st"> </span><span class="kw">factor</span>(wagenmakers2008<span class="op">$</span>stimulus,</a>
-<a class="sourceLine" id="cb120-36" title="36">                     <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;nw&quot;</span>, <span class="st">&quot;w&quot;</span>))</a>
-<a class="sourceLine" id="cb120-37" title="37"></a>
-<a class="sourceLine" id="cb120-38" title="38">wagenmakers2008<span class="op">$</span>resp &lt;-<span class="st"> </span><span class="kw">factor</span>(wagenmakers2008<span class="op">$</span>resp,</a>
-<a class="sourceLine" id="cb120-39" title="39">                     <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;NW&quot;</span>,<span class="st">&quot;W&quot;</span>))</a>
-<a class="sourceLine" id="cb120-40" title="40"></a>
-<a class="sourceLine" id="cb120-41" title="41">wagenmakers2008<span class="op">$</span>freq &lt;-<span class="st"> </span>((wagenmakers2008<span class="op">$</span>freq<span class="dv">-1</span>) <span class="op">%%</span><span class="st"> </span><span class="dv">3</span>)<span class="op">+</span><span class="dv">1</span></a>
-<a class="sourceLine" id="cb120-42" title="42"></a>
-<a class="sourceLine" id="cb120-43" title="43">wagenmakers2008<span class="op">$</span>freq &lt;-<span class="st"> </span><span class="kw">factor</span>(wagenmakers2008<span class="op">$</span>freq,</a>
-<a class="sourceLine" id="cb120-44" title="44">                  <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;hf&quot;</span>,<span class="st">&quot;lf&quot;</span>,<span class="st">&quot;vlf&quot;</span>))</a>
-<a class="sourceLine" id="cb120-45" title="45"></a>
-<a class="sourceLine" id="cb120-46" title="46">wagenmakers2008<span class="op">$</span>correct &lt;-<span class="st"> </span><span class="kw">toupper</span>(wagenmakers2008<span class="op">$</span>stimulus) <span class="op">==</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb120-47" title="47"><span class="st">  </span><span class="kw">toupper</span>(wagenmakers2008<span class="op">$</span>resp)</a>
-<a class="sourceLine" id="cb120-48" title="48"></a>
-<a class="sourceLine" id="cb120-49" title="49">wagenmakers2008<span class="op">$</span>W &lt;-<span class="st"> </span><span class="kw">as.character</span>(wagenmakers2008<span class="op">$</span>freq)</a>
-<a class="sourceLine" id="cb120-50" title="50"></a>
-<a class="sourceLine" id="cb120-51" title="51">wagenmakers2008<span class="op">$</span>W[wagenmakers2008<span class="op">$</span>stimulus <span class="op">==</span><span class="st"> &quot;nw&quot;</span>] &lt;-<span class="st"> &quot;nw&quot;</span></a>
-<a class="sourceLine" id="cb120-52" title="52"></a>
-<a class="sourceLine" id="cb120-53" title="53">wagenmakers2008<span class="op">$</span>W &lt;-<span class="st"> </span><span class="kw">factor</span>(wagenmakers2008<span class="op">$</span>W,</a>
-<a class="sourceLine" id="cb120-54" title="54">                  <span class="kw">c</span>(<span class="st">&quot;hf&quot;</span>,<span class="st">&quot;lf&quot;</span>,<span class="st">&quot;vlf&quot;</span>,<span class="st">&quot;nw&quot;</span>))</a>
-<a class="sourceLine" id="cb120-55" title="55"></a>
-<a class="sourceLine" id="cb120-56" title="56">wagenmakers2008 &lt;-<span class="st"> </span><span class="kw">select</span>(<span class="dt">.data =</span> wagenmakers2008,</a>
-<a class="sourceLine" id="cb120-57" title="57">                          subject,</a>
-<a class="sourceLine" id="cb120-58" title="58">                          cond,</a>
-<a class="sourceLine" id="cb120-59" title="59">                          W,</a>
-<a class="sourceLine" id="cb120-60" title="60">                          resp,</a>
-<a class="sourceLine" id="cb120-61" title="61">                          rt,</a>
-<a class="sourceLine" id="cb120-62" title="62">                          correct) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb120-63" title="63"><span class="st">  </span><span class="kw">rename</span>(<span class="dt">stimulus =</span> W)</a>
-<a class="sourceLine" id="cb120-64" title="64"></a>
-<a class="sourceLine" id="cb120-65" title="65">wagenmakers2008<span class="op">$</span>correct &lt;-<span class="st"> </span><span class="kw">if_else</span>(wagenmakers2008<span class="op">$</span>correct,</a>
-<a class="sourceLine" id="cb120-66" title="66">                                   <span class="dt">true =</span> <span class="st">&quot;2&quot;</span>,</a>
-<a class="sourceLine" id="cb120-67" title="67">                                   <span class="dt">false =</span> <span class="st">&quot;1&quot;</span>)</a>
-<a class="sourceLine" id="cb120-68" title="68"><span class="kw">save</span>(wagenmakers2008,</a>
-<a class="sourceLine" id="cb120-69" title="69">     <span class="dt">file =</span> <span class="st">&quot;wagenmakers2008.RData&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb121"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb121-1"><a href="appendix.html#cb121-1" tabindex="-1"></a><span class="co">#~~~~~~~~~~~~~~~~~~~~ Wagenmakers 2008 Lexical decision task ~~~~~~~~~~~~~~~~~~~~~~~~~~~#</span></span>
+<span id="cb121-2"><a href="appendix.html#cb121-2" tabindex="-1"></a></span>
+<span id="cb121-3"><a href="appendix.html#cb121-3" tabindex="-1"></a><span class="co"># 1) subject = participant number</span></span>
+<span id="cb121-4"><a href="appendix.html#cb121-4" tabindex="-1"></a><span class="co"># 2) block = block number</span></span>
+<span id="cb121-5"><a href="appendix.html#cb121-5" tabindex="-1"></a><span class="co"># 3) practice = 1 if practice block, otherwise 0</span></span>
+<span id="cb121-6"><a href="appendix.html#cb121-6" tabindex="-1"></a><span class="co"># 4) cond = condition either &quot;2&quot; for 75% words or &quot;1&quot; for 75% non-words)</span></span>
+<span id="cb121-7"><a href="appendix.html#cb121-7" tabindex="-1"></a><span class="co"># 5) stimulus = unique identifier of stimulus, stimuli are nested in frequency conditions</span></span>
+<span id="cb121-8"><a href="appendix.html#cb121-8" tabindex="-1"></a><span class="co"># 6) freq = Code &quot;1&quot; means &quot;high frequency word&quot;, code &quot;2&quot; means &quot;low frequency word&quot;,</span></span>
+<span id="cb121-9"><a href="appendix.html#cb121-9" tabindex="-1"></a><span class="co">#    and code &quot;3&quot; means &quot;very low frequency word&quot;. Codes 4, 5, and 6 = &quot;non-word&quot;.</span></span>
+<span id="cb121-10"><a href="appendix.html#cb121-10" tabindex="-1"></a><span class="co"># 7) resp =  0 is non-word, 1 is word, -1 is not interpretable response (i.e., pushed a button,</span></span>
+<span id="cb121-11"><a href="appendix.html#cb121-11" tabindex="-1"></a><span class="co">#         but not the right one and also not the one next to the right button)</span></span>
+<span id="cb121-12"><a href="appendix.html#cb121-12" tabindex="-1"></a><span class="co"># 8) rt = response time in seconds</span></span>
+<span id="cb121-13"><a href="appendix.html#cb121-13" tabindex="-1"></a><span class="co"># 9) censor = 1 if value is eliminated from further analysis;</span></span>
+<span id="cb121-14"><a href="appendix.html#cb121-14" tabindex="-1"></a><span class="co">#       practice block, uninterpretable response, too fast response (&lt;180 ms), too slow response (&gt;3 sec)</span></span>
+<span id="cb121-15"><a href="appendix.html#cb121-15" tabindex="-1"></a></span>
+<span id="cb121-16"><a href="appendix.html#cb121-16" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list=</span><span class="fu">ls</span>())</span>
+<span id="cb121-17"><a href="appendix.html#cb121-17" tabindex="-1"></a><span class="fu">require</span>(tidyverse)</span>
+<span id="cb121-18"><a href="appendix.html#cb121-18" tabindex="-1"></a></span>
+<span id="cb121-19"><a href="appendix.html#cb121-19" tabindex="-1"></a>wagenmakers2008 <span class="ot">&lt;-</span> <span class="fu">read.delim</span>(<span class="st">&quot;PropData.txt&quot;</span>,</span>
+<span id="cb121-20"><a href="appendix.html#cb121-20" tabindex="-1"></a>                              <span class="at">header =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb121-21"><a href="appendix.html#cb121-21" tabindex="-1"></a></span>
+<span id="cb121-22"><a href="appendix.html#cb121-22" tabindex="-1"></a><span class="fu">names</span>(wagenmakers2008) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;subject&quot;</span>,<span class="st">&quot;block&quot;</span>,<span class="st">&quot;practice&quot;</span>,</span>
+<span id="cb121-23"><a href="appendix.html#cb121-23" tabindex="-1"></a>                            <span class="st">&quot;cond&quot;</span>,<span class="st">&quot;stimulus&quot;</span>,<span class="st">&quot;freq&quot;</span>,<span class="st">&quot;resp&quot;</span>,<span class="st">&quot;rt&quot;</span>,</span>
+<span id="cb121-24"><a href="appendix.html#cb121-24" tabindex="-1"></a>                            <span class="st">&quot;censor&quot;</span>)</span>
+<span id="cb121-25"><a href="appendix.html#cb121-25" tabindex="-1"></a></span>
+<span id="cb121-26"><a href="appendix.html#cb121-26" tabindex="-1"></a>wagenmakers2008 <span class="ot">&lt;-</span> wagenmakers2008[wagenmakers2008<span class="sc">$</span>censor<span class="sc">!=</span><span class="dv">1</span>,<span class="sc">-</span><span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">9</span>)]</span>
+<span id="cb121-27"><a href="appendix.html#cb121-27" tabindex="-1"></a></span>
+<span id="cb121-28"><a href="appendix.html#cb121-28" tabindex="-1"></a>wagenmakers2008<span class="sc">$</span>subject <span class="ot">&lt;-</span> <span class="fu">factor</span>(wagenmakers2008<span class="sc">$</span>subject)</span>
+<span id="cb121-29"><a href="appendix.html#cb121-29" tabindex="-1"></a></span>
+<span id="cb121-30"><a href="appendix.html#cb121-30" tabindex="-1"></a>wagenmakers2008<span class="sc">$</span>cond <span class="ot">&lt;-</span> <span class="fu">factor</span>(wagenmakers2008<span class="sc">$</span>cond,</span>
+<span id="cb121-31"><a href="appendix.html#cb121-31" tabindex="-1"></a>                     <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;nw&quot;</span>,<span class="st">&quot;w&quot;</span>))</span>
+<span id="cb121-32"><a href="appendix.html#cb121-32" tabindex="-1"></a></span>
+<span id="cb121-33"><a href="appendix.html#cb121-33" tabindex="-1"></a>wagenmakers2008<span class="sc">$</span>stimulus <span class="ot">&lt;-</span> wagenmakers2008<span class="sc">$</span>freq <span class="sc">&lt;</span> <span class="dv">4</span></span>
+<span id="cb121-34"><a href="appendix.html#cb121-34" tabindex="-1"></a></span>
+<span id="cb121-35"><a href="appendix.html#cb121-35" tabindex="-1"></a>wagenmakers2008<span class="sc">$</span>stimulus <span class="ot">&lt;-</span> <span class="fu">factor</span>(wagenmakers2008<span class="sc">$</span>stimulus,</span>
+<span id="cb121-36"><a href="appendix.html#cb121-36" tabindex="-1"></a>                     <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;nw&quot;</span>, <span class="st">&quot;w&quot;</span>))</span>
+<span id="cb121-37"><a href="appendix.html#cb121-37" tabindex="-1"></a></span>
+<span id="cb121-38"><a href="appendix.html#cb121-38" tabindex="-1"></a>wagenmakers2008<span class="sc">$</span>resp <span class="ot">&lt;-</span> <span class="fu">factor</span>(wagenmakers2008<span class="sc">$</span>resp,</span>
+<span id="cb121-39"><a href="appendix.html#cb121-39" tabindex="-1"></a>                     <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;NW&quot;</span>,<span class="st">&quot;W&quot;</span>))</span>
+<span id="cb121-40"><a href="appendix.html#cb121-40" tabindex="-1"></a></span>
+<span id="cb121-41"><a href="appendix.html#cb121-41" tabindex="-1"></a>wagenmakers2008<span class="sc">$</span>freq <span class="ot">&lt;-</span> ((wagenmakers2008<span class="sc">$</span>freq<span class="dv">-1</span>) <span class="sc">%%</span> <span class="dv">3</span>)<span class="sc">+</span><span class="dv">1</span></span>
+<span id="cb121-42"><a href="appendix.html#cb121-42" tabindex="-1"></a></span>
+<span id="cb121-43"><a href="appendix.html#cb121-43" tabindex="-1"></a>wagenmakers2008<span class="sc">$</span>freq <span class="ot">&lt;-</span> <span class="fu">factor</span>(wagenmakers2008<span class="sc">$</span>freq,</span>
+<span id="cb121-44"><a href="appendix.html#cb121-44" tabindex="-1"></a>                  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;hf&quot;</span>,<span class="st">&quot;lf&quot;</span>,<span class="st">&quot;vlf&quot;</span>))</span>
+<span id="cb121-45"><a href="appendix.html#cb121-45" tabindex="-1"></a></span>
+<span id="cb121-46"><a href="appendix.html#cb121-46" tabindex="-1"></a>wagenmakers2008<span class="sc">$</span>correct <span class="ot">&lt;-</span> <span class="fu">toupper</span>(wagenmakers2008<span class="sc">$</span>stimulus) <span class="sc">==</span> </span>
+<span id="cb121-47"><a href="appendix.html#cb121-47" tabindex="-1"></a>  <span class="fu">toupper</span>(wagenmakers2008<span class="sc">$</span>resp)</span>
+<span id="cb121-48"><a href="appendix.html#cb121-48" tabindex="-1"></a></span>
+<span id="cb121-49"><a href="appendix.html#cb121-49" tabindex="-1"></a>wagenmakers2008<span class="sc">$</span>W <span class="ot">&lt;-</span> <span class="fu">as.character</span>(wagenmakers2008<span class="sc">$</span>freq)</span>
+<span id="cb121-50"><a href="appendix.html#cb121-50" tabindex="-1"></a></span>
+<span id="cb121-51"><a href="appendix.html#cb121-51" tabindex="-1"></a>wagenmakers2008<span class="sc">$</span>W[wagenmakers2008<span class="sc">$</span>stimulus <span class="sc">==</span> <span class="st">&quot;nw&quot;</span>] <span class="ot">&lt;-</span> <span class="st">&quot;nw&quot;</span></span>
+<span id="cb121-52"><a href="appendix.html#cb121-52" tabindex="-1"></a></span>
+<span id="cb121-53"><a href="appendix.html#cb121-53" tabindex="-1"></a>wagenmakers2008<span class="sc">$</span>W <span class="ot">&lt;-</span> <span class="fu">factor</span>(wagenmakers2008<span class="sc">$</span>W,</span>
+<span id="cb121-54"><a href="appendix.html#cb121-54" tabindex="-1"></a>                  <span class="fu">c</span>(<span class="st">&quot;hf&quot;</span>,<span class="st">&quot;lf&quot;</span>,<span class="st">&quot;vlf&quot;</span>,<span class="st">&quot;nw&quot;</span>))</span>
+<span id="cb121-55"><a href="appendix.html#cb121-55" tabindex="-1"></a></span>
+<span id="cb121-56"><a href="appendix.html#cb121-56" tabindex="-1"></a>wagenmakers2008 <span class="ot">&lt;-</span> <span class="fu">select</span>(<span class="at">.data =</span> wagenmakers2008,</span>
+<span id="cb121-57"><a href="appendix.html#cb121-57" tabindex="-1"></a>                          subject,</span>
+<span id="cb121-58"><a href="appendix.html#cb121-58" tabindex="-1"></a>                          cond,</span>
+<span id="cb121-59"><a href="appendix.html#cb121-59" tabindex="-1"></a>                          W,</span>
+<span id="cb121-60"><a href="appendix.html#cb121-60" tabindex="-1"></a>                          resp,</span>
+<span id="cb121-61"><a href="appendix.html#cb121-61" tabindex="-1"></a>                          rt,</span>
+<span id="cb121-62"><a href="appendix.html#cb121-62" tabindex="-1"></a>                          correct) <span class="sc">%&gt;%</span></span>
+<span id="cb121-63"><a href="appendix.html#cb121-63" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">stimulus =</span> W)</span>
+<span id="cb121-64"><a href="appendix.html#cb121-64" tabindex="-1"></a></span>
+<span id="cb121-65"><a href="appendix.html#cb121-65" tabindex="-1"></a>wagenmakers2008<span class="sc">$</span>correct <span class="ot">&lt;-</span> <span class="fu">if_else</span>(wagenmakers2008<span class="sc">$</span>correct,</span>
+<span id="cb121-66"><a href="appendix.html#cb121-66" tabindex="-1"></a>                                   <span class="at">true =</span> <span class="st">&quot;2&quot;</span>,</span>
+<span id="cb121-67"><a href="appendix.html#cb121-67" tabindex="-1"></a>                                   <span class="at">false =</span> <span class="st">&quot;1&quot;</span>)</span>
+<span id="cb121-68"><a href="appendix.html#cb121-68" tabindex="-1"></a><span class="fu">save</span>(wagenmakers2008,</span>
+<span id="cb121-69"><a href="appendix.html#cb121-69" tabindex="-1"></a>     <span class="at">file =</span> <span class="st">&quot;wagenmakers2008.RData&quot;</span>)</span></code></pre></div>
 
 </div>
 </div>
-<h3>References</h3>
-<div id="refs" class="references">
-<div id="ref-wagenmakers2008diffusion">
-<p>Wagenmakers, Eric-Jan, Roger Ratcliff, Pablo Gomez, and Gail McKoon. 2008. “A Diffusion Model Account of Criterion Shifts in the Lexical Decision Task.” <em>Journal of Memory and Language</em> 58 (1): 140–59.</p>
+<h3>References<a href="references.html#references" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-wagenmakers2008diffusion" class="csl-entry">
+Wagenmakers, Eric-Jan, Roger Ratcliff, Pablo Gomez, and Gail McKoon. 2008. <span>“A Diffusion Model Account of Criterion Shifts in the Lexical Decision Task.”</span> <em>Journal of Memory and Language</em> 58 (1): 140–59.
 </div>
 </div>
             </section>
@@ -331,7 +378,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
-<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
 <script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
@@ -342,42 +388,42 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
-"sharing": {
-"github": false,
-"facebook": true,
-"twitter": true,
-"linkedin": false,
-"weibo": false,
-"instapaper": false,
-"vk": false,
-"whatsapp": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
-},
-"fontsettings": {
-"theme": "white",
-"family": "sans",
-"size": 2
-},
-"edit": {
-"link": "https://github.com/rstudio/bookdown-demo/edit/master/06-appendix.Rmd",
-"text": "Edit"
-},
-"history": {
-"link": null,
-"text": null
-},
-"view": {
-"link": null,
-"text": null
-},
-"download": ["PMwG-Sampler-Tutorial.pdf", "PMwG-Sampler-Tutorial.epub"],
-"search": {
-"engine": "lunr",
-"options": null
-},
-"toc": {
-"collapse": "subsection"
-}
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": "https://github.com/rstudio/bookdown-demo/edit/master/06-appendix.Rmd",
+    "text": "Edit"
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": ["PMwG-Sampler-Tutorial.pdf", "PMwG-Sampler-Tutorial.epub"],
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "subsection"
+  }
 });
 });
 </script>
@@ -388,7 +434,7 @@ gitbook.start({
     var script = document.createElement("script");
     script.type = "text/javascript";
     var src = "true";
-    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:")
       if (/^https?:/.test(src))
         src = src.replace(/^https?:/, '');

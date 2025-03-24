@@ -30,7 +30,7 @@ run-sdtsampler
 check-the-sampling-process
 simulating-posterior-data
 forstmannChapter
-the-speed-accuracy-tradeoff-in-perceptual-decisions
+the-speed-accuracy-trade-off-in-perceptual-decisions
 LBAParameters
 theLLFunc
 what-is-a-log-likelihood-function
@@ -69,7 +69,7 @@ generate-proposal-parameters-from-importance-samples
 write-a-group-distribution-function
 write-a-prior-distribution-function
 write-a-get_logp-function
-compute-the-lw
+compute-the-log-weights
 make-it-work
 bootstrapping-for-se
 troubleshoot

@@ -6,11 +6,10 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 4 PMwG sampler with the Linear Ballistic Accumulator and a complex experiment design | Particle Based Samplers for MCMC</title>
   <meta name="description" content="Particle Based Sampler for MCMC" />
-  <meta name="generator" content="bookdown 0.23 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.42 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 4 PMwG sampler with the Linear Ballistic Accumulator and a complex experiment design | Particle Based Samplers for MCMC" />
   <meta property="og:type" content="book" />
-  
   
   <meta property="og:description" content="Particle Based Sampler for MCMC" />
   <meta name="github-repo" content="rstudio/bookdown-demo" />
@@ -32,6 +31,7 @@
 <link rel="prev" href="forstmannChapter.html"/>
 <link rel="next" href="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -47,31 +47,33 @@
 
 
 
-
-<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
-<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
 
 
 <style type="text/css">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -80,15 +82,15 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
 code span.at { color: #7d9029; } /* Attribute */
 code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
+code span.bu { color: #008000; } /* BuiltIn */
 code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
 code span.ch { color: #4070a0; } /* Char */
 code span.cn { color: #880000; } /* Constant */
@@ -101,7 +103,7 @@ code span.er { color: #ff0000; font-weight: bold; } /* Error */
 code span.ex { } /* Extension */
 code span.fl { color: #40a070; } /* Float */
 code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
+code span.im { color: #008000; font-weight: bold; } /* Import */
 code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 code span.kw { color: #007020; font-weight: bold; } /* Keyword */
 code span.op { color: #666666; } /* Operator */
@@ -115,6 +117,33 @@ code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
@@ -132,7 +161,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="./">PMwG Samplers Package</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction to particle based sampler for MCMC</a><ul>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction to particle based sampler for MCMC</a>
+<ul>
 <li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#assumed-knowledge"><i class="fa fa-check"></i><b>1.1</b> Assumed knowledge</a></li>
 <li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#why-would-you-use-particle-metropolis-within-gibbs-sampling"><i class="fa fa-check"></i><b>1.2</b> Why would you use Particle Metropolis within Gibbs sampling?</a></li>
 <li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#the-assumed-hierarchical-structure"><i class="fa fa-check"></i><b>1.3</b> The assumed hierarchical structure</a></li>
@@ -140,64 +170,79 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="1.5" data-path="index.html"><a href="index.html#what-is-particle-metropolis-within-gibbs-sampling"><i class="fa fa-check"></i><b>1.5</b> What is Particle Metropolis within Gibbs sampling?</a></li>
 <li class="chapter" data-level="1.6" data-path="index.html"><a href="index.html#generating-proposals-in-pmwg-sampling-using-particle-metropolis"><i class="fa fa-check"></i><b>1.6</b> Generating proposals in PMwG sampling using Particle Metropolis</a></li>
 </ul></li>
-<li class="chapter" data-level="2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html"><i class="fa fa-check"></i><b>2</b> PMwG sampler and Signal Detection Theory</a><ul>
+<li class="chapter" data-level="2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html"><i class="fa fa-check"></i><b>2</b> PMwG sampler and Signal Detection Theory</a>
+<ul>
 <li class="chapter" data-level="2.0.1" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#sdtOutline"><i class="fa fa-check"></i><b>2.0.1</b> Signal Detection Theory analysis of lexical decision task</a></li>
 <li class="chapter" data-level="2.0.2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#SDTLLFun"><i class="fa fa-check"></i><b>2.0.2</b> The log-likelihood function</a></li>
 <li class="chapter" data-level="2.1" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#testing-the-sdt-log-likelihood-function"><i class="fa fa-check"></i><b>2.1</b> Testing the SDT log-likelihood function</a></li>
-<li class="chapter" data-level="2.2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#sdtWag"><i class="fa fa-check"></i><b>2.2</b> SDT log-likelihood function for Wagenmakers experiment</a><ul>
+<li class="chapter" data-level="2.2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#sdtWag"><i class="fa fa-check"></i><b>2.2</b> SDT log-likelihood function for Wagenmakers experiment</a>
+<ul>
 <li class="chapter" data-level="2.2.1" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#description-of-wagenmakers-experiment"><i class="fa fa-check"></i><b>2.2.1</b> Description of Wagenmakers experiment</a></li>
 <li class="chapter" data-level="2.2.2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#computation-time-of-the-log-likelihood-function"><i class="fa fa-check"></i><b>2.2.2</b> Computation time of the log-likelihood function</a></li>
 </ul></li>
-<li class="chapter" data-level="2.3" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#sdtPMwG"><i class="fa fa-check"></i><b>2.3</b> PMwG Framework</a><ul>
+<li class="chapter" data-level="2.3" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#sdtPMwG"><i class="fa fa-check"></i><b>2.3</b> PMwG Framework</a>
+<ul>
 <li class="chapter" data-level="2.3.1" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#start-points"><i class="fa fa-check"></i><b>2.3.1</b> Model start points</a></li>
 <li class="chapter" data-level="2.3.2" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#run-sdtsampler"><i class="fa fa-check"></i><b>2.3.2</b> Running the sampler</a></li>
 </ul></li>
 <li class="chapter" data-level="2.4" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#check-the-sampling-process"><i class="fa fa-check"></i><b>2.4</b> Check the sampling process</a></li>
 <li class="chapter" data-level="2.5" data-path="pmwg-sampler-and-signal-detection-theory.html"><a href="pmwg-sampler-and-signal-detection-theory.html#simulating-posterior-data"><i class="fa fa-check"></i><b>2.5</b> Simulating posterior data</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="forstmannChapter.html"><a href="forstmannChapter.html"><i class="fa fa-check"></i><b>3</b> PMwG sampler and sequential sampling models</a><ul>
-<li class="chapter" data-level="3.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#the-speed-accuracy-tradeoff-in-perceptual-decisions"><i class="fa fa-check"></i><b>3.1</b> The speed-accuracy tradeoff in perceptual decisions</a></li>
+<li class="chapter" data-level="3" data-path="forstmannChapter.html"><a href="forstmannChapter.html"><i class="fa fa-check"></i><b>3</b> PMwG sampler and sequential sampling models</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#the-speed-accuracy-trade-off-in-perceptual-decisions"><i class="fa fa-check"></i><b>3.1</b> The speed-accuracy trade-off in perceptual decisions</a></li>
 <li class="chapter" data-level="3.2" data-path="forstmannChapter.html"><a href="forstmannChapter.html#LBAParameters"><i class="fa fa-check"></i><b>3.2</b> Linear Ballistic Accumulator Parameters</a></li>
-<li class="chapter" data-level="3.3" data-path="forstmannChapter.html"><a href="forstmannChapter.html#theLLFunc"><i class="fa fa-check"></i><b>3.3</b> The log-likelihood function</a><ul>
+<li class="chapter" data-level="3.3" data-path="forstmannChapter.html"><a href="forstmannChapter.html#theLLFunc"><i class="fa fa-check"></i><b>3.3</b> The log-likelihood function</a>
+<ul>
 <li class="chapter" data-level="3.3.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#what-is-a-log-likelihood-function"><i class="fa fa-check"></i><b>3.3.1</b> What is a log-likelihood function?</a></li>
 <li class="chapter" data-level="3.3.2" data-path="forstmannChapter.html"><a href="forstmannChapter.html#writing-the-log-likelihood-function-for-the-forstmann-data-set"><i class="fa fa-check"></i><b>3.3.2</b> Writing the log-likelihood function for the Forstmann data set</a></li>
 <li class="chapter" data-level="3.3.3" data-path="forstmannChapter.html"><a href="forstmannChapter.html#fstLBALL"><i class="fa fa-check"></i><b>3.3.3</b> Fast LBA Log-likelihood Function</a></li>
 </ul></li>
-<li class="chapter" data-level="3.4" data-path="forstmannChapter.html"><a href="forstmannChapter.html#pmwg-framework"><i class="fa fa-check"></i><b>3.4</b> PMwG Framework</a><ul>
+<li class="chapter" data-level="3.4" data-path="forstmannChapter.html"><a href="forstmannChapter.html#pmwg-framework"><i class="fa fa-check"></i><b>3.4</b> PMwG Framework</a>
+<ul>
 <li class="chapter" data-level="3.4.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#lbaStartPts"><i class="fa fa-check"></i><b>3.4.1</b> Model start points</a></li>
 <li class="chapter" data-level="3.4.2" data-path="forstmannChapter.html"><a href="forstmannChapter.html#run-sampler"><i class="fa fa-check"></i><b>3.4.2</b> Running the sampler</a></li>
 <li class="chapter" data-level="3.4.3" data-path="forstmannChapter.html"><a href="forstmannChapter.html#estSet"><i class="fa fa-check"></i><b>3.4.3</b> Determining estimation settings for the PMwG sampler</a></li>
 </ul></li>
-<li class="chapter" data-level="3.5" data-path="forstmannChapter.html"><a href="forstmannChapter.html#genppdatafunc"><i class="fa fa-check"></i><b>3.5</b> Simulating Posterior Predictive Data</a><ul>
+<li class="chapter" data-level="3.5" data-path="forstmannChapter.html"><a href="forstmannChapter.html#genppdatafunc"><i class="fa fa-check"></i><b>3.5</b> Simulating Posterior Predictive Data</a>
+<ul>
 <li class="chapter" data-level="3.5.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#assessing-descriptive-adequacy-goodness-of-fit"><i class="fa fa-check"></i><b>3.5.1</b> Assessing Descriptive Adequacy (goodness of fit)</a></li>
 <li class="chapter" data-level="3.5.2" data-path="forstmannChapter.html"><a href="forstmannChapter.html#pmwg-framework-for-a-single-threshold-model"><i class="fa fa-check"></i><b>3.5.2</b> PMwG framework for a single threshold model</a></li>
 </ul></li>
 <li class="chapter" data-level="3.6" data-path="forstmannChapter.html"><a href="forstmannChapter.html#checking-descriptive-adequacy-of-1b-model."><i class="fa fa-check"></i><b>3.6</b> Checking Descriptive Adequacy of 1b model.</a></li>
-<li class="chapter" data-level="3.7" data-path="forstmannChapter.html"><a href="forstmannChapter.html#forstMC"><i class="fa fa-check"></i><b>3.7</b> Model Comparison</a><ul>
+<li class="chapter" data-level="3.7" data-path="forstmannChapter.html"><a href="forstmannChapter.html#forstMC"><i class="fa fa-check"></i><b>3.7</b> Model Comparison</a>
+<ul>
 <li class="chapter" data-level="3.7.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#assessing-descriptive-adequacy-graphically"><i class="fa fa-check"></i><b>3.7.1</b> Assessing Descriptive Adequacy Graphically</a></li>
 <li class="chapter" data-level="3.7.2" data-path="forstmannChapter.html"><a href="forstmannChapter.html#forstDIC"><i class="fa fa-check"></i><b>3.7.2</b> Model comparison via DIC</a></li>
 </ul></li>
-<li class="chapter" data-level="3.8" data-path="forstmannChapter.html"><a href="forstmannChapter.html#LBAllcheck"><i class="fa fa-check"></i><b>3.8</b> Checking the LBA log-likelihood function</a><ul>
+<li class="chapter" data-level="3.8" data-path="forstmannChapter.html"><a href="forstmannChapter.html#LBAllcheck"><i class="fa fa-check"></i><b>3.8</b> Checking the LBA log-likelihood function</a>
+<ul>
 <li class="chapter" data-level="3.8.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#test-one-do-changes-in-parameter-values-cause-changes-in-the-returned-log-likelihood"><i class="fa fa-check"></i><b>3.8.1</b> Test one: Do changes in parameter values cause changes in the returned log-likelihood?</a></li>
 <li class="chapter" data-level="3.8.2" data-path="forstmannChapter.html"><a href="forstmannChapter.html#testing-whether-data-generating-parameter-values-have-the-highest-likelihood"><i class="fa fa-check"></i><b>3.8.2</b> Testing whether data generating parameter values have the highest likelihood</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><i class="fa fa-check"></i><b>4</b> PMwG sampler with the Linear Ballistic Accumulator and a complex experiment design</a><ul>
-<li class="chapter" data-level="4.1" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#the-lba-log-likelihood-function-for-the-wagenmakers-data-set"><i class="fa fa-check"></i><b>4.1</b> The LBA log-likelihood function for the Wagenmakers data set</a><ul>
+<li class="chapter" data-level="4" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><i class="fa fa-check"></i><b>4</b> PMwG sampler with the Linear Ballistic Accumulator and a complex experiment design</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#the-lba-log-likelihood-function-for-the-wagenmakers-data-set"><i class="fa fa-check"></i><b>4.1</b> The LBA log-likelihood function for the Wagenmakers data set</a>
+<ul>
 <li class="chapter" data-level="4.1.1" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#what-is-a-log-likelihood-function-1"><i class="fa fa-check"></i><b>4.1.1</b> What is a log-likelihood function?</a></li>
 <li class="chapter" data-level="4.1.2" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#writing-the-lba-log-likelihood-for-the-wagenmakers-data-set"><i class="fa fa-check"></i><b>4.1.2</b> Writing the LBA log-likelihood for the Wagenmakers data set</a></li>
 </ul></li>
 <li class="chapter" data-level="4.2" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#wagFastll"><i class="fa fa-check"></i><b>4.2</b> Fast LBA Log-likelihood function</a></li>
-<li class="chapter" data-level="4.3" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#pmwg-framework-1"><i class="fa fa-check"></i><b>4.3</b> PMwG Framework</a><ul>
+<li class="chapter" data-level="4.3" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#pmwg-framework-1"><i class="fa fa-check"></i><b>4.3</b> PMwG Framework</a>
+<ul>
 <li class="chapter" data-level="4.3.1" data-path="forstmannChapter.html"><a href="forstmannChapter.html#run-sampler"><i class="fa fa-check"></i><b>4.3.1</b> Running the sampler</a></li>
 </ul></li>
-<li class="chapter" data-level="4.4" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#genppdataWag"><i class="fa fa-check"></i><b>4.4</b> Simulating Posterior Predictive Data</a><ul>
+<li class="chapter" data-level="4.4" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#genppdataWag"><i class="fa fa-check"></i><b>4.4</b> Simulating Posterior Predictive Data</a>
+<ul>
 <li class="chapter" data-level="4.4.1" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#assessing-descriptive-adequacy-goodness-of-fit-1"><i class="fa fa-check"></i><b>4.4.1</b> Assessing Descriptive Adequacy (goodness of fit)</a></li>
 </ul></li>
 <li class="chapter" data-level="4.5" data-path="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#model-comparison-via-dic"><i class="fa fa-check"></i><b>4.5</b> Model Comparison via DIC</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><i class="fa fa-check"></i><b>5</b> Estimating the Marginal Likelihood via Importance Sampling (IS<sup>2</sup>)</a><ul>
-<li class="chapter" data-level="5.1" data-path="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling-is2.html#using-is2-with-the-forstmann-dataset"><i class="fa fa-check"></i><b>5.1</b> Using IS2 with the Forstmann dataset</a><ul>
+<li class="chapter" data-level="5" data-path="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><i class="fa fa-check"></i><b>5</b> Estimating the Marginal Likelihood via Importance Sampling (IS<sup>2</sup>)</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling-is2.html#using-is2-with-the-forstmann-dataset"><i class="fa fa-check"></i><b>5.1</b> Using IS2 with the Forstmann dataset</a>
+<ul>
 <li class="chapter" data-level="5.1.1" data-path="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling-is2.html#load-packages-and-samples"><i class="fa fa-check"></i><b>5.1.1</b> Load packages and samples</a></li>
 <li class="chapter" data-level="5.1.2" data-path="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling-is2.html#set-up-variables"><i class="fa fa-check"></i><b>5.1.2</b> Set up variables</a></li>
 <li class="chapter" data-level="5.1.3" data-path="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling-is2.html#store-the-samples"><i class="fa fa-check"></i><b>5.1.3</b> Store the samples</a></li>
@@ -205,16 +250,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="5.1.5" data-path="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling-is2.html#generate-proposal-parameters-from-importance-samples"><i class="fa fa-check"></i><b>5.1.5</b> Generate proposal parameters from importance samples</a></li>
 <li class="chapter" data-level="5.1.6" data-path="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling-is2.html#write-a-group-distribution-function"><i class="fa fa-check"></i><b>5.1.6</b> Write a group distribution function</a></li>
 <li class="chapter" data-level="5.1.7" data-path="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling-is2.html#write-a-prior-distribution-function"><i class="fa fa-check"></i><b>5.1.7</b> Write a prior distribution function</a></li>
-<li class="chapter" data-level="5.1.8" data-path="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling-is2.html#write-a-get_logp-function"><i class="fa fa-check"></i><b>5.1.8</b> Write a get_logp function</a></li>
-<li class="chapter" data-level="5.1.9" data-path="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling-is2.html#compute-the-lw"><i class="fa fa-check"></i><b>5.1.9</b> Compute the LW</a></li>
+<li class="chapter" data-level="5.1.8" data-path="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling-is2.html#write-a-get_logp-function"><i class="fa fa-check"></i><b>5.1.8</b> Write a <code>get_logp</code> function</a></li>
+<li class="chapter" data-level="5.1.9" data-path="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling-is2.html#compute-the-log-weights"><i class="fa fa-check"></i><b>5.1.9</b> Compute the Log Weights</a></li>
 <li class="chapter" data-level="5.1.10" data-path="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling-is2.html#make-it-work"><i class="fa fa-check"></i><b>5.1.10</b> Make it work</a></li>
 <li class="chapter" data-level="5.1.11" data-path="estimating-the-marginal-likelihood-via-importance-sampling-is2.html"><a href="estimating-the-marginal-likelihood-via-importance-sampling-is2.html#bootstrapping-for-se"><i class="fa fa-check"></i><b>5.1.11</b> Bootstrapping for SE</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="6" data-path="troubleshoot.html"><a href="troubleshoot.html"><i class="fa fa-check"></i><b>6</b> Troubleshooting PMwG errors</a><ul>
+<li class="chapter" data-level="6" data-path="troubleshoot.html"><a href="troubleshoot.html"><i class="fa fa-check"></i><b>6</b> Troubleshooting PMwG errors</a>
+<ul>
 <li class="chapter" data-level="6.1" data-path="troubleshoot.html"><a href="troubleshoot.html#writing-your-log-likelihood-function-tips-errors-and-check-list"><i class="fa fa-check"></i><b>6.1</b> Writing your log-likelihood function: Tips, errors and check list</a></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="appendix.html"><a href="appendix.html"><i class="fa fa-check"></i><b>7</b> Appendix</a><ul>
+<li class="chapter" data-level="7" data-path="appendix.html"><a href="appendix.html"><i class="fa fa-check"></i><b>7</b> Appendix</a>
+<ul>
 <li class="chapter" data-level="7.1" data-path="appendix.html"><a href="appendix.html#wagSDTscript"><i class="fa fa-check"></i><b>7.1</b> Wagenmakers SDT script</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
@@ -238,190 +285,190 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design" class="section level1 tabset tabset-fade">
-<h1><span class="header-section-number">Chapter 4</span> PMwG sampler with the Linear Ballistic Accumulator and a complex experiment design</h1>
+<div id="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design" class="section level1 tabset tabset-fade hasAnchor" number="4">
+<h1><span class="header-section-number">Chapter 4</span> PMwG sampler with the Linear Ballistic Accumulator and a complex experiment design<a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <p>In <a href="pmwg-sampler-and-signal-detection-theory.html#sdtOutline">chapter 2</a> we demonstrated how the PMwG sampler can be used to model a lexical decision task in a signal detection framework. However, the SDT framework does not allow us to consider response time (RT) and the join distribution of RT and accuracy. In this example we will expand on what was covered in chapter 2, by fitting the LBA - a more complex model - to the Wagenmakers 2008 data.</p>
 <p>A description of the Wagenmakers experiment and data is covered in <a href="pmwg-sampler-and-signal-detection-theory.html#sdtOutline">chapter 2</a>. This experiment is more complicated than the Forstmann example in <a href="forstmannChapter.html#forstmannChapter">chapter 3</a>, and the LBA is also more complicated than the SDT model. As a result, the log-likelihood function for this example will be more complex, however, you’ll notice that each step closely follows those taken in previous chapters with simpler data sets and simpler models.</p>
-<div id="the-lba-log-likelihood-function-for-the-wagenmakers-data-set" class="section level2">
-<h2><span class="header-section-number">4.1</span> The LBA log-likelihood function for the Wagenmakers data set</h2>
-<div id="what-is-a-log-likelihood-function-1" class="section level3">
-<h3><span class="header-section-number">4.1.1</span> What is a log-likelihood function?</h3>
-<p>If you’re unsure what a log-likehood function is and/or does, see our explanation <a href="pmwg-sampler-and-signal-detection-theory.html#WTFisaLLf">here</a>.</p>
+<div id="the-lba-log-likelihood-function-for-the-wagenmakers-data-set" class="section level2 hasAnchor" number="4.1">
+<h2><span class="header-section-number">4.1</span> The LBA log-likelihood function for the Wagenmakers data set<a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#the-lba-log-likelihood-function-for-the-wagenmakers-data-set" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="what-is-a-log-likelihood-function-1" class="section level3 hasAnchor" number="4.1.1">
+<h3><span class="header-section-number">4.1.1</span> What is a log-likelihood function?<a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#what-is-a-log-likelihood-function-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>If you’re unsure what a log-likelihood function is and/or does, see our explanation <a href="pmwg-sampler-and-signal-detection-theory.html#WTFisaLLf">here</a>.</p>
 </div>
-<div id="writing-the-lba-log-likelihood-for-the-wagenmakers-data-set" class="section level3">
-<h3><span class="header-section-number">4.1.2</span> Writing the LBA log-likelihood for the Wagenmakers data set</h3>
+<div id="writing-the-lba-log-likelihood-for-the-wagenmakers-data-set" class="section level3 hasAnchor" number="4.1.2">
+<h3><span class="header-section-number">4.1.2</span> Writing the LBA log-likelihood for the Wagenmakers data set<a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#writing-the-lba-log-likelihood-for-the-wagenmakers-data-set" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>As we have shown in the previous two examples, we include a computationally-slow and easy to follow log-likelihood function. The log-likelihood function steps through the data line by line (i.e. trial by trial) and gives a likelihood value for each line given <code>x</code> parameters. As mentioned in previous chapters, we encourage those who have experience writing likelihood functions to write a computationally efficient function or use our <a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#wagFastll">fast LBA log-likelihood function</a>. For those new to modelling, the trialwise function directly below is easier to follow, debug and is less likely to result in errors. The down side is that the slow/trialwise log-likelihood function is approximately five times slower to run than the fast log-likelihood function.</p>
 <p>The structure of our log-likelihood function follows those in the preceding chapters, so we will focus on the parts that differ i.e. the experiment design and hypothesis about which parameters are being influenced by the experimental manipulations. See <a href="forstmannChapter.html#LBAParameters">chapter 3</a> for an outline of the LBA parameters.</p>
 <p>Let’s begin by loading <code>rtdists</code> package…</p>
-<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb86-1" title="1"><span class="kw">library</span>(rtdists)</a></code></pre></div>
+<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb87-1" tabindex="-1"></a><span class="fu">library</span>(rtdists)</span></code></pre></div>
 <p>…and now a complete trialwise (slow) log-likelihood function.</p>
-<div class="sourceCode" id="cb87"><pre class="sourceCode numberSource r numberLines"><code class="sourceCode r"><a class="sourceLine" id="cb87-1" title="1">tw_lba_ll &lt;-<span class="st"> </span><span class="cf">function</span>(x, data, <span class="dt">sample =</span> <span class="ot">FALSE</span>) {</a>
-<a class="sourceLine" id="cb87-2" title="2">  x &lt;-<span class="st"> </span><span class="kw">exp</span>(x)</a>
-<a class="sourceLine" id="cb87-3" title="3">  <span class="cf">if</span> (<span class="kw">any</span>(data<span class="op">$</span>rt <span class="op">&lt;</span><span class="st"> </span>x[<span class="st">&quot;t0&quot;</span>])) {</a>
-<a class="sourceLine" id="cb87-4" title="4">    <span class="kw">return</span>(<span class="op">-</span><span class="fl">1e10</span>)</a>
-<a class="sourceLine" id="cb87-5" title="5">  }</a>
-<a class="sourceLine" id="cb87-6" title="6">  </a>
-<a class="sourceLine" id="cb87-7" title="7">  <span class="cf">if</span> (sample) {</a>
-<a class="sourceLine" id="cb87-8" title="8">    data<span class="op">$</span>rt &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="ot">NA</span>, <span class="kw">nrow</span>(data))</a>
-<a class="sourceLine" id="cb87-9" title="9">    data<span class="op">$</span>resp &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="ot">NA</span>, <span class="kw">nrow</span>(data))</a>
-<a class="sourceLine" id="cb87-10" title="10">  } <span class="cf">else</span> {</a>
-<a class="sourceLine" id="cb87-11" title="11">    out &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data))</a>
-<a class="sourceLine" id="cb87-12" title="12">  }</a>
-<a class="sourceLine" id="cb87-13" title="13">  </a>
-<a class="sourceLine" id="cb87-14" title="14">  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(data)) {</a>
-<a class="sourceLine" id="cb87-15" title="15">    A =<span class="st"> </span>x[<span class="st">&quot;A&quot;</span>]</a>
-<a class="sourceLine" id="cb87-16" title="16">    b.w =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, data<span class="op">$</span>cond[i], <span class="st">&quot;.W&quot;</span>)] <span class="op">+</span><span class="st"> </span>A</a>
-<a class="sourceLine" id="cb87-17" title="17">    b.nw =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, data<span class="op">$</span>cond[i], <span class="st">&quot;.NW&quot;</span>)] <span class="op">+</span><span class="st"> </span>A</a>
-<a class="sourceLine" id="cb87-18" title="18">    bs =<span class="st"> </span><span class="kw">list</span>(b.nw, b.w)</a>
-<a class="sourceLine" id="cb87-19" title="19">    v.w =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;v.&quot;</span>, data<span class="op">$</span>stim[i], <span class="st">&quot;.W&quot;</span>)]</a>
-<a class="sourceLine" id="cb87-20" title="20">    v.nw =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;v.&quot;</span>, data<span class="op">$</span>stim[i], <span class="st">&quot;.NW&quot;</span>)]</a>
-<a class="sourceLine" id="cb87-21" title="21">    vs =<span class="st"> </span><span class="kw">c</span>(v.nw, v.w)</a>
-<a class="sourceLine" id="cb87-22" title="22">    t0 =<span class="st"> </span>x[<span class="st">&quot;t0&quot;</span>]</a>
-<a class="sourceLine" id="cb87-23" title="23">    s =<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb87-24" title="24">    </a>
-<a class="sourceLine" id="cb87-25" title="25">    <span class="cf">if</span> (sample) {</a>
-<a class="sourceLine" id="cb87-26" title="26">      tmp &lt;-<span class="st"> </span><span class="kw">rLBA</span>(<span class="dt">n =</span> <span class="dv">1</span>,</a>
-<a class="sourceLine" id="cb87-27" title="27">                  <span class="dt">A =</span> A,</a>
-<a class="sourceLine" id="cb87-28" title="28">                  <span class="dt">b =</span> bs,</a>
-<a class="sourceLine" id="cb87-29" title="29">                  <span class="dt">mean_v =</span> vs,</a>
-<a class="sourceLine" id="cb87-30" title="30">                  <span class="dt">sd_v =</span> s,</a>
-<a class="sourceLine" id="cb87-31" title="31">                  <span class="dt">t0 =</span> t0,</a>
-<a class="sourceLine" id="cb87-32" title="32">                  <span class="dt">dist =</span> <span class="st">&quot;norm&quot;</span>,</a>
-<a class="sourceLine" id="cb87-33" title="33">                  <span class="dt">silent =</span> <span class="ot">TRUE</span></a>
-<a class="sourceLine" id="cb87-34" title="34">      )</a>
-<a class="sourceLine" id="cb87-35" title="35">      data<span class="op">$</span>rt[i] &lt;-<span class="st"> </span>tmp<span class="op">$</span>rt</a>
-<a class="sourceLine" id="cb87-36" title="36">      data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span>tmp<span class="op">$</span>resp</a>
-<a class="sourceLine" id="cb87-37" title="37">    } <span class="cf">else</span> {</a>
-<a class="sourceLine" id="cb87-38" title="38">      out[i] &lt;-<span class="st"> </span><span class="kw">dLBA</span>(<span class="dt">rt =</span> data<span class="op">$</span>rt[i],</a>
-<a class="sourceLine" id="cb87-39" title="39">                     <span class="dt">response =</span> data<span class="op">$</span>resp[i],</a>
-<a class="sourceLine" id="cb87-40" title="40">                     <span class="dt">A =</span> A,</a>
-<a class="sourceLine" id="cb87-41" title="41">                     <span class="dt">b =</span> bs,</a>
-<a class="sourceLine" id="cb87-42" title="42">                     <span class="dt">mean_v =</span> vs,</a>
-<a class="sourceLine" id="cb87-43" title="43">                     <span class="dt">sd_v =</span> s,</a>
-<a class="sourceLine" id="cb87-44" title="44">                     <span class="dt">t0 =</span> t0,</a>
-<a class="sourceLine" id="cb87-45" title="45">                     <span class="dt">dist =</span> <span class="st">&quot;norm&quot;</span>,</a>
-<a class="sourceLine" id="cb87-46" title="46">                     <span class="dt">silent =</span> <span class="ot">TRUE</span></a>
-<a class="sourceLine" id="cb87-47" title="47">                     )</a>
-<a class="sourceLine" id="cb87-48" title="48">      }</a>
-<a class="sourceLine" id="cb87-49" title="49">  }</a>
-<a class="sourceLine" id="cb87-50" title="50">  <span class="cf">if</span> (sample) {</a>
-<a class="sourceLine" id="cb87-51" title="51">    <span class="kw">return</span>(data)</a>
-<a class="sourceLine" id="cb87-52" title="52">  } <span class="cf">else</span> {</a>
-<a class="sourceLine" id="cb87-53" title="53">    bad &lt;-<span class="st"> </span>(out <span class="op">&lt;</span><span class="st"> </span><span class="fl">1e-10</span>) <span class="op">|</span><span class="st"> </span>(<span class="op">!</span><span class="kw">is.finite</span>(out))</a>
-<a class="sourceLine" id="cb87-54" title="54">    out[bad] &lt;-<span class="st"> </span><span class="fl">1e-10</span></a>
-<a class="sourceLine" id="cb87-55" title="55">    out &lt;-<span class="st"> </span><span class="kw">sum</span>(<span class="kw">log</span>(out))</a>
-<a class="sourceLine" id="cb87-56" title="56">    <span class="kw">return</span>(out)</a>
-<a class="sourceLine" id="cb87-57" title="57">  }</a>
-<a class="sourceLine" id="cb87-58" title="58">}</a></code></pre></div>
+<div class="sourceCode" id="cb88"><pre class="sourceCode numberSource r numberLines"><code class="sourceCode r"><span id="cb88-1"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-1"></a>tw_lba_ll <span class="ot">&lt;-</span> <span class="cf">function</span>(x, data, <span class="at">sample =</span> <span class="cn">FALSE</span>) {</span>
+<span id="cb88-2"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-2"></a>  x <span class="ot">&lt;-</span> <span class="fu">exp</span>(x)</span>
+<span id="cb88-3"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-3"></a>  <span class="cf">if</span> (<span class="fu">any</span>(data<span class="sc">$</span>rt <span class="sc">&lt;</span> x[<span class="st">&quot;t0&quot;</span>])) {</span>
+<span id="cb88-4"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-4"></a>    <span class="fu">return</span>(<span class="sc">-</span><span class="fl">1e10</span>)</span>
+<span id="cb88-5"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-5"></a>  }</span>
+<span id="cb88-6"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-6"></a>  </span>
+<span id="cb88-7"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-7"></a>  <span class="cf">if</span> (sample) {</span>
+<span id="cb88-8"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-8"></a>    data<span class="sc">$</span>rt <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA</span>, <span class="fu">nrow</span>(data))</span>
+<span id="cb88-9"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-9"></a>    data<span class="sc">$</span>resp <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA</span>, <span class="fu">nrow</span>(data))</span>
+<span id="cb88-10"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-10"></a>  } <span class="cf">else</span> {</span>
+<span id="cb88-11"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-11"></a>    out <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="fu">nrow</span>(data))</span>
+<span id="cb88-12"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-12"></a>  }</span>
+<span id="cb88-13"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-13"></a>  </span>
+<span id="cb88-14"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-14"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(data)) {</span>
+<span id="cb88-15"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-15"></a>    A <span class="ot">=</span> x[<span class="st">&quot;A&quot;</span>]</span>
+<span id="cb88-16"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-16"></a>    b.w <span class="ot">=</span> x[<span class="fu">paste0</span>(<span class="st">&quot;b.&quot;</span>, data<span class="sc">$</span>cond[i], <span class="st">&quot;.W&quot;</span>)] <span class="sc">+</span> A</span>
+<span id="cb88-17"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-17"></a>    b.nw <span class="ot">=</span> x[<span class="fu">paste0</span>(<span class="st">&quot;b.&quot;</span>, data<span class="sc">$</span>cond[i], <span class="st">&quot;.NW&quot;</span>)] <span class="sc">+</span> A</span>
+<span id="cb88-18"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-18"></a>    bs <span class="ot">=</span> <span class="fu">list</span>(b.nw, b.w)</span>
+<span id="cb88-19"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-19"></a>    v.w <span class="ot">=</span> x[<span class="fu">paste0</span>(<span class="st">&quot;v.&quot;</span>, data<span class="sc">$</span>stim[i], <span class="st">&quot;.W&quot;</span>)]</span>
+<span id="cb88-20"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-20"></a>    v.nw <span class="ot">=</span> x[<span class="fu">paste0</span>(<span class="st">&quot;v.&quot;</span>, data<span class="sc">$</span>stim[i], <span class="st">&quot;.NW&quot;</span>)]</span>
+<span id="cb88-21"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-21"></a>    vs <span class="ot">=</span> <span class="fu">c</span>(v.nw, v.w)</span>
+<span id="cb88-22"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-22"></a>    t0 <span class="ot">=</span> x[<span class="st">&quot;t0&quot;</span>]</span>
+<span id="cb88-23"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-23"></a>    s <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb88-24"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-24"></a>    </span>
+<span id="cb88-25"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-25"></a>    <span class="cf">if</span> (sample) {</span>
+<span id="cb88-26"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-26"></a>      tmp <span class="ot">&lt;-</span> <span class="fu">rLBA</span>(<span class="at">n =</span> <span class="dv">1</span>,</span>
+<span id="cb88-27"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-27"></a>                  <span class="at">A =</span> A,</span>
+<span id="cb88-28"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-28"></a>                  <span class="at">b =</span> bs,</span>
+<span id="cb88-29"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-29"></a>                  <span class="at">mean_v =</span> vs,</span>
+<span id="cb88-30"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-30"></a>                  <span class="at">sd_v =</span> s,</span>
+<span id="cb88-31"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-31"></a>                  <span class="at">t0 =</span> t0,</span>
+<span id="cb88-32"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-32"></a>                  <span class="at">dist =</span> <span class="st">&quot;norm&quot;</span>,</span>
+<span id="cb88-33"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-33"></a>                  <span class="at">silent =</span> <span class="cn">TRUE</span></span>
+<span id="cb88-34"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-34"></a>      )</span>
+<span id="cb88-35"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-35"></a>      data<span class="sc">$</span>rt[i] <span class="ot">&lt;-</span> tmp<span class="sc">$</span>rt</span>
+<span id="cb88-36"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-36"></a>      data<span class="sc">$</span>resp[i] <span class="ot">&lt;-</span> tmp<span class="sc">$</span>resp</span>
+<span id="cb88-37"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-37"></a>    } <span class="cf">else</span> {</span>
+<span id="cb88-38"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-38"></a>      out[i] <span class="ot">&lt;-</span> <span class="fu">dLBA</span>(<span class="at">rt =</span> data<span class="sc">$</span>rt[i],</span>
+<span id="cb88-39"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-39"></a>                     <span class="at">response =</span> data<span class="sc">$</span>resp[i],</span>
+<span id="cb88-40"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-40"></a>                     <span class="at">A =</span> A,</span>
+<span id="cb88-41"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-41"></a>                     <span class="at">b =</span> bs,</span>
+<span id="cb88-42"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-42"></a>                     <span class="at">mean_v =</span> vs,</span>
+<span id="cb88-43"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-43"></a>                     <span class="at">sd_v =</span> s,</span>
+<span id="cb88-44"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-44"></a>                     <span class="at">t0 =</span> t0,</span>
+<span id="cb88-45"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-45"></a>                     <span class="at">dist =</span> <span class="st">&quot;norm&quot;</span>,</span>
+<span id="cb88-46"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-46"></a>                     <span class="at">silent =</span> <span class="cn">TRUE</span></span>
+<span id="cb88-47"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-47"></a>                     )</span>
+<span id="cb88-48"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-48"></a>      }</span>
+<span id="cb88-49"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-49"></a>  }</span>
+<span id="cb88-50"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-50"></a>  <span class="cf">if</span> (sample) {</span>
+<span id="cb88-51"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-51"></a>    <span class="fu">return</span>(data)</span>
+<span id="cb88-52"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-52"></a>  } <span class="cf">else</span> {</span>
+<span id="cb88-53"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-53"></a>    bad <span class="ot">&lt;-</span> (out <span class="sc">&lt;</span> <span class="fl">1e-10</span>) <span class="sc">|</span> (<span class="sc">!</span><span class="fu">is.finite</span>(out))</span>
+<span id="cb88-54"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-54"></a>    out[bad] <span class="ot">&lt;-</span> <span class="fl">1e-10</span></span>
+<span id="cb88-55"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-55"></a>    out <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">log</span>(out))</span>
+<span id="cb88-56"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-56"></a>    <span class="fu">return</span>(out)</span>
+<span id="cb88-57"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-57"></a>  }</span>
+<span id="cb88-58"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb88-58"></a>}</span></code></pre></div>
 <p><b>Note:</b> If you’d like to run through this example, it is best to copy the <code>tw_lba_ll</code> function from the code block above rather than copying from the separate code chunks below where curly braces have been removed.</p>
-<p>We begin from the <code>for</code> loop on line 14. For for each row in the dataset, we assign the values (<code>x</code>) of each parameter in our model so that any conditional parameters (for example <code>b</code> in our model) are correctly assigned. For the Wagenmakers data set, we want to calculate the density function for a model that has a threshold (<code>b</code>) parameter for each of the conditions (<code>cond</code> = <code>w</code>: 75% words &amp; 25% non-words, <code>nw</code>: 75% non-words &amp; 25% words). We also want threshold to vary for respone (<code>resp</code>) type (i.e., the accumulator for a word (<code>W</code>) response, and the accumulator for the non-word (<code>NW</code>). So, on lines 16 and 17, we paste together the <code>"b."</code> threshold parameter, the condition (<code>cond</code> = <code>w</code> or <code>nw</code>) and the response <code>".W"</code> or <code>".NW"</code> and add the start point parameter <code>A</code>. The start point parameter is added to the threshold values to ensure that threshold is greater than the start point value.</p>
+<p>We begin from the <code>for</code> loop on line 14. For for each row in the dataset, we assign the values (<code>x</code>) of each parameter in our model so that any conditional parameters (for example <code>b</code> in our model) are correctly assigned. For the Wagenmakers data set, we want to calculate the density function for a model that has a threshold (<code>b</code>) parameter for each of the conditions (<code>cond</code> = <code>w</code>: 75% words &amp; 25% non-words, <code>nw</code>: 75% non-words &amp; 25% words). We also want threshold to vary for response (<code>resp</code>) type (i.e., the accumulator for a word (<code>W</code>) response, and the accumulator for the non-word (<code>NW</code>). So, on lines 16 and 17, we paste together the <code>"b."</code> threshold parameter, the condition (<code>cond</code> = <code>w</code> or <code>nw</code>) and the response <code>".W"</code> or <code>".NW"</code> and add the start point parameter <code>A</code>. The start point parameter is added to the threshold values to ensure that threshold is greater than the start point value.</p>
 <p>We hypothesised that drift rate <code>v</code> would vary with word frequency (<code>stim</code> = <code>hf</code>,<code>lf</code>,<code>vlf</code>,<code>nw</code>), so on lines 19 and 20 we allow drift rate for response <i>word</i> (<code>v.w</code>) to vary with the levels of word frequency, by pasting the <code>"v."</code> with <code>stim</code> and with the accumulator for each response (<code>".W"</code> or <code>".NW"</code>). You’ll notice that in this example, we no longer have a drift rate for the correct response (<code>vc</code>) or incorrect response (<code>ve</code>), instead, we have a drift rate for responding <i>word</i> (<code>v.w</code>) and <i>non-word</i> (<code>v.nw</code>). This is a different way (and our preferred way) of coding drift rate. On line 21 we have ordered the <code>vs</code> vector with <code>v.nw</code> first and <code>v.w</code> second.</p>
-<div class="sourceCode" id="cb88" startFrom="14"><pre class="sourceCode numberSource r numberLines"><code class="sourceCode r"><a class="sourceLine" id="cb88-14" title="14"> <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(data)) {</a>
-<a class="sourceLine" id="cb88-15" title="15">    A =<span class="st"> </span>x[<span class="st">&quot;A&quot;</span>]</a>
-<a class="sourceLine" id="cb88-16" title="16">    b.w =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, data<span class="op">$</span>cond[i], <span class="st">&quot;.W&quot;</span>)] <span class="op">+</span><span class="st"> </span>A</a>
-<a class="sourceLine" id="cb88-17" title="17">    b.nw =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, data<span class="op">$</span>cond[i], <span class="st">&quot;.NW&quot;</span>)] <span class="op">+</span><span class="st"> </span>A</a>
-<a class="sourceLine" id="cb88-18" title="18">    bs =<span class="st"> </span><span class="kw">list</span>(b.nw, b.w)</a>
-<a class="sourceLine" id="cb88-19" title="19">    v.w =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;v.&quot;</span>, data<span class="op">$</span>stim[i], <span class="st">&quot;.W&quot;</span>)]</a>
-<a class="sourceLine" id="cb88-20" title="20">    v.nw =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;v.&quot;</span>, data<span class="op">$</span>stim[i], <span class="st">&quot;.NW&quot;</span>)]</a>
-<a class="sourceLine" id="cb88-21" title="21">    vs =<span class="st"> </span><span class="kw">c</span>(v.nw, v.w)</a>
-<a class="sourceLine" id="cb88-22" title="22">    t0 =<span class="st"> </span>x[<span class="st">&quot;t0&quot;</span>]</a>
-<a class="sourceLine" id="cb88-23" title="23">    s =<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb89" startFrom="14"><pre class="sourceCode numberSource r numberLines"><code class="sourceCode r" style="counter-reset: source-line 13;"><span id="cb89-14"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb89-14"></a> <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(data)) {</span>
+<span id="cb89-15"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb89-15"></a>    A <span class="ot">=</span> x[<span class="st">&quot;A&quot;</span>]</span>
+<span id="cb89-16"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb89-16"></a>    b.w <span class="ot">=</span> x[<span class="fu">paste0</span>(<span class="st">&quot;b.&quot;</span>, data<span class="sc">$</span>cond[i], <span class="st">&quot;.W&quot;</span>)] <span class="sc">+</span> A</span>
+<span id="cb89-17"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb89-17"></a>    b.nw <span class="ot">=</span> x[<span class="fu">paste0</span>(<span class="st">&quot;b.&quot;</span>, data<span class="sc">$</span>cond[i], <span class="st">&quot;.NW&quot;</span>)] <span class="sc">+</span> A</span>
+<span id="cb89-18"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb89-18"></a>    bs <span class="ot">=</span> <span class="fu">list</span>(b.nw, b.w)</span>
+<span id="cb89-19"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb89-19"></a>    v.w <span class="ot">=</span> x[<span class="fu">paste0</span>(<span class="st">&quot;v.&quot;</span>, data<span class="sc">$</span>stim[i], <span class="st">&quot;.W&quot;</span>)]</span>
+<span id="cb89-20"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb89-20"></a>    v.nw <span class="ot">=</span> x[<span class="fu">paste0</span>(<span class="st">&quot;v.&quot;</span>, data<span class="sc">$</span>stim[i], <span class="st">&quot;.NW&quot;</span>)]</span>
+<span id="cb89-21"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb89-21"></a>    vs <span class="ot">=</span> <span class="fu">c</span>(v.nw, v.w)</span>
+<span id="cb89-22"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb89-22"></a>    t0 <span class="ot">=</span> x[<span class="st">&quot;t0&quot;</span>]</span>
+<span id="cb89-23"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb89-23"></a>    s <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>)</span></code></pre></div>
 <p>It is important to check the order of your levels for the response factor to ensure you correctly order your <code>v.nw</code> and <code>v.w</code> accumulators in the <code>vs</code> vector.</p>
-<div class="sourceCode" id="cb89"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb89-1" title="1"><span class="kw">levels</span>(data<span class="op">$</span>resp)</a></code></pre></div>
+<div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb90-1"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb90-1" tabindex="-1"></a><span class="fu">levels</span>(data<span class="sc">$</span>resp)</span></code></pre></div>
 <pre><code>## [1] &quot;1&quot; &quot;2&quot;</code></pre>
 <p>If we look at our levels for response, we see the order is <code>NW</code> and <code>W</code> respectively. This means that <code>NW</code> is coded as <code>1</code> and <code>W</code> is coded as <code>2</code>. Therefore, on line 36, if <code>data$resp[i] = N.W</code> then the level is 1, and the first accumulator in position 1 will be chosen. If <code>data$resp[i] = W</code> this tells the sampler that the accumulator in position 2 will be chosen. In other words, the parameters will map correctly because <code>v.nw</code> is in position 1 and <code>v.w</code> in position 2 in our <code>vs</code> vector.</p>
 <p>The remaining lines of the log-likelihood function are identical to the function used in the Forstmann example in <a href="forstmannChapter.html#forstmannChapter">chapter 3</a>, except the threshold parameter <code>bs</code> (line 29 and 44) is a list with two elements (<code>b = bs</code>)</p>
 </div>
 </div>
-<div id="wagFastll" class="section level2">
-<h2><span class="header-section-number">4.2</span> Fast LBA Log-likelihood function</h2>
-<p>As we mentioned in section <a href="forstmannChapter.html#fstLBALL">3.3.3</a>, the data is large and the dLBA function takes some time to run, so the log-likelihood code above is computationally inefficient. There are several ways to improve the log-likelihood’s performance; in our example below, we reduce the number of calls to dLBA to one call. We do this by passing a list of dLBA parameter values for the length of the data.</p>
-<p>Note: When generating posterior predictive data, the rLBA function is still executed for each row of data; however, it is only executed several times, so computational efficiency is uncompromised.</p>
-<div class="sourceCode" id="cb91"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb91-1" title="1">fast_lba_ll &lt;-<span class="st"> </span><span class="cf">function</span>(x, data, <span class="dt">sample =</span> <span class="ot">FALSE</span>) {</a>
-<a class="sourceLine" id="cb91-2" title="2">  x &lt;-<span class="st"> </span><span class="kw">exp</span>(x)</a>
-<a class="sourceLine" id="cb91-3" title="3">  <span class="cf">if</span> (<span class="kw">any</span>(data<span class="op">$</span>rt <span class="op">&lt;</span><span class="st"> </span>x[<span class="st">&quot;t0&quot;</span>])) {</a>
-<a class="sourceLine" id="cb91-4" title="4">    <span class="kw">return</span>(<span class="op">-</span><span class="fl">1e10</span>)</a>
-<a class="sourceLine" id="cb91-5" title="5">  }</a>
-<a class="sourceLine" id="cb91-6" title="6">  b.w =<span class="st"> </span>b.nw =<span class="st"> </span>v.w =<span class="st"> </span>v.nw =<span class="st"> </span>out =<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">nrow</span>(data))</a>
-<a class="sourceLine" id="cb91-7" title="7">    <span class="cf">for</span> (p <span class="cf">in</span> <span class="kw">unique</span>(data<span class="op">$</span>prop)) {</a>
-<a class="sourceLine" id="cb91-8" title="8">      use &lt;-<span class="st"> </span>data<span class="op">$</span>cond <span class="op">==</span><span class="st"> </span>p  </a>
-<a class="sourceLine" id="cb91-9" title="9">      b.w[use] =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, p, <span class="st">&quot;.W&quot;</span>)] <span class="op">+</span><span class="st"> </span>x[<span class="st">&quot;A&quot;</span>]</a>
-<a class="sourceLine" id="cb91-10" title="10">      b.nw[use] =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;b.&quot;</span>, p, <span class="st">&quot;.NW&quot;</span>)] <span class="op">+</span><span class="st"> </span>x[<span class="st">&quot;A&quot;</span>]</a>
-<a class="sourceLine" id="cb91-11" title="11">    }</a>
-<a class="sourceLine" id="cb91-12" title="12">    <span class="cf">for</span> (f <span class="cf">in</span> <span class="kw">unique</span>(data<span class="op">$</span>freq)) {</a>
-<a class="sourceLine" id="cb91-13" title="13">      use &lt;-<span class="st"> </span>data<span class="op">$</span>stim <span class="op">==</span><span class="st"> </span>f </a>
-<a class="sourceLine" id="cb91-14" title="14">      v.w[use] =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;v.&quot;</span>, f, <span class="st">&quot;.W&quot;</span>)]</a>
-<a class="sourceLine" id="cb91-15" title="15">      v.nw[use] =<span class="st"> </span>x[<span class="kw">paste0</span>(<span class="st">&quot;v.&quot;</span>, f, <span class="st">&quot;.NW&quot;</span>)]</a>
-<a class="sourceLine" id="cb91-16" title="16">        }</a>
-<a class="sourceLine" id="cb91-17" title="17">    bs =<span class="st"> </span><span class="kw">list</span>(b.nw,b.w)</a>
-<a class="sourceLine" id="cb91-18" title="18">    vs =<span class="st"> </span><span class="kw">list</span>(v.nw,v.w)</a>
-<a class="sourceLine" id="cb91-19" title="19">    </a>
-<a class="sourceLine" id="cb91-20" title="20">  <span class="cf">if</span> (<span class="op">!</span>sample){</a>
-<a class="sourceLine" id="cb91-21" title="21">    out &lt;-<span class="st"> </span><span class="kw">dLBA</span>(<span class="dt">rt =</span> data<span class="op">$</span>rt,</a>
-<a class="sourceLine" id="cb91-22" title="22">                <span class="dt">resp =</span> data<span class="op">$</span>resp,</a>
-<a class="sourceLine" id="cb91-23" title="23">                <span class="dt">A =</span> x[<span class="st">&quot;A&quot;</span>],</a>
-<a class="sourceLine" id="cb91-24" title="24">                <span class="dt">b =</span> bs,</a>
-<a class="sourceLine" id="cb91-25" title="25">                <span class="dt">t0 =</span> x[<span class="st">&quot;t0&quot;</span>],</a>
-<a class="sourceLine" id="cb91-26" title="26">                <span class="dt">mean_v =</span> vs,</a>
-<a class="sourceLine" id="cb91-27" title="27">                <span class="dt">sd_v =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>), </a>
-<a class="sourceLine" id="cb91-28" title="28">                <span class="dt">distribution =</span> <span class="st">&quot;norm&quot;</span>,</a>
-<a class="sourceLine" id="cb91-29" title="29">                <span class="dt">silent =</span> <span class="ot">TRUE</span>)</a>
-<a class="sourceLine" id="cb91-30" title="30">    out &lt;-<span class="st"> </span><span class="kw">sum</span>(<span class="kw">log</span>(<span class="kw">pmax</span>(out,<span class="fl">1e-10</span>)))</a>
-<a class="sourceLine" id="cb91-31" title="31">    <span class="kw">return</span>(out)</a>
-<a class="sourceLine" id="cb91-32" title="32">  } <span class="cf">else</span> {</a>
-<a class="sourceLine" id="cb91-33" title="33">    data<span class="op">$</span>rt &lt;-<span class="st"> </span><span class="ot">NA</span></a>
-<a class="sourceLine" id="cb91-34" title="34">    data<span class="op">$</span>resp &lt;-<span class="st"> </span><span class="ot">NA</span></a>
-<a class="sourceLine" id="cb91-35" title="35">    <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">nrow</span>(data)){</a>
-<a class="sourceLine" id="cb91-36" title="36">      tmp&lt;-<span class="st"> </span><span class="kw">rLBA</span>(<span class="dt">n =</span> <span class="dv">1</span>,</a>
-<a class="sourceLine" id="cb91-37" title="37">                 <span class="dt">A =</span> x[<span class="st">&quot;A&quot;</span>],</a>
-<a class="sourceLine" id="cb91-38" title="38">                 <span class="dt">b =</span> <span class="kw">list</span>(b.nw[i], b.w[i]),</a>
-<a class="sourceLine" id="cb91-39" title="39">                 <span class="dt">t0 =</span> x[<span class="st">&quot;t0&quot;</span>],</a>
-<a class="sourceLine" id="cb91-40" title="40">                 <span class="dt">mean_v =</span> <span class="kw">list</span>(v.nw[i], v.w[i]),</a>
-<a class="sourceLine" id="cb91-41" title="41">                 <span class="dt">sd_v =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>),</a>
-<a class="sourceLine" id="cb91-42" title="42">                 <span class="dt">distribution =</span> <span class="st">&quot;norm&quot;</span>,</a>
-<a class="sourceLine" id="cb91-43" title="43">                 <span class="dt">silent =</span> <span class="ot">TRUE</span>)</a>
-<a class="sourceLine" id="cb91-44" title="44">      data<span class="op">$</span>rt[i] &lt;-<span class="st"> </span>tmp<span class="op">$</span>rt</a>
-<a class="sourceLine" id="cb91-45" title="45">      data<span class="op">$</span>resp[i] &lt;-<span class="st"> </span>tmp<span class="op">$</span>resp</a>
-<a class="sourceLine" id="cb91-46" title="46">    }</a>
-<a class="sourceLine" id="cb91-47" title="47">      <span class="kw">return</span>(data)</a>
-<a class="sourceLine" id="cb91-48" title="48">  }</a>
-<a class="sourceLine" id="cb91-49" title="49">}</a></code></pre></div>
+<div id="wagFastll" class="section level2 hasAnchor" number="4.2">
+<h2><span class="header-section-number">4.2</span> Fast LBA Log-likelihood function<a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#wagFastll" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>As we mentioned in section <a href="forstmannChapter.html#fstLBALL">3.3.3</a>, the data is large and the <code>dLBA</code> function takes some time to run, so the log-likelihood code above is computationally inefficient. There are several ways to improve the log-likelihood’s performance; in our example below, we reduce the number of calls to <code>dLBA</code> to one call. We do this by passing a list of <code>dLBA</code> parameter values for the length of the data.</p>
+<p>Note: When generating posterior predictive data, the <code>rLBA</code> function is still executed for each row of data; however, it is only executed several times, so computational efficiency is not compromised.</p>
+<div class="sourceCode" id="cb92"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb92-1"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-1" tabindex="-1"></a>fast_lba_ll <span class="ot">&lt;-</span> <span class="cf">function</span>(x, data, <span class="at">sample =</span> <span class="cn">FALSE</span>) {</span>
+<span id="cb92-2"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-2" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">exp</span>(x)</span>
+<span id="cb92-3"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-3" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">any</span>(data<span class="sc">$</span>rt <span class="sc">&lt;</span> x[<span class="st">&quot;t0&quot;</span>])) {</span>
+<span id="cb92-4"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-4" tabindex="-1"></a>    <span class="fu">return</span>(<span class="sc">-</span><span class="fl">1e10</span>)</span>
+<span id="cb92-5"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-5" tabindex="-1"></a>  }</span>
+<span id="cb92-6"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-6" tabindex="-1"></a>  b.w <span class="ot">=</span> b.nw <span class="ot">=</span> v.w <span class="ot">=</span> v.nw <span class="ot">=</span> out <span class="ot">=</span> <span class="fu">numeric</span>(<span class="fu">nrow</span>(data))</span>
+<span id="cb92-7"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-7" tabindex="-1"></a>    <span class="cf">for</span> (p <span class="cf">in</span> <span class="fu">unique</span>(data<span class="sc">$</span>prop)) {</span>
+<span id="cb92-8"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-8" tabindex="-1"></a>      use <span class="ot">&lt;-</span> data<span class="sc">$</span>cond <span class="sc">==</span> p  </span>
+<span id="cb92-9"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-9" tabindex="-1"></a>      b.w[use] <span class="ot">=</span> x[<span class="fu">paste0</span>(<span class="st">&quot;b.&quot;</span>, p, <span class="st">&quot;.W&quot;</span>)] <span class="sc">+</span> x[<span class="st">&quot;A&quot;</span>]</span>
+<span id="cb92-10"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-10" tabindex="-1"></a>      b.nw[use] <span class="ot">=</span> x[<span class="fu">paste0</span>(<span class="st">&quot;b.&quot;</span>, p, <span class="st">&quot;.NW&quot;</span>)] <span class="sc">+</span> x[<span class="st">&quot;A&quot;</span>]</span>
+<span id="cb92-11"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-11" tabindex="-1"></a>    }</span>
+<span id="cb92-12"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-12" tabindex="-1"></a>    <span class="cf">for</span> (f <span class="cf">in</span> <span class="fu">unique</span>(data<span class="sc">$</span>freq)) {</span>
+<span id="cb92-13"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-13" tabindex="-1"></a>      use <span class="ot">&lt;-</span> data<span class="sc">$</span>stim <span class="sc">==</span> f </span>
+<span id="cb92-14"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-14" tabindex="-1"></a>      v.w[use] <span class="ot">=</span> x[<span class="fu">paste0</span>(<span class="st">&quot;v.&quot;</span>, f, <span class="st">&quot;.W&quot;</span>)]</span>
+<span id="cb92-15"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-15" tabindex="-1"></a>      v.nw[use] <span class="ot">=</span> x[<span class="fu">paste0</span>(<span class="st">&quot;v.&quot;</span>, f, <span class="st">&quot;.NW&quot;</span>)]</span>
+<span id="cb92-16"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-16" tabindex="-1"></a>        }</span>
+<span id="cb92-17"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-17" tabindex="-1"></a>    bs <span class="ot">=</span> <span class="fu">list</span>(b.nw,b.w)</span>
+<span id="cb92-18"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-18" tabindex="-1"></a>    vs <span class="ot">=</span> <span class="fu">list</span>(v.nw,v.w)</span>
+<span id="cb92-19"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-19" tabindex="-1"></a>    </span>
+<span id="cb92-20"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-20" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span>sample){</span>
+<span id="cb92-21"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-21" tabindex="-1"></a>    out <span class="ot">&lt;-</span> <span class="fu">dLBA</span>(<span class="at">rt =</span> data<span class="sc">$</span>rt,</span>
+<span id="cb92-22"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-22" tabindex="-1"></a>                <span class="at">resp =</span> data<span class="sc">$</span>resp,</span>
+<span id="cb92-23"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-23" tabindex="-1"></a>                <span class="at">A =</span> x[<span class="st">&quot;A&quot;</span>],</span>
+<span id="cb92-24"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-24" tabindex="-1"></a>                <span class="at">b =</span> bs,</span>
+<span id="cb92-25"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-25" tabindex="-1"></a>                <span class="at">t0 =</span> x[<span class="st">&quot;t0&quot;</span>],</span>
+<span id="cb92-26"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-26" tabindex="-1"></a>                <span class="at">mean_v =</span> vs,</span>
+<span id="cb92-27"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-27" tabindex="-1"></a>                <span class="at">sd_v =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>), </span>
+<span id="cb92-28"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-28" tabindex="-1"></a>                <span class="at">distribution =</span> <span class="st">&quot;norm&quot;</span>,</span>
+<span id="cb92-29"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-29" tabindex="-1"></a>                <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb92-30"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-30" tabindex="-1"></a>    out <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">log</span>(<span class="fu">pmax</span>(out,<span class="fl">1e-10</span>)))</span>
+<span id="cb92-31"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-31" tabindex="-1"></a>    <span class="fu">return</span>(out)</span>
+<span id="cb92-32"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-32" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb92-33"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-33" tabindex="-1"></a>    data<span class="sc">$</span>rt <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb92-34"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-34" tabindex="-1"></a>    data<span class="sc">$</span>resp <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb92-35"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-35" tabindex="-1"></a>    <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(data)){</span>
+<span id="cb92-36"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-36" tabindex="-1"></a>      tmp<span class="ot">&lt;-</span> <span class="fu">rLBA</span>(<span class="at">n =</span> <span class="dv">1</span>,</span>
+<span id="cb92-37"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-37" tabindex="-1"></a>                 <span class="at">A =</span> x[<span class="st">&quot;A&quot;</span>],</span>
+<span id="cb92-38"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-38" tabindex="-1"></a>                 <span class="at">b =</span> <span class="fu">list</span>(b.nw[i], b.w[i]),</span>
+<span id="cb92-39"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-39" tabindex="-1"></a>                 <span class="at">t0 =</span> x[<span class="st">&quot;t0&quot;</span>],</span>
+<span id="cb92-40"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-40" tabindex="-1"></a>                 <span class="at">mean_v =</span> <span class="fu">list</span>(v.nw[i], v.w[i]),</span>
+<span id="cb92-41"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-41" tabindex="-1"></a>                 <span class="at">sd_v =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>),</span>
+<span id="cb92-42"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-42" tabindex="-1"></a>                 <span class="at">distribution =</span> <span class="st">&quot;norm&quot;</span>,</span>
+<span id="cb92-43"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-43" tabindex="-1"></a>                 <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb92-44"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-44" tabindex="-1"></a>      data<span class="sc">$</span>rt[i] <span class="ot">&lt;-</span> tmp<span class="sc">$</span>rt</span>
+<span id="cb92-45"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-45" tabindex="-1"></a>      data<span class="sc">$</span>resp[i] <span class="ot">&lt;-</span> tmp<span class="sc">$</span>resp</span>
+<span id="cb92-46"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-46" tabindex="-1"></a>    }</span>
+<span id="cb92-47"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-47" tabindex="-1"></a>      <span class="fu">return</span>(data)</span>
+<span id="cb92-48"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-48" tabindex="-1"></a>  }</span>
+<span id="cb92-49"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb92-49" tabindex="-1"></a>}</span></code></pre></div>
 <p>You should improve your log-likelihood’s performance as you see fit. When you’re confident that your log-likelihood code functions correctly, we suggest saving it as a separate script so it can be sourced and loaded when running the sampler. If you’re learning how to write log-likelihood functions, take a look at our <a href="troubleshoot.html#troubleshoot">troubleshooting section</a> for tips. In our experience, a very large proportion of problems with sampling and inference are caused by inadequate checking and care in the likelihood function.</p>
 </div>
-<div id="pmwg-framework-1" class="section level2">
-<h2><span class="header-section-number">4.3</span> PMwG Framework</h2>
+<div id="pmwg-framework-1" class="section level2 hasAnchor" number="4.3">
+<h2><span class="header-section-number">4.3</span> PMwG Framework<a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#pmwg-framework-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Now that we have a log-likelihood function, we can set up the <code>PMwG</code> sampler. To run the sampler, we simply follow the procedure from <a href="pmwg-sampler-and-signal-detection-theory.html#sdtOutline">chapter 2</a> and <a href="forstmannChapter.html#forstmannChapter">chapter 3</a>; we need to set up a vector of model parameter names, create a <code>priors</code> object, source our LBA log-likelihood script and then create our <code>sampler</code> object.</p>
 <p>First, load the <code>PMwG</code> library and data…</p>
-<div class="sourceCode" id="cb92"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb92-1" title="1"><span class="kw">library</span>(pmwg)</a>
-<a class="sourceLine" id="cb92-2" title="2"><span class="kw">load</span>(<span class="st">&quot;dataObjects/wagenmakers2008.RData&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb93-1"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb93-1" tabindex="-1"></a><span class="fu">library</span>(pmwg)</span>
+<span id="cb93-2"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb93-2" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;dataObjects/wagenmakers2008.RData&quot;</span>)</span></code></pre></div>
 <p>Let’s create a vector of model parameter names. Remember that this must match the names and number of parameters you include in your log-likelihood function. You can name this vector as you wish; however, in our example, we name it <code>pars</code>.</p>
 <p>For the Wagenmakers dataset, we require four threshold parameters because we assume that both word proportion (<code>cond</code>) and response (<code>resp</code>) have an effect on level of caution (i.e. a threshold parameter for each combination of word proportion and response). We also need a <i> drift rate</i> for each cell of our design i.e. eight drift rate parameters; one for each level of <code>word frequency</code> (<code>hf</code>,<code>lf</code>,<code>vlf</code>,<code>nw</code>) for the Word response accumulator <code>.W</code>, and the non-word response accumulator <code>.NW</code>).</p>
 <p>We’ve made a decision to set the <code>sv</code> to 1 to satisfy the scaling properties of the model. As such, we haven’t included the <code>sv</code> parameter in the <code>pars</code> vector - it is found in the LBA’s log-likelihood function (see below).</p>
-<div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb93-1" title="1">pars &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;A&quot;</span>,</a>
-<a class="sourceLine" id="cb93-2" title="2">         <span class="st">&quot;b.nw.NW&quot;</span>,</a>
-<a class="sourceLine" id="cb93-3" title="3">         <span class="st">&quot;b.nw.W&quot;</span>,</a>
-<a class="sourceLine" id="cb93-4" title="4">         <span class="st">&quot;b.w.NW&quot;</span>,</a>
-<a class="sourceLine" id="cb93-5" title="5">         <span class="st">&quot;b.w.W&quot;</span>,</a>
-<a class="sourceLine" id="cb93-6" title="6">         <span class="st">&quot;v.hf.NW&quot;</span>,</a>
-<a class="sourceLine" id="cb93-7" title="7">         <span class="st">&quot;v.hf.W&quot;</span>,</a>
-<a class="sourceLine" id="cb93-8" title="8">         <span class="st">&quot;v.lf.NW&quot;</span>,</a>
-<a class="sourceLine" id="cb93-9" title="9">         <span class="st">&quot;v.lf.W&quot;</span>,</a>
-<a class="sourceLine" id="cb93-10" title="10">         <span class="st">&quot;v.vlf.NW&quot;</span>,</a>
-<a class="sourceLine" id="cb93-11" title="11">         <span class="st">&quot;v.vlf.W&quot;</span>,</a>
-<a class="sourceLine" id="cb93-12" title="12">         <span class="st">&quot;v.nw.NW&quot;</span>,</a>
-<a class="sourceLine" id="cb93-13" title="13">         <span class="st">&quot;v.nw.W&quot;</span>,</a>
-<a class="sourceLine" id="cb93-14" title="14">         <span class="st">&quot;t0&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb94"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb94-1"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb94-1" tabindex="-1"></a>pars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;A&quot;</span>,</span>
+<span id="cb94-2"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb94-2" tabindex="-1"></a>         <span class="st">&quot;b.nw.NW&quot;</span>,</span>
+<span id="cb94-3"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb94-3" tabindex="-1"></a>         <span class="st">&quot;b.nw.W&quot;</span>,</span>
+<span id="cb94-4"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb94-4" tabindex="-1"></a>         <span class="st">&quot;b.w.NW&quot;</span>,</span>
+<span id="cb94-5"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb94-5" tabindex="-1"></a>         <span class="st">&quot;b.w.W&quot;</span>,</span>
+<span id="cb94-6"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb94-6" tabindex="-1"></a>         <span class="st">&quot;v.hf.NW&quot;</span>,</span>
+<span id="cb94-7"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb94-7" tabindex="-1"></a>         <span class="st">&quot;v.hf.W&quot;</span>,</span>
+<span id="cb94-8"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb94-8" tabindex="-1"></a>         <span class="st">&quot;v.lf.NW&quot;</span>,</span>
+<span id="cb94-9"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb94-9" tabindex="-1"></a>         <span class="st">&quot;v.lf.W&quot;</span>,</span>
+<span id="cb94-10"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb94-10" tabindex="-1"></a>         <span class="st">&quot;v.vlf.NW&quot;</span>,</span>
+<span id="cb94-11"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb94-11" tabindex="-1"></a>         <span class="st">&quot;v.vlf.W&quot;</span>,</span>
+<span id="cb94-12"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb94-12" tabindex="-1"></a>         <span class="st">&quot;v.nw.NW&quot;</span>,</span>
+<span id="cb94-13"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb94-13" tabindex="-1"></a>         <span class="st">&quot;v.nw.W&quot;</span>,</span>
+<span id="cb94-14"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb94-14" tabindex="-1"></a>         <span class="st">&quot;t0&quot;</span>)</span></code></pre></div>
 <p>For the mean of the distribution for random effects (theta_mu), we assume a multivariate normal prior. The user can specify the mean and variance of this prior distribution using the object <code>priors</code>, which has elements <code>theta_mu_mean</code> and <code>theta_mu_var</code>. A typical setting for LBA models is to set <code>theta_mu_mean</code> to be a zero vector and to set <code>theta_mu_var</code> to be a multiple of the identity matrix, e.g. with 9 on the diagonal (representing a standard deviation of 3 for the subject-level means in the prior).</p>
 <p>We create our <code>priors</code> object; a list that contains two components:</p>
 <ul>
 <li><code>theta_mu_mean</code> a vector containing the prior for model parameter means</li>
 <li><code>theta_mu_var</code> the prior covariance matrix for model parameters.</li>
 </ul>
-<div class="sourceCode" id="cb94"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb94-1" title="1">priors &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">theta_mu_mean =</span> <span class="kw">rep</span>(<span class="dv">0</span>, <span class="kw">length</span>(pars)),</a>
-<a class="sourceLine" id="cb94-2" title="2">  <span class="dt">theta_mu_var =</span> <span class="kw">diag</span>(<span class="kw">rep</span>(<span class="dv">1</span>, <span class="kw">length</span>(pars)))</a>
-<a class="sourceLine" id="cb94-3" title="3">)</a></code></pre></div>
+<div class="sourceCode" id="cb95"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb95-1"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb95-1" tabindex="-1"></a>priors <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">theta_mu_mean =</span> <span class="fu">rep</span>(<span class="dv">0</span>, <span class="fu">length</span>(pars)),</span>
+<span id="cb95-2"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb95-2" tabindex="-1"></a>  <span class="at">theta_mu_var =</span> <span class="fu">diag</span>(<span class="fu">rep</span>(<span class="dv">1</span>, <span class="fu">length</span>(pars)))</span>
+<span id="cb95-3"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb95-3" tabindex="-1"></a>)</span></code></pre></div>
 <p>Now source and load your log-likelihood script <i>before</i> you create the sampler object.</p>
-<div class="sourceCode" id="cb95"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb95-1" title="1"><span class="kw">source</span>(<span class="dt">file =</span> <span class="st">&quot;fast_lba_ll.R&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb96"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb96-1"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb96-1" tabindex="-1"></a><span class="fu">source</span>(<span class="at">file =</span> <span class="st">&quot;fast_lba_ll.R&quot;</span>)</span></code></pre></div>
 <p>Next we specify the PMwG <code>sampler</code> object.
 The <code>pmwgs</code> function takes a set of arguments (listed below) and returns a list containing the required components for performing the particle metropolis within Gibbs steps.</p>
 <ul>
@@ -430,15 +477,15 @@ The <code>pmwgs</code> function takes a set of arguments (listed below) and retu
 <li><code>prior =</code> the priors to be used (e.g.<code>priors</code>)</li>
 <li><code>ll_func =</code> name of log-likelihood function to be used (e.g.<code>fast_lba_ll</code>)</li>
 </ul>
-<div class="sourceCode" id="cb96"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb96-1" title="1">sampler &lt;-<span class="st"> </span><span class="kw">pmwgs</span>(<span class="dt">data =</span> data,</a>
-<a class="sourceLine" id="cb96-2" title="2">                 <span class="dt">pars =</span> pars,</a>
-<a class="sourceLine" id="cb96-3" title="3">                 <span class="dt">prior =</span> priors,</a>
-<a class="sourceLine" id="cb96-4" title="4">                 <span class="dt">ll_func =</span> fast_lba_ll</a>
-<a class="sourceLine" id="cb96-5" title="5">                 )</a></code></pre></div>
-<div id="run-sampler" class="section level3">
-<h3><span class="header-section-number">4.3.1</span> Running the sampler</h3>
+<div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb97-1"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb97-1" tabindex="-1"></a>sampler <span class="ot">&lt;-</span> <span class="fu">pmwgs</span>(<span class="at">data =</span> data,</span>
+<span id="cb97-2"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb97-2" tabindex="-1"></a>                 <span class="at">pars =</span> pars,</span>
+<span id="cb97-3"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb97-3" tabindex="-1"></a>                 <span class="at">prior =</span> priors,</span>
+<span id="cb97-4"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb97-4" tabindex="-1"></a>                 <span class="at">ll_func =</span> fast_lba_ll</span>
+<span id="cb97-5"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb97-5" tabindex="-1"></a>                 )</span></code></pre></div>
+<div id="run-sampler" class="section level3 hasAnchor" number="4.3.1">
+<h3><span class="header-section-number">4.3.1</span> Running the sampler<a href="forstmannChapter.html#run-sampler" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Setup is now complete and we can run the sampler. First, we use the <code>init</code> function to generate initial start points for the random effects and store them in the <code>sampler</code> object. If you wanted you could include start points for your chain. We will not specify start points as we did in the Forstmann three threshold model. This is why have not included a <code>start_mu</code> and a <code>start_sig</code>. Instead, the start points will be drawn from the prior. <b>Note:</b> The <code>init</code> stage can take some time to run because it uses a large number of particles.</p>
-<div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb97-1" title="1">sampler &lt;-<span class="st"> </span><span class="kw">init</span>(sampler)</a></code></pre></div>
+<div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb98-1"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb98-1" tabindex="-1"></a>sampler <span class="ot">&lt;-</span> <span class="fu">init</span>(sampler)</span></code></pre></div>
 <p><br>
 To run the sampler, we use the <code>run_stage</code> function. To execute the <code>run_stage</code> function, you <b>must</b> provide values for two arguments:</p>
 <ul>
@@ -454,23 +501,23 @@ To run the sampler, we use the <code>run_stage</code> function. To execute the <
 <li><code>n_cores =</code> the number of cores on a machine you wish to use to run the sampler. This allows sampling to be run across cores (parallelising for subjects). Default = 1. <b> Note:</b> Setting <code>n_cores</code> greater than 1 is only permitted on Linux and Mac OS X machines.</li>
 </ul>
 <p>The first sampling stage is burn-in <code>"burn"</code>. The burn-in stage allows time for the sampler to move from the (arbitrary) start points that were provided by the user to the mode of the posterior distribution. This can be checked by examining the chains for stationarity. We take the <code>sampler</code> object created in the <code>init</code> function above, set the stage argument to <code>"burn"</code> and assign the outcome to an object called <code>burned</code>. Iterations for burn-in (in this example <code>iter = 1000</code>) are set by choosing a sufficient number of iterations that will get the sampler to the posterior space <b>Note:</b> You should visually check the chains for convergence/stationarity after burn-in.</p>
-<div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb98-1" title="1">burned &lt;-<span class="st"> </span><span class="kw">run_stage</span>(sampler, </a>
-<a class="sourceLine" id="cb98-2" title="2">                    <span class="dt">stage =</span> <span class="st">&quot;burn&quot;</span>,</a>
-<a class="sourceLine" id="cb98-3" title="3">                    <span class="dt">iter =</span> <span class="dv">1000</span>,</a>
-<a class="sourceLine" id="cb98-4" title="4">                    <span class="dt">particles =</span> <span class="dv">100</span></a>
-<a class="sourceLine" id="cb98-5" title="5">                    )</a></code></pre></div>
+<div class="sourceCode" id="cb99"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb99-1"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb99-1" tabindex="-1"></a>burned <span class="ot">&lt;-</span> <span class="fu">run_stage</span>(sampler, </span>
+<span id="cb99-2"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb99-2" tabindex="-1"></a>                    <span class="at">stage =</span> <span class="st">&quot;burn&quot;</span>,</span>
+<span id="cb99-3"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb99-3" tabindex="-1"></a>                    <span class="at">iter =</span> <span class="dv">1000</span>,</span>
+<span id="cb99-4"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb99-4" tabindex="-1"></a>                    <span class="at">particles =</span> <span class="dv">100</span></span>
+<span id="cb99-5"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb99-5" tabindex="-1"></a>                    )</span></code></pre></div>
 <p>Next is the adaptation stage <code>"adapt"</code>. The adaptation stage draws samples using a simple, but relatively inefficient proposal distribution (the same proposal distribution as the <code>"burn"</code>stage). Enough samples are drawn to allow the algorithm to estimate a much more sophisticated and efficient proposal distribution, using conditional normal distributions. We take the <code>burned</code> object created in the previous stage and set iterations <code>iter =</code> to a high number (e.g. <code>10000</code>), as it should exit before reaching this point. If it doesn’t, there is likely an issue with acceptance rates, the likelihood function or limited data to operate on (i.e. few trials in some conditions). Here, we have saved the outcome of the adaptation stage to an object called <code>adapted</code>.</p>
-<div class="sourceCode" id="cb99"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb99-1" title="1">adapted &lt;-<span class="st"> </span><span class="kw">run_stage</span>(burned, </a>
-<a class="sourceLine" id="cb99-2" title="2">                     <span class="dt">stage =</span> <span class="st">&quot;adapt&quot;</span>, </a>
-<a class="sourceLine" id="cb99-3" title="3">                     <span class="dt">iter =</span> <span class="dv">5000</span>, </a>
-<a class="sourceLine" id="cb99-4" title="4">                     <span class="dt">particles =</span> <span class="dv">100</span></a>
-<a class="sourceLine" id="cb99-5" title="5">                     )</a></code></pre></div>
+<div class="sourceCode" id="cb100"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb100-1"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb100-1" tabindex="-1"></a>adapted <span class="ot">&lt;-</span> <span class="fu">run_stage</span>(burned, </span>
+<span id="cb100-2"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb100-2" tabindex="-1"></a>                     <span class="at">stage =</span> <span class="st">&quot;adapt&quot;</span>, </span>
+<span id="cb100-3"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb100-3" tabindex="-1"></a>                     <span class="at">iter =</span> <span class="dv">5000</span>, </span>
+<span id="cb100-4"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb100-4" tabindex="-1"></a>                     <span class="at">particles =</span> <span class="dv">100</span></span>
+<span id="cb100-5"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb100-5" tabindex="-1"></a>                     )</span></code></pre></div>
 <p>The final stage is the sampling stage <code>"sample"</code>. The sampling stage uses the sophisticated and adaptive conditional normal proposal distributions. This allows for very efficient sampling, using far fewer particles. Samples from this stage are taken from the ‘posterior distribution’ and stored in the <code>sampled</code> object.</p>
-<div class="sourceCode" id="cb100"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb100-1" title="1">sampled &lt;-<span class="st"> </span><span class="kw">run_stage</span>(adapted, </a>
-<a class="sourceLine" id="cb100-2" title="2">                     <span class="dt">stage =</span> <span class="st">&quot;sample&quot;</span>,</a>
-<a class="sourceLine" id="cb100-3" title="3">                     <span class="dt">iter =</span> <span class="dv">10000</span>, </a>
-<a class="sourceLine" id="cb100-4" title="4">                     <span class="dt">particles =</span> <span class="dv">100</span></a>
-<a class="sourceLine" id="cb100-5" title="5">                     )</a></code></pre></div>
+<div class="sourceCode" id="cb101"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb101-1"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb101-1" tabindex="-1"></a>sampled <span class="ot">&lt;-</span> <span class="fu">run_stage</span>(adapted, </span>
+<span id="cb101-2"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb101-2" tabindex="-1"></a>                     <span class="at">stage =</span> <span class="st">&quot;sample&quot;</span>,</span>
+<span id="cb101-3"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb101-3" tabindex="-1"></a>                     <span class="at">iter =</span> <span class="dv">10000</span>, </span>
+<span id="cb101-4"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb101-4" tabindex="-1"></a>                     <span class="at">particles =</span> <span class="dv">100</span></span>
+<span id="cb101-5"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb101-5" tabindex="-1"></a>                     )</span></code></pre></div>
 <p>The <code>sampled</code> object includes all samples from the <code>"sample"</code> stage above and the following elements:</p>
 <ul>
 <li><code>data</code> : the data (data frame) you included in your analysis</li>
@@ -491,12 +538,12 @@ To run the sampler, we use the <code>run_stage</code> function. To execute the <
 <li><code>last_theta_sig_inv</code>: the inverse of the last sample for theta_sig (the variance-covariance matrix).</li>
 </ul>
 <p>You should save your sampled object at this point.</p>
-<div class="sourceCode" id="cb101"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb101-1" title="1"><span class="kw">save</span>(sampled, <span class="dt">file =</span> <span class="st">&quot;wagSamp.RData&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb102"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb102-1"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb102-1" tabindex="-1"></a><span class="fu">save</span>(sampled, <span class="at">file =</span> <span class="st">&quot;wagSamp.RData&quot;</span>)</span></code></pre></div>
 <p>For help with determining an appropriate number of iterations and particles required for your model estimation, see <a href="forstmannChapter.html#estSet">estimation settings for the PMwG sampler</a> in chapter 3.</p>
 </div>
 </div>
-<div id="genppdataWag" class="section level2">
-<h2><span class="header-section-number">4.4</span> Simulating Posterior Predictive Data</h2>
+<div id="genppdataWag" class="section level2 hasAnchor" number="4.4">
+<h2><span class="header-section-number">4.4</span> Simulating Posterior Predictive Data<a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#genppdataWag" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>We can generate posterior predictive data by setting <code>sample = TRUE</code> in our log-likelihood function to generate response times and responses <i>given</i> the posterior parameter estimates for each subject. To do this, we use the <code>gen_pp_data</code> function below, which calls the log-likelihood function embedded in our <code>sampled</code> object. The <code>gen_pp_data</code> function takes four arguments:</p>
 <ul>
 <li><code>sampled</code>: is the object/output from the PMwG sampler</li>
@@ -504,174 +551,174 @@ To run the sampler, we use the <code>run_stage</code> function. To execute the <
 <li><code>ll_func =</code>: the log-likelihood function embedded in the <code>sampled</code> object</li>
 <li><code>rbind.data =</code>: bind the rows of each predictive sample into a rectangular array, or leave as a list.</li>
 </ul>
-<div class="sourceCode" id="cb102"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb102-1" title="1">gen_pp_data &lt;-<span class="st"> </span><span class="cf">function</span> (sampled, n, <span class="dt">ll_func =</span> sampled<span class="op">$</span>ll_func, <span class="dt">rbind.data =</span> <span class="ot">TRUE</span>) {</a>
-<a class="sourceLine" id="cb102-2" title="2">  sampled_stage &lt;-<span class="st"> </span><span class="kw">length</span>(sampled<span class="op">$</span>samples<span class="op">$</span>stage[sampled<span class="op">$</span>samples<span class="op">$</span>stage <span class="op">==</span><span class="st"> &quot;sample&quot;</span>])</a>
-<a class="sourceLine" id="cb102-3" title="3">  iterations &lt;-<span class="st"> </span><span class="kw">round</span>(<span class="kw">seq</span>(<span class="dt">from =</span> (sampled<span class="op">$</span>samples<span class="op">$</span>idx <span class="op">-</span><span class="st"> </span>sampled_stage),</a>
-<a class="sourceLine" id="cb102-4" title="4">                            <span class="dt">to =</span> sampled<span class="op">$</span>samples<span class="op">$</span>idx,</a>
-<a class="sourceLine" id="cb102-5" title="5">                            <span class="dt">length.out =</span> n))</a>
-<a class="sourceLine" id="cb102-6" title="6">  data &lt;-<span class="st"> </span>sampled<span class="op">$</span>data</a>
-<a class="sourceLine" id="cb102-7" title="7">  S &lt;-<span class="st"> </span>sampled<span class="op">$</span>n_subjects</a>
-<a class="sourceLine" id="cb102-8" title="8">  pp_data &lt;-<span class="st"> </span><span class="kw">list</span>()</a>
-<a class="sourceLine" id="cb102-9" title="9">  </a>
-<a class="sourceLine" id="cb102-10" title="10">    <span class="cf">for</span> (s <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>S){</a>
-<a class="sourceLine" id="cb102-11" title="11">       <span class="kw">print</span>(<span class="kw">paste0</span>(<span class="st">&quot;subject&quot;</span>, s))</a>
-<a class="sourceLine" id="cb102-12" title="12">      <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(iterations)) {</a>
-<a class="sourceLine" id="cb102-13" title="13">        <span class="kw">print</span>(i)</a>
-<a class="sourceLine" id="cb102-14" title="14">        x &lt;-<span class="st"> </span>sampled<span class="op">$</span>samples<span class="op">$</span>alpha[, s, iterations[i]]</a>
-<a class="sourceLine" id="cb102-15" title="15">        <span class="kw">names</span>(x) &lt;-<span class="st"> </span>sampled<span class="op">$</span>par_names</a>
-<a class="sourceLine" id="cb102-16" title="16">        out &lt;-<span class="st"> </span><span class="kw">ll_func</span>(<span class="dt">x =</span> x, </a>
-<a class="sourceLine" id="cb102-17" title="17">                       <span class="dt">data =</span> data[data<span class="op">$</span>subject <span class="op">==</span><span class="st"> </span><span class="kw">unique</span>(data<span class="op">$</span>subject)[s], ],</a>
-<a class="sourceLine" id="cb102-18" title="18">                       <span class="dt">sample =</span> <span class="ot">TRUE</span>)</a>
-<a class="sourceLine" id="cb102-19" title="19">        </a>
-<a class="sourceLine" id="cb102-20" title="20">        <span class="cf">if</span> (i <span class="op">==</span><span class="st"> </span><span class="dv">1</span>){</a>
-<a class="sourceLine" id="cb102-21" title="21">          pp_data[[s]] =<span class="st"> </span><span class="kw">cbind</span>(<span class="dt">pp_iter =</span> i, out)</a>
-<a class="sourceLine" id="cb102-22" title="22">        }</a>
-<a class="sourceLine" id="cb102-23" title="23">        <span class="cf">else</span> {</a>
-<a class="sourceLine" id="cb102-24" title="24">          pp_data[[s]] =<span class="st"> </span><span class="kw">rbind</span>(pp_data[[s]],</a>
-<a class="sourceLine" id="cb102-25" title="25">                         <span class="kw">cbind</span>(<span class="dt">pp_iter =</span> i, out))</a>
-<a class="sourceLine" id="cb102-26" title="26">        }</a>
-<a class="sourceLine" id="cb102-27" title="27">      }</a>
-<a class="sourceLine" id="cb102-28" title="28">    }</a>
-<a class="sourceLine" id="cb102-29" title="29">  </a>
-<a class="sourceLine" id="cb102-30" title="30">    <span class="cf">if</span> (rbind.data){</a>
-<a class="sourceLine" id="cb102-31" title="31">    tidy_pp_data &lt;-<span class="st"> </span><span class="kw">do.call</span>(rbind, pp_data)  </a>
-<a class="sourceLine" id="cb102-32" title="32">    <span class="kw">return</span>(tidy_pp_data)</a>
-<a class="sourceLine" id="cb102-33" title="33">    }</a>
-<a class="sourceLine" id="cb102-34" title="34">    <span class="cf">else</span> {</a>
-<a class="sourceLine" id="cb102-35" title="35">      <span class="kw">return</span>(pp_data)</a>
-<a class="sourceLine" id="cb102-36" title="36">    }</a>
-<a class="sourceLine" id="cb102-37" title="37">}</a></code></pre></div>
+<div class="sourceCode" id="cb103"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb103-1"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-1" tabindex="-1"></a>gen_pp_data <span class="ot">&lt;-</span> <span class="cf">function</span> (sampled, n, <span class="at">ll_func =</span> sampled<span class="sc">$</span>ll_func, <span class="at">rbind.data =</span> <span class="cn">TRUE</span>) {</span>
+<span id="cb103-2"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-2" tabindex="-1"></a>  sampled_stage <span class="ot">&lt;-</span> <span class="fu">length</span>(sampled<span class="sc">$</span>samples<span class="sc">$</span>stage[sampled<span class="sc">$</span>samples<span class="sc">$</span>stage <span class="sc">==</span> <span class="st">&quot;sample&quot;</span>])</span>
+<span id="cb103-3"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-3" tabindex="-1"></a>  iterations <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">seq</span>(<span class="at">from =</span> (sampled<span class="sc">$</span>samples<span class="sc">$</span>idx <span class="sc">-</span> sampled_stage),</span>
+<span id="cb103-4"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-4" tabindex="-1"></a>                            <span class="at">to =</span> sampled<span class="sc">$</span>samples<span class="sc">$</span>idx,</span>
+<span id="cb103-5"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-5" tabindex="-1"></a>                            <span class="at">length.out =</span> n))</span>
+<span id="cb103-6"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-6" tabindex="-1"></a>  data <span class="ot">&lt;-</span> sampled<span class="sc">$</span>data</span>
+<span id="cb103-7"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-7" tabindex="-1"></a>  S <span class="ot">&lt;-</span> sampled<span class="sc">$</span>n_subjects</span>
+<span id="cb103-8"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-8" tabindex="-1"></a>  pp_data <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb103-9"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-9" tabindex="-1"></a>  </span>
+<span id="cb103-10"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-10" tabindex="-1"></a>    <span class="cf">for</span> (s <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>S){</span>
+<span id="cb103-11"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-11" tabindex="-1"></a>       <span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">&quot;subject&quot;</span>, s))</span>
+<span id="cb103-12"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-12" tabindex="-1"></a>      <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(iterations)) {</span>
+<span id="cb103-13"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-13" tabindex="-1"></a>        <span class="fu">print</span>(i)</span>
+<span id="cb103-14"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-14" tabindex="-1"></a>        x <span class="ot">&lt;-</span> sampled<span class="sc">$</span>samples<span class="sc">$</span>alpha[, s, iterations[i]]</span>
+<span id="cb103-15"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-15" tabindex="-1"></a>        <span class="fu">names</span>(x) <span class="ot">&lt;-</span> sampled<span class="sc">$</span>par_names</span>
+<span id="cb103-16"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-16" tabindex="-1"></a>        out <span class="ot">&lt;-</span> <span class="fu">ll_func</span>(<span class="at">x =</span> x, </span>
+<span id="cb103-17"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-17" tabindex="-1"></a>                       <span class="at">data =</span> data[data<span class="sc">$</span>subject <span class="sc">==</span> <span class="fu">unique</span>(data<span class="sc">$</span>subject)[s], ],</span>
+<span id="cb103-18"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-18" tabindex="-1"></a>                       <span class="at">sample =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb103-19"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-19" tabindex="-1"></a>        </span>
+<span id="cb103-20"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-20" tabindex="-1"></a>        <span class="cf">if</span> (i <span class="sc">==</span> <span class="dv">1</span>){</span>
+<span id="cb103-21"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-21" tabindex="-1"></a>          pp_data[[s]] <span class="ot">=</span> <span class="fu">cbind</span>(<span class="at">pp_iter =</span> i, out)</span>
+<span id="cb103-22"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-22" tabindex="-1"></a>        }</span>
+<span id="cb103-23"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-23" tabindex="-1"></a>        <span class="cf">else</span> {</span>
+<span id="cb103-24"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-24" tabindex="-1"></a>          pp_data[[s]] <span class="ot">=</span> <span class="fu">rbind</span>(pp_data[[s]],</span>
+<span id="cb103-25"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-25" tabindex="-1"></a>                         <span class="fu">cbind</span>(<span class="at">pp_iter =</span> i, out))</span>
+<span id="cb103-26"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-26" tabindex="-1"></a>        }</span>
+<span id="cb103-27"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-27" tabindex="-1"></a>      }</span>
+<span id="cb103-28"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-28" tabindex="-1"></a>    }</span>
+<span id="cb103-29"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-29" tabindex="-1"></a>  </span>
+<span id="cb103-30"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-30" tabindex="-1"></a>    <span class="cf">if</span> (rbind.data){</span>
+<span id="cb103-31"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-31" tabindex="-1"></a>    tidy_pp_data <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, pp_data)  </span>
+<span id="cb103-32"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-32" tabindex="-1"></a>    <span class="fu">return</span>(tidy_pp_data)</span>
+<span id="cb103-33"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-33" tabindex="-1"></a>    }</span>
+<span id="cb103-34"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-34" tabindex="-1"></a>    <span class="cf">else</span> {</span>
+<span id="cb103-35"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-35" tabindex="-1"></a>      <span class="fu">return</span>(pp_data)</span>
+<span id="cb103-36"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-36" tabindex="-1"></a>    }</span>
+<span id="cb103-37"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb103-37" tabindex="-1"></a>}</span></code></pre></div>
 <p>We generate 20 posterior predictive data samples.</p>
-<div class="sourceCode" id="cb103"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb103-1" title="1">ppdataWag &lt;-<span class="st"> </span><span class="kw">gen_pp_data</span>(sampled, <span class="dt">n =</span> <span class="dv">20</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb104-1"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb104-1" tabindex="-1"></a>ppdataWag <span class="ot">&lt;-</span> <span class="fu">gen_pp_data</span>(sampled, <span class="at">n =</span> <span class="dv">20</span>)</span></code></pre></div>
 <p>The returned data is a matrix with the same dimensions and names as <code>wagenmakers</code> – with the addition of <code>pp_iter</code> column. <code>pp_iter</code> is the iteration of the posterior sample (in this example <code>i = 1:20</code>) for the corresponding subject. We now have two matrices based on samples from either model. The response (<code>resp</code>) and response time (<code>rt</code>) columns now contain posterior predictive data.</p>
 <p>In the next section, we will use the posterior predictive data to assess descriptive adequacy.</p>
-<div id="assessing-descriptive-adequacy-goodness-of-fit-1" class="section level3">
-<h3><span class="header-section-number">4.4.1</span> Assessing Descriptive Adequacy (goodness of fit)</h3>
+<div id="assessing-descriptive-adequacy-goodness-of-fit-1" class="section level3 hasAnchor" number="4.4.1">
+<h3><span class="header-section-number">4.4.1</span> Assessing Descriptive Adequacy (goodness of fit)<a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#assessing-descriptive-adequacy-goodness-of-fit-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Now we will plot the posterior predictive data against the real data. In the section below we compare observed RTs against predicted RTs, which is common for RT modelling; however, the code could also be modified for different types of data.</p>
-<div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb104-1" title="1"><span class="co"># Recode condition column in order to calculate accuracy</span></a>
-<a class="sourceLine" id="cb104-2" title="2"><span class="co"># Data</span></a>
-<a class="sourceLine" id="cb104-3" title="3">wagenmakers<span class="op">$</span>condition &lt;-<span class="st"> </span><span class="kw">recode</span>(wagenmakers<span class="op">$</span>condition, <span class="dt">w =</span> <span class="st">&quot;W&quot;</span>, <span class="dt">nw =</span><span class="st">&quot;NW&quot;</span> )</a>
-<a class="sourceLine" id="cb104-4" title="4">wagenmakers<span class="op">$</span>correct &lt;-<span class="st"> </span>wagenmakers<span class="op">$</span>correct <span class="op">-</span><span class="st"> </span><span class="dv">1</span></a>
-<a class="sourceLine" id="cb104-5" title="5"><span class="co"># Posterior predictive data</span></a>
-<a class="sourceLine" id="cb104-6" title="6">ppdataWag<span class="op">$</span>condition &lt;-<span class="st"> </span><span class="kw">recode</span>(ppdataWag<span class="op">$</span>condition, <span class="dt">w =</span> <span class="st">&quot;W&quot;</span>, <span class="dt">nw =</span><span class="st">&quot;NW&quot;</span> )</a>
-<a class="sourceLine" id="cb104-7" title="7">ppdataWag<span class="op">$</span>binary_stim &lt;-<span class="st"> </span><span class="kw">ifelse</span>(ppdataWag<span class="op">$</span>stim <span class="op">==</span><span class="st">&quot;nw&quot;</span>, <span class="dv">1</span>, <span class="dv">2</span>)</a>
-<a class="sourceLine" id="cb104-8" title="8">ppdataWag<span class="op">$</span>correct &lt;-<span class="st"> </span><span class="kw">ifelse</span>(ppdataWag<span class="op">$</span>binary_stim <span class="op">==</span><span class="st"> </span>ppdataWag<span class="op">$</span>response, <span class="dv">1</span>, <span class="dv">0</span>)</a>
-<a class="sourceLine" id="cb104-9" title="9"></a>
-<a class="sourceLine" id="cb104-10" title="10"><span class="co"># Subject x condition Q25, median and Q75 respone time + mean accuracy </span></a>
-<a class="sourceLine" id="cb104-11" title="11"><span class="co"># Wagenmakers dataset</span></a>
-<a class="sourceLine" id="cb104-12" title="12">pqWag &lt;-<span class="st"> </span>wagenmakers <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb104-13" title="13"><span class="st">  </span><span class="kw">group_by</span>(subject, condition, stim) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb104-14" title="14"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">Q25 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.25</span>),</a>
-<a class="sourceLine" id="cb104-15" title="15">            <span class="dt">median =</span> <span class="kw">median</span>(rt), </a>
-<a class="sourceLine" id="cb104-16" title="16">            <span class="dt">Q75 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.75</span>),</a>
-<a class="sourceLine" id="cb104-17" title="17">            <span class="dt">acc =</span>  <span class="kw">mean</span>(correct),</a>
-<a class="sourceLine" id="cb104-18" title="18">            <span class="dt">.groups =</span> <span class="st">&quot;keep&quot;</span></a>
-<a class="sourceLine" id="cb104-19" title="19">            )</a>
-<a class="sourceLine" id="cb104-20" title="20"></a>
-<a class="sourceLine" id="cb104-21" title="21"><span class="co"># Subject x condition Q25, median and Q75 respone time for posterior predictive data</span></a>
-<a class="sourceLine" id="cb104-22" title="22">pp_pqWag &lt;-<span class="st"> </span>ppdataWag <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb104-23" title="23"><span class="st">  </span><span class="kw">group_by</span>(condition, pp_iter, subject, stim) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb104-24" title="24"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">Q25 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.25</span>),</a>
-<a class="sourceLine" id="cb104-25" title="25">            <span class="dt">median =</span> <span class="kw">median</span>(rt), </a>
-<a class="sourceLine" id="cb104-26" title="26">            <span class="dt">Q75 =</span> <span class="kw">quantile</span>(rt, <span class="dt">prob =</span> <span class="fl">0.75</span>),</a>
-<a class="sourceLine" id="cb104-27" title="27">            <span class="dt">acc =</span> <span class="kw">mean</span>(correct),</a>
-<a class="sourceLine" id="cb104-28" title="28">            <span class="dt">.groups =</span> <span class="st">&quot;keep&quot;</span></a>
-<a class="sourceLine" id="cb104-29" title="29">            )</a>
-<a class="sourceLine" id="cb104-30" title="30"></a>
-<a class="sourceLine" id="cb104-31" title="31"><span class="co"># Combine data with posterior predictive data and add data source</span></a>
-<a class="sourceLine" id="cb104-32" title="32">pqWag &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(<span class="kw">cbind</span>(<span class="dt">src =</span> <span class="kw">rep</span>(<span class="st">&quot;data&quot;</span>, <span class="kw">nrow</span>(pqWag)), pqWag),</a>
-<a class="sourceLine" id="cb104-33" title="33">                <span class="kw">cbind</span>(<span class="dt">src =</span> <span class="kw">rep</span>(<span class="st">&quot;model&quot;</span>, <span class="kw">nrow</span>(pp_pqWag)), pp_pqWag)</a>
-<a class="sourceLine" id="cb104-34" title="34">                )</a>
-<a class="sourceLine" id="cb104-35" title="35"></a>
-<a class="sourceLine" id="cb104-36" title="36"><span class="co"># Mean Q25, median, Q4 and accuracy for data and posterior predictive data</span></a>
-<a class="sourceLine" id="cb104-37" title="37">av_pqWag &lt;-<span class="st"> </span>pqWag <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb104-38" title="38"><span class="st">  </span><span class="kw">group_by</span>(src, condition, stim) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb104-39" title="39"><span class="st">  </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(Q25<span class="op">:</span>acc), mean)</a>
-<a class="sourceLine" id="cb104-40" title="40"></a>
-<a class="sourceLine" id="cb104-41" title="41"><span class="co"># Variances of posterior samples</span></a>
-<a class="sourceLine" id="cb104-42" title="42">pp_varWag &lt;-<span class="st"> </span>pqWag <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb104-43" title="43"><span class="st">  </span><span class="kw">filter</span>(src <span class="op">!=</span><span class="st"> &quot;data&quot;</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb104-44" title="44"><span class="st">  </span><span class="kw">group_by</span>(condition, pp_iter, src, stim) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb104-45" title="45"><span class="st">  </span><span class="kw">summarise_at</span>(<span class="kw">vars</span>(Q25<span class="op">:</span>acc), mean)</a>
-<a class="sourceLine" id="cb104-46" title="46"></a>
-<a class="sourceLine" id="cb104-47" title="47"><span class="co"># Convert source column to a factor and add labels</span></a>
-<a class="sourceLine" id="cb104-48" title="48">av_pqWag<span class="op">$</span>src &lt;-<span class="st"> </span><span class="kw">factor</span>(av_pqWag<span class="op">$</span>src,</a>
-<a class="sourceLine" id="cb104-49" title="49">                    <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;model&quot;</span>, <span class="st">&quot;data&quot;</span>),</a>
-<a class="sourceLine" id="cb104-50" title="50">                    <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;model&quot;</span>, <span class="st">&quot;data&quot;</span>)</a>
-<a class="sourceLine" id="cb104-51" title="51">                    )</a>
-<a class="sourceLine" id="cb104-52" title="52"></a>
-<a class="sourceLine" id="cb104-53" title="53">pp_varsrcWag &lt;-<span class="st"> </span><span class="kw">factor</span>(pp_varWag<span class="op">$</span>src,</a>
-<a class="sourceLine" id="cb104-54" title="54">                    <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;model&quot;</span>, <span class="st">&quot;data&quot;</span>),</a>
-<a class="sourceLine" id="cb104-55" title="55">                    <span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;model&quot;</span>, <span class="st">&quot;data&quot;</span>)</a>
-<a class="sourceLine" id="cb104-56" title="56">                    )</a>
-<a class="sourceLine" id="cb104-57" title="57"><span class="co"># Rename conditions</span></a>
-<a class="sourceLine" id="cb104-58" title="58"><span class="kw">levels</span>(av_pqWag<span class="op">$</span>condition) &lt;-</a>
-<a class="sourceLine" id="cb104-59" title="59"><span class="st">  </span><span class="kw">levels</span>(pp_varWag<span class="op">$</span>condition) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;75% </span><span class="ch">\n</span><span class="st">Non-Word </span><span class="ch">\n</span><span class="st">stimuli&quot;</span>,<span class="st">&quot;75% </span><span class="ch">\n</span><span class="st">Word stimuli&quot;</span>)</a>
-<a class="sourceLine" id="cb104-60" title="60"><span class="co"># Change plot stimuli labels</span></a>
-<a class="sourceLine" id="cb104-61" title="61"></a>
-<a class="sourceLine" id="cb104-62" title="62"></a>
-<a class="sourceLine" id="cb104-63" title="63"></a>
-<a class="sourceLine" id="cb104-64" title="64"><span class="co"># Convert rt to milliseconds and acc to percentage</span></a>
-<a class="sourceLine" id="cb104-65" title="65">av_pqWag<span class="op">$</span>acc &lt;-<span class="st"> </span><span class="dv">100</span> <span class="op">*</span><span class="st"> </span>av_pqWag<span class="op">$</span>acc</a>
-<a class="sourceLine" id="cb104-66" title="66">pp_varWag<span class="op">$</span>acc &lt;-<span class="st"> </span><span class="dv">100</span> <span class="op">*</span><span class="st"> </span>pp_varWag<span class="op">$</span>acc</a>
-<a class="sourceLine" id="cb104-67" title="67">av_pqWag[, <span class="kw">c</span>(<span class="st">&quot;Q25&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q75&quot;</span>)] &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="op">*</span><span class="st"> </span>av_pqWag[, <span class="kw">c</span>(<span class="st">&quot;Q25&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q75&quot;</span>)]</a>
-<a class="sourceLine" id="cb104-68" title="68">pp_varWag[, <span class="kw">c</span>(<span class="st">&quot;Q25&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q75&quot;</span>)] &lt;-<span class="st"> </span><span class="dv">1000</span> <span class="op">*</span><span class="st"> </span>pp_varWag[, <span class="kw">c</span>(<span class="st">&quot;Q25&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q75&quot;</span>)]</a></code></pre></div>
+<div class="sourceCode" id="cb105"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb105-1"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-1" tabindex="-1"></a><span class="co"># Recode condition column in order to calculate accuracy</span></span>
+<span id="cb105-2"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-2" tabindex="-1"></a><span class="co"># Data</span></span>
+<span id="cb105-3"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-3" tabindex="-1"></a>wagenmakers<span class="sc">$</span>condition <span class="ot">&lt;-</span> <span class="fu">recode</span>(wagenmakers<span class="sc">$</span>condition, <span class="at">w =</span> <span class="st">&quot;W&quot;</span>, <span class="at">nw =</span><span class="st">&quot;NW&quot;</span> )</span>
+<span id="cb105-4"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-4" tabindex="-1"></a>wagenmakers<span class="sc">$</span>correct <span class="ot">&lt;-</span> wagenmakers<span class="sc">$</span>correct <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb105-5"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-5" tabindex="-1"></a><span class="co"># Posterior predictive data</span></span>
+<span id="cb105-6"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-6" tabindex="-1"></a>ppdataWag<span class="sc">$</span>condition <span class="ot">&lt;-</span> <span class="fu">recode</span>(ppdataWag<span class="sc">$</span>condition, <span class="at">w =</span> <span class="st">&quot;W&quot;</span>, <span class="at">nw =</span><span class="st">&quot;NW&quot;</span> )</span>
+<span id="cb105-7"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-7" tabindex="-1"></a>ppdataWag<span class="sc">$</span>binary_stim <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(ppdataWag<span class="sc">$</span>stim <span class="sc">==</span><span class="st">&quot;nw&quot;</span>, <span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb105-8"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-8" tabindex="-1"></a>ppdataWag<span class="sc">$</span>correct <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(ppdataWag<span class="sc">$</span>binary_stim <span class="sc">==</span> ppdataWag<span class="sc">$</span>response, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb105-9"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-9" tabindex="-1"></a></span>
+<span id="cb105-10"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-10" tabindex="-1"></a><span class="co"># Subject x condition Q25, median and Q75 response time + mean accuracy </span></span>
+<span id="cb105-11"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-11" tabindex="-1"></a><span class="co"># Wagenmakers dataset</span></span>
+<span id="cb105-12"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-12" tabindex="-1"></a>pqWag <span class="ot">&lt;-</span> wagenmakers <span class="sc">%&gt;%</span> </span>
+<span id="cb105-13"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-13" tabindex="-1"></a>  <span class="fu">group_by</span>(subject, condition, stim) <span class="sc">%&gt;%</span> </span>
+<span id="cb105-14"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-14" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Q25 =</span> <span class="fu">quantile</span>(rt, <span class="at">prob =</span> <span class="fl">0.25</span>),</span>
+<span id="cb105-15"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-15" tabindex="-1"></a>            <span class="at">median =</span> <span class="fu">median</span>(rt), </span>
+<span id="cb105-16"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-16" tabindex="-1"></a>            <span class="at">Q75 =</span> <span class="fu">quantile</span>(rt, <span class="at">prob =</span> <span class="fl">0.75</span>),</span>
+<span id="cb105-17"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-17" tabindex="-1"></a>            <span class="at">acc =</span>  <span class="fu">mean</span>(correct),</span>
+<span id="cb105-18"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-18" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">&quot;keep&quot;</span></span>
+<span id="cb105-19"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-19" tabindex="-1"></a>            )</span>
+<span id="cb105-20"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-20" tabindex="-1"></a></span>
+<span id="cb105-21"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-21" tabindex="-1"></a><span class="co"># Subject x condition Q25, median and Q75 response time for posterior predictive data</span></span>
+<span id="cb105-22"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-22" tabindex="-1"></a>pp_pqWag <span class="ot">&lt;-</span> ppdataWag <span class="sc">%&gt;%</span></span>
+<span id="cb105-23"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-23" tabindex="-1"></a>  <span class="fu">group_by</span>(condition, pp_iter, subject, stim) <span class="sc">%&gt;%</span></span>
+<span id="cb105-24"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-24" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Q25 =</span> <span class="fu">quantile</span>(rt, <span class="at">prob =</span> <span class="fl">0.25</span>),</span>
+<span id="cb105-25"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-25" tabindex="-1"></a>            <span class="at">median =</span> <span class="fu">median</span>(rt), </span>
+<span id="cb105-26"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-26" tabindex="-1"></a>            <span class="at">Q75 =</span> <span class="fu">quantile</span>(rt, <span class="at">prob =</span> <span class="fl">0.75</span>),</span>
+<span id="cb105-27"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-27" tabindex="-1"></a>            <span class="at">acc =</span> <span class="fu">mean</span>(correct),</span>
+<span id="cb105-28"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-28" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">&quot;keep&quot;</span></span>
+<span id="cb105-29"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-29" tabindex="-1"></a>            )</span>
+<span id="cb105-30"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-30" tabindex="-1"></a></span>
+<span id="cb105-31"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-31" tabindex="-1"></a><span class="co"># Combine data with posterior predictive data and add data source</span></span>
+<span id="cb105-32"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-32" tabindex="-1"></a>pqWag <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(<span class="fu">cbind</span>(<span class="at">src =</span> <span class="fu">rep</span>(<span class="st">&quot;data&quot;</span>, <span class="fu">nrow</span>(pqWag)), pqWag),</span>
+<span id="cb105-33"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-33" tabindex="-1"></a>                <span class="fu">cbind</span>(<span class="at">src =</span> <span class="fu">rep</span>(<span class="st">&quot;model&quot;</span>, <span class="fu">nrow</span>(pp_pqWag)), pp_pqWag)</span>
+<span id="cb105-34"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-34" tabindex="-1"></a>                )</span>
+<span id="cb105-35"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-35" tabindex="-1"></a></span>
+<span id="cb105-36"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-36" tabindex="-1"></a><span class="co"># Mean Q25, median, Q4 and accuracy for data and posterior predictive data</span></span>
+<span id="cb105-37"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-37" tabindex="-1"></a>av_pqWag <span class="ot">&lt;-</span> pqWag <span class="sc">%&gt;%</span></span>
+<span id="cb105-38"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-38" tabindex="-1"></a>  <span class="fu">group_by</span>(src, condition, stim) <span class="sc">%&gt;%</span></span>
+<span id="cb105-39"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-39" tabindex="-1"></a>  <span class="fu">summarise_at</span>(<span class="fu">vars</span>(Q25<span class="sc">:</span>acc), mean)</span>
+<span id="cb105-40"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-40" tabindex="-1"></a></span>
+<span id="cb105-41"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-41" tabindex="-1"></a><span class="co"># Variances of posterior samples</span></span>
+<span id="cb105-42"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-42" tabindex="-1"></a>pp_varWag <span class="ot">&lt;-</span> pqWag <span class="sc">%&gt;%</span></span>
+<span id="cb105-43"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-43" tabindex="-1"></a>  <span class="fu">filter</span>(src <span class="sc">!=</span> <span class="st">&quot;data&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb105-44"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-44" tabindex="-1"></a>  <span class="fu">group_by</span>(condition, pp_iter, src, stim) <span class="sc">%&gt;%</span></span>
+<span id="cb105-45"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-45" tabindex="-1"></a>  <span class="fu">summarise_at</span>(<span class="fu">vars</span>(Q25<span class="sc">:</span>acc), mean)</span>
+<span id="cb105-46"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-46" tabindex="-1"></a></span>
+<span id="cb105-47"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-47" tabindex="-1"></a><span class="co"># Convert source column to a factor and add labels</span></span>
+<span id="cb105-48"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-48" tabindex="-1"></a>av_pqWag<span class="sc">$</span>src <span class="ot">&lt;-</span> <span class="fu">factor</span>(av_pqWag<span class="sc">$</span>src,</span>
+<span id="cb105-49"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-49" tabindex="-1"></a>                    <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;model&quot;</span>, <span class="st">&quot;data&quot;</span>),</span>
+<span id="cb105-50"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-50" tabindex="-1"></a>                    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;model&quot;</span>, <span class="st">&quot;data&quot;</span>)</span>
+<span id="cb105-51"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-51" tabindex="-1"></a>                    )</span>
+<span id="cb105-52"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-52" tabindex="-1"></a></span>
+<span id="cb105-53"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-53" tabindex="-1"></a>pp_varsrcWag <span class="ot">&lt;-</span> <span class="fu">factor</span>(pp_varWag<span class="sc">$</span>src,</span>
+<span id="cb105-54"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-54" tabindex="-1"></a>                    <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;model&quot;</span>, <span class="st">&quot;data&quot;</span>),</span>
+<span id="cb105-55"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-55" tabindex="-1"></a>                    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;model&quot;</span>, <span class="st">&quot;data&quot;</span>)</span>
+<span id="cb105-56"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-56" tabindex="-1"></a>                    )</span>
+<span id="cb105-57"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-57" tabindex="-1"></a><span class="co"># Rename conditions</span></span>
+<span id="cb105-58"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-58" tabindex="-1"></a><span class="fu">levels</span>(av_pqWag<span class="sc">$</span>condition) <span class="ot">&lt;-</span></span>
+<span id="cb105-59"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-59" tabindex="-1"></a>  <span class="fu">levels</span>(pp_varWag<span class="sc">$</span>condition) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;75% </span><span class="sc">\n</span><span class="st">Non-Word </span><span class="sc">\n</span><span class="st">stimuli&quot;</span>,<span class="st">&quot;75% </span><span class="sc">\n</span><span class="st">Word stimuli&quot;</span>)</span>
+<span id="cb105-60"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-60" tabindex="-1"></a><span class="co"># Change plot stimuli labels</span></span>
+<span id="cb105-61"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-61" tabindex="-1"></a></span>
+<span id="cb105-62"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-62" tabindex="-1"></a></span>
+<span id="cb105-63"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-63" tabindex="-1"></a></span>
+<span id="cb105-64"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-64" tabindex="-1"></a><span class="co"># Convert rt to milliseconds and accuracy to percentage</span></span>
+<span id="cb105-65"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-65" tabindex="-1"></a>av_pqWag<span class="sc">$</span>acc <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="sc">*</span> av_pqWag<span class="sc">$</span>acc</span>
+<span id="cb105-66"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-66" tabindex="-1"></a>pp_varWag<span class="sc">$</span>acc <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="sc">*</span> pp_varWag<span class="sc">$</span>acc</span>
+<span id="cb105-67"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-67" tabindex="-1"></a>av_pqWag[, <span class="fu">c</span>(<span class="st">&quot;Q25&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q75&quot;</span>)] <span class="ot">&lt;-</span> <span class="dv">1000</span> <span class="sc">*</span> av_pqWag[, <span class="fu">c</span>(<span class="st">&quot;Q25&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q75&quot;</span>)]</span>
+<span id="cb105-68"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb105-68" tabindex="-1"></a>pp_varWag[, <span class="fu">c</span>(<span class="st">&quot;Q25&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q75&quot;</span>)] <span class="ot">&lt;-</span> <span class="dv">1000</span> <span class="sc">*</span> pp_varWag[, <span class="fu">c</span>(<span class="st">&quot;Q25&quot;</span>, <span class="st">&quot;median&quot;</span>, <span class="st">&quot;Q75&quot;</span>)]</span></code></pre></div>
 <p><img src="PMwG-Sampler-Tutorial_files/figure-html/ppdataplotarrgWag-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 </div>
-<div id="model-comparison-via-dic" class="section level2">
-<h2><span class="header-section-number">4.5</span> Model Comparison via DIC</h2>
+<div id="model-comparison-via-dic" class="section level2 hasAnchor" number="4.5">
+<h2><span class="header-section-number">4.5</span> Model Comparison via DIC<a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#model-comparison-via-dic" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Deviance information criterion (DIC) can be used as a metric to compare two models, and assess which model fits the data best, with penalties applied to model complexity. <b>Note:</b> we recommend using marginal likelihood (Bayes factors) instead of DIC for model selection. For more information, see this paper on <a href="https://link.springer.com/article/10.3758/s13428-020-01348-w">estimating the Marginal Likelihood via importance sampling</a>.</p>
 <p>In this chapter we have covered one LBA model, however; we have included a DIC function and DIC value for completeness. To see an example where DIC is used as a model selection technique, see <a href="forstmannChapter.html#forstDIC">chapter 3</a>.</p>
-<div class="sourceCode" id="cb105"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb105-1" title="1">pmwg_DIC &lt;-<span class="st"> </span><span class="cf">function</span>(sampled, <span class="dt">pD =</span> <span class="ot">FALSE</span>){</a>
-<a class="sourceLine" id="cb105-2" title="2">  <span class="co"># Identify number of subjects</span></a>
-<a class="sourceLine" id="cb105-3" title="3">  nsubj &lt;-<span class="st"> </span><span class="kw">length</span>(<span class="kw">unique</span>(sampled<span class="op">$</span>data<span class="op">$</span>subject))</a>
-<a class="sourceLine" id="cb105-4" title="4"> </a>
-<a class="sourceLine" id="cb105-5" title="5">  <span class="co"># Mean log-likelihood of the overall (sampled-stage) model, for each subject</span></a>
-<a class="sourceLine" id="cb105-6" title="6">  mean_ll &lt;-<span class="st"> </span><span class="kw">apply</span>(sampled<span class="op">$</span>samples<span class="op">$</span>subj_ll[, sampled<span class="op">$</span>samples<span class="op">$</span>stage <span class="op">==</span><span class="st"> &quot;sample&quot;</span>],</a>
-<a class="sourceLine" id="cb105-7" title="7">                   <span class="dv">1</span>,</a>
-<a class="sourceLine" id="cb105-8" title="8">                   mean)</a>
-<a class="sourceLine" id="cb105-9" title="9"> </a>
-<a class="sourceLine" id="cb105-10" title="10">  <span class="co"># Mean of each parameter across iterations.</span></a>
-<a class="sourceLine" id="cb105-11" title="11">  <span class="co"># Keep dimensions for parameters and subjects</span></a>
-<a class="sourceLine" id="cb105-12" title="12">  mean_pars &lt;-<span class="st"> </span><span class="kw">t</span>(<span class="kw">apply</span>(sampled<span class="op">$</span>samples<span class="op">$</span>alpha[,, sampled<span class="op">$</span>samples<span class="op">$</span>stage <span class="op">==</span><span class="st"> &quot;sample&quot;</span>],</a>
-<a class="sourceLine" id="cb105-13" title="13">                       <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>,</a>
-<a class="sourceLine" id="cb105-14" title="14">                       mean))</a>
-<a class="sourceLine" id="cb105-15" title="15"></a>
-<a class="sourceLine" id="cb105-16" title="16"> </a>
-<a class="sourceLine" id="cb105-17" title="17">  <span class="co"># Name &#39;mean_pars&#39; so it can be used by the log_like function</span></a>
-<a class="sourceLine" id="cb105-18" title="18">  <span class="kw">colnames</span>(mean_pars) &lt;-<span class="st"> </span>sampled<span class="op">$</span>par_names</a>
-<a class="sourceLine" id="cb105-19" title="19"> </a>
-<a class="sourceLine" id="cb105-20" title="20">  <span class="co"># log-likelihood for each subject using their mean parameter vector</span></a>
-<a class="sourceLine" id="cb105-21" title="21">  mean_pars_ll &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="kw">ncol</span>(mean_pars))</a>
-<a class="sourceLine" id="cb105-22" title="22">  </a>
-<a class="sourceLine" id="cb105-23" title="23">  data &lt;-<span class="st"> </span><span class="kw">transform</span>(sampled<span class="op">$</span>data, </a>
-<a class="sourceLine" id="cb105-24" title="24">                    <span class="dt">subject =</span> <span class="kw">match</span>(subject, <span class="kw">unique</span>(subject)))</a>
-<a class="sourceLine" id="cb105-25" title="25">  </a>
-<a class="sourceLine" id="cb105-26" title="26">  <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span>nsubj) {</a>
-<a class="sourceLine" id="cb105-27" title="27">    mean_pars_ll[j] &lt;-<span class="st"> </span>sampled<span class="op">$</span><span class="kw">ll_func</span>(mean_pars[j, ],</a>
-<a class="sourceLine" id="cb105-28" title="28">                                       <span class="dt">data =</span> data[data<span class="op">$</span>subject <span class="op">==</span><span class="st"> </span>j,],</a>
-<a class="sourceLine" id="cb105-29" title="29">                                       <span class="dt">sample =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb105-30" title="30">  }</a>
-<a class="sourceLine" id="cb105-31" title="31"> </a>
-<a class="sourceLine" id="cb105-32" title="32">  <span class="co"># Effective number of parameters</span></a>
-<a class="sourceLine" id="cb105-33" title="33">  pD &lt;-<span class="st"> </span><span class="kw">sum</span>(<span class="op">-</span><span class="dv">2</span> <span class="op">*</span><span class="st"> </span>mean_ll <span class="op">+</span><span class="st"> </span><span class="dv">2</span> <span class="op">*</span><span class="st"> </span>mean_pars_ll)</a>
-<a class="sourceLine" id="cb105-34" title="34"> </a>
-<a class="sourceLine" id="cb105-35" title="35">  <span class="co"># Deviance Information Criterion</span></a>
-<a class="sourceLine" id="cb105-36" title="36">  DIC &lt;-<span class="st"> </span><span class="kw">sum</span>(<span class="op">-</span><span class="dv">4</span> <span class="op">*</span><span class="st"> </span>mean_ll <span class="op">+</span><span class="st"> </span><span class="dv">2</span> <span class="op">*</span><span class="st"> </span>mean_pars_ll)</a>
-<a class="sourceLine" id="cb105-37" title="37"> </a>
-<a class="sourceLine" id="cb105-38" title="38">  <span class="cf">if</span> (pD){</a>
-<a class="sourceLine" id="cb105-39" title="39">    <span class="kw">return</span>(<span class="kw">c</span>(<span class="st">&quot;DIC &quot;</span> =<span class="st"> </span>DIC, <span class="st">&quot; Effective parameters&quot;</span> =<span class="st"> </span>pD))</a>
-<a class="sourceLine" id="cb105-40" title="40">  }<span class="cf">else</span>{</a>
-<a class="sourceLine" id="cb105-41" title="41">    <span class="kw">return</span>(DIC)</a>
-<a class="sourceLine" id="cb105-42" title="42">  }</a>
-<a class="sourceLine" id="cb105-43" title="43">   </a>
-<a class="sourceLine" id="cb105-44" title="44">}</a></code></pre></div>
+<div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb106-1"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-1" tabindex="-1"></a>pmwg_DIC <span class="ot">&lt;-</span> <span class="cf">function</span>(sampled, <span class="at">pD =</span> <span class="cn">FALSE</span>){</span>
+<span id="cb106-2"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-2" tabindex="-1"></a>  <span class="co"># Identify number of subjects</span></span>
+<span id="cb106-3"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-3" tabindex="-1"></a>  nsubj <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">unique</span>(sampled<span class="sc">$</span>data<span class="sc">$</span>subject))</span>
+<span id="cb106-4"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-4" tabindex="-1"></a> </span>
+<span id="cb106-5"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-5" tabindex="-1"></a>  <span class="co"># Mean log-likelihood of the overall (sampled-stage) model, for each subject</span></span>
+<span id="cb106-6"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-6" tabindex="-1"></a>  mean_ll <span class="ot">&lt;-</span> <span class="fu">apply</span>(sampled<span class="sc">$</span>samples<span class="sc">$</span>subj_ll[, sampled<span class="sc">$</span>samples<span class="sc">$</span>stage <span class="sc">==</span> <span class="st">&quot;sample&quot;</span>],</span>
+<span id="cb106-7"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-7" tabindex="-1"></a>                   <span class="dv">1</span>,</span>
+<span id="cb106-8"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-8" tabindex="-1"></a>                   mean)</span>
+<span id="cb106-9"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-9" tabindex="-1"></a> </span>
+<span id="cb106-10"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-10" tabindex="-1"></a>  <span class="co"># Mean of each parameter across iterations.</span></span>
+<span id="cb106-11"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-11" tabindex="-1"></a>  <span class="co"># Keep dimensions for parameters and subjects</span></span>
+<span id="cb106-12"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-12" tabindex="-1"></a>  mean_pars <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">apply</span>(sampled<span class="sc">$</span>samples<span class="sc">$</span>alpha[,, sampled<span class="sc">$</span>samples<span class="sc">$</span>stage <span class="sc">==</span> <span class="st">&quot;sample&quot;</span>],</span>
+<span id="cb106-13"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-13" tabindex="-1"></a>                       <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>,</span>
+<span id="cb106-14"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-14" tabindex="-1"></a>                       mean))</span>
+<span id="cb106-15"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-15" tabindex="-1"></a></span>
+<span id="cb106-16"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-16" tabindex="-1"></a> </span>
+<span id="cb106-17"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-17" tabindex="-1"></a>  <span class="co"># Name &#39;mean_pars&#39; so it can be used by the log_like function</span></span>
+<span id="cb106-18"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-18" tabindex="-1"></a>  <span class="fu">colnames</span>(mean_pars) <span class="ot">&lt;-</span> sampled<span class="sc">$</span>par_names</span>
+<span id="cb106-19"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-19" tabindex="-1"></a> </span>
+<span id="cb106-20"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-20" tabindex="-1"></a>  <span class="co"># log-likelihood for each subject using their mean parameter vector</span></span>
+<span id="cb106-21"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-21" tabindex="-1"></a>  mean_pars_ll <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="fu">ncol</span>(mean_pars))</span>
+<span id="cb106-22"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-22" tabindex="-1"></a>  </span>
+<span id="cb106-23"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-23" tabindex="-1"></a>  data <span class="ot">&lt;-</span> <span class="fu">transform</span>(sampled<span class="sc">$</span>data, </span>
+<span id="cb106-24"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-24" tabindex="-1"></a>                    <span class="at">subject =</span> <span class="fu">match</span>(subject, <span class="fu">unique</span>(subject)))</span>
+<span id="cb106-25"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-25" tabindex="-1"></a>  </span>
+<span id="cb106-26"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-26" tabindex="-1"></a>  <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>nsubj) {</span>
+<span id="cb106-27"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-27" tabindex="-1"></a>    mean_pars_ll[j] <span class="ot">&lt;-</span> sampled<span class="sc">$</span><span class="fu">ll_func</span>(mean_pars[j, ],</span>
+<span id="cb106-28"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-28" tabindex="-1"></a>                                       <span class="at">data =</span> data[data<span class="sc">$</span>subject <span class="sc">==</span> j,],</span>
+<span id="cb106-29"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-29" tabindex="-1"></a>                                       <span class="at">sample =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb106-30"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-30" tabindex="-1"></a>  }</span>
+<span id="cb106-31"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-31" tabindex="-1"></a> </span>
+<span id="cb106-32"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-32" tabindex="-1"></a>  <span class="co"># Effective number of parameters</span></span>
+<span id="cb106-33"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-33" tabindex="-1"></a>  pD <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="sc">-</span><span class="dv">2</span> <span class="sc">*</span> mean_ll <span class="sc">+</span> <span class="dv">2</span> <span class="sc">*</span> mean_pars_ll)</span>
+<span id="cb106-34"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-34" tabindex="-1"></a> </span>
+<span id="cb106-35"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-35" tabindex="-1"></a>  <span class="co"># Deviance Information Criterion</span></span>
+<span id="cb106-36"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-36" tabindex="-1"></a>  DIC <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="sc">-</span><span class="dv">4</span> <span class="sc">*</span> mean_ll <span class="sc">+</span> <span class="dv">2</span> <span class="sc">*</span> mean_pars_ll)</span>
+<span id="cb106-37"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-37" tabindex="-1"></a> </span>
+<span id="cb106-38"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-38" tabindex="-1"></a>  <span class="cf">if</span> (pD){</span>
+<span id="cb106-39"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-39" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">c</span>(<span class="st">&quot;DIC &quot;</span> <span class="ot">=</span> DIC, <span class="st">&quot; Effective parameters&quot;</span> <span class="ot">=</span> pD))</span>
+<span id="cb106-40"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-40" tabindex="-1"></a>  }<span class="cf">else</span>{</span>
+<span id="cb106-41"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-41" tabindex="-1"></a>    <span class="fu">return</span>(DIC)</span>
+<span id="cb106-42"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-42" tabindex="-1"></a>  }</span>
+<span id="cb106-43"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-43" tabindex="-1"></a>   </span>
+<span id="cb106-44"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb106-44" tabindex="-1"></a>}</span></code></pre></div>
 <p>We calculate a DIC value for a model by passing the <code>sampled</code> object into the <code>pmwgDIC</code> function.</p>
-<div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb106-1" title="1"><span class="co"># Load Wagenmakers sampled object and assign to variable &quot;sampledWag&quot;</span></a>
-<a class="sourceLine" id="cb106-2" title="2"><span class="kw">load</span>(<span class="st">&quot;wagLBAsamp.RData&quot;</span>)</a>
-<a class="sourceLine" id="cb106-3" title="3">sampledWag &lt;-<span class="st"> </span>sampled</a>
-<a class="sourceLine" id="cb106-4" title="4"><span class="kw">pmwg_DIC</span>(<span class="dt">sampled =</span> sampledWag)</a></code></pre></div>
+<div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb107-1" tabindex="-1"></a><span class="co"># Load Wagenmakers sampled object and assign to variable &quot;sampledWag&quot;</span></span>
+<span id="cb107-2"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb107-2" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;wagLBAsamp.RData&quot;</span>)</span>
+<span id="cb107-3"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb107-3" tabindex="-1"></a>sampledWag <span class="ot">&lt;-</span> sampled</span>
+<span id="cb107-4"><a href="pmwg-sampler-with-the-linear-ballistic-accumulator-and-a-complex-experiment-design.html#cb107-4" tabindex="-1"></a><span class="fu">pmwg_DIC</span>(<span class="at">sampled =</span> sampledWag)</span></code></pre></div>
 <pre><code>             DIC   Effective parameters 
       -20085.6336              224.2085 </code></pre>
 
@@ -687,7 +734,6 @@ To run the sampler, we use the <code>run_stage</code> function. To execute the <
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
-<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
 <script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
@@ -698,42 +744,42 @@ To run the sampler, we use the <code>run_stage</code> function. To execute the <
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
-"sharing": {
-"github": false,
-"facebook": true,
-"twitter": true,
-"linkedin": false,
-"weibo": false,
-"instapaper": false,
-"vk": false,
-"whatsapp": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
-},
-"fontsettings": {
-"theme": "white",
-"family": "sans",
-"size": 2
-},
-"edit": {
-"link": "https://github.com/rstudio/bookdown-demo/edit/master/03-wagLBA.Rmd",
-"text": "Edit"
-},
-"history": {
-"link": null,
-"text": null
-},
-"view": {
-"link": null,
-"text": null
-},
-"download": ["PMwG-Sampler-Tutorial.pdf", "PMwG-Sampler-Tutorial.epub"],
-"search": {
-"engine": "lunr",
-"options": null
-},
-"toc": {
-"collapse": "subsection"
-}
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": "https://github.com/rstudio/bookdown-demo/edit/master/03-wagLBA.Rmd",
+    "text": "Edit"
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": ["PMwG-Sampler-Tutorial.pdf", "PMwG-Sampler-Tutorial.epub"],
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "subsection"
+  }
 });
 });
 </script>
@@ -744,7 +790,7 @@ gitbook.start({
     var script = document.createElement("script");
     script.type = "text/javascript";
     var src = "true";
-    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:")
       if (/^https?:/.test(src))
         src = src.replace(/^https?:/, '');
