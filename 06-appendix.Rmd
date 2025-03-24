@@ -9,11 +9,11 @@ Use the script below to process the data file so that the dataset structure is t
 # 1) subject = participant number
 # 2) block = block number
 # 3) practice = 1 if practice block, otherwise 0
-# 4) cond = condition either "2" for 75% words or "1" for 75% nonwords)
+# 4) cond = condition either "2" for 75% words or "1" for 75% non-words)
 # 5) stimulus = unique identifier of stimulus, stimuli are nested in frequency conditions
 # 6) freq = Code "1" means "high frequency word", code "2" means "low frequency word",
-#    and code "3" means "very low frequency word". Codes 4, 5, and 6 = "nonword".
-# 7) resp =  0 is nonword, 1 is word, -1 is not interpretable response (i.e., pushed a button,
+#    and code "3" means "very low frequency word". Codes 4, 5, and 6 = "non-word".
+# 7) resp =  0 is non-word, 1 is word, -1 is not interpretable response (i.e., pushed a button,
 #         but not the right one and also not the one next to the right button)
 # 8) rt = response time in seconds
 # 9) censor = 1 if value is eliminated from further analysis;

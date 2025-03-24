@@ -40,7 +40,7 @@ Benefits of the Particle Metropolis within Gibbs sampling algorithm include:
 
 * It allows you to efficiently get posterior samples from difficult-to-estimate models with highly correlated parameters, such as the LBA or diffusion model, and these samples have nice properties (e.g., lower autocorrelation than other MCMC samplers). 
 
-* Statistical efficiency makes it feasilbe to draw a large number of posterior samples. This can be important in posterior inference, for example in calculating Bayes Factors using established methods.  
+* Statistical efficiency makes it feasible to draw a large number of posterior samples. This can be important in posterior inference, for example in calculating Bayes Factors using established methods.  
 
 * It allows you to estimate the covariance structure between parameters in a principled manner. 
 

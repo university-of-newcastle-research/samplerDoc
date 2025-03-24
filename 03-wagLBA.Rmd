@@ -12,7 +12,7 @@ load("dataObjects/wagenmakers2008.RData")
 ## The LBA log-likelihood function for the Wagenmakers data set 
 
 ### What is a log-likelihood function?
-If you're unsure what a log-likehood function is and/or does, see our explanation [here](#WTFisaLLf).
+If you're unsure what a log-likelihood function is and/or does, see our explanation [here](#WTFisaLLf).
 
 ### Writing the LBA log-likelihood for the Wagenmakers data set
 As we have shown in the previous two examples, we include a computationally-slow and easy to follow log-likelihood function. The log-likelihood function steps through the data line by line (i.e. trial by trial) and gives a likelihood value for each line given `x` parameters. As mentioned in previous chapters, we encourage those who have experience writing likelihood functions to write a computationally efficient function or use our [fast LBA log-likelihood function](#wagFastll). For those new to modelling, the trialwise function directly below is easier to follow, debug and is less likely to result in errors. The down side is that the slow/trialwise log-likelihood function is approximately five times slower to run than the fast log-likelihood function.
@@ -89,7 +89,7 @@ tw_lba_ll <- function(x, data, sample = FALSE) {
 
 <b>Note:</b> If you'd like to run through this example, it is best to copy the `tw_lba_ll` function from the code block above rather than copying from the separate code chunks below where curly braces have been removed.
 
-We begin from the `for` loop on line 14. For for each row in the dataset, we assign the values (`x`) of each parameter in our model so that any conditional parameters (for example `b` in our model) are correctly assigned. For the Wagenmakers data set, we want to calculate the density function for a model that has a threshold (`b`) parameter for each of the conditions (`cond` = `w`: 75% words & 25% non-words, `nw`: 75% non-words & 25% words). We also want threshold to vary for respone (`resp`) type  (i.e., the accumulator for a word (`W`) response, and the accumulator for the non-word (`NW`). So, on lines 16 and 17, we paste together the `"b."` threshold parameter, the condition (`cond` = `w` or `nw`) and the response `".W"` or `".NW"` and add the start point parameter `A`. The start point parameter is added to the threshold values to ensure that threshold is greater than the start point value. 
+We begin from the `for` loop on line 14. For for each row in the dataset, we assign the values (`x`) of each parameter in our model so that any conditional parameters (for example `b` in our model) are correctly assigned. For the Wagenmakers data set, we want to calculate the density function for a model that has a threshold (`b`) parameter for each of the conditions (`cond` = `w`: 75% words & 25% non-words, `nw`: 75% non-words & 25% words). We also want threshold to vary for response (`resp`) type  (i.e., the accumulator for a word (`W`) response, and the accumulator for the non-word (`NW`). So, on lines 16 and 17, we paste together the `"b."` threshold parameter, the condition (`cond` = `w` or `nw`) and the response `".W"` or `".NW"` and add the start point parameter `A`. The start point parameter is added to the threshold values to ensure that threshold is greater than the start point value. 
 
 We hypothesised that drift rate `v` would vary with word frequency (`stim` = `hf`,`lf`,`vlf`,`nw`), so on lines 19 and 20 we allow drift rate for response <i>word</i> (`v.w`) to vary with the levels of word frequency, by pasting the `"v."` with `stim` and with the accumulator for each response (`".W"` or `".NW"`). You'll notice that in this example, we no longer have a drift rate for the correct response (`vc`) or incorrect response (`ve`), instead, we have a drift rate for responding <i>word</i> (`v.w`) and <i>non-word</i> (`v.nw`). This is a different way (and our preferred way) of coding drift rate. On line 21 we have ordered the `vs` vector with `v.nw` first and `v.w` second. 
 
@@ -120,9 +120,9 @@ The remaining lines of the log-likelihood function are identical to the function
 
 ## Fast LBA Log-likelihood function {#wagFastll}
 
-As we mentioned in section \@ref(fstLBALL), the data is large and the dLBA function takes some time to run, so the log-likelihood code above is computationally inefficient. There are several ways to improve the log-likelihood’s performance; in our example below, we reduce the number of calls to dLBA to one call. We do this by passing a list of dLBA parameter values for the length of the data.
+As we mentioned in section \@ref(fstLBALL), the data is large and the `dLBA` function takes some time to run, so the log-likelihood code above is computationally inefficient. There are several ways to improve the log-likelihood’s performance; in our example below, we reduce the number of calls to `dLBA` to one call. We do this by passing a list of `dLBA` parameter values for the length of the data.
 
-Note: When generating posterior predictive data, the rLBA function is still executed for each row of data; however, it is only executed several times, so computational efficiency is uncompromised.
+Note: When generating posterior predictive data, the `rLBA` function is still executed for each row of data; however, it is only executed several times, so computational efficiency is not compromised.
 
 
 ```{r fast_lba,include=TRUE}
@@ -411,7 +411,7 @@ ppdataWag$condition <- recode(ppdataWag$condition, w = "W", nw ="NW" )
 ppdataWag$binary_stim <- ifelse(ppdataWag$stim =="nw", 1, 2)
 ppdataWag$correct <- ifelse(ppdataWag$binary_stim == ppdataWag$response, 1, 0)
 
-# Subject x condition Q25, median and Q75 respone time + mean accuracy 
+# Subject x condition Q25, median and Q75 response time + mean accuracy 
 # Wagenmakers dataset
 pqWag <- wagenmakers %>% 
   group_by(subject, condition, stim) %>% 
@@ -422,7 +422,7 @@ pqWag <- wagenmakers %>%
             .groups = "keep"
             )
 
-# Subject x condition Q25, median and Q75 respone time for posterior predictive data
+# Subject x condition Q25, median and Q75 response time for posterior predictive data
 pp_pqWag <- ppdataWag %>%
   group_by(condition, pp_iter, subject, stim) %>%
   summarise(Q25 = quantile(rt, prob = 0.25),
@@ -465,7 +465,7 @@ levels(av_pqWag$condition) <-
 
 
 
-# Convert rt to milliseconds and acc to percentage
+# Convert rt to milliseconds and accuracy to percentage
 av_pqWag$acc <- 100 * av_pqWag$acc
 pp_varWag$acc <- 100 * pp_varWag$acc
 av_pqWag[, c("Q25", "median", "Q75")] <- 1000 * av_pqWag[, c("Q25", "median", "Q75")]
