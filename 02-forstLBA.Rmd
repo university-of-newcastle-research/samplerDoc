@@ -786,8 +786,8 @@ pars <- c("A","b","vc","ve","t0")
 
 # Specify a priors list
 priors <- list(
-  theta_mu = rep(0, length(pars)),
-  theta_sig = diag(rep(1, length(pars)))
+  theta_mu_mean = rep(0, length(pars)),
+  theta_mu_var = diag(rep(1, length(pars)))
 )
 
 # Setup your sampler object - include your data, parameter vector, 
