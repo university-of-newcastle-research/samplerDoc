@@ -349,7 +349,7 @@ The `pmwgs` function takes a set of arguments (listed below) and returns a list 
 * `ll_func =` name of log-likelihood function to be used (e.g.`fast_lba_ll3b`)
 
 ```{r forstSampObj, eval=FALSE}
-sampler <- pmwgs(data = data,
+sampler <- pmwgs(data = forstmann,
                  pars = pars,
                  prior = priors,
                  ll_func = fast_lba_ll3b
@@ -651,8 +651,7 @@ rtplot3b <- ggplot(data = av_pq3b,
         axis.ticks.x = element_blank(),
         legend.text = element_text(size = 12),
         legend.key.size = unit(0.75, 'cm'),
-        legend.title = element_text(size = 14, face = 'bold'),
-        legend.title.align = 0.5,
+        legend.title = element_text(size = 14, face = 'bold', hjust = 0.5),
         legend.position = "top") +
    ylim(275, 650)
 
@@ -686,7 +685,7 @@ plots3b <- rtplot3b/accplot3b
 plots3b
 ```
 
-##Evaluating different models - single threshold LBA 
+## Evaluating different models - single threshold LBA
 
 In this section we will evaluate different LBA models. For each model, we will the estimate posterior distribution, generate posterior predictive data, and then compare those against observed data.
 
@@ -955,8 +954,7 @@ rtplot1b <- ggplot(data = av_pq1b,
         axis.ticks.x = element_blank(),
         legend.text = element_text(size = 12),
         legend.key.size = unit(0.75, 'cm'),
-        legend.title = element_text(size = 14, face = 'bold'),
-        legend.title.align = 0.5,
+        legend.title = element_text(size = 14, face = 'bold', hjust = 0.5),
         legend.position = "top") +
    ylim(275, 650)
 
@@ -1137,8 +1135,7 @@ rtplot <- ggplot(data = av_pq,
         axis.ticks.x = element_blank(),
         legend.text = element_text(size = 12),
         legend.key.size = unit(0.75, 'cm'),
-        legend.title = element_text(size = 14, face = 'bold'),
-        legend.title.align = 0.5,
+        legend.title = element_text(size = 14, face = 'bold', hjust = 0.5),
         legend.position = "top") +
    ylim(275, 650)
 

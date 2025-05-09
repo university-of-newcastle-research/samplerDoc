@@ -242,7 +242,7 @@ The `pmwgs` function takes a set of arguments (listed below) and returns a list 
 * `ll_func =` name of log-likelihood function to be used (e.g.`fast_lba_ll`)
 
 ```{r wagSampObj, eval=FALSE}
-sampler <- pmwgs(data = data,
+sampler <- pmwgs(data = wagenmakers,
                  pars = pars,
                  prior = priors,
                  ll_func = fast_lba_ll
@@ -527,8 +527,7 @@ rtplotWag <- ggplot(data = av_pqWag,
         axis.ticks.x = element_blank(),
         legend.text = element_text(size = 12),
         legend.key.size = unit(0.75, 'cm'),
-        legend.title = element_text(size = 14, face = 'bold'),
-        legend.title.align = 0.5,
+        legend.title = element_text(size = 14, face = 'bold', hjust = 0.5),
         legend.position = "top") +
    ylim(400, 850)
 
