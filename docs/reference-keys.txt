@@ -42,6 +42,7 @@ run-sampler
 estSet
 genppdatafunc
 assessing-descriptive-adequacy-goodness-of-fit
+evaluating-different-models---single-threshold-lba
 pmwg-framework-for-a-single-threshold-model
 checking-descriptive-adequacy-of-1b-model.
 forstMC
